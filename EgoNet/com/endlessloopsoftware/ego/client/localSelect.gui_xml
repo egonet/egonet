@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.4.2_03" class="java.beans.XMLDecoder"> 
+ <object id="FoamPanel0" class="com.cim.dlgedit.layout.FoamPanel"> 
+  <void method="add"> 
+   <object id="JLabel0" class="javax.swing.JLabel"> 
+    <void property="horizontalAlignment"> 
+     <int>0</int> 
+    </void> 
+    <void property="name"> 
+     <string>Title</string> 
+    </void> 
+    <void property="text"> 
+     <string>Egocentric Network Study</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="add"> 
+   <object id="JLabel1" class="javax.swing.JLabel"> 
+    <void property="horizontalAlignment"> 
+     <int>0</int> 
+    </void> 
+    <void property="name"> 
+     <string>StudyName</string> 
+    </void> 
+    <void property="text"> 
+     <string>New Study</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="add"> 
+   <object id="JButton0" class="javax.swing.JButton"> 
+    <string>Select Study</string> 
+    <void property="name"> 
+     <string>SelectStudy</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="add"> 
+   <object id="JButton1" class="javax.swing.JButton"> 
+    <string>View Interview</string> 
+    <void property="name"> 
+     <string>ViewInterview</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="add"> 
+   <object id="JButton2" class="javax.swing.JButton"> 
+    <string>Summary Statistics</string> 
+    <void property="name"> 
+     <string>SummaryStatistics</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="add"> 
+   <object id="JButton3" class="javax.swing.JButton"> 
+    <string>Start Interview</string> 
+    <void property="name"> 
+     <string>StartInterview</string> 
+    </void> 
+   </object> 
+  </void> 
+  <void property="minimumSize"> 
+   <object class="java.awt.Dimension"> 
+    <int>525</int> 
+    <int>246</int> 
+   </object> 
+  </void> 
+  <void property="preferredSize"> 
+   <object class="java.awt.Dimension"> 
+    <int>525</int> 
+    <int>246</int> 
+   </object> 
+  </void> 
+  <void property="layout"> 
+   <object class="com.cim.dlgedit.layout.AnchoringLayout"> 
+    <object idref="FoamPanel0"/> 
+    <void method="addLayoutComponent"> 
+     <object idref="JButton3"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton3"/> 
+     <string>West</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel1"/> 
+      <string>West</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton3"/> 
+     <string>East</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel1"/> 
+      <string>East</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton3"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JButton0"/> 
+      <string>South</string> 
+      <int>30</int> 
+     </object> 
+    </void> 
+    <void method="addLayoutComponent"> 
+     <object idref="JButton1"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton1"/> 
+     <string>West</string> 
+     <object class="com.cim.dlgedit.layout.CenteringAnchor"> 
+      <object idref="JButton1"/> 
+      <object idref="FoamPanel0"/> 
+      <object class="com.cim.dlgedit.layout.MasterAnchor"> 
+       <void method="addBean"> 
+        <object idref="JButton1"/> 
+       </void> 
+      </object> 
+      <int>10</int> 
+      <int>8</int> 
+      <int>50</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton1"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JButton0"/> 
+      <string>North</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton1"/> 
+     <string>Width</string> 
+     <object class="com.cim.dlgedit.layout.PreferredSizeAnchor"> 
+      <object idref="JButton1"/> 
+      <int>10</int> 
+     </object> 
+    </void> 
+    <void method="addLayoutComponent"> 
+     <object idref="JButton0"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton0"/> 
+     <string>West</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel1"/> 
+      <string>West</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton0"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel1"/> 
+      <string>South</string> 
+      <int>30</int> 
+     </object> 
+    </void> 
+    <void method="addLayoutComponent"> 
+     <object idref="JButton2"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton2"/> 
+     <string>East</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel1"/> 
+      <string>East</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JButton2"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JButton0"/> 
+      <string>North</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="addLayoutComponent"> 
+     <object idref="JLabel1"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel1"/> 
+     <string>West</string> 
+     <object class="com.cim.dlgedit.layout.PercentageOffsetAnchor"> 
+      <object idref="FoamPanel0"/> 
+      <int>10</int> 
+      <string>Width</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel1"/> 
+     <string>East</string> 
+     <object class="com.cim.dlgedit.layout.PercentageOffsetAnchor"> 
+      <object idref="FoamPanel0"/> 
+      <int>90</int> 
+      <string>Width</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel1"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="JLabel0"/> 
+      <string>South</string> 
+      <int>30</int> 
+     </object> 
+    </void> 
+    <void method="addLayoutComponent"> 
+     <object idref="JLabel0"/> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel0"/> 
+     <string>West</string> 
+     <object class="com.cim.dlgedit.layout.PercentageOffsetAnchor"> 
+      <object idref="FoamPanel0"/> 
+      <int>5</int> 
+      <string>Width</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel0"/> 
+     <string>East</string> 
+     <object class="com.cim.dlgedit.layout.PercentageOffsetAnchor"> 
+      <object idref="FoamPanel0"/> 
+      <int>95</int> 
+      <string>Width</string> 
+      <int>0</int> 
+     </object> 
+    </void> 
+    <void method="putConstraint"> 
+     <object idref="JLabel0"/> 
+     <string>North</string> 
+     <object class="com.cim.dlgedit.layout.OffsetAnchor"> 
+      <object idref="FoamPanel0"/> 
+      <string>North</string> 
+      <int>18</int> 
+     </object> 
+    </void> 
+   </object> 
+  </void> 
+ </object> 
+</java> 

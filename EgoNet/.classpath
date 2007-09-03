@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/admin/dev/proj/endlessloop/elsutils/ELSUtils.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/EgoEJB"/>
+	<classpathentry kind="lib" path="/EgoEJB/lib/strutslib/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="/Users/admin/dev/proj/EgoNet/lib/EXML.jar"/>
+	<classpathentry kind="lib" path="/Users/admin/dev/proj/EgoNet/lib/FoamRuntime.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
