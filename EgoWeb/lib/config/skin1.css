@@ -1,0 +1,113 @@
+A	    {color : #D1D3FD; }
+A:Visited  {color : #D1D3FD; }
+A:Active   {color : #D1D3FD; }
+A:Hover    {color : #FFFFFF; text-decoration : none; }
+
+BODY 	{
+/*  		     color      : #000000;   */
+	background-color      : #336699;
+	margin-left           : 8;
+	margin-top            : 8;
+}
+
+
+/* Skin1  - Struts Example Application */
+SPAN.LABEL {
+     	           color : #FFFFEE;
+  	     font-weight : bold;
+}
+
+TH.LABEL {
+		text-align:right;
+}
+
+H3 {
+	color : #FFFFEE;
+}
+
+
+
+P.SUBSCRIPTION {
+		  color : #FFFFEE;
+		  font-family: arial;
+		  font-weight : bold;
+		  text-align : center;
+		  font-size : 16px;
+}
+TABLE.SUBSCRIPTION {
+		  background-color:#FFFFFF;
+}
+TH.SUBSCRIPTION {
+		background-color : #ED4F50;
+}
+
+P.SUBS {
+		  color : #FFFFEE;
+		  font-family: arial;
+		  font-weight : bold;
+		  text-align : center;
+		  font-size : 16px;
+}
+
+TABLE.SUBS {
+		background-color : #FFFFFF;	
+}
+TABLE.SUBS2 {background-color:#FFFFFF;}
+
+
+
+TH.SUBS {
+		background-color : #ED4F50;
+			
+}
+
+TD.ERROR {
+		background-color : #ED4F50;
+}
+
+TABLE.FORM {background-color:#FFFFFF;}
+
+TH.FORM {
+		background-color : #ED4F50;
+		color : #FFFFFF;
+}
+
+TD.FORM {
+		background-color :  #336699;
+}
+
+/**
+ * Calendar classes
+ */
+
+TD.CALENDRIER {
+	background-color: #C2C2C2; 
+	font-weight: bold; 
+	text-align: center; 
+	font-size: 10px;
+}
+
+A.CALENDRIER {
+	text-decoration: none; 
+	color: #000000;
+}
+
+.CALENDARBORDER {
+	background-color: #336699; //#000000; 
+}
+
+.CALENDARTITLE {
+	background-color: #336699; //#C9252C;
+}
+
+.CALENDARWEEK {
+	background-color: #FFFFFF;
+}
+
+.CALENDARWEEKEND {
+	background-color: #FFF4E5;
+}
+
+.CALENDARSELECTED {
+	background-color: #FF8F01;
+}

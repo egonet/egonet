@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurations>
+<archive name="Standard-JAR.jar" destination="" used="false" exploded="false">
+<folder prefix="" includes="**/*.class" excludes="" project="" projectLocation="/bin" name="bin" location="bin" used="false"/>
+<file prefix="META-INF" project="" projectLocation="/src/META-INF/MANIFEST.MF" name="MANIFEST.MF" location="src/META-INF/MANIFEST.MF" used="false"/>
+</archive>
+<archive name="EgoEJB.jar" destination="" used="true" exploded="false">
+<folder prefix="" includes="com/endlessloopsoftware/egonet/ejb/*.class,com/endlessloopsoftware/egonet/data/*.class,com/endlessloopsoftware/egonet/interfaces/*.class,com/endlessloopsoftware/egonet/util/*.class" excludes="" project="" projectLocation="bin" name="bin" location="bin" used="true"/>
+<file prefix="META-INF" project="" projectLocation="src/META-INF/ejb-jar.xml" name="ejb-jar.xml" location="src/META-INF/ejb-jar.xml" used="true"/>
+<file prefix="META-INF" project="" projectLocation="src/META-INF/jboss.xml" name="jboss.xml" location="src/META-INF/jboss.xml" used="true"/>
+<file prefix="META-INF" project="" projectLocation="src/META-INF/jbosscmp-jdbc.xml" name="jbosscmp-jdbc.xml" location="src/META-INF/jbosscmp-jdbc.xml" used="true"/>
+</archive>
+<archive name="EgoEJB-client.jar" destination="" used="true" exploded="false">
+<folder prefix="" includes="com/endlessloopsoftware/egonet/interfaces/*.class,com/endlessloopsoftware/egonet/data/*.class" excludes="" project="" projectLocation="bin" name="bin" location="bin" used="true"/>
+</archive>
+<archive name="egoapplet.jar" destination="" used="true" exploded="false">
+<folder prefix="" includes="com/endlessloopsoftware/egonet/web/applet/*.class" excludes="" project="" projectLocation="bin" name="bin" location="bin" used="true"/>
+</archive>
+<archive name="EgoWeb.war" destination="" used="true" exploded="false">
+<folder prefix="WEB-INF/classes" includes="com/endlessloopsoftware/egonet/web/**/*.class,com/endlessloopsoftware/egonet/web/*.class" excludes="com/endlessloopsoftware/egonet/web/applet/*.class" project="" projectLocation="bin" name="bin" location="bin" used="true"/>
+<file prefix="WEB-INF/lib" project="" projectLocation="EgoEJB-client.jar" name="EgoEJB-client.jar" location="EgoEJB-client.jar" used="true"/>
+<folder prefix="WEB-INF/lib" includes="" excludes="" project="" projectLocation="lib/strutslib" name="strutslib" location="lib/strutslib" used="true"/>
+<folder prefix="WEB-INF/classes/com/endlessloopsoftware/egonet/web/resources" includes="" excludes="" project="" projectLocation="resources" name="resources" location="resources" used="true"/>
+<folder prefix="images" includes="" excludes="" project="" projectLocation="lib/images" name="images" location="lib/images" used="true"/>
+<folder prefix="config" includes="" excludes="" project="" projectLocation="lib/config" name="config" location="lib/config" used="true"/>
+<folder prefix="" includes="*.class" excludes="" project="" projectLocation="bin" name="bin" location="bin" used="true"/>
+<file prefix="lib" project="" projectLocation="egoapplet.jar" name="egoapplet.jar" location="egoapplet.jar" used="true"/>
+<folder prefix="lib" includes="*.jar" excludes="" project="" projectLocation="lib/appletlib" name="appletlib" location="lib/appletlib" used="true"/>
+<folder prefix="WEB-INF" includes="" excludes="CVS,**/CVS" project="" projectLocation="WEB-INF" name="WEB-INF" location="WEB-INF" used="true"/>
+<folder prefix="" includes="" excludes="" project="" projectLocation="docroot" name="docroot" location="docroot" used="true"/>
+<folder prefix="WEB-INF/lib" includes="*.jar" excludes="" project="" projectLocation="lib/appletlib" name="appletlib" location="lib/appletlib" used="true"/>
+</archive>
+<archive name="EgoNet.ear" destination="" used="true" exploded="false">
+<file prefix="META-INF" project="" projectLocation="/src/META-INF/application.xml" name="application.xml" location="src/META-INF/application.xml" used="true"/>
+<file prefix="" project="" projectLocation="EgoEJB.jar" name="EgoEJB.jar" location="EgoEJB.jar" used="true"/>
+<file prefix="" project="" projectLocation="EgoWeb.war" name="EgoWeb.war" location="EgoWeb.war" used="true"/>
+</archive>
+</configurations>
