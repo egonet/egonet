@@ -1,8 +1,0 @@
-.cvsignore
-EgoEJB-client.jar
-EgoEJB.jar
-EgoNet.ear
-EgoWeb.war
-bin
-.externalToolBuilders
-egoapplet.jar
