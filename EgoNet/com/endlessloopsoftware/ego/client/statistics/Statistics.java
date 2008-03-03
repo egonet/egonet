@@ -422,7 +422,8 @@ public class Statistics
 		for (s = 0; s < size; ++s)
 		{
 			Stack S = new Stack();
-			List<Integer>[] P = new List<Integer>[size];
+			java.util.List[] P = new java.util.List[size];
+			//List<Integer>[] P = <Integer>[] new List[size];
 			LinkedList Q = new LinkedList();
 			int[] spaths = new int[size];
 			int[] distance = new int[size];
@@ -470,18 +471,27 @@ public class Statistics
 			while (!S.empty())
 			{
 				int w = ((Integer) S.pop()).intValue();
+				/*
+	            for (Integer o : P[w])
+	            {
+	               int v = o;
+	               dependency[v] += (spaths[v] + (spaths[v] * dependency[w])) / spaths[w];
+	            }
+				 */
+				Iterator it = P[w].iterator();
+				while (it.hasNext())
+				{
+					int v = ((Integer) it.next()).intValue();
+					dependency[v] += (spaths[v] + (spaths[v] * dependency[w])) / spaths[w];
+				}
 
-            for (Integer o : P[w])
-            {
-               int v = o;
-               dependency[v] += (spaths[v] + (spaths[v] * dependency[w])) / spaths[w];
-            }
-
-            if (w != s)
+				if (w != s)
 				{
 					Cb[w] += dependency[w];
 				}
 			}
+			
+			
 		}
 
 		return (Cb);

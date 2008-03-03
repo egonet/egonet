@@ -18,8 +18,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.endlessloopsoftware.ego.client.statistics;
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
+ /** <p>Description: Configuration Utilities for an Egocentric network study</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: Endless Loop Software</p>
  * @author Peter C. Schoaff
@@ -28,6 +27,8 @@ package com.endlessloopsoftware.ego.client.statistics;
  * $Id$
  *
  */
+package com.endlessloopsoftware.ego.client.statistics;
+
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
