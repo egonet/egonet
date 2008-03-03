@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/strutslib/struts-legacy.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/struts.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/jakarta-oro.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/struts-workflow-1-0-3.jar"/>
+	<classpathentry kind="lib" path="lib/appletlib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/Struts-Layout.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/elsutils.jar"/>
+	<classpathentry kind="lib" path="lib/strutslib/jbossall-client.jar"/>
+	<classpathentry kind="lib" path="/Enet/lib/jung-1.7.6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

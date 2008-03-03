@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module context-root="/EgoEJB" name="EgoEJB"
+    archive="EgoEJB.war" type="WEB" id="myeclipse.1089750823289">
+    <attributes>
+        <attribute name="webrootdir" value="WEB-INF"/>
+    </attributes>
+</project-module>
