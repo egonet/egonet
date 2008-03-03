@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="com/endlessloopsoftware/ego/client/graph/NodePanel.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/EXML.jar"/>
+	<classpathentry kind="lib" path="lib/jung-1.7.6.jar" sourcepath="/home/sonam/JavaLib/JUNG1.7/jung-1.7.6-src.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/FoamRuntime.jar"/>
+	<classpathentry kind="lib" path="lib/elsutils.jar"/>
+	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/EgoWeb"/>
+	<classpathentry kind="lib" path="/EgoWeb/lib/appletlib/colt.jar"/>
+	<classpathentry kind="lib" path="/EgoWeb/lib/strutslib/jbossall-client.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

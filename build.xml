@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Enet" default="compile" basedir=".">
+
+	<description>
+		Egonet
+	</description>
+
+	<!-- Global Properties-->
+	<property name="dir.lib.Enet" location="../Enet/lib" />
+	<property name="dir.lib.Egoweb.appletlib" location="../EgoWeb/lib/appletlib" />
+	<property name="dir.lib.Egoweb.strutslib" location="../EgoWeb/lib/strutslib" />
+	<property name="dir.src.Egonet" location="../Enet/src" />
+	<property name="dir.src.Egoweb" location="../EgoWeb/src" />
+	<property name="dir.build.Egonet" location="build" />
+
+	<!--specifying the main classes to be executed -->
+	<property name="main.class.EgoClient" value="com.endlessloopsoftware.ego.client.EgoClient" />
+	<property name="main.class.EgoNet" value="com.endlessloopsoftware.ego.author.EgoNet" />
+
+	<!-- Class path ref -->
+	<path id="classpath.project.Egonet">
+		<pathelement location="${dir.build.Egonet}" />
+		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
+		<fileset dir="${dir.lib.Egoweb.strutslib}" includes="jbossall-client.jar" />
+		<fileset dir="${dir.lib.Egoweb.appletlib}" includes="colt.jar" />
+	</path>
+	<path id="classpath.project.Egoweb">
+		<pathelement location="${dir.build.Egonet}" />
+		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
+		<fileset dir="${dir.lib.Egoweb.strutslib}" includes="*.jar" />
+		<fileset dir="${dir.lib.Egoweb.appletlib}" includes="*.jar" />
+	</path>
+
+
+
+	<!-- Compiling the Egoweb and Enet java Files -->
+	<target name="compile" description="compile the Enet source" depends="init">
+		<javac srcdir="${dir.src.Egoweb}" destdir="${dir.build.Egonet}">
+			<classpath refid="classpath.project.Egoweb" />
+		</javac>
+		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}">
+			<classpath refid="classpath.project.Egonet" />
+		</javac>
+	</target>
+
+	<!-- Creat a build folder to put the class files-->
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${dir.build.Egonet}" />
+	</target>
+
+	<!-- Remove the build folder
+	<target name="clean" description="clean up">
+			<delete dir="${dir.Egonet.build}" />
+    </target>
+	-->
+
+	<!-- Create jar file for project -->
+	<target name="lib-jar">
+		<!-- Creating jar for Enet libraries -->
+		<jar jarfile="Egonet-lib.jar">
+			<zipfileset src="${dir.lib.Enet}/commons-collections-3.2.jar" />
+			<zipfileset src="${dir.lib.Enet}/elsutils.jar" />
+			<zipfileset src="${dir.lib.Enet}/EXML.jar" />
+			<zipfileset src="${dir.lib.Enet}/FoamRuntime.jar" />
+			<zipfileset src="${dir.lib.Enet}/forms-1.1.0.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung-1.7.6.jar" />
+			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/jbossall-client.jar" />
+			<zipfileset src="${dir.lib.Egoweb.appletlib}/colt.jar" />
+
+			<!--
+			<property name="dir.layoutxml.Egonet" location="../Enet/src/com/endlessloopsoftware/ego/client" />
+			<property name="" location="../Enet/src/com/endlessloopsoftware/ego/author" />
+
+			<fileset file="${dir.layoutxml.Egonet}/localSelect.gui_xml" />
+			<fileset file="${dir.layoutxml.Egonet}/QuestionPanel.gui_xml" />
+			<fileset file="${dir.layoutxml.Egonet}/ServerInterviewChooser.gui_xml" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts-legacy.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/jakarta-oro.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-validator.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-lang.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-fileupload.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-digester.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-beanutils.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts-workflow-1-0-3.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/javax.servlet.jar" />
+			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-logging.jar" />
+			-->
+		</jar>
+	</target>
+
+	<target name="jar" depends="compile,lib-jar">
+		<!-- Creating jar file for the main class EgoClient.java -->
+		<jar destfile="EgoClient.jar" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class.EgoClient}" />
+				<attribute name="Class-Path" value="Egonet-lib.jar" />
+			</manifest>
+			<zipfileset dir="${dir.build.Egonet}" includes="**/*.class" />
+			<zipfileset dir="${dir.src.Egonet}" />
+			<zipfileset src="Egonet-lib.jar" />
+
+		</jar>
+		<!-- Creating jar file for the main class "EgoNet.java" -->
+		<jar destfile="EgoAuthor.jar" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class.EgoNet}" />
+				<attribute name="Class-Path" value="Egonet-lib.jar" />
+
+			</manifest>
+			<zipfileset dir="${dir.build.Egonet}" />
+			<zipfileset dir="${dir.src.Egonet}" />
+			<zipfileset src="Egonet-lib.jar" />
+		</jar>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${dir.build.egonet}" />
+		<delete file="EgoAuthor.jar" />
+		<delete file="EgoClient.jar" />
+		<delete file="Egonet-lib.jar" />
+	</target>
+
+	<target name="dist" depends="clean,jar" description="Create Windows-compatible executables from the built Jar files">
+		<taskdef name="jsmoothgen" classname="net.charabia.jsmoothgen.ant.JSmoothGen" classpath="${dir.lib.Enet}/jsmooth/jsmoothgen-ant.jar" />
+		<jsmoothgen project="Egonet.jsmooth" skeletonroot="lib/jsmooth/" />
+		<taskdef name="jsmoothgen" classname="net.charabia.jsmoothgen.ant.JSmoothGen" classpath="${dir.lib.Enet}/jsmooth/jsmoothgen-ant.jar" />
+		<jsmoothgen project="Egoauthor.jsmooth" skeletonroot="lib/jsmooth/" />
+	</target>
+</project>
+

@@ -1,0 +1,136 @@
+package com.endlessloopsoftware.ego.client.graph;
+
+import java.awt.*;
+import javax.swing.*;
+
+import com.endlessloopsoftware.ego.client.graph.GraphTabPanel;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import com.endlessloopsoftware.ego.client.statistics.StatisticsFrame;
+
+public class GraphPanel extends javax.swing.JPanel {
+	private JSplitPane mainSplitPane;
+
+	private JSplitPane rightSplitPane;
+
+	// private JPanel mainPanel;
+
+	private JPanel leftPanel;
+
+	private JPanel topRightPanel;
+
+	GraphRenderer graphRenderer;
+
+	public GraphPanel() {
+		init();
+	}
+
+	/**
+	 * calls createRenderer(Statistics Frame) calls methods to create split
+	 * panes
+	 * 
+	 * @param frame
+	 */
+	public void init() {
+		GraphRenderer.propertyMap.clear();
+		GraphRenderer.edgeMap.clear();
+		GraphRenderer.edgeLabelMap.clear();
+		GraphRenderer.edgePropertyList.clear();
+		
+		graphRenderer = new GraphRenderer();
+		graphRenderer.createNodeEdge();
+		// split the window into 3 and populate with appropriate panels
+		createSplitPanel();
+		this.setLayout(new BorderLayout());
+		this.add(mainSplitPane, BorderLayout.CENTER);
+	}
+
+	/*
+	 * Creating and populating separate panels for left pane, top right pane and
+	 * bottom right pane
+	 */
+
+	/**
+	 * Mehtod to create left panel and add graph to it
+	 */
+	private void createLeftPanel() {
+		leftPanel = new JPanel();
+		JComponent gzsp = graphRenderer.createGraph();
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.setPreferredSize(new Dimension(600, 600));
+		leftPanel.add(gzsp, BorderLayout.CENTER);
+	}
+
+	/**
+	 * Create Top right panel with graph, node and edge tabs
+	 * 
+	 */
+	private void createTopRightPanel() {
+		topRightPanel = new JPanel(new BorderLayout());
+
+		JTabbedPane tabs = new JTabbedPane();
+
+		tabs.add("Graph", new GraphTabPanel(graphRenderer));
+	//	tabs.add("Node", new NodePanel(graphRenderer));
+		tabs.add("Edge", new EdgePanel(graphRenderer));
+		tabs.add("Node Label", new NodeLabelPanel(graphRenderer));
+		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
+		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
+		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
+		tabs.add("Structural Measures", new StructuralMeasuresPanel(graphRenderer));
+		
+
+		topRightPanel.add(tabs);
+	}
+
+	/**
+	 * Create panels for individual parts of the split window Create split panes
+	 * to divide total window into three set properties of set property to male
+	 * split pane contractible Split panes are populated with individual panels
+	 * for the split window
+	 */
+	private void createSplitPanel() {
+		createLeftPanel();
+		createTopRightPanel();
+
+		// Topright: 3 tabbed window; Bottom right: satellite view; left: graph
+		// display
+		JScrollPane topRightScrollPanel = new JScrollPane(topRightPanel);
+
+		JComponent satellitePane = graphRenderer.createSatellitePane();
+		satellitePane.setMinimumSize(satellitePane.getPreferredSize());
+		
+		rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, topRightScrollPanel, satellitePane);
+
+		rightSplitPane.setResizeWeight(0.75);
+		rightSplitPane.setContinuousLayout(true);
+
+		//with staellite pane
+//		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
+//				rightSplitPane);
+		
+		//without satellite pane
+		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
+				topRightScrollPanel);
+		
+		mainSplitPane.setResizeWeight(0.8);
+		mainSplitPane.setContinuousLayout(true);
+		mainSplitPane.setOneTouchExpandable(true);
+	}
+
+	public static void main(String[] args) {
+
+		JFrame frame = new JFrame();
+		GraphPanel gf = new GraphPanel();
+
+		frame.add(gf);
+
+		frame.setTitle("Ego-centric network Graph");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(1200, 800);
+		frame.setLocationRelativeTo(null);
+		frame.pack();
+		frame.setVisible(true);
+
+	}
+
+}
