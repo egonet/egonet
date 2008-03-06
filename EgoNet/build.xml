@@ -36,10 +36,10 @@
 
 	<!-- Compiling the Egoweb and Enet java Files -->
 	<target name="compile" description="compile the Enet source" depends="init">
-		<javac srcdir="${dir.src.Egoweb}" destdir="${dir.build.Egonet}">
+		<javac srcdir="${dir.src.Egoweb}" destdir="${dir.build.Egonet}" target="1.5">
 			<classpath refid="classpath.project.Egoweb" />
 		</javac>
-		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}">
+		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}" target="1.5">
 			<classpath refid="classpath.project.Egonet" />
 		</javac>
 	</target>
