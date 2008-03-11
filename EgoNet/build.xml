@@ -57,7 +57,7 @@
 	</target>
 
 	<!-- Create jar file for project -->
-	<target name="lib-jar">
+	<target name="lib-jar" depends="compile">
 		<!-- Creating jar for Enet libraries -->
 		<jar jarfile="${dir.dist.Egonet}/Egonet-lib.jar">
 			<zipfileset src="${dir.lib.Enet}/commons-collections-3.2.jar" />
@@ -67,29 +67,11 @@
 			<zipfileset src="${dir.lib.Enet}/forms-1.1.0.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung-1.7.6.jar" />
 			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
+			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
+			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
 			<zipfileset src="${dir.lib.Egoweb.strutslib}/jbossall-client.jar" />
 			<zipfileset src="${dir.lib.Egoweb.appletlib}/colt.jar" />
-
-			<!--
-			<property name="dir.layoutxml.Egonet" location="../Enet/src/com/endlessloopsoftware/ego/client" />
-			<property name="" location="../Enet/src/com/endlessloopsoftware/ego/author" />
-
-			<fileset file="${dir.layoutxml.Egonet}/localSelect.gui_xml" />
-			<fileset file="${dir.layoutxml.Egonet}/QuestionPanel.gui_xml" />
-			<fileset file="${dir.layoutxml.Egonet}/ServerInterviewChooser.gui_xml" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts-legacy.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/jakarta-oro.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-validator.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-lang.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-fileupload.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-digester.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-beanutils.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts-workflow-1-0-3.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/struts.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/javax.servlet.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/commons-logging.jar" />
-			-->
+		
 		</jar>
 	</target>
 
