@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import org.jdesktop.layout.GroupLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -37,8 +38,8 @@ public class StructuralMeasuresPanel extends JPanel {
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
 		graphData = new GraphData();
 		createComponents();
 	}
@@ -106,30 +107,30 @@ public class StructuralMeasuresPanel extends JPanel {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup().addComponent(sizeLabel)
-				.addGap(30).addComponent(applySizeButton).addGap(30)
-				.addComponent(colorLabel).addGap(30).addComponent(
+		hGroup.add(layout.createParallelGroup().add(sizeLabel)
+				.add(30).add(applySizeButton).add(30)
+				.add(colorLabel).add(30).add(
 						applyColorButton));
-		hGroup.addGroup(layout.createParallelGroup().addComponent(
-				structuralCombo_1).addComponent(structuralCombo_2));
+		hGroup.add(layout.createParallelGroup().add(
+				structuralCombo_1).add(structuralCombo_2));
 		layout.setHorizontalGroup(hGroup);
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(sizeLabel)
-				.addComponent(structuralCombo_1));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addGap(30));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(applySizeButton));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addGap(30));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(colorLabel)
-				.addComponent(structuralCombo_2));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addGap(30));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(applyColorButton));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(sizeLabel)
+				.add(structuralCombo_1));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(30));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(applySizeButton));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(30));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(colorLabel)
+				.add(structuralCombo_2));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(30));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(applyColorButton));
 		layout.setVerticalGroup(vGroup);
 	}
 }

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
 import java.awt.event.*;
+import org.jdesktop.layout.GroupLayout;
 
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
@@ -44,8 +45,8 @@ public class NodeColorPanel extends JPanel {
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
 		graphData = new GraphData();
 		createComponents();
 	}
@@ -170,25 +171,25 @@ public class NodeColorPanel extends JPanel {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup()
-				.addComponent(questionLabel).addComponent(questionCombo)
-				.addComponent(table.getTableHeader()).addComponent(table)
-				.addComponent(applyButton));
+		hGroup.add(layout.createParallelGroup()
+				.add(questionLabel).add(questionCombo)
+				.add(table.getTableHeader()).add(table)
+				.add(applyButton));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionLabel));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionLabel));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(table));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(applyButton));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(table));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(applyButton));
 
 		layout.setVerticalGroup(vGroup);
 	}

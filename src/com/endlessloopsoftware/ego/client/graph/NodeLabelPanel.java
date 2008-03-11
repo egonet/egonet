@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import org.jdesktop.layout.GroupLayout;
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 
@@ -44,8 +45,8 @@ public class NodeLabelPanel extends JPanel {
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
 		graphData = new GraphData();
 		createComponents();
 	}
@@ -116,19 +117,19 @@ public class NodeLabelPanel extends JPanel {
 
 		// show only questin combo and label
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup()
-				.addComponent(questionRadio).addComponent(questionCombo)
-				.addComponent(alterNamesRadio));
+		hGroup.add(layout.createParallelGroup()
+				.add(questionRadio).add(questionCombo)
+				.add(alterNamesRadio));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionRadio));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(alterNamesRadio));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionRadio));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(alterNamesRadio));
 		layout.setVerticalGroup(vGroup);
 	}
 
@@ -197,27 +198,27 @@ public class NodeLabelPanel extends JPanel {
 	private void drawPanel() {
 		this.removeAll();
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup()
-				.addComponent(questionRadio).addComponent(questionCombo)
-				.addComponent(table.getTableHeader()).addComponent(table)
-				.addComponent(applyButton).addComponent(alterNamesRadio));
+		hGroup.add(layout.createParallelGroup()
+				.add(questionRadio).add(questionCombo)
+				.add(table.getTableHeader()).add(table)
+				.add(applyButton).add(alterNamesRadio));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionRadio));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionRadio));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(table));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(applyButton));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(alterNamesRadio));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(table));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(applyButton));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(alterNamesRadio));
 
 		layout.setVerticalGroup(vGroup);
 	}

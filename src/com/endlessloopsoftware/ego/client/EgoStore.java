@@ -23,7 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.ProgressMonitor;
-import javax.swing.SwingWorker;
+import org.jdesktop.swingworker.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.FileMismatchException;
