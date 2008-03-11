@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import org.jdesktop.layout.GroupLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -53,8 +54,8 @@ public class GraphTabPanel extends JPanel {
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
 		
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
 		
 		// label combo pair for choosing different layouts
 		JLabel layoutLabel = new JLabel("Choose Layout");
@@ -165,12 +166,12 @@ public class GraphTabPanel extends JPanel {
 		// positions them at the same x location.
 		//
 		// Variable indentation is used to reinforce the level of grouping.
-		hGroup.addGroup(layout.createParallelGroup().addComponent(layoutLabel)
-				.addComponent(modeLabel).addComponent(bgcolorLabel)
-				.addComponent(showLabelChkBox).addComponent(showWeightChkBox));
+		hGroup.add(layout.createParallelGroup().add(layoutLabel)
+				.add(modeLabel).add(bgcolorLabel)
+				.add(showLabelChkBox).add(showWeightChkBox));
 
-		hGroup.addGroup(layout.createParallelGroup().addComponent(layoutCombo)
-				.addComponent(modeCombo).addComponent(bgcolorButton));
+		hGroup.add(layout.createParallelGroup().add(layoutCombo)
+				.add(modeCombo).add(bgcolorButton));
 
 		layout.setHorizontalGroup(hGroup);
 
@@ -184,19 +185,19 @@ public class GraphTabPanel extends JPanel {
 		// the second label and text field. By using a sequential group
 		// the labels and text fields are positioned vertically after one
 		// another.
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(layoutLabel)
-				.addComponent(layoutCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(modeLabel)
-				.addComponent(modeCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(bgcolorLabel)
-				.addComponent(bgcolorButton));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(showLabelChkBox));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(showWeightChkBox));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(layoutLabel)
+				.add(layoutCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(modeLabel)
+				.add(modeCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(bgcolorLabel)
+				.add(bgcolorButton));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(showLabelChkBox));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(showWeightChkBox));
 		layout.setVerticalGroup(vGroup);
 	}
 

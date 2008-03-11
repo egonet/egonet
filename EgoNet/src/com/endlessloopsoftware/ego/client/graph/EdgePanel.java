@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import org.jdesktop.layout.GroupLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.*;
@@ -8,7 +9,7 @@ import javax.swing.table.*;
 
 import org.egonet.util.table.*;
 
-import javax.swing.GroupLayout;
+import org.jdesktop.layout.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -64,8 +65,8 @@ public class EdgePanel extends JPanel implements TableModelListener {
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
 
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
 
 		this.graphRenderer = gr;
 		this.graphQuestions = graphRenderer.getGQuestions();
@@ -375,24 +376,24 @@ public class EdgePanel extends JPanel implements TableModelListener {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup()
-				.addComponent(questionLabel).addComponent(questionCombo)
-				.addComponent(selectionLabel).addComponent(
-						table.getTableHeader()).addComponent(table));
+		hGroup.add(layout.createParallelGroup()
+				.add(questionLabel).add(questionCombo)
+				.add(selectionLabel).add(
+						table.getTableHeader()).add(table));
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionLabel));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(questionCombo));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(selectionLabel));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionLabel));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(questionCombo));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(selectionLabel));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.addGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.BASELINE).addComponent(table));
+		vGroup.add(layout.createParallelGroup(
+				GroupLayout.BASELINE).add(table));
 		layout.setVerticalGroup(vGroup);
 
 	}
