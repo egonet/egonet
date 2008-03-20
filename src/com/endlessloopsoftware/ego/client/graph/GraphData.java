@@ -397,8 +397,8 @@ public class GraphData {
 		return adjacencyMatrix;
 	}
 
-	public void setAdjacencyMatrix(int[][] adjacencyMatrix) {
-		this.adjacencyMatrix = adjacencyMatrix;
+	public void setAdjacencyMatrix(int[][] adj) {
+		adjacencyMatrix = adj;
 	}
 
 }

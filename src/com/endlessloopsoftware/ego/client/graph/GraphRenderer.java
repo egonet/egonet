@@ -63,13 +63,6 @@ public class GraphRenderer extends PluggableRenderer implements
 	public static java.util.List<GraphQuestion> gQuestions = java.util.Collections
 			.synchronizedList(new ArrayList<GraphQuestion>());
 
-	/**
-	 * Contains a map of GraphQuestion --> GraphProperty. GraphProperty may be
-	 * any of its two subclasses - NodeProperty or EdgeProperty. This map is
-	 * used to find out the list of alters matching a QA pair and their
-	 * respective properties in the graph This map will be used to poplulate the
-	 * vertexMap
-	 */
 	public static Map<GraphQuestion, GraphProperty> propertyMap = java.util.Collections
 			.synchronizedMap(new HashMap<GraphQuestion, GraphProperty>());
 
