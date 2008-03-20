@@ -40,6 +40,8 @@ import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.ParseException;
 
+import org.jdom.*;
+
 /*******************************************************************************
  * Handles IO for the EgoNet program Tracks data files and changes to those
  * files
@@ -775,6 +777,10 @@ public class EgoStore extends Observable {
 			throw new FileCreateException();
 		}
 	}
+	
+	public void writeGraphSettings() {
+		
+	}
 
 	public static File int2ist(String istPath, String intFile) {
 		return (new File(istPath, intFile
@@ -793,6 +799,7 @@ public class EgoStore extends Observable {
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_weighted_matrix.csv"));
 	}
+	
 }
 
 /**

@@ -69,6 +69,8 @@ public class ClientFrame extends JFrame {
 			"Save Weighted Adjacency Matrix");
 
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as JPEG image");
+	
+	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 	
@@ -123,6 +125,12 @@ public class ClientFrame extends JFrame {
 			}
 		});
 
+		saveGraphSettings.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveGraphSettings_actionPerformed(e);
+			}
+		});
+		
 		saveInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -257,6 +265,34 @@ public class ClientFrame extends JFrame {
 			File imageFile = fileChooser.getSelectedFile();
 			System.out.println(imageFile.getName());
 			GraphData.writeJPEGImage(imageFile);
+		}
+
+	}
+	
+	void saveGraphSettings_actionPerformed(ActionEvent e) {
+		String fileName;
+		fileName = EgoClient.interview.getName() + "_graphSettings";
+		File currentDirectory = new File(EgoClient.storage.getPackageFile()
+				.getParent()
+				+ "/Graphs");
+		currentDirectory.mkdir();
+
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(currentDirectory);
+		fileChooser.setSelectedFile(new File(fileName + ".settings"));
+		fileChooser.setDialogTitle("Save Graph Settings");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
+		// Files",".jpeg");
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings", "settings");
+		fileChooser.addChoosableFileFilter(filter);
+
+		int returnValue = fileChooser.showSaveDialog(this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File settingsFile = fileChooser.getSelectedFile();
+			System.out.println(settingsFile.getName());
+			GraphData.writeJPEGImage(settingsFile);
 		}
 
 	}
