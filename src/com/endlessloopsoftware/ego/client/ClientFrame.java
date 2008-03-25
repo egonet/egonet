@@ -209,6 +209,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
+			jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
@@ -292,7 +293,7 @@ public class ClientFrame extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
 			System.out.println(settingsFile.getName());
-			GraphData.writeJPEGImage(settingsFile);
+			EgoClient.storage.writeGraphSettings(settingsFile);
 		}
 
 	}

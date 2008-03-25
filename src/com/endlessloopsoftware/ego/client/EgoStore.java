@@ -40,8 +40,6 @@ import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.ParseException;
 
-import org.jdom.*;
-
 /*******************************************************************************
  * Handles IO for the EgoNet program Tracks data files and changes to those
  * files
@@ -778,7 +776,7 @@ public class EgoStore extends Observable {
 		}
 	}
 	
-	public void writeGraphSettings() {
+	public void writeGraphSettings(File settingsFile) {
 		
 	}
 
