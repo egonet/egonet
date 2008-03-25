@@ -177,7 +177,7 @@ public class Question implements Cloneable {
 
 			this.link.active = true;
 			this.link.answer = new Answer(qlData.getQuestionId());
-			this.link.answer.value = qlData.getAnswerValue();
+			this.link.answer.setValue(qlData.getAnswerValue());
 			this.link.answer.string = qlData.getAnswerString();
 		} else {
 			this.link.active = false;
@@ -234,7 +234,7 @@ public class Question implements Cloneable {
 		if (link != null) {
 			this.link.active = true;
 			this.link.answer = new Answer(new Long(link.getLong("Id")));
-			this.link.answer.value = link.getInt("value");
+			this.link.answer.setValue(link.getInt("value"));
 
 			/* Only support questions with single answers for link */
 			this.link.answer.string = link.getTextString("string");
@@ -405,7 +405,7 @@ public class Question implements Cloneable {
 				Element link = e.addElement("Link");
 				link.addElement("Id").setLong(
 						this.link.answer.questionId.longValue());
-				link.addElement("value").setInt(this.link.answer.value);
+				link.addElement("value").setInt(this.link.answer.getValue());
 				link.addElement("string").setText(this.link.answer.string);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -443,7 +443,7 @@ public class Question implements Cloneable {
 			try {
 				QuestionLinkDataValue qlData = new QuestionLinkDataValue();
 				qlData.setActive(true);
-				qlData.setAnswerValue(this.link.answer.value);
+				qlData.setAnswerValue(this.link.answer.getValue());
 				qlData.setAnswerString(this.link.answer.string);
 				qlData.setQuestionId(this.link.answer.questionId);
 			} catch (Exception ex) {

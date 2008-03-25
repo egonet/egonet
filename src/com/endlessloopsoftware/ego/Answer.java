@@ -29,9 +29,9 @@ public class Answer implements Cloneable {
 
 	public boolean adjacent;
 
-	public int value;
+	private int value;
 
-	public int index;
+	private int index;
 	
 	public String string;
 
@@ -52,7 +52,7 @@ public class Answer implements Cloneable {
 		questionId = Id;
 		answered = false;
 		adjacent = false;
-		value = -1;
+		setValue(-1);
 		string = "";
 		timestamp = DateFormat.getDateInstance().format(new Date());
 
@@ -67,7 +67,7 @@ public class Answer implements Cloneable {
 		questionId = data.getQuestionId();
 		answered = data.getAnswered();
 		adjacent = data.getAnswerAdjacent();
-		value = data.getAnswerValue();
+		setValue(data.getAnswerValue());
 		string = data.getAnswerString();
 		alters = data.getAlters().toArray();
 	}
@@ -92,8 +92,9 @@ public class Answer implements Cloneable {
 			answerElement.addElement("Answered").setBoolean(answered);
 
 			if (answered) {
-				answerElement.addElement("Value").setInt(value);
-				answerElement.addElement("Index").setInt(index);
+				if(questionId.equals(1205185478364L)) System.err.println("Printed a value into the XML file that was zero: " + getString());
+				answerElement.addElement("Value").setInt(getValue());
+				answerElement.addElement("Index").setInt(getIndex());
 				answerElement.addElement("Adjacent").setBoolean(adjacent);
 				answerElement.addElement("String").setText(string);
 				answerElement.addElement("TimeStamp").setText(timestamp);
@@ -145,9 +146,9 @@ public class Answer implements Cloneable {
 
 		if (r.answered) {
 			r.string = e.getString("String");
-			r.value = e.getInt("Value");
-			r.index = e.getInt("Index");
-			r.adjacent = q.selectionAdjacent(r.value);
+			r.setValue(e.getInt("Value"));
+			r.setIndex(e.getInt("Index"));
+			r.adjacent = q.selectionAdjacent(r.getValue());
 		} else {
 			r.string = null;
 		}
@@ -175,7 +176,7 @@ public class Answer implements Cloneable {
 	public String toString() {
 		String str = null;
 		if (string == null) {
-			Integer val = value;
+			Integer val = getValue();
 			str = val.toString();
 			;
 		} else {
@@ -186,8 +187,24 @@ public class Answer implements Cloneable {
 	
 	public String getString() {
 		String str = "";
-		str = "Answered: " + answered + " string: " + string + " value : " + value;
+		str = "questionId=" + questionId + ", answered=" + answered + ", string=" + string + ", index="+getIndex()+", value=" + getValue();
 		return str;
 		
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 }

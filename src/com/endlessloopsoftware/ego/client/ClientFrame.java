@@ -209,7 +209,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
-			jMenuFile.add(saveGraphSettings);
+			//jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();

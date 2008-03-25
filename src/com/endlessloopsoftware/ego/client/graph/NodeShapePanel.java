@@ -131,8 +131,7 @@ public class NodeShapePanel extends JPanel {
 				NodeProperty.NodeShape shape = NodeProperty.NodeShape.values()[i];
 				rowData[i][1] = shape;
 			} else {
-				NodeProperty.NodeShape shape = NodeProperty.NodeShape.values()[i
-						- maxNoOfShapes];
+				NodeProperty.NodeShape shape = NodeProperty.NodeShape.values()[i % maxNoOfShapes];
 				rowData[i][1] = shape;
 			}
 		}

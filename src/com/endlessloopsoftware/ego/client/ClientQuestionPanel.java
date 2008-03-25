@@ -337,8 +337,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		JScrollPane questionListScroll = new JScrollPane(questionList);
 		questionListScroll.setBorder(listBorder);
 		questionListScroll.setMinimumSize(new Dimension(150, 150));
-		questionListScroll
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		questionListScroll
+//				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		questionListScroll.setAutoscrolls(true);
 
 		questionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -506,7 +506,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				numericalTextField.requestFocusInWindow();
 
 				if (question.answer.answered) {
-					if (question.answer.value != -1) {
+					if (question.answer.getValue() != -1) {
 						numericalTextField.setText(question.answer.string);
 						noAnswerBox.setSelected(false);
 					} else {
@@ -530,7 +530,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 				answerPanel.showCard(RADIO_CARD);
 
-				if (question.answer.answered && (question.answer.value >= 0)) {
+				if (question.answer.answered && (question.answer.getValue() >= 0)) {
 					// int idx = question.selections.length -
 					// (question.answer.value + 1);
 					// if (answerButtons != null && idx < answerButtons.length
@@ -538,10 +538,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					// && answerButtons.length != 0)
 					// answerButtons[question.answer.index].setSelected(true);
 
-					int idx = question.selections.length
-							- (question.answer.value + 1);
+					//int idx = question.selections.length - (question.answer.getValue() + 1);
 					if (answerButtons != null && answerButtons.length != 0) {
-						answerButtons[question.answer.index].setSelected(true);
+						answerButtons[question.answer.getIndex()].setSelected(true);
 //						System.out.println("Question : "
 //								+ question.toString()
 //								+ "\n"
@@ -566,7 +565,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerButtons[i].setText("("
 							+ question.selections[i].getValue() + ") "
 							+ question.selections[i].getString());
-					System.out.println("i : " + i + " " + "Text : "
+					System.out.println("Question selection index=" + i + ", " + "Text : "
 							+ answerButtons[i].getText());
 					answerButtons[i].setVisible(true);
 					answerButtons[i]
@@ -590,8 +589,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerMenu.addItem(question.selections[i]);
 				}
 
-				if (question.answer.value > -1) {
-					answerMenu.setSelectedIndex(question.answer.index + 1);
+				if (question.answer.getValue() > -1) {
+					answerMenu.setSelectedIndex(question.answer.getIndex() + 1);
 				} else {
 					answerMenu.setSelectedIndex(0);
 				}
@@ -630,8 +629,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		if (question.questionType == Question.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
-			answer.value = (alterList.getListStrings().length);
-			answer.answered = (!EgoClient.interview.isLastAlterPrompt() || (answer.value >= EgoClient.study
+			answer.setValue((alterList.getListStrings().length));
+			answer.answered = (!EgoClient.interview.isLastAlterPrompt() || (answer.getValue() >= EgoClient.study
 					.getNumAlters()));
 			EgoClient.interview.setAlterList(alterList.getListStrings());
 		} else {
@@ -643,16 +642,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					System.out.println("Timestamp: " + answer.timestamp);
 					if (noAnswerBox.isSelected()) {
 						answer.answered = true;
-						answer.value = (Answer.NO_ANSWER);
+						answer.setValue((Answer.NO_ANSWER));
 						answer.string = "No Answer";
 					} else {
 						answer.string = numericalTextField.getText();
-						answer.value = (Integer.valueOf(answer.string)
-								.intValue());
+						answer.setValue((Integer.valueOf(answer.string).intValue()));
 						answer.answered = true;
 					}
 				} else {
-					answer.value = (Answer.NO_ANSWER);
+					answer.setValue((Answer.NO_ANSWER));
 					answer.answered = false;
 				}
 				break;
@@ -661,8 +659,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answer.timestamp = generateTimeStamp();
 				System.out.println("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
-				answer.value = (answer.string.length());
-				answer.answered = (answer.value != 0);
+				answer.setValue((answer.string.length()));
+				answer.answered = (answer.getValue() != 0);
 				break;
 
 			case Question.CATEGORICAL:
@@ -672,18 +670,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
-						System.out.println("Timestamp: " + answer.timestamp);
-						answer.value = (question.selections[button].getValue());
+						
 
+						answer.setValue((question.selections[button].getValue()));
 						// added 11/27/2007
-						answer.index = question.selections[button].getIndex();
-						// answer.index = question.selections.length -
-						// question.selections[button].getIndex();
-						answer.adjacent = question.selections[button]
-								.isAdjacent();
+						answer.setIndex(question.selections[button].getIndex());
+						// answer.index = question.selections.length - question.selections[button].getIndex();
+						answer.adjacent = question.selections[button].isAdjacent();
 						answer.string = question.selections[button].getString();
-						// answer.timestamp =
-						// DateFormat.getDateInstance().format(new Date());
+						System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
+						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
 					int selection = answerMenu.getSelectedIndex() - 1;
@@ -694,12 +690,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.timestamp = generateTimeStamp();
 						System.out.println("Timestamp: " + answer.timestamp);
 
-						answer.value = (question.selections[selection]
-								.getValue());
+						answer.setValue((question.selections[selection]
+								.getValue()));
 
 						// added 11/27/2007
-						answer.index = question.selections[selection]
-								.getIndex();
+						answer.setIndex(question.selections[selection]
+								.getIndex());
 
 						answer.adjacent = question.selections[selection]
 								.isAdjacent();
@@ -886,8 +882,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			if ((defaultAnswer >= 0)
 					&& (defaultAnswer < question.selections.length)) {
-				question.answer.value = (question.selections[defaultAnswer]
-						.getValue());
+				question.answer.setValue((question.selections[defaultAnswer].getValue()));
+				question.answer.setIndex(question.selections[defaultAnswer].getIndex());
+				
 				question.answer.string = question.selections[defaultAnswer]
 						.getString();
 				question.answer.adjacent = false;

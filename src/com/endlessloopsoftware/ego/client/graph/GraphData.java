@@ -237,7 +237,7 @@ public class GraphData {
 				if (weighted) {
 					if ((adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] == 0)
 							&& (adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] == 0)
-							&& (a.value == selection.getValue())) {
+							&& (a.getValue() == selection.getValue())) {
 						adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? selection
 								.getValue()
 								: 0;
@@ -250,7 +250,7 @@ public class GraphData {
 				} else {
 					if ((adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] == 0)
 							&& (adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] == 0)
-							&& (a.value == selection.getValue())) {
+							&& (a.getValue() == selection.getValue())) {
 						adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? 1
 								: 0;
 						adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? 1
