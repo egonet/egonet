@@ -796,19 +796,19 @@ public class Statistics
 
 					if (a.answered)
 					{
-						alterSummary[a.getAlters()[0]][index] = new Integer(a.value);
+						alterSummary[a.getAlters()[0]][index] = new Integer(a.getValue());
 
 						if (q.answerType == Question.NUMERICAL)
 						{
-							if (a.value != -1)
+							if (a.getValue() != -1)
 							{
-								alterStatArray[index].answerTotals[0] += a.value;
+								alterStatArray[index].answerTotals[0] += a.getValue();
 								alterStatArray[index].answerCount++;
 							}
 						}
 						else if (q.answerType == Question.CATEGORICAL)
 						{
-							alterStatArray[index].answerTotals[a.index] += 1;
+							alterStatArray[index].answerTotals[a.getIndex()] += 1;
 							alterStatArray[index].answerCount++;
 						}
 					}
