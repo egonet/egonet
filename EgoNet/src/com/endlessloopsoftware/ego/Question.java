@@ -279,6 +279,7 @@ public class Question implements Cloneable {
 						this.selections[index].setIndex(index);
 
 					} catch (NumberFormatException ex) {
+						System.out.println("Throwing exception");
 						this.selections[index].setValue(selections.size()
 								- (index + 1));
 						this.selections[index].setAdjacent(false);
