@@ -89,11 +89,19 @@ public class GraphSettings {
 	public void addQAsetting(GraphQuestion graphQuestion,
 			NodeProperty nodeProperty) {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
-				nodeProperty);
+				nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
 		displaySettings();
 	}
 
+	public void addQAsetting(GraphQuestion graphQuestion,
+			EdgeProperty edgeProperty) {
+		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
+				edgeProperty, GraphSettingType.Edge);
+		QAsettings.add(entry);
+		displaySettings();
+	}
+	
 	private void displaySettings() {
 
 		System.out

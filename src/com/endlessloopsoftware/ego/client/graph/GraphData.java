@@ -40,8 +40,8 @@ import edu.uci.ics.jung.utils.Pair;
 
 public class GraphData {
 
-    private static final double OFFSET = 25.0d;
-    
+	private static final double OFFSET = 25.0d;
+
 	private String[] completeAlterNameList;
 
 	private Interview interview;
@@ -59,7 +59,7 @@ public class GraphData {
 	 * List to contain list of all alter pair Questions in interview
 	 */
 	private List<Question> interviewAlterPairQuestionList;
-	
+
 	public GraphData() {
 		interview = EgoClient.interview;
 		completeAlterNameList = EgoClient.interview.getStats().alterList;
@@ -155,7 +155,8 @@ public class GraphData {
 		return alterNumbers;
 	}
 
-	public List<Integer> getAlterNumbers(Question selectedQuestion, Selection selection) {
+	public List<Integer> getAlterNumbers(Question selectedQuestion,
+			Selection selection) {
 		List<Integer> alterNumbers = new ArrayList<Integer>();
 		Long QID = selectedQuestion.UniqueId;
 		Iterator questionIterator;
@@ -170,8 +171,8 @@ public class GraphData {
 				continue;
 			}
 			if (interviewQuestion.UniqueId == QID) {
-				if ((interviewQuestion.answer.string.trim())
-						.equals(selection.getString().trim())) {
+				if ((interviewQuestion.answer.string.trim()).equals(selection
+						.getString().trim())) {
 					int[] alterNumArray = interviewQuestion.answer.getAlters();
 					for (int alterNum : alterNumArray) {
 						alterNumbers.add(alterNum);
@@ -182,6 +183,7 @@ public class GraphData {
 		}
 		return alterNumbers;
 	}
+
 	/**
 	 * Given a graph question, this method returns the list of alters for whom
 	 * the question answer pair was provided.
@@ -264,119 +266,121 @@ public class GraphData {
 		}
 	}
 
-	public static void writeJPEGImage(File imageFile)
-	{
-        int width = GraphRenderer.getVv().getWidth();
-        int height = GraphRenderer.getVv().getHeight();
+	public static void writeJPEGImage(File imageFile) {
+		int width = GraphRenderer.getVv().getWidth();
+		int height = GraphRenderer.getVv().getHeight();
 
-        BufferedImage bi = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = bi.createGraphics();
-        GraphRenderer.getVv().paint(graphics);
-        
-        graphics.dispose();
-        
-        try {
-            ImageIO.write(bi, "jpeg", imageFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		BufferedImage bi = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics = bi.createGraphics();
+		GraphRenderer.getVv().paint(graphics);
+
+		graphics.dispose();
+
+		try {
+			ImageIO.write(bi, "jpeg", imageFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		/*
-		Color bg = GraphRenderer.getVv().getBackground();
-        Rectangle rect = calculateGraphRect();
-        Dimension size = rect.getSize();
-        size.setSize(size.width + OFFSET * 2, size.height + OFFSET * 2);
-        BufferedImage bi = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_BGR);
-        Graphics2D graphics = bi.createGraphics();
-        graphics.setColor(bg);
-        graphics.fillRect(0, 0, size.width, size.height);
-        Dimension visibleSize = GraphRenderer.getVv().getSize();
-
-        // Hide the visualization viewer, resize it to entire graph size and move the graph to
-        // upper most left corner of the viewr.
-        GraphRenderer.getVv().setVisible(false);
-        GraphRenderer.getVv().setSize(size);
-        GraphRenderer.getVv().getViewTransformer().translate(OFFSET - rect.getX(), OFFSET - rect.getY());
-
-        GraphRenderer.getVv().paint(graphics);
-
-        // Return the previous size and location and redisplay the graph
-        GraphRenderer.getVv().getViewTransformer().translate(rect.getX() - OFFSET, rect.getY() - OFFSET);
-        GraphRenderer.getVv().setSize(visibleSize);
-        GraphRenderer.getVv().setVisible(true);
-
-        try {
-            ImageIO.write(bi, "jpeg", imageFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-		*/
+		 * Color bg = GraphRenderer.getVv().getBackground(); Rectangle rect =
+		 * calculateGraphRect(); Dimension size = rect.getSize();
+		 * size.setSize(size.width + OFFSET * 2, size.height + OFFSET * 2);
+		 * BufferedImage bi = new BufferedImage(size.width, size.height,
+		 * BufferedImage.TYPE_INT_BGR); Graphics2D graphics =
+		 * bi.createGraphics(); graphics.setColor(bg); graphics.fillRect(0, 0,
+		 * size.width, size.height); Dimension visibleSize =
+		 * GraphRenderer.getVv().getSize();
+		 *  // Hide the visualization viewer, resize it to entire graph size and
+		 * move the graph to // upper most left corner of the viewr.
+		 * GraphRenderer.getVv().setVisible(false);
+		 * GraphRenderer.getVv().setSize(size);
+		 * GraphRenderer.getVv().getViewTransformer().translate(OFFSET -
+		 * rect.getX(), OFFSET - rect.getY());
+		 * 
+		 * GraphRenderer.getVv().paint(graphics);
+		 *  // Return the previous size and location and redisplay the graph
+		 * GraphRenderer.getVv().getViewTransformer().translate(rect.getX() -
+		 * OFFSET, rect.getY() - OFFSET);
+		 * GraphRenderer.getVv().setSize(visibleSize);
+		 * GraphRenderer.getVv().setVisible(true);
+		 * 
+		 * try { ImageIO.write(bi, "jpeg", imageFile); } catch (IOException e) {
+		 * e.printStackTrace(); }
+		 */
 	}
 
-    public static StringLabeller getStringLabeller(Graph graph) {
-        return StringLabeller.getLabeller(graph);
-    }
-    
-	 public static Rectangle calculateGraphRect() {
-	        double x;
-	        double y;
-	        double minX = Double.MAX_VALUE;
-	        double minY = Double.MAX_VALUE;
-	        double maxX = Double.MIN_VALUE;
-	        double maxY = Double.MIN_VALUE;
+	public static StringLabeller getStringLabeller(Graph graph) {
+		return StringLabeller.getLabeller(graph);
+	}
 
-	        double labeloffset = OFFSET * 2.0d;
-	        
-	        Point2D location;
+	public static Rectangle calculateGraphRect() {
+		double x;
+		double y;
+		double minX = Double.MAX_VALUE;
+		double minY = Double.MAX_VALUE;
+		double maxX = Double.MIN_VALUE;
+		double maxY = Double.MIN_VALUE;
 
-	        Layout layout = GraphRenderer.getVv().getGraphLayout();
-	        MutableTransformer layoutTransformer = GraphRenderer.getVv().getLayoutTransformer();
-	        Graph graph = layout.getGraph();
-	        StringLabeller labeller = getStringLabeller(GraphRenderer.getGraph());
-	        Set<Vertex> vertices = graph.getVertices();
-	        Vertex mostRightVertex = vertices.iterator().next();
+		double labeloffset = OFFSET * 2.0d;
 
-	        // Find the upper most left in lower most right vertices
-	        for (Vertex v : vertices) {
-	            // Transform from graph layout coordinates to graphics2d coordinates
-	            location = layoutTransformer.transform(layout.getLocation(v));
-	            x = location.getX();
-	            y = location.getY();
-	            if (x < minX) {
-	                minX = x;
-	            }
-	            if (x > maxX) {
-	                maxX = x;
-	                mostRightVertex = v;
-	            }
-	            if (y < minY) {
-	                minY = y;
-	            }
-	            if (y > maxY) {
-	                maxY = y;
-	            }
-	        }
+		Point2D location;
 
-	        // Calculate the width of the right most vetrex label
-	        String label = labeller.getLabel(mostRightVertex);
-	        if (label == null) {
-	            label = "";
-	        }
-	        if (GraphRenderer.getVv().getRenderer() instanceof PluggableRenderer) {
-	            VertexFontFunction vertexFontFunction =
-	                    ((PluggableRenderer) GraphRenderer.getVv().getRenderer()).getVertexFontFunction();
-	            Font font = vertexFontFunction.getFont(mostRightVertex);
-	            Rectangle2D labelBounds = font.getStringBounds(label, ((Graphics2D) GraphRenderer.getVv().getGraphics()).getFontRenderContext());
-	            labeloffset += labelBounds.getWidth();
-	        } else {
-	            Font font = GraphRenderer.getVv().getFont();
-	            Rectangle2D labelBounds = font.getStringBounds(label, ((Graphics2D) GraphRenderer.getVv().getGraphics()).getFontRenderContext());
-	            labeloffset += labelBounds.getWidth();
-	        }
+		Layout layout = GraphRenderer.getVv().getGraphLayout();
+		MutableTransformer layoutTransformer = GraphRenderer.getVv()
+				.getLayoutTransformer();
+		Graph graph = layout.getGraph();
+		StringLabeller labeller = getStringLabeller(GraphRenderer.getGraph());
+		Set<Vertex> vertices = graph.getVertices();
+		Vertex mostRightVertex = vertices.iterator().next();
 
-	        final Dimension actual = new Dimension((int) (maxX - minX) + (int) labeloffset, (int) (maxY - minY) + (int) OFFSET * 2);
-	        return new Rectangle(new Point((int) minX, (int) minY), actual);
-	    }
+		// Find the upper most left in lower most right vertices
+		for (Vertex v : vertices) {
+			// Transform from graph layout coordinates to graphics2d coordinates
+			location = layoutTransformer.transform(layout.getLocation(v));
+			x = location.getX();
+			y = location.getY();
+			if (x < minX) {
+				minX = x;
+			}
+			if (x > maxX) {
+				maxX = x;
+				mostRightVertex = v;
+			}
+			if (y < minY) {
+				minY = y;
+			}
+			if (y > maxY) {
+				maxY = y;
+			}
+		}
+
+		// Calculate the width of the right most vetrex label
+		String label = labeller.getLabel(mostRightVertex);
+		if (label == null) {
+			label = "";
+		}
+		if (GraphRenderer.getVv().getRenderer() instanceof PluggableRenderer) {
+			VertexFontFunction vertexFontFunction = ((PluggableRenderer) GraphRenderer
+					.getVv().getRenderer()).getVertexFontFunction();
+			Font font = vertexFontFunction.getFont(mostRightVertex);
+			Rectangle2D labelBounds = font.getStringBounds(label,
+					((Graphics2D) GraphRenderer.getVv().getGraphics())
+							.getFontRenderContext());
+			labeloffset += labelBounds.getWidth();
+		} else {
+			Font font = GraphRenderer.getVv().getFont();
+			Rectangle2D labelBounds = font.getStringBounds(label,
+					((Graphics2D) GraphRenderer.getVv().getGraphics())
+							.getFontRenderContext());
+			labeloffset += labelBounds.getWidth();
+		}
+
+		final Dimension actual = new Dimension((int) (maxX - minX)
+				+ (int) labeloffset, (int) (maxY - minY) + (int) OFFSET * 2);
+		return new Rectangle(new Point((int) minX, (int) minY), actual);
+	}
+
 	public String[] getCompleteAlterNameList() {
 		return completeAlterNameList;
 	}

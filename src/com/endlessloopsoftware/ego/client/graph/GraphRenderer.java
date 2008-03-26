@@ -569,8 +569,9 @@ public class GraphRenderer extends PluggableRenderer implements
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
 			GraphQuestion graphQuestion = entry.getGraphQuestion();
-			if (graphQuestion.getCategory() == Question.ALTER_QUESTION) {
-				NodeProperty nodeProperty = entry.getNodeProperty();
+			if ((graphQuestion.getCategory() == Question.ALTER_QUESTION)
+					&& (entry.getType() == GraphSettingType.Node)) {
+				NodeProperty nodeProperty = (NodeProperty)entry.getNodeProperty();
 				NodeProperty.Property prop = nodeProperty.getProperty();
 				Question question = graphQuestion.getQuestion();
 				Selection selection = graphQuestion.getSelection();
@@ -604,10 +605,10 @@ public class GraphRenderer extends PluggableRenderer implements
 					}
 					break;
 				}
-			} else if (graphQuestion.getCategory() == Question.CATEGORICAL) // structural
+			} else if (graphQuestion.getCategory() == 0) // structural
 			// measure
 			{
-				NodeProperty nodeProperty = entry.getNodeProperty();
+				NodeProperty nodeProperty = (NodeProperty)entry.getNodeProperty();
 				NodeProperty.Property prop = nodeProperty.getProperty();
 				if (graphQuestion.getSelection().getString() == "DegreeCentrality") {
 					switch (prop) {
@@ -737,9 +738,14 @@ public class GraphRenderer extends PluggableRenderer implements
 		graphSettings.addQAsetting(graphQuestion, nodeProperty);
 	}
 
+	public void addQAsettings(GraphQuestion graphQuestion,
+			EdgeProperty edgeProperty) {
+		graphSettings.addQAsetting(graphQuestion, edgeProperty);
+	}
+	
 	public String getToolTipText(Vertex v) {
 		String text = graphSettings.getNodeToolTipText(v);
-	//	System.out.println(text);
+		// System.out.println(text);
 		return text;
 	}
 

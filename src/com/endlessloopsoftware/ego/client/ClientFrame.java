@@ -293,6 +293,7 @@ public class ClientFrame extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
 			System.out.println(settingsFile.getName());
+			
 			EgoClient.storage.writeGraphSettings(settingsFile);
 		}
 
