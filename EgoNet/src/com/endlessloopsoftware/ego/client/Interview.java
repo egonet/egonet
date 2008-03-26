@@ -235,11 +235,11 @@ public class Interview {
 				String s = q.toString();
 
 				if (q.questionType == Question.ALTER_QUESTION) {
-					s = s + "; " + _alterList[_answers[i].getAlters()[0]];
+					s = s + "; " + _answers[i].getAlters()[0];
 				} else if (q.questionType == Question.ALTER_PAIR_QUESTION) {
 					s = s + "; "
-							+ _alterList[_answers[i].getAlters()[0]] + " & "
-							+ _alterList[_answers[i].getAlters()[1]];
+							+ _answers[i].getAlters()[0] + " & "
+							+ _answers[i].getAlters()[1];
 				}
 
 				s = Question.questionTypeString(q.questionType) + ": " + s;

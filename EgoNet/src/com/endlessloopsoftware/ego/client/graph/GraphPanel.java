@@ -117,20 +117,4 @@ public class GraphPanel extends javax.swing.JPanel {
 		mainSplitPane.setOneTouchExpandable(true);
 	}
 
-	public static void main(String[] args) {
-
-		JFrame frame = new JFrame();
-		GraphPanel gf = new GraphPanel();
-
-		frame.add(gf);
-
-		frame.setTitle("Ego-centric network Graph");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1200, 800);
-		frame.setLocationRelativeTo(null);
-		frame.pack();
-		frame.setVisible(true);
-
-	}
-
 }

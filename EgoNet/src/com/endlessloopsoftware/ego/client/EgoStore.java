@@ -776,7 +776,7 @@ public class EgoStore extends Observable {
 		}
 	}
 	
-	public void writeGraphSettings(File settingsFile) {
+	public void writeGraphSettings(File settingsFile, Iterator QAsettingsIterator) {
 		
 	}
 
