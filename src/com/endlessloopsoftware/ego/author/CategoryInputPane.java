@@ -54,7 +54,6 @@ public class CategoryInputPane extends JDialog {
 	 */
 	public CategoryInputPane(JList list) {
 		parentList = list;
-
 		try {
 			jbInit();
 		} catch (Exception e) {
@@ -71,13 +70,12 @@ public class CategoryInputPane extends JDialog {
 	private void jbInit() throws Exception {
 		box1 = Box.createHorizontalBox();
 		this.getContentPane().setLayout(gridBagLayout1);
-
 		this.setModal(true);
 		this.setTitle("Category Options");
-		this.setSize(400, 300);
-
-		// Center the window
+		//this.setSize(800, 600);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setSize(screenSize);
+		// Center the window
 		Dimension frameSize = this.getSize();
 		if (frameSize.height > screenSize.height) {
 			frameSize.height = screenSize.height;
@@ -122,6 +120,7 @@ public class CategoryInputPane extends JDialog {
 			}
 		});
 
+		this.pack();
 	}
 
 	void OKButton_actionPerformed(ActionEvent e) {
@@ -134,29 +133,6 @@ public class CategoryInputPane extends JDialog {
 			/* count choices */
 
 			Selection[] newSelections = listBuilder.getListSelections();
-
-			// code added 09/05/2007 sonam
-			// ask for values for each question
-
-			/*
-			 * for (int i = 0; i < newSelections.length; i++) { String
-			 * inputValue = null; String extraInformation = ""; int
-			 * intInputValue = -1;
-			 * 
-			 * do { inputValue = JOptionPane.showInputDialog(this,
-			 * extraInformation + " Please input a value for " +
-			 * newSelections[i].getString() + ": ", new
-			 * Integer(newSelections[i].getValue()) ); if (inputValue == null) { //
-			 * if user actually selected cancel
-			 * JOptionPane.showMessageDialog(this, "Your question weight will
-			 * default to " + Integer.toString(i) + "!"); inputValue =
-			 * Integer.toString(i); } try { intInputValue =
-			 * Integer.parseInt(inputValue); } catch (NumberFormatException ex) {
-			 * inputValue = null; extraInformation = "Sorry! That was not a
-			 * valid value for :\"" + newSelections[i].getString() + "\"";
-			 * continue; } } while (inputValue == null);
-			 * newSelections[i].setValue(intInputValue); }
-			 */
 
 			if (newSelections.length != q.selections.length) {
 				if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame)) {
@@ -186,12 +162,6 @@ public class CategoryInputPane extends JDialog {
 				// q.selections[i].value= newSelections[i].value;
 			}
 
-			/*
-			 * original code by Peter: // change all the values at once for (int
-			 * i = 0; i < newWeights.length; i++) newSelections[i].value =
-			 * newWeights[i];
-			 */
-			// End of code change
 			EgoNet.study.setModified(changed);
 			EgoNet.study.setCompatible(compatible);
 
@@ -231,8 +201,8 @@ public class CategoryInputPane extends JDialog {
 //		
 		listBuilder
 				.setAdjacencyActive(q.questionType == Question.ALTER_PAIR_QUESTION);
-
-		this.setSize(450, 400);
+		
+		this.setPreferredSize(new Dimension(800,600));
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
 

@@ -151,6 +151,7 @@ public class ListBuilder<T> extends JPanel implements Observer
 					"2dlu, fill:pref:grow, 2dlu");
 			setLayout(layout);
 			add(jScrollPane, constraints.xy(2, 2));
+			invalidate();
 			return;
 		}
 
@@ -163,6 +164,7 @@ public class ListBuilder<T> extends JPanel implements Observer
 		add(buildTop(), constraints.xy(2, 2));
 		add(buildBottom(), constraints.xy(2, 4));
 
+		//mainLayout.invalidateLayout(this);
 		// when the list selection is changed
 		jList.addListSelectionListener(new ListSelectionListener()
 		{
@@ -200,6 +202,7 @@ public class ListBuilder<T> extends JPanel implements Observer
 				setTextFields(firstStr, lastStr, selection.getString(), "" + selection.getValue());
 			}
 		});
+		
 	}
 
 	private JComponent buildTop()

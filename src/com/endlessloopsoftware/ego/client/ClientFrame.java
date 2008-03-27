@@ -95,6 +95,7 @@ public class ClientFrame extends JFrame {
 	// Component initialization
 	private void jbInit() throws Exception {
 		this.setSize(new Dimension(700, 600));
+		this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Networks Study Tool");
 
 		createMenuBar(EgoClient.SELECT);
@@ -294,7 +295,7 @@ public class ClientFrame extends JFrame {
 			File settingsFile = fileChooser.getSelectedFile();
 			System.out.println(settingsFile.getName());
 			
-			EgoClient.storage.writeGraphSettings(settingsFile);
+			//EgoClient.storage.writeGraphSettings(settingsFile);
 		}
 
 	}
