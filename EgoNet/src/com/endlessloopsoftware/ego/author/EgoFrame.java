@@ -106,7 +106,7 @@ public class EgoFrame extends JFrame implements Observer {
 		contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(borderLayout1);
 		this.setSize(new Dimension(815, 600));
-		//this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Network Study");
 
 		jMenuFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
