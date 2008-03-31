@@ -4,7 +4,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.awt.event.*;
-
+import java.awt.Robot;
+import java.awt.Dimension;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
 
@@ -13,11 +14,10 @@ import java.util.Observer;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ListBuilder<T> extends JPanel implements Observer
-{
+public class ListBuilder<T> extends JPanel implements Observer {
 	/**
-	 * Contains a list of Selection items that can be observed as the contents of
-	 * the list change.
+	 * Contains a list of Selection items that can be observed as the contents
+	 * of the list change.
 	 */
 	public ObservableList<Selection> elementList;
 
@@ -50,8 +50,8 @@ public class ListBuilder<T> extends JPanel implements Observer
 	private boolean presetListsActive = false;
 
 	/**
-	 * When true, users will be able to directly set Selection values in the same
-	 * manner they can enter string values.
+	 * When true, users will be able to directly set Selection values in the
+	 * same manner they can enter string values.
 	 */
 	private boolean letUserPickValues = false;
 
@@ -83,71 +83,69 @@ public class ListBuilder<T> extends JPanel implements Observer
 
 	private JButton buttonDelete = null;
 
+	private JButton buttonAdd = null;
+
+	private JButton buttonNext = null;
+
 	private JTextArea labelDescription = null;
 
 	private JTextField firstName, lastName, itemName, value;
 
 	private CellConstraints constraints = new CellConstraints();
 
-	private static final Map<String, Selection[]> presets = ListBuilderPresets.getPresets();
+	private static final Map<String, Selection[]> presets = ListBuilderPresets
+			.getPresets();
 
 	private static final String CHOOSE_PRESET_INSTRUCTION = "Choose from preset options";
 
-	public ListBuilder()
-	{
-		super();
-		elementList = new ObservableList<Selection>();
-		build();
-		addListObserver(this);
-	}
-	
-	public ListBuilder(boolean isPresetValuesActive)
-	{
+	public ListBuilder() {
 		super();
 		elementList = new ObservableList<Selection>();
 		build();
 		addListObserver(this);
 	}
 
-	public ListBuilder(Selection[] selections)
-	{
+	public ListBuilder(boolean isPresetValuesActive) {
+		super();
+		elementList = new ObservableList<Selection>();
+		build();
+		addListObserver(this);
+	}
+
+	public ListBuilder(Selection[] selections) {
 		super();
 		elementList = new ObservableList<Selection>(selections);
 		build();
 		addListObserver(this);
 	}
 
-	public void addListObserver(Observer ob)
-	{
+	public void addListObserver(Observer ob) {
 		elementList.addObserver(ob);
 	}
 
 	/**
 	 * item has been updated. update our JList.
 	 */
-	public void update(Observable o, Object arg)
-	{
+	public void update(Observable o, Object arg) {
 		jList.setListData(elementList.toArray());
 		jList.revalidate();
 		jList.repaint();
 	}
 
-	private void build()
-	{
+	private void build() {
 		// purge anything old
 		removeAll();
 
-//		System.out.println("Building List builder...");
+		// System.out.println("Building List builder...");
 		jList = new JList();
 		jList.setCellRenderer(new SelectionListCellRenderer());
 		jList.setListData(elementList.toArray());
 		jScrollPane = new JScrollPane(jList);
-		
 
 		// is NOT editable, we only use the main panel i.e. "this"
-		if (!editable)
-		{
-			FormLayout layout = new FormLayout("2dlu, fill:min(pref;200dlu):grow, 2dlu",
+		if (!editable) {
+			FormLayout layout = new FormLayout(
+					"2dlu, fill:min(pref;200dlu):grow, 2dlu",
 					"2dlu, fill:pref:grow, 2dlu");
 			setLayout(layout);
 			add(jScrollPane, constraints.xy(2, 2));
@@ -156,7 +154,8 @@ public class ListBuilder<T> extends JPanel implements Observer
 		}
 
 		// is editable, so we start using subpanels for layouts
-		FormLayout mainLayout = new FormLayout("2dlu, fill:min(pref;300dlu):grow, 2dlu",
+		FormLayout mainLayout = new FormLayout(
+				"2dlu, fill:min(pref;300dlu):grow, 2dlu",
 				"2dlu, fill:pref:grow, 2dlu, fill:max(pref;2dlu), 2dlu");
 		setLayout(mainLayout);
 
@@ -164,14 +163,11 @@ public class ListBuilder<T> extends JPanel implements Observer
 		add(buildTop(), constraints.xy(2, 2));
 		add(buildBottom(), constraints.xy(2, 4));
 
-		//mainLayout.invalidateLayout(this);
+		// mainLayout.invalidateLayout(this);
 		// when the list selection is changed
-		jList.addListSelectionListener(new ListSelectionListener()
-		{
-			public void valueChanged(ListSelectionEvent e)
-			{
-				if (e.getValueIsAdjusting())
-				{
+		jList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
 					clearTextFields();
 					return;
 				}
@@ -185,29 +181,26 @@ public class ListBuilder<T> extends JPanel implements Observer
 				// otherwise leave them empty
 				String firstStr = "";
 				String lastStr = "";
-				if (isNameList())
-				{
+				if (isNameList()) {
 					String[] parts = selection.getString().split(", ");
-					if (parts.length != 2)
-					{
+					if (parts.length != 2) {
 						// TODO: warn person
 						return;
-					} else
-					{
+					} else {
 						lastStr = parts[0];
 						firstStr = parts[1];
 					}
 				}
 
-				setTextFields(firstStr, lastStr, selection.getString(), "" + selection.getValue());
+				setTextFields(firstStr, lastStr, selection.getString(), ""
+						+ selection.getValue());
 			}
 		});
-		
+
 	}
 
-	private JComponent buildTop()
-	{
-//		System.out.println("Building Top....");
+	private JComponent buildTop() {
+		// System.out.println("Building Top....");
 		// top half panel
 		panelTopHalf = new JPanel();
 		FormLayout topHalfLayout = new FormLayout(
@@ -219,11 +212,11 @@ public class ListBuilder<T> extends JPanel implements Observer
 		return panelTopHalf;
 	}
 
-	private JComponent buildTopRight()
-	{
-//		System.out.println("Building Top Right....:"+ isPresetListsActive());
+	private JComponent buildTopRight() {
+		// System.out.println("Building Top Right....:"+ isPresetListsActive());
 		panelTopRight = new JPanel();
-		FormLayout panelTopRightLayout = new FormLayout("2dlu, fill:75dlu:grow, 2dlu",
+		FormLayout panelTopRightLayout = new FormLayout(
+				"2dlu, fill:75dlu:grow, 2dlu",
 				"2dlu, fill:20dlu:grow, 2dlu, fill:pref:grow, 2dlu, pref:grow, 2dlu, fill:pref:grow, 2dlu");
 		panelTopRight.setLayout(panelTopRightLayout);
 
@@ -237,24 +230,19 @@ public class ListBuilder<T> extends JPanel implements Observer
 		JScrollPane sp = new JScrollPane(labelDescription);
 		panelTopRight.add(sp, constraints.xy(2, 4));
 
-		if (isPresetListsActive())
-		{
-	//		System.out.println("Presets are supposed to be active");
+		if (isPresetListsActive()) {
+			// System.out.println("Presets are supposed to be active");
 			final JComboBox comboPresets = new JComboBox();
 			comboPresets.addItem(CHOOSE_PRESET_INSTRUCTION);
 			for (String presetName : presets.keySet())
 				comboPresets.addItem(presetName);
 			panelTopRight.add(comboPresets, constraints.xy(2, 6));
-			comboPresets.addItemListener(new ItemListener()
-			{
-				public void itemStateChanged(ItemEvent e)
-				{
-					if (e.getStateChange() == ItemEvent.SELECTED)
-					{
+			comboPresets.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
 						Object item = e.getItem();
 						Selection[] options = presets.get(item);
-						if (options != null)
-						{
+						if (options != null) {
 							setListSelections(options);
 							comboPresets.setSelectedIndex(0);
 							clearTextFields();
@@ -269,8 +257,7 @@ public class ListBuilder<T> extends JPanel implements Observer
 		return panelTopRight;
 	}
 
-	private JComponent buildInputPanel()
-	{
+	private JComponent buildInputPanel() {
 		final String colspec = "2dlu, fill:pref:grow,  2dlu";
 
 		FormLayout inputLayout = new FormLayout(colspec);
@@ -284,80 +271,74 @@ public class ListBuilder<T> extends JPanel implements Observer
 		lastName = new JTextField();
 		itemName = new JTextField();
 		value = new JTextField();
-
-		firstName.addKeyListener(new KeyListener()
-		{
-			public void keyTyped(KeyEvent keyEvent)
-			{
+		buttonNext = new JButton("-->");
+		buttonNext.setEnabled(false);
+		
+		firstName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent keyEvent) {
+				buttonNext.setEnabled(true);
 			}
 
-			public void keyPressed(KeyEvent keyEvent)
-			{
+			public void keyPressed(KeyEvent keyEvent) {
 			}
 
-			public void keyReleased(KeyEvent keyEvent)
-			{
+			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
 				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter"))
 					lastName.grabFocus();
 			}
 		});
 
-		lastName.addKeyListener(new KeyListener()
-		{
-			public void keyTyped(KeyEvent keyEvent)
-			{
+		lastName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent keyEvent) {
+				buttonAdd.setEnabled(true);
 			}
 
-			public void keyPressed(KeyEvent keyEvent)
-			{
+			public void keyPressed(KeyEvent keyEvent) {
 			}
 
-			public void keyReleased(KeyEvent keyEvent)
-			{
+			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter") && isLetUserPickValues())
+				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")
+						&& isLetUserPickValues())
 					value.grabFocus();
-				else if(KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter"))
+				else if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals(
+						"Enter"))
 					firstName.grabFocus();
 			}
 		});
 
-		itemName.addKeyListener(new KeyListener()
-		{
-			public void keyTyped(KeyEvent keyEvent)
-			{
+		itemName.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent keyEvent) {
+				buttonNext.setEnabled(true);
 			}
 
-			public void keyPressed(KeyEvent keyEvent)
-			{
+			public void keyPressed(KeyEvent keyEvent) {
 			}
 
-			public void keyReleased(KeyEvent keyEvent)
-			{
+			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter") && isLetUserPickValues())
+				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")
+						&& isLetUserPickValues())
 					value.grabFocus();
 			}
 		});
 
-		value.addKeyListener(new KeyListener()
-		{
-			public void keyTyped(KeyEvent keyEvent)
-			{
+		value.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent keyEvent) {
+				buttonAdd.setEnabled(true);
 			}
 
-			public void keyPressed(KeyEvent keyEvent)
-			{
+			public void keyPressed(KeyEvent keyEvent) {
 			}
 
-			public void keyReleased(KeyEvent keyEvent)
-			{
+			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-
+//				System.out.println("source=" + keyEvent.getSource() + " id=" + keyEvent.getID() + 
+//						" when=" + keyEvent.getWhen() + " modifiers=" + keyEvent.getModifiers() +
+//						" keyCode=" + keyEvent.getKeyCode() + " keyChar=" + keyEvent.getKeyChar());
 				// if you typed on value, blank the selection
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter"))
-				{
+				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")) {
 					if (isNameList())
 						firstName.grabFocus();
 					else
@@ -366,14 +347,26 @@ public class ListBuilder<T> extends JPanel implements Observer
 			}
 		});
 
+		buttonNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				// simulate "Enter" key being pressed at last name
+				if (isNameList()) {
+					lastName.grabFocus();
+				}
+				else {
+					value.grabFocus();
+				}
+			}
+		});
+
 		// couple different configurations here
-		if (nameList)
-		{
-			formBuilder.append("First Name: ", firstName, true);
+		if (nameList) {
+			formBuilder.append("First Name: ", firstName, false);
+			formBuilder.append(buttonNext, 1);
 			formBuilder.append("Last Name: ", lastName, true);
-		} else
-		{
-			formBuilder.append("Item Name: ", itemName, true);
+		} else {
+			formBuilder.append("Item Name: ", itemName, false);
+			formBuilder.append(buttonNext, 1);
 		}
 
 		if (letUserPickValues)
@@ -390,51 +383,46 @@ public class ListBuilder<T> extends JPanel implements Observer
 	 * 
 	 * @param keyEvent
 	 */
-	private void saveDataForSelectionOfList(KeyEvent keyEvent)
-	{
+	private void saveDataForSelectionOfList(KeyEvent keyEvent) {
 		Object selectionObject = jList.getSelectedValue();
 		boolean itemSelectedFromList = selectionObject != null
 				&& selectionObject instanceof Selection;
-		boolean enterPressed = KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter");
+		boolean enterPressed = KeyEvent.getKeyText(keyEvent.getKeyCode())
+				.equals("Enter");
 		boolean shouldBlank = (keyEvent.getSource() == value)
 				|| (keyEvent.getSource() == lastName && isNameList() && !isLetUserPickValues())
 				|| (keyEvent.getSource() == itemName && !isNameList() && !isLetUserPickValues());
 
-		if (itemSelectedFromList)
-		{
+		if (itemSelectedFromList) {
 			Selection selection = (Selection) selectionObject;
 
 			// OLD item
-			try
-			{
+			try {
 				convertTextFieldsToSelection(selection);
-			} catch (Exception ex)
-			{
-				JOptionPane.showMessageDialog(this, "Could not parse your integer value",
-						"Value problem", JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this,
+						"Could not parse your integer value", "Value problem",
+						JOptionPane.ERROR_MESSAGE);
 				value.setText(selection.getValue() + "");
 				return;
 			}
 
-			if (enterPressed && shouldBlank)
-			{
+			if (enterPressed && shouldBlank) {
 				// someone HAS pressed enter
 				jList.clearSelection();
 				clearTextFields();
 			}
 			jList.updateUI();
-		} else if (!itemSelectedFromList)
-		{
-			// NEW item -- don't do anything until they hit enter on the LAST field
-			if (enterPressed && shouldBlank)
-			{
+		} else if (!itemSelectedFromList) {
+			// NEW item -- don't do anything until they hit enter on the LAST
+			// field
+			if (enterPressed && shouldBlank) {
 				Selection selection = new Selection();
-				try
-				{
+				try {
 					convertTextFieldsToSelection(selection);
-				} catch (Exception ex)
-				{
-					JOptionPane.showMessageDialog(this, "Could not parse your integer value",
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this,
+							"Could not parse your integer value",
 							"Value problem", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -447,68 +435,86 @@ public class ListBuilder<T> extends JPanel implements Observer
 		}
 	}
 
-	private void convertTextFieldsToSelection(Selection selection) throws NumberFormatException
-	{
-		if (isLetUserPickValues() && !value.getText().equals("") && !value.getText().equals("-"))
-		{
+	private void convertTextFieldsToSelection(Selection selection)
+			throws NumberFormatException {
+		if (isLetUserPickValues() && !value.getText().equals("")
+				&& !value.getText().equals("-")) {
 			int intVal = Integer.parseInt(value.getText());
 			selection.setValue(intVal);
 		}
 
-		if (isNameList())
-		{
-			//selection.setString(lastName.getText() + ", " + firstName.getText());
+		if (isNameList()) {
+			// selection.setString(lastName.getText() + ", " +
+			// firstName.getText());
 			selection.setString(firstName.getText() + " " + lastName.getText());
-		} else
-		{
+		} else {
 			selection.setString(itemName.getText());
 		}
 	}
 
-	private void clearTextFields()
-	{
+	private void clearTextFields() {
 		setTextFields("", "", "", "");
 	}
 
-	private void setTextFields(String first, String last, String item, String values)
-	{
+	private void setTextFields(String first, String last, String item,
+			String values) {
 		firstName.setText(first);
 		lastName.setText(last);
 		itemName.setText(item);
 		value.setText(values);
 	}
 
-	private JComponent buildBottom()
-	{
+	private JComponent buildBottom() {
 		// button panel
 		panelButtons = new JPanel();
+		buttonAdd = new JButton("Add to list");
+		buttonAdd.setEnabled(false);
+		buttonAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				// simulate "Enter" key being pressed at last name
+				if (lastName.getText() != null && firstName.getText() != null) {
+						try {
+							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0,
+									KeyEvent.VK_ENTER, '\n');
+							saveDataForSelectionOfList(keyEvent);
+						} catch (Exception ex) {
+							ex.printStackTrace(System.err);
+						}
+					}
+				else { //if (itemName.getText() != null && value.getText() != null) {
+					System.out.println("In here");
+						try {
+							KeyEvent keyEvent = new KeyEvent(value, 0, 0, 0,
+									KeyEvent.VK_ENTER, '\n');
+							saveDataForSelectionOfList(keyEvent);
+						} catch (Exception ex) {
+							ex.printStackTrace(System.err);
+						}
+					}
+			}
+		});
 
 		buttonDelete = new JButton("Delete selected item");
-		buttonDelete.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent actionEvent)
-			{
+		buttonDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
 				Object[] selections = jList.getSelectedValues();
 				for (Object o : selections)
 					elementList.remove(o);
 				jList.clearSelection();
 			}
 		});
+		panelButtons.add(buttonAdd);
 		panelButtons.add(buttonDelete);
 
-		if (isAdjacencyActive())
-		{
+		if (isAdjacencyActive()) {
 			buttonAdjacency = new JButton("Mark selected item adjacent");
-			buttonAdjacency.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent actionEvent)
-				{
+			buttonAdjacency.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent actionEvent) {
 					Object[] selections = jList.getSelectedValues();
-					for (Object o : selections)
-					{
-						if (o instanceof Selection)
-						{
-							((Selection) o).setAdjacent(!((Selection) o).isAdjacent());
+					for (Object o : selections) {
+						if (o instanceof Selection) {
+							((Selection) o).setAdjacent(!((Selection) o)
+									.isAdjacent());
 						}
 					}
 					jList.revalidate();
@@ -521,8 +527,7 @@ public class ListBuilder<T> extends JPanel implements Observer
 		return panelButtons;
 	}
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		ListBuilder listBuilder = new ListBuilder();
 
 		listBuilder.setName("name field");
@@ -548,60 +553,49 @@ public class ListBuilder<T> extends JPanel implements Observer
 		frame.setVisible(true);
 	}
 
-	public boolean isEditable()
-	{
+	public boolean isEditable() {
 		return editable;
 	}
 
-	public void setEditable(boolean editable)
-	{
+	public void setEditable(boolean editable) {
 		this.editable = editable;
 		build();
 	}
 
-	public ObservableList getElementList()
-	{
+	public ObservableList getElementList() {
 		return elementList;
 	}
 
-	public void setElementList(ObservableList<Selection> elementList)
-	{
+	public void setElementList(ObservableList<Selection> elementList) {
 		this.elementList = elementList;
 	}
 
-	public String getElementName()
-	{
+	public String getElementName() {
 		return elementName;
 	}
 
-	public void setElementName(String elementName)
-	{
+	public void setElementName(String elementName) {
 		this.elementName = elementName;
 	}
 
-	public int getMaxListSize()
-	{
+	public int getMaxListSize() {
 		return maxSize;
 	}
 
-	public void setMaxListSize(int maxSize)
-	{
+	public void setMaxListSize(int maxSize) {
 		setMaxSize(maxSize);
 	}
 
-	public int getMaxSize()
-	{
+	public int getMaxSize() {
 		return maxSize;
 	}
 
-	public void setMaxSize(int maxSize)
-	{
+	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
 		build();
 	}
 
-	public Selection[] getSelections()
-	{
+	public Selection[] getSelections() {
 		int ct = 0;
 		for (Object o : elementList.toArray())
 			if (o.getClass().equals(Selection.class))
@@ -609,10 +603,8 @@ public class ListBuilder<T> extends JPanel implements Observer
 
 		Selection[] arr = new Selection[ct];
 		int i = 0;
-		for (Object o : elementList.toArray())
-		{
-			if (o.getClass().equals(Selection.class))
-			{
+		for (Object o : elementList.toArray()) {
+			if (o.getClass().equals(Selection.class)) {
 				arr[i] = (Selection) o;
 				i++;
 			}
@@ -621,84 +613,69 @@ public class ListBuilder<T> extends JPanel implements Observer
 		return arr;
 	}
 
-	public void setSelections(Selection[] selections)
-	{
+	public void setSelections(Selection[] selections) {
 		elementList.removeAll();
 		elementList.addAll(selections);
 	}
 
-	public Selection[] getListSelections()
-	{
+	public Selection[] getListSelections() {
 		return getSelections();
 	}
 
-	public void setListSelections(Selection[] selections)
-	{
+	public void setListSelections(Selection[] selections) {
 		setSelections(selections);
 	}
 
-	public String getTitle()
-	{
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title)
-	{
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public String getDescription()
-	{
+	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description)
-	{
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public boolean isNameList()
-	{
+	public boolean isNameList() {
 		return nameList;
 	}
 
-	public void setNameList(boolean nameList)
-	{
+	public void setNameList(boolean nameList) {
 		this.nameList = nameList;
 		build();
 	}
 
-	public boolean isAdjacencyActive()
-	{
+	public boolean isAdjacencyActive() {
 		return adjacencyActive;
 	}
 
-	public void setAdjacencyActive(boolean adjacencyActive)
-	{
+	public void setAdjacencyActive(boolean adjacencyActive) {
 		this.adjacencyActive = adjacencyActive;
 		build();
 	}
 
-	public boolean isPresetListsActive()
-	{
+	public boolean isPresetListsActive() {
 		return presetListsActive;
 	}
 
-	public void setPresetListsActive(boolean presetListsActive)
-	{
+	public void setPresetListsActive(boolean presetListsActive) {
 		this.presetListsActive = presetListsActive;
 		System.out.println("Set presets on");
 		build();
 		System.out.println("Completed new build");
 	}
 
-	public String[] getListStrings()
-	{
+	public String[] getListStrings() {
 		int len = elementList.size();
 		String[] listStrings = new String[len];
 		int i = 0;
-		for (Iterator iterator = elementList.iterator(); iterator.hasNext();)
-		{
+		for (Iterator iterator = elementList.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
 			if (!(element instanceof Selection))
 				element = new Selection();
@@ -710,29 +687,24 @@ public class ListBuilder<T> extends JPanel implements Observer
 		return listStrings;
 	}
 
-	public void setListStrings(String[] listStrings)
-	{
+	public void setListStrings(String[] listStrings) {
 		elementList.removeAll();
-		for (int i = 0; i < listStrings.length; i++)
-		{
+		for (int i = 0; i < listStrings.length; i++) {
 			elementList.add(new Selection(listStrings[i], i, i, false));
 		}
 	}
 
-	public boolean isLetUserPickValues()
-	{
+	public boolean isLetUserPickValues() {
 		return letUserPickValues;
 	}
 
-	public void setLetUserPickValues(boolean letUserPickValues)
-	{
+	public void setLetUserPickValues(boolean letUserPickValues) {
 		this.letUserPickValues = letUserPickValues;
 		build();
 	}
-	
-	public void requestFocusOnFirstVisibleComponent()
-	{
-		if(this.isNameList())
+
+	public void requestFocusOnFirstVisibleComponent() {
+		if (this.isNameList())
 			itemName.requestFocusInWindow();
 		else
 			firstName.requestFocusInWindow();
