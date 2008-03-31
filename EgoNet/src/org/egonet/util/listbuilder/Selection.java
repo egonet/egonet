@@ -25,7 +25,8 @@ public class Selection
 	
 	public String toString()
 	{
-		return "[Selection \"" + string + "\", index = "+index+", value = "+value+", adjacent = "+adjacent+"]";
+		//return "[Selection \"" + string + "\", index = "+index+", value = "+value+", adjacent = "+adjacent+"]";
+		return string;
 	}
 
 	public boolean isAdjacent()
