@@ -35,9 +35,13 @@ public class GraphPanel extends javax.swing.JPanel {
 		GraphRenderer.edgeMap.clear();
 		GraphRenderer.edgeLabelMap.clear();
 		GraphRenderer.edgePropertyList.clear();
-		
+
 		graphRenderer = new GraphRenderer();
-		graphRenderer.createNodeEdge();
+		try {
+			graphRenderer.createNodeEdge();
+		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
+		}
 		// split the window into 3 and populate with appropriate panels
 		createSplitPanel();
 		this.setLayout(new BorderLayout());
@@ -70,14 +74,14 @@ public class GraphPanel extends javax.swing.JPanel {
 		JTabbedPane tabs = new JTabbedPane();
 
 		tabs.add("Graph", new GraphTabPanel(graphRenderer));
-	//	tabs.add("Node", new NodePanel(graphRenderer));
+		// tabs.add("Node", new NodePanel(graphRenderer));
 		tabs.add("Edge", new EdgePanel(graphRenderer));
 		tabs.add("Node Label", new NodeLabelPanel(graphRenderer));
 		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
 		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
 		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
-		tabs.add("Structural Measures", new StructuralMeasuresPanel(graphRenderer));
-		
+		tabs.add("Structural Measures", new StructuralMeasuresPanel(
+				graphRenderer));
 
 		topRightPanel.add(tabs);
 	}
@@ -98,20 +102,21 @@ public class GraphPanel extends javax.swing.JPanel {
 
 		JComponent satellitePane = graphRenderer.createSatellitePane();
 		satellitePane.setMinimumSize(satellitePane.getPreferredSize());
-		
-		rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, topRightScrollPanel, satellitePane);
+
+		rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				topRightScrollPanel, satellitePane);
 
 		rightSplitPane.setResizeWeight(0.75);
 		rightSplitPane.setContinuousLayout(true);
 
-		//with staellite pane
-//		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
-//				rightSplitPane);
-		
-		//without satellite pane
+		// with staellite pane
+		// mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
+		// rightSplitPane);
+
+		// without satellite pane
 		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
 				topRightScrollPanel);
-		
+
 		mainSplitPane.setResizeWeight(0.8);
 		mainSplitPane.setContinuousLayout(true);
 		mainSplitPane.setOneTouchExpandable(true);

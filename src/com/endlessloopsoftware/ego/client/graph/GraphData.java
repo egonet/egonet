@@ -62,8 +62,13 @@ public class GraphData {
 
 	public GraphData() {
 		interview = EgoClient.interview;
+		try {
 		completeAlterNameList = EgoClient.interview.getStats().alterList;
 		adjacencyMatrix = interview.getStats().adjacencyMatrix;
+		} catch(Exception ex)
+		{
+			ex.printStackTrace(System.err);
+		}
 		interviewAlterQuestionList = new ArrayList<Question>();
 		interviewAlterPairQuestionList = new ArrayList<Question>();
 	}

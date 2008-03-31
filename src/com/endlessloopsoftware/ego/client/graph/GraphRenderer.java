@@ -113,14 +113,16 @@ public class GraphRenderer extends PluggableRenderer implements
 	public GraphRenderer() {
 		graph = new UndirectedSparseGraph();
 		stats = EgoClient.interview.getStats();
+		try {
 		alterList = stats.alterList;
 		_vertexArray = new Vertex[alterList.length];
-
 		for (int i = 0; i < alterList.length; ++i) {
 			_vertexArray[i] = new SparseVertex();
 			graph.addVertex(_vertexArray[i]);
 		}
-
+		} catch(NullPointerException ex) {
+			ex.printStackTrace(System.err);
+		}
 		graphData = new GraphData();
 		graphSettings = new GraphSettings(this);
 		adjacencyMatrix = graphData.getAdjacencyMatrix();
@@ -234,7 +236,7 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * creates the nodes for every alter creates edges for entries in adjacency
 	 * matrix
 	 */
-	public void createNodeEdge() {
+	public void createNodeEdge() throws Exception{
 
 		graph.removeAllEdges();
 		// graph.removeAllVertices();

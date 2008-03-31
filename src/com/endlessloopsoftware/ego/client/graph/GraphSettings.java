@@ -25,10 +25,14 @@ public class GraphSettings {
 
 	public GraphSettings(GraphRenderer renderer) {
 		this.renderer = renderer;
-		init();
+		try {
+			init();
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+		}
 	}
 
-	private void init() {
+	private void init() throws Exception{
 		int noOfAlters = EgoClient.interview.getNumAlters();
 		for (int i = 0; i < noOfAlters; i++) {
 			String alterName = EgoClient.interview.getAlterList()[i];

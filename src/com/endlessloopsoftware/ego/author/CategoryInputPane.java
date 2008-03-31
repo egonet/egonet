@@ -202,7 +202,8 @@ public class CategoryInputPane extends JDialog {
 		listBuilder
 				.setAdjacencyActive(q.questionType == Question.ALTER_PAIR_QUESTION);
 		
-		this.setPreferredSize(new Dimension(800,600));
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setPreferredSize(screenSize);
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
 
