@@ -63,8 +63,6 @@ public class EgoStore extends Observable {
 
 	private static final String FILE_PREF = "FILE_PREF";
 
-	
-
 	/**
 	 * Sets parent frame
 	 * 
@@ -146,21 +144,22 @@ public class EgoStore extends Observable {
 		} catch (Throwable t) {
 			// eat this exception
 		}
-		
 
 		jNewStudyChooser.addChoosableFileFilter(packageFilter);
 		jNewStudyChooser.setDialogTitle("Select Study Definition File");
 
 		if (getPackageFile() != null) {
-			jNewStudyChooser.setCurrentDirectory(getPackageFile().getParentFile());
+			jNewStudyChooser.setCurrentDirectory(getPackageFile()
+					.getParentFile());
 		} else {
-			if(prefs!=null)
+			if (prefs != null)
 				directory = new File(prefs.get(FILE_PREF, "."));
 			directory = new File(".");
 			jNewStudyChooser.setCurrentDirectory(directory);
 		}
 
-		if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(EgoClient.getFrame())) {
+		if (JFileChooser.APPROVE_OPTION == jNewStudyChooser
+				.showOpenDialog(EgoClient.getFrame())) {
 			f = jNewStudyChooser.getSelectedFile();
 
 			if (f != null) {
@@ -171,7 +170,7 @@ public class EgoStore extends Observable {
 						setPackageFile(f);
 
 						// Store location in prefs file
-						if(prefs!=null)
+						if (prefs != null)
 							prefs.put(FILE_PREF, f.getParent());
 					}
 				} catch (Exception e) {
@@ -192,47 +191,50 @@ public class EgoStore extends Observable {
 	 * 
 	 */
 	public class VersionFileFilter extends ExtensionFileFilter {
-		Map<File,Boolean> cacheResults = new HashMap<File,Boolean>();
-		
+		Map<File, Boolean> cacheResults = new HashMap<File, Boolean>();
+
 		public VersionFileFilter(String description, String extension) {
 			super(description, extension);
 		}
-		
-		public void cacheList(File currentDirectory, final ProgressMonitor progress)
-		{
+
+		public void cacheList(File currentDirectory,
+				final ProgressMonitor progress) {
 			int ct = 0;
-			
-			for(File ptr : currentDirectory.listFiles())
-			{
+
+			for (File ptr : currentDirectory.listFiles()) {
 				final Integer tct = ++ct;
-				cacheResults.put(ptr, ptr.canRead() && ptr.isFile() && cacheAccept(ptr));
-				javax.swing.SwingUtilities.invokeLater(new Runnable() {public void run() {progress.setProgress(tct);}} );
-				
+				cacheResults.put(ptr, ptr.canRead() && ptr.isFile()
+						&& cacheAccept(ptr));
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						progress.setProgress(tct);
+					}
+				});
+
 			}
 		}
-		
-		public boolean accept(File ptr)
-		{
-			if(cacheResults.containsKey(ptr)) {
+
+		public boolean accept(File ptr) {
+			if (cacheResults.containsKey(ptr)) {
 				// cache hit
 				return cacheResults.get(ptr);
 			} else {
 				// cache miss
 				boolean accept = ptr.canRead() && cacheAccept(ptr);
-				cacheResults.put(ptr,  accept);
+				cacheResults.put(ptr, accept);
 				return accept;
 			}
 		}
-		
+
 		public boolean cacheAccept(java.io.File f) {
 
-			if(f.isDirectory())
+			if (f.isDirectory())
 				return true;
-			
+
 			boolean cantread = (!f.isFile()) || (!f.canRead());
-			if(cantread)
+			if (cantread)
 				return !cantread;
-			
+
 			boolean accept = true;
 			try {
 				// compare study id of interview file with id of currently
@@ -246,10 +248,10 @@ public class EgoStore extends Observable {
 				// readInterview(f);
 			} catch (FileMismatchException exception) {
 				accept = false;
-				//exception.printStackTrace();
+				// exception.printStackTrace();
 			} catch (ParseException ex) {
 				accept = false;
-				//ex.printStackTrace();
+				// ex.printStackTrace();
 			} catch (Throwable t) {
 				accept = false;
 			}
@@ -268,59 +270,81 @@ public class EgoStore extends Observable {
 	 */
 
 	public void selectInterview() {
-		
-		int option=-1;
-		
-		final File currentDirectory = new File(getPackageFile().getParent(), "/Interviews/");
-		
-		
+
+		int option = -1;
+
+		final File currentDirectory = new File(getPackageFile().getParent(),
+				"/Interviews/");
+
 		final int numFiles = currentDirectory.list().length;
-		
-		final VersionFileFilter filter = new VersionFileFilter("Interview Files", "int");
+
+		final VersionFileFilter filter = new VersionFileFilter(
+				"Interview Files", "int");
 		final JFileChooser jNewInterviewChooser = new JFileChooser();
 		final ProgressMonitor progressMonitor = new ProgressMonitor(
 				EgoClient.frame,
-				"Searching for interviews and caching the list of files that match the current study", "", 0, numFiles);
+				"Searching for interviews and caching the list of files that match the current study",
+				"", 0, numFiles);
 		jNewInterviewChooser.setCurrentDirectory(currentDirectory);
 		jNewInterviewChooser.setDialogTitle("Select Interview File");
 
 		progressMonitor.setMaximum(numFiles);
-		
-		SwingWorker<Integer,Integer> filterWorker = new SwingWorker<Integer,Integer>() {
-			public Integer doInBackground()
-			{
+
+		SwingWorker<Integer, Integer> filterWorker = new SwingWorker<Integer, Integer>() {
+			public Integer doInBackground() {
 				filter.cacheList(currentDirectory, progressMonitor);
 				return 0;
 			}
 
 			public void done() {
-				 progressMonitor.close();
+				progressMonitor.close();
 
-					jNewInterviewChooser.addChoosableFileFilter(filter); 
-					int result = jNewInterviewChooser.showOpenDialog(EgoClient.frame);
-						
-					if (JFileChooser.APPROVE_OPTION == result) {
-						final File f = jNewInterviewChooser.getSelectedFile();
+				jNewInterviewChooser.addChoosableFileFilter(filter);
+				int result = jNewInterviewChooser
+						.showOpenDialog(EgoClient.frame);
 
-						try {
-							//if (!(f != null && f.canRead())) {
-							if (!f.canRead()) {
-								throw new IOException("Couldn't read file");
-							} else {
-								setInterviewFile(f);
-								EgoClient.interview = EgoClient.storage.readInterview();
-								if(EgoClient.interview != null)
-									ViewInterviewPanel.gotoPanel();
+				if (JFileChooser.APPROVE_OPTION == result) {
+					final File f = jNewInterviewChooser.getSelectedFile();
+
+					try {
+						// if (!(f != null && f.canRead())) {
+						if (!f.canRead()) {
+							throw new IOException("Couldn't read file");
+						} else {
+							setInterviewFile(f);
+							boolean complete = true;
+
+							try {
+								Document document = new Document(f);
+								Element e = document.getRoot();
+								complete = e.getBoolean("Complete");
+							} catch (Exception ex) {
+								complete = false;
 							}
-						} catch (Throwable e) {
-							/** @todo Handle file failure */
-							e.printStackTrace();
 
-							JOptionPane.showMessageDialog(null,
-									"Unable to read interview file.", "File Error",
-									JOptionPane.ERROR_MESSAGE);
+							EgoClient.interview = EgoClient.storage
+									.readInterview();
+							if (complete == false) {
+								JOptionPane
+										.showMessageDialog(
+												EgoClient.frame,
+												"This interview is not completed and no "
+														+ "graph or statictical data will be displayed!",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+							}
+							if (EgoClient.interview != null)
+								ViewInterviewPanel.gotoPanel();
 						}
+					} catch (Throwable e) {
+						/** @todo Handle file failure */
+						e.printStackTrace();
+
+						JOptionPane.showMessageDialog(null,
+								"Unable to read interview file.", "File Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
+				}
 
 			}
 
@@ -411,7 +435,7 @@ public class EgoStore extends Observable {
 		long studyId;
 
 		try {
-			
+
 			Document document = new Document(f);
 
 			/* make sure id matches study */
@@ -775,9 +799,10 @@ public class EgoStore extends Observable {
 			throw new FileCreateException();
 		}
 	}
-	
-	public void writeGraphSettings(File settingsFile, Iterator QAsettingsIterator) {
-		
+
+	public void writeGraphSettings(File settingsFile,
+			Iterator QAsettingsIterator) {
+
 	}
 
 	public static File int2ist(String istPath, String intFile) {
@@ -797,7 +822,7 @@ public class EgoStore extends Observable {
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_weighted_matrix.csv"));
 	}
-	
+
 }
 
 /**

@@ -179,7 +179,12 @@ public class EdgePanel extends JPanel implements TableModelListener {
 			}
 
 		}
+		try {
 		graphRenderer.createNodeEdge();
+		} catch(Exception ex)
+		{
+			ex.printStackTrace(System.err);
+		}
 		graphRenderer.getVv().repaint();
 	}
 
