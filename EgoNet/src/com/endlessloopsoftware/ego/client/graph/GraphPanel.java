@@ -1,6 +1,7 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 
 import com.endlessloopsoftware.ego.client.graph.GraphTabPanel;
@@ -31,17 +32,7 @@ public class GraphPanel extends javax.swing.JPanel {
 	 * @param frame
 	 */
 	public void init() {
-		GraphRenderer.propertyMap.clear();
-		GraphRenderer.edgeMap.clear();
-		GraphRenderer.edgeLabelMap.clear();
-		GraphRenderer.edgePropertyList.clear();
-
 		graphRenderer = new GraphRenderer();
-		try {
-			graphRenderer.createNodeEdge();
-		} catch (Exception ex) {
-			ex.printStackTrace(System.err);
-		}
 		// split the window into 3 and populate with appropriate panels
 		createSplitPanel();
 		this.setLayout(new BorderLayout());
@@ -75,7 +66,9 @@ public class GraphPanel extends javax.swing.JPanel {
 
 		tabs.add("Graph", new GraphTabPanel(graphRenderer));
 		// tabs.add("Node", new NodePanel(graphRenderer));
-		tabs.add("Edge", new EdgePanel(graphRenderer));
+		tabs.add("Edge Color", new EdgeColorPanel(graphRenderer));
+		tabs.add("Edge Shape", new EdgeShapePanel(graphRenderer));
+		tabs.add("Edge Size", new EdgeSizePanel(graphRenderer));
 		tabs.add("Node Label", new NodeLabelPanel(graphRenderer));
 		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
 		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
@@ -120,6 +113,11 @@ public class GraphPanel extends javax.swing.JPanel {
 		mainSplitPane.setResizeWeight(0.8);
 		mainSplitPane.setContinuousLayout(true);
 		mainSplitPane.setOneTouchExpandable(true);
+	}
+	
+	public Iterator getSettingsIterator() {
+		Iterator iterator = graphRenderer.getSettingsIterator();
+		return iterator;
 	}
 
 }

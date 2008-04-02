@@ -85,8 +85,6 @@ public class ListBuilder<T> extends JPanel implements Observer {
 
 	private JButton buttonAdd = null;
 
-	private JButton buttonNext = null;
-
 	private JTextArea labelDescription = null;
 
 	private JTextField firstName, lastName, itemName, value;
@@ -271,12 +269,9 @@ public class ListBuilder<T> extends JPanel implements Observer {
 		lastName = new JTextField();
 		itemName = new JTextField();
 		value = new JTextField();
-		buttonNext = new JButton("-->");
-		buttonNext.setEnabled(false);
 		
 		firstName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
-				buttonNext.setEnabled(true);
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -310,7 +305,6 @@ public class ListBuilder<T> extends JPanel implements Observer {
 
 		itemName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
-				buttonNext.setEnabled(true);
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -347,26 +341,12 @@ public class ListBuilder<T> extends JPanel implements Observer {
 			}
 		});
 
-		buttonNext.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				// simulate "Enter" key being pressed at last name
-				if (isNameList()) {
-					lastName.grabFocus();
-				}
-				else {
-					value.grabFocus();
-				}
-			}
-		});
-
 		// couple different configurations here
 		if (nameList) {
 			formBuilder.append("First Name: ", firstName, false);
-			formBuilder.append(buttonNext, 1);
 			formBuilder.append("Last Name: ", lastName, true);
 		} else {
 			formBuilder.append("Item Name: ", itemName, false);
-			formBuilder.append(buttonNext, 1);
 		}
 
 		if (letUserPickValues)
@@ -472,7 +452,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 		buttonAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				// simulate "Enter" key being pressed at last name
-				if (lastName.getText() != null && firstName.getText() != null) {
+				if(isNameList()) {
 						try {
 							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0,
 									KeyEvent.VK_ENTER, '\n');
@@ -482,7 +462,6 @@ public class ListBuilder<T> extends JPanel implements Observer {
 						}
 					}
 				else { //if (itemName.getText() != null && value.getText() != null) {
-					System.out.println("In here");
 						try {
 							KeyEvent keyEvent = new KeyEvent(value, 0, 0, 0,
 									KeyEvent.VK_ENTER, '\n');
@@ -704,7 +683,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 	}
 
 	public void requestFocusOnFirstVisibleComponent() {
-		if (this.isNameList())
+		if (this.isNameList()) 
 			itemName.requestFocusInWindow();
 		else
 			firstName.requestFocusInWindow();

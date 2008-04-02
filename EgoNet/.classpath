@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/endlessloopsoftware/ego/client/graph/NodePanel.java" kind="src" path="src"/>
+	<classpathentry excluding="com/endlessloopsoftware/ego/client/graph/NodePanel.java|com/endlessloopsoftware/ego/client/graph/EdgePanel.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/EXML.jar"/>
 	<classpathentry kind="lib" path="lib/jung-1.7.6.jar" sourcepath="/home/sonam/JavaLib/JUNG1.7/jung-1.7.6-src.jar"/>

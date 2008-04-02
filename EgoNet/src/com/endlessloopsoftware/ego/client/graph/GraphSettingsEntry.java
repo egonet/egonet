@@ -22,7 +22,7 @@ public class GraphSettingsEntry {
 		return graphQuestion;
 	}
 
-	public GraphProperty getNodeProperty() {
+	public GraphProperty getProperty() {
 		return property;
 	}
 	

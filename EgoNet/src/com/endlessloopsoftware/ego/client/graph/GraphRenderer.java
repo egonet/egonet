@@ -60,24 +60,6 @@ public class GraphRenderer extends PluggableRenderer implements
 		EdgePaintFunction, EdgeStringer, VertexStringer, EdgeStrokeFunction,
 		ToolTipFunction {
 
-	public static java.util.List<GraphQuestion> gQuestions = java.util.Collections
-			.synchronizedList(new ArrayList<GraphQuestion>());
-
-	public static Map<GraphQuestion, GraphProperty> propertyMap = java.util.Collections
-			.synchronizedMap(new HashMap<GraphQuestion, GraphProperty>());
-
-	public static List<EdgeProperty> edgePropertyList = java.util.Collections
-			.synchronizedList(new ArrayList<EdgeProperty>());
-
-	public static Map<Edge, EdgeProperty> edgeMap = java.util.Collections
-			.synchronizedMap(new HashMap<Edge, EdgeProperty>());
-
-	public static Map<ArchetypeEdge, String> edgeLabelMap = java.util.Collections
-			.synchronizedMap(new HashMap<ArchetypeEdge, String>());
-
-	public static List<Pair> vertexPair = java.util.Collections
-			.synchronizedList(new ArrayList<Pair>());
-
 	private GraphSettings graphSettings;
 
 	private static VisualizationViewer visualizationViewer;
@@ -96,8 +78,6 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private Vertex[] _vertexArray = null;
 
-	private List<Edge> edgeList = null;
-
 	private int[][] adjacencyMatrix;
 
 	private String[] alterList;
@@ -114,13 +94,13 @@ public class GraphRenderer extends PluggableRenderer implements
 		graph = new UndirectedSparseGraph();
 		stats = EgoClient.interview.getStats();
 		try {
-		alterList = stats.alterList;
-		_vertexArray = new Vertex[alterList.length];
-		for (int i = 0; i < alterList.length; ++i) {
-			_vertexArray[i] = new SparseVertex();
-			graph.addVertex(_vertexArray[i]);
-		}
-		} catch(NullPointerException ex) {
+			alterList = stats.alterList;
+			_vertexArray = new Vertex[alterList.length];
+			for (int i = 0; i < alterList.length; ++i) {
+				_vertexArray[i] = new SparseVertex();
+				graph.addVertex(_vertexArray[i]);
+			}
+		} catch (NullPointerException ex) {
 			ex.printStackTrace(System.err);
 		}
 		graphData = new GraphData();
@@ -212,10 +192,6 @@ public class GraphRenderer extends PluggableRenderer implements
 						.getCenter());
 			}
 		});
-		// minus.setMaximumSize(new Dimension(20,20));
-		// visualizationViewerScrollPane.add(plus);
-		// visualizationViewerScrollPane.add(minus);
-
 		// create the sat viewer and scroller
 		satelliteVisualizationViewer = new SatelliteVisualizationViewer(
 				visualizationViewer, visualizationModel,
@@ -236,62 +212,54 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * creates the nodes for every alter creates edges for entries in adjacency
 	 * matrix
 	 */
-	public void createNodeEdge() throws Exception{
-
+	 public void updateEdges(){
 		graph.removeAllEdges();
-		// graph.removeAllVertices();
-
-		edgeMap.clear();
-		edgeList = new ArrayList<Edge>();
-
-		int counter = 0;
-
-		if (!vertexPair.isEmpty()) {
-			for (Pair alterPair : vertexPair) {
-				UndirectedSparseEdge edge = new UndirectedSparseEdge(
-						_vertexArray[(Integer) alterPair.getFirst()],
-						_vertexArray[(Integer) alterPair.getSecond()]);
-				edgeMap.put(edge, edgePropertyList.get(counter));
-
-				edgeLabelMap.put(edge,
-						((Integer) stats.proximityMatrix[(Integer) alterPair
-								.getFirst()][(Integer) alterPair.getSecond()])
-								.toString());
-
-				counter++;
-				graph.addEdge(edge);
-
-			}
-			return;
+		Iterator edgeIterator = graphSettings.getEdgeIterator();
+		while(edgeIterator.hasNext()) {
+			Edge edge = (Edge)edgeIterator.next();
+			graph.addEdge(edge);
 		}
-		for (int i = 0; i < adjacencyMatrix.length; ++i) {
-			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
-				if (adjacencyMatrix[i][j] > 0) {
-					UndirectedSparseEdge edge = new UndirectedSparseEdge(
-							_vertexArray[i], _vertexArray[j]);
-					graph.addEdge(edge);
-
-					edgeLabelMap.put(edge,
-							((Integer) stats.proximityMatrix[i][j]).toString());
-
-				}
-			}
-		}
+		
+//		int counter = 0;
+//		if (!vertexPair.isEmpty()) {
+//			for (Pair alterPair : vertexPair) {
+//				UndirectedSparseEdge edge = new UndirectedSparseEdge(
+//						_vertexArray[(Integer) alterPair.getFirst()],
+//						_vertexArray[(Integer) alterPair.getSecond()]);
+//				edgeMap.put(edge, edgePropertyList.get(counter));
+//
+//				edgeLabelMap.put(edge,
+//						((Integer) stats.proximityMatrix[(Integer) alterPair
+//								.getFirst()][(Integer) alterPair.getSecond()])
+//								.toString());
+//
+//				counter++;
+//				graph.addEdge(edge);
+//
+//			}
+//			return;
+//		}
+//		for (int i = 0; i < adjacencyMatrix.length; ++i) {
+//			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
+//				if (adjacencyMatrix[i][j] > 0) {
+//					UndirectedSparseEdge edge = new UndirectedSparseEdge(
+//							_vertexArray[i], _vertexArray[j]);
+//					graph.addEdge(edge);
+//
+//					edgeLabelMap.put(edge,
+//							((Integer) stats.proximityMatrix[i][j]).toString());
+//
+//				}
+//			}
+//		}
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see edu.uci.ics.jung.graph.decorators.VertexStringer#getLabel(edu.uci.ics.jung.graph.ArchetypeVertex)
 	 */
 	public String getLabel(ArchetypeVertex v) {
-		/*
-		 * String label = null; for (int i = 0; i < _vertexArray.length; i++) {
-		 * if (_vertexArray[i].equals(v)) { label = alterList[i]; } }
-		 */
-		// return vertexLabelMap.get(v);
 		return graphSettings.getNodeLabel(v);
-		// return label;
 	}
 
 	/**
@@ -344,55 +312,32 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getDrawPaint(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Paint getDrawPaint(Edge e) {
-		EdgeProperty edgeProperty = edgeMap.get(e);
-		Paint returnPaint = null;
-		ConstantEdgePaintFunction edgePaintFunction;
-		if (edgeProperty != null) {
-			// System.out.println("Edge color from map");
-			edgePaintFunction = new ConstantEdgePaintFunction(edgeProperty
-					.getColor(), null);
-			returnPaint = edgePaintFunction.getDrawPaint(e);
-			return returnPaint;
-		}
-		edgePaintFunction = new ConstantEdgePaintFunction(Color.BLACK, null);
-		returnPaint = edgePaintFunction.getDrawPaint(e);
-		return returnPaint;
+		Color fillColor = graphSettings.getEdgeColor(e);
+		ConstantEdgePaintFunction cvpf = new ConstantEdgePaintFunction(
+				Color.BLACK, fillColor);
+		return cvpf.getDrawPaint(e);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getFillPaint(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Paint getFillPaint(Edge e) {
-		EdgeProperty edgeProperty = edgeMap.get(e);
-		Paint returnPaint = null;
-		ConstantEdgePaintFunction edgePaintFunction;
-		if (edgeProperty != null) {
-			edgePaintFunction = new ConstantEdgePaintFunction(edgeProperty
-					.getColor(), null);
-			returnPaint = edgePaintFunction.getFillPaint(e);
-			return returnPaint;
-		}
-		edgePaintFunction = new ConstantEdgePaintFunction(Color.BLACK, null);
-		returnPaint = edgePaintFunction.getFillPaint(e);
-		return returnPaint;
+		Color fillColor = graphSettings.getEdgeColor(e);
+		ConstantEdgePaintFunction cvpf = new ConstantEdgePaintFunction(
+				Color.BLACK, fillColor);
+		return cvpf.getFillPaint(e);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see edu.uci.ics.jung.graph.decorators.EdgeStrokeFunction#getStroke(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Stroke getStroke(Edge e) {
-		EdgeProperty edgeProperty = edgeMap.get(e);
-		ConstantEdgeStrokeFunction edgeStrokeFunction;
-		if (edgeProperty != null) {
-			edgeStrokeFunction = new ConstantEdgeStrokeFunction(
-					(float) edgeProperty.getSize());
-			return edgeStrokeFunction.getStroke(e);
-		}
-		edgeStrokeFunction = new ConstantEdgeStrokeFunction(1.0f);
+		ConstantEdgeStrokeFunction edgeStrokeFunction = new ConstantEdgeStrokeFunction(
+				(float) graphSettings.getEdgeSize(e));
 		return edgeStrokeFunction.getStroke(e);
 	}
 
@@ -406,10 +351,6 @@ public class GraphRenderer extends PluggableRenderer implements
 				Color.BLACK, fillColor);
 
 		return cvpf.getFillPaint(v);
-	}
-
-	public java.util.List<GraphQuestion> getGQuestions() {
-		return gQuestions;
 	}
 
 	public static Graph getGraph() {
@@ -429,7 +370,7 @@ public class GraphRenderer extends PluggableRenderer implements
 	 */
 	public String getLabel(ArchetypeEdge e) {
 
-		return edgeLabelMap.get((UndirectedSparseEdge) e);
+		return graphSettings.getEdgeLabel((Edge)e);
 	}
 
 	/**
@@ -494,12 +435,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			}
 		};
 		this.setEdgeStringer(stringer);
-		/*
-		 * this.setEdgePaintFunction(new PickableEdgePaintFunction(this,
-		 * Color.black, Color.black));
-		 */
 		visualizationViewer.repaint();
-
 	}
 
 	/**
@@ -521,30 +457,26 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * @see edu.uci.ics.jung.graph.decorators.EdgeShapeFunction#getShape(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Shape getShape(Edge e) {
-
-		EdgeProperty edgeProperty = edgeMap.get(e);
 		Shape returnShape = null;
 		EdgeShapeFunction edgeShapeFunction;
-		if (edgeProperty != null) {
-			switch (edgeProperty.getShape()) {
-			case Line:
-				edgeShapeFunction = new EdgeShape.Line();
-				returnShape = edgeShapeFunction.getShape(e);
-				break;
-			case QuadCurve:
-				edgeShapeFunction = new EdgeShape.QuadCurve();
-				returnShape = edgeShapeFunction.getShape(e);
-				break;
-			case CubicCurve:
-				edgeShapeFunction = new EdgeShape.CubicCurve();
-				returnShape = edgeShapeFunction.getShape(e);
-				break;
-			}
-			return returnShape;
+		switch (graphSettings.getEdgeShape(e)) {
+		case Line:
+			edgeShapeFunction = new EdgeShape.Line();
+			returnShape = edgeShapeFunction.getShape(e);
+			break;
+		case QuadCurve:
+			edgeShapeFunction = new EdgeShape.QuadCurve();
+			returnShape = edgeShapeFunction.getShape(e);
+			break;
+		case CubicCurve:
+			edgeShapeFunction = new EdgeShape.CubicCurve();
+			returnShape = edgeShapeFunction.getShape(e);
+			break;
 		}
-		edgeShapeFunction = new EdgeShape.Line();
-		returnShape = edgeShapeFunction.getShape(e);
 		return returnShape;
+		// edgeShapeFunction = new EdgeShape.Line();
+		// returnShape = edgeShapeFunction.getShape(e);
+		// return returnShape;
 	}
 
 	/**
@@ -558,14 +490,6 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	}
 
-	public List<Edge> getEdgeList() {
-		return edgeList;
-	}
-
-	public void setEdgeList(List<Edge> edgeList) {
-		this.edgeList = edgeList;
-	}
-
 	public void updateGraphSettings() {
 		Iterator iterator = graphSettings.getQAsettingsIterator();
 		while (iterator.hasNext()) {
@@ -573,7 +497,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			GraphQuestion graphQuestion = entry.getGraphQuestion();
 			if ((graphQuestion.getCategory() == Question.ALTER_QUESTION)
 					&& (entry.getType() == GraphSettingType.Node)) {
-				NodeProperty nodeProperty = (NodeProperty)entry.getNodeProperty();
+				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
 				NodeProperty.Property prop = nodeProperty.getProperty();
 				Question question = graphQuestion.getQuestion();
 				Selection selection = graphQuestion.getSelection();
@@ -610,7 +534,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			} else if (graphQuestion.getCategory() == 0) // structural
 			// measure
 			{
-				NodeProperty nodeProperty = (NodeProperty)entry.getNodeProperty();
+				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
 				NodeProperty.Property prop = nodeProperty.getProperty();
 				if (graphQuestion.getSelection().getString() == "DegreeCentrality") {
 					switch (prop) {
@@ -632,7 +556,45 @@ public class GraphRenderer extends PluggableRenderer implements
 					}
 				}
 			}
+			// Edge property manipulation
+			else if ((graphQuestion.getCategory() == Question.ALTER_PAIR_QUESTION)
+					&& (entry.getType() == GraphSettingType.Edge)) {
+				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
+				EdgeProperty.Property prop = edgeProperty.getProperty();
+				Question question = graphQuestion.getQuestion();
+				Selection selection = graphQuestion.getSelection();
+				GraphData graphData = new GraphData();
+				List<Pair> vPair = graphData.getAlterPairs(graphQuestion);
+				switch (prop) {
+				case Color:
+					for (Pair pair : vPair) {
+						UndirectedSparseEdge edge = new UndirectedSparseEdge(
+								_vertexArray[(Integer) pair.getFirst()],
+								_vertexArray[(Integer) pair.getSecond()]);
+						graphSettings.setEdgeColor(edge, edgeProperty
+								.getColor());
+					}
+					break;
+				case Shape:
+					for (Pair pair : vPair) {
+						UndirectedSparseEdge edge = new UndirectedSparseEdge(
+								_vertexArray[(Integer) pair.getFirst()],
+								_vertexArray[(Integer) pair.getSecond()]);
+						graphSettings.setEdgeShape(edge, edgeProperty
+								.getShape());
+					}
+					break;
+				case Size:
+					for (Pair pair : vPair) {
+						UndirectedSparseEdge edge = new UndirectedSparseEdge(
+								_vertexArray[(Integer) pair.getFirst()],
+								_vertexArray[(Integer) pair.getSecond()]);
+						graphSettings.setEdgeSize(edge, edgeProperty.getSize());
+					}
+				}
+			}
 		}
+		updateEdges();
 		visualizationViewer.repaint();
 	}
 
@@ -744,7 +706,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			EdgeProperty edgeProperty) {
 		graphSettings.addQAsetting(graphQuestion, edgeProperty);
 	}
-	
+
 	public String getToolTipText(Vertex v) {
 		String text = graphSettings.getNodeToolTipText(v);
 		// System.out.println(text);
@@ -759,4 +721,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		return ((JComponent) event.getSource()).getToolTipText();
 	}
 
+	public Iterator getSettingsIterator() {
+		return graphSettings.getQAsettingsIterator();
+	}
 }
