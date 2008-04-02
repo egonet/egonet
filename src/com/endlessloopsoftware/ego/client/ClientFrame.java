@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Iterator;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -20,6 +21,7 @@ import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
 
 import com.endlessloopsoftware.ego.Shared;
+import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.elsutils.AboutBox;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
@@ -294,9 +296,9 @@ public class ClientFrame extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
 			System.out.println(settingsFile.getName());
+			//obtain the iterator for QA settings
+			Iterator iterator;
 			
-			//EgoClient.storage.writeGraphSettings(settingsFile);
 		}
-
 	}
 }

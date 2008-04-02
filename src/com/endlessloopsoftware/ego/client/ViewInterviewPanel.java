@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 
+import java.util.*;
+
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsFrame;
 import com.endlessloopsoftware.elsutils.SwingWorker;
@@ -19,6 +21,7 @@ import com.endlessloopsoftware.ego.client.graph.*;
 public class ViewInterviewPanel
 	extends JTabbedPane
 {
+	GraphPanel graphPanel;
 	public ViewInterviewPanel(ProgressMonitor progress)
 	{
 		super();
@@ -26,7 +29,8 @@ public class ViewInterviewPanel
 		this.addTab("Interview", new ClientQuestionPanel());
 		progress.setProgress(15);
 		this.addTab("Statistics", new StatisticsFrame());
-		this.addTab("Graph", new GraphPanel());
+		graphPanel = new GraphPanel();
+		this.addTab("Graph", graphPanel);
 		progress.setProgress(70);
 	}
 	
@@ -64,6 +68,10 @@ public class ViewInterviewPanel
      progressMonitor.setMillisToPopup(0);
   	
      worker.start();
+   }
+   
+   public Iterator settingsIterator() {
+	   return graphPanel.getSettingsIterator();
    }
 }
 

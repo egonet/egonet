@@ -2,10 +2,19 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.*;
 
+import com.endlessloopsoftware.ego.client.graph.NodeProperty.Property;
+
 public class EdgeProperty extends GraphProperty{
 
 	public static enum EdgeShape {Line, QuadCurve, CubicCurve}
 	EdgeShape shape;
+	
+	public static enum Property {
+		Color, Shape, Size, Label
+	}
+	
+	private Property property = null;
+	private boolean visible = true;
 	
 	public EdgeProperty()
 	{
@@ -14,6 +23,19 @@ public class EdgeProperty extends GraphProperty{
 		this.color = Color.BLACK;
 	}
 
+	public EdgeProperty(String label, Color color, EdgeShape shape, int size) {
+		this.label = label;
+		this.color = color;
+		this.shape = shape;
+		this.size = size;
+	}
+	
+	public EdgeProperty(Color color, EdgeShape shape, int size) {
+		this.color = color;
+		this.shape = shape;
+		this.size = size;
+	}
+	
 	public EdgeShape getShape() {
 		return this.shape;
 	}
@@ -29,5 +51,20 @@ public class EdgeProperty extends GraphProperty{
 		return str;
 	}
 	
+	public Property getProperty() {
+		return property;
+	}
+
+	public void setProperty(Property property) {
+		this.property = property;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
 	
 }

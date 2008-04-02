@@ -1,6 +1,11 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import edu.uci.ics.jung.graph.ArchetypeVertex;
+import edu.uci.ics.jung.graph.ArchetypeEdge;
+import edu.uci.ics.jung.graph.Edge;
+import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
+import edu.uci.ics.jung.utils.Pair;
+
 import java.util.*;
 import java.util.List;
 import java.awt.*;
@@ -12,11 +17,15 @@ import org.egonet.util.listbuilder.Selection;
 
 import com.endlessloopsoftware.ego.client.*;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
+import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 
 public class GraphSettings {
 
-	private Map<ArchetypeVertex, NodeProperty> propertySettingsMap = Collections
+	private Map<ArchetypeVertex, NodeProperty> nodeSettingsMap = Collections
 			.synchronizedMap(new HashMap<ArchetypeVertex, NodeProperty>());
+
+	private Map<Edge, EdgeProperty> edgeSettingsMap = Collections
+			.synchronizedMap(new HashMap<Edge, EdgeProperty>());
 
 	private java.util.List<GraphSettingsEntry> QAsettings = Collections
 			.synchronizedList(new ArrayList<GraphSettingsEntry>());
@@ -32,8 +41,9 @@ public class GraphSettings {
 		}
 	}
 
-	private void init() throws Exception{
+	private void init() throws Exception {
 		int noOfAlters = EgoClient.interview.getNumAlters();
+		// initialize nodes with default settings
 		for (int i = 0; i < noOfAlters; i++) {
 			String alterName = EgoClient.interview.getAlterList()[i];
 			Color color = Color.RED;
@@ -43,51 +53,125 @@ public class GraphSettings {
 					shape, size);
 			String toolTipText = getAlterInfo(i);
 			nodeProperty.setToolTipText(toolTipText);
-			propertySettingsMap
-					.put(renderer.get_vertexArray()[i], nodeProperty);
+			nodeSettingsMap.put(renderer.get_vertexArray()[i], nodeProperty);
+		}
+		// initialize edges with default settings
+		renderer.getGraph().removeAllEdges();
+		GraphData graphData = new GraphData();
+		int[][] adjacencyMatrix = graphData.getAdjacencyMatrix();
+		for (int i = 0; i < adjacencyMatrix.length; ++i) {
+			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
+				if (adjacencyMatrix[i][j] > 0) {
+					UndirectedSparseEdge edge = new UndirectedSparseEdge(
+							renderer.get_vertexArray()[i], renderer
+									.get_vertexArray()[j]);
+					renderer.getGraph().addEdge(edge);
 
+					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
+							.toString();
+					EdgeProperty edgeProperty = new EdgeProperty(label,
+							Color.BLACK, EdgeShape.Line, 1);
+					edgeProperty.setVisible(true);
+					edgeSettingsMap.put(edge, edgeProperty);
+				}
+			}
 		}
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {
-		NodeProperty nodeProperty = propertySettingsMap.get(node);
+		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getSize();
 	}
 
 	public void setNodeSize(ArchetypeVertex node, int nodeSize) {
-		propertySettingsMap.get(node).setSize(nodeSize);
+		nodeSettingsMap.get(node).setSize(nodeSize);
 	}
 
 	public NodeShape getNodeShape(ArchetypeVertex node) {
-		NodeProperty nodeProperty = propertySettingsMap.get(node);
+		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getShape();
 	}
 
 	public void setNodeShape(ArchetypeVertex node, NodeShape nodeShape) {
-		propertySettingsMap.get(node).setShape(nodeShape);
+		nodeSettingsMap.get(node).setShape(nodeShape);
 	}
 
 	public Color getNodeColor(ArchetypeVertex node) {
-		NodeProperty nodeProperty = propertySettingsMap.get(node);
+		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getColor();
 	}
 
 	public void setNodeColor(ArchetypeVertex node, Color nodeColor) {
-		propertySettingsMap.get(node).setColor(nodeColor);
+		nodeSettingsMap.get(node).setColor(nodeColor);
 	}
 
 	public String getNodeLabel(ArchetypeVertex node) {
-		NodeProperty nodeProperty = propertySettingsMap.get(node);
+		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getLabel();
 	}
 
 	public void setNodeLabel(ArchetypeVertex node, String nodeLabel) {
-		propertySettingsMap.get(node).setLabel(nodeLabel);
+		nodeSettingsMap.get(node).setLabel(nodeLabel);
 	}
 
 	public String getNodeToolTipText(ArchetypeVertex node) {
-		NodeProperty nodeProperty = propertySettingsMap.get(node);
+		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getToolTipText();
+	}
+
+	public int getEdgeSize(Edge edge) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		return edgeProperty.getSize();
+	}
+
+	public void setEdgeSize(Edge edge, int edgeSize) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		if (edgeProperty != null) {
+			edgeProperty.setSize(edgeSize);
+		} else {
+			edgeProperty = new EdgeProperty(Color.BLACK, EdgeShape.Line,
+					edgeSize);
+		}
+		edgeSettingsMap.put(edge, edgeProperty);
+	}
+
+	public EdgeShape getEdgeShape(Edge edge) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		return edgeProperty.getShape();
+	}
+
+	public void setEdgeShape(Edge edge, EdgeShape edgeShape) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		if (edgeProperty != null) {
+			edgeProperty.setShape(edgeShape);
+		} else {
+			edgeProperty = new EdgeProperty(Color.BLACK, edgeShape, 1);
+		}
+		edgeSettingsMap.put(edge, edgeProperty);
+	}
+
+	public Color getEdgeColor(Edge edge) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		return edgeProperty.getColor();
+	}
+
+	public void setEdgeColor(Edge edge, Color edgeColor) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		if (edgeProperty != null) {
+			edgeProperty.setColor(edgeColor);
+		} else {
+			edgeProperty = new EdgeProperty(edgeColor, EdgeShape.Line, 1);
+		}
+		edgeSettingsMap.put(edge, edgeProperty);
+	}
+
+	public String getEdgeLabel(Edge edge) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		return edgeProperty.getLabel();
+	}
+
+	public void setEdgeLabel(Edge edge, String edgeLabel) {
+		edgeSettingsMap.get(edge).setLabel(edgeLabel);
 	}
 
 	public void addQAsetting(GraphQuestion graphQuestion,
@@ -105,7 +189,7 @@ public class GraphSettings {
 		QAsettings.add(entry);
 		displaySettings();
 	}
-	
+
 	private void displaySettings() {
 
 		System.out
@@ -126,7 +210,8 @@ public class GraphSettings {
 	private String getAlterInfo(int alterIndex) {
 		String[] alterToolTip = new String[EgoClient.interview.getNumAlters()];
 		for (int i = 0; i < alterToolTip.length; i++) {
-			alterToolTip[i] = "<html>" + EgoClient.interview.getAlterList()[i] + "<br>";
+			alterToolTip[i] = "<html>" + EgoClient.interview.getAlterList()[i]
+					+ "<br>";
 		}
 		Answer[] answers = EgoClient.interview.get_answers();
 		for (Answer answer : answers) {
@@ -146,6 +231,12 @@ public class GraphSettings {
 
 		}
 		return alterToolTip[alterIndex];
+	}
 
+	public Iterator getEdgeIterator() {
+		return edgeSettingsMap.keySet().iterator();
+	}
+	public static void writeSettings() {
+		// Iterator iterator = getQAsettingsIterator();
 	}
 }
