@@ -492,6 +492,8 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	public void updateGraphSettings() {
 		Iterator iterator = graphSettings.getQAsettingsIterator();
+		graphSettings.emptyEdgeSettingsMap();
+		graph.removeAllEdges();
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
 			GraphQuestion graphQuestion = entry.getGraphQuestion();
