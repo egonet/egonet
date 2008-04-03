@@ -195,14 +195,22 @@ public class Question implements Cloneable {
 	 *             if theres is a problem with the XML representation
 	 */
 	public Question(Element question) throws MalformedQuestionException {
-		if ((question.getElement("QuestionTitle") == null)
-				|| (question.getElement("QuestionText") == null)
-				|| (question.getElement("Id") == null)
-				|| (question.getElement("QuestionType") == null)
-				|| (question.getElement("AnswerType") == null)) {
-			throw (new MalformedQuestionException());
-		}
-
+//		if ((question.getElement("QuestionTitle") == null)
+//				|| (question.getElement("QuestionText") == null)
+//				|| (question.getElement("Id") == null)
+//				|| (question.getElement("QuestionType") == null)
+//				|| (question.getElement("AnswerType") == null)) {
+//			System.out.println("title:" + question.getElement("QuestionTitle")
+//					+ "ID:" + question.getElement("Id"));
+//			throw (new MalformedQuestionException());
+//		}
+		
+		if(question.getElement("QuestionTitle") == null) {
+			this.title = "";
+		} else if(question.getElement("QuestionText") == null) {
+			this.text = "";
+		} 
+		
 		this.title = question.getTextString("QuestionTitle");
 		this.title = (this.title == null) ? "" : this.title;
 
@@ -226,6 +234,8 @@ public class Question implements Cloneable {
 
 			if (centrality
 					&& (this.questionType != Question.ALTER_PAIR_QUESTION)) {
+				System.out.println("ID:" + this.UniqueId + " title:"
+						+ this.title);
 				throw (new MalformedQuestionException());
 			}
 		}

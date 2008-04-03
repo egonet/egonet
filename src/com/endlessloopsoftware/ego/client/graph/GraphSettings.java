@@ -66,7 +66,7 @@ public class GraphSettings {
 							renderer.get_vertexArray()[i], renderer
 									.get_vertexArray()[j]);
 					renderer.getGraph().addEdge(edge);
-
+				//	System.out.println("Adding Edge");
 					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
 							.toString();
 					EdgeProperty edgeProperty = new EdgeProperty(label,
@@ -238,5 +238,9 @@ public class GraphSettings {
 	}
 	public static void writeSettings() {
 		// Iterator iterator = getQAsettingsIterator();
+	}
+	
+	public void emptyEdgeSettingsMap() {
+		edgeSettingsMap.clear();
 	}
 }

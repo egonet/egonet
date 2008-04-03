@@ -927,16 +927,19 @@ public class Study extends Observable
 
 		while (questions.hasMoreElements())
 		{
+			Question q = null;
 			try
 			{
 				/* Question complete, add it */
-				Question q = new Question(questions.next());
+				 q = new Question(questions.next());
 				addQuestion(q);
 			}
 			catch (MalformedQuestionException e)
 			{
 				/* Don't create this question. Incomplete */
+				//System.out.println("Question:" + q.getString());
 				System.err.println("Malformed Question in file.");
+				
 			}
 			catch (DuplicateQuestionException e)
 			{
