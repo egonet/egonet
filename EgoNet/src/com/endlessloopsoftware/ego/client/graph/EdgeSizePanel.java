@@ -27,7 +27,7 @@ public class EdgeSizePanel extends JPanel {
 
 	private JComboBox sizeCombo;
 
-	private PropertyTableModel tableModel;
+	private ChoosablePropertyTableModel tableModel;
 
 	private JTable table;
 
@@ -113,7 +113,7 @@ public class EdgeSizePanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 		int category = Question.ALTER_PAIR_QUESTION;
 		int noOfRows = question.selections.length;
-		Object[][] rowData = new Object[noOfRows][2];
+		Object[][] rowData = new Object[noOfRows][3];
 		/* change the list of selections based on the selected question */
 		if (!selectionList.isEmpty()) {
 			selectionList.removeAll(selectionList);
@@ -123,22 +123,23 @@ public class EdgeSizePanel extends JPanel {
 		}
 		// populate the responses
 		for (int i = 0; i < noOfRows; i++) {
-			rowData[i][0] = selectionList.get(i);
-			String str = ((Selection) rowData[i][0]).getString();
+			rowData[i][0] = Boolean.FALSE;
+			rowData[i][1] = selectionList.get(i);
+			String str = ((Selection) rowData[i][1]).getString();
 		}
 		// populate the shapes
 		int noOfSizes = question.selections.length;
 		for (int i = 1; i <= noOfSizes; i++) {
 			if (i < sizes.length) {
 				String num = (new Integer(i)).toString();
-				rowData[i - 1][1] = num;
+				rowData[i - 1][2] = num;
 			} else {
 				String num = (new Integer(i - sizes.length)).toString();
-				rowData[i - 1][1] = num;
+				rowData[i - 1][2] = num;
 			}
 		}
 
-		table = new JTable(new PropertyTableModel(rowData));
+		table = new JTable(new ChoosablePropertyTableModel(rowData));
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setRowHeight(25);
 		table.setVisible(true);
@@ -147,34 +148,37 @@ public class EdgeSizePanel extends JPanel {
 
 		TableColumnModel columnModel = table.getColumnModel();
 		LabelRenderer selectionRenderer = new LabelRenderer();
-		columnModel.getColumn(0).setCellRenderer(selectionRenderer);
+		columnModel.getColumn(1).setCellRenderer(selectionRenderer);
 
 		DefaultCellEditor sizeEditor = new DefaultCellEditor(sizeCombo);
-		columnModel.getColumn(1).setCellEditor(sizeEditor);
-		columnModel.getColumn(1).setCellRenderer(
+		columnModel.getColumn(2).setCellEditor(sizeEditor);
+		columnModel.getColumn(2).setCellRenderer(
 				new TableComboBoxRenderer(sizes));
 
-		columnModel.getColumn(0).setMaxWidth(200);
-		columnModel.getColumn(1).setMaxWidth(80);
+		columnModel.getColumn(0).setMaxWidth(50);
+		columnModel.getColumn(1).setMaxWidth(200);
+		columnModel.getColumn(2).setMaxWidth(80);
 	}
 
 	private void updateNodeSize() {
-//		Question question = (Question) questionCombo.getSelectedItem();
-//		for (int i = 0; i < question.selections.length; i++) {
-//			Selection selection = question.selections[i];
-//			List<Integer> alterList = graphData.getAlterNumbers(question,
-//					selection);
-//
-//			GraphQuestion graphQuestion = new GraphQuestion(question,
-//					selection, Question.ALTER_QUESTION);
-//			NodeProperty nodeProperty = new NodeProperty();
-//			nodeProperty.setSize(Integer.parseInt((String) table.getValueAt(i,
-//					1)));
-//			nodeProperty.setProperty(NodeProperty.Property.Size);
-//			graphRenderer.addQAsettings(graphQuestion, nodeProperty);
-//			graphRenderer.updateGraphSettings();
-//		}
-		// graphRenderer.getVv().repaint();
+		int noOfAlters = EgoClient.interview.getNumAlters();
+		Question question = (Question) questionCombo.getSelectedItem();
+		for (int i = 0; i < question.selections.length; i++) {
+			if(((Boolean)table.getValueAt(i,0)) == true) {
+				Selection selection = question.selections[i];
+				List<Integer> alterList = graphData.getAlterNumbers(question,
+						selection);
+				
+				GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
+				EdgeProperty edgeProperty = new EdgeProperty();
+				String sizeStr = (String) table.getValueAt(i, 2);
+				int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+				edgeProperty.setSize(size);
+				edgeProperty.setProperty(EdgeProperty.Property.Size);
+				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
+				graphRenderer.updateGraphSettings();
+			}
+		}
 	}
 
 	private void drawPanel() {

@@ -217,7 +217,17 @@ public class GraphRenderer extends PluggableRenderer implements
 		Iterator edgeIterator = graphSettings.getEdgeIterator();
 		while(edgeIterator.hasNext()) {
 			Edge edge = (Edge)edgeIterator.next();
+			Iterator iterator = graph.getEdges().iterator();
+			while(iterator.hasNext()) {
+				if(iterator.next().equals(edge))
+					System.out.println("Skipping an existing edge");
+					return;
+			}
+			try {
 			graph.addEdge(edge);
+			} catch(edu.uci.ics.jung.exceptions.ConstraintViolationException ex) {
+				System.err.println(ex.getMessage());
+			}
 		}
 		
 //		int counter = 0;
@@ -326,7 +336,7 @@ public class GraphRenderer extends PluggableRenderer implements
 	public Paint getFillPaint(Edge e) {
 		Color fillColor = graphSettings.getEdgeColor(e);
 		ConstantEdgePaintFunction cvpf = new ConstantEdgePaintFunction(
-				Color.BLACK, fillColor);
+				Color.BLACK, null);
 		return cvpf.getFillPaint(e);
 	}
 
@@ -563,8 +573,6 @@ public class GraphRenderer extends PluggableRenderer implements
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.Property prop = edgeProperty.getProperty();
-				Question question = graphQuestion.getQuestion();
-				Selection selection = graphQuestion.getSelection();
 				GraphData graphData = new GraphData();
 				List<Pair> vPair = graphData.getAlterPairs(graphQuestion);
 				switch (prop) {
