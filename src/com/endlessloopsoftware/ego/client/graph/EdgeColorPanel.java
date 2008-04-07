@@ -27,7 +27,7 @@ public class EdgeColorPanel extends JPanel {
 
 	ColorChooserEditor colorChooser;
 
-	private PropertyTableModel tableModel;
+	private ChoosablePropertyTableModel tableModel;
 
 	private JTable table;
 
@@ -105,7 +105,7 @@ public class EdgeColorPanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 		int category = Question.ALTER_PAIR_QUESTION;
 		int noOfRows = question.selections.length;
-		Object[][] rowData = new Object[noOfRows][2];
+		Object[][] rowData = new Object[noOfRows][3];
 		/* change the list of selections based on the selected question */
 		if (!selectionList.isEmpty()) {
 			selectionList.removeAll(selectionList);
@@ -115,8 +115,9 @@ public class EdgeColorPanel extends JPanel {
 		}
 		// populate the responses
 		for (int i = 0; i < noOfRows; i++) {
-			rowData[i][0] = selectionList.get(i);
-			String str = ((Selection) rowData[i][0]).getString();
+			rowData[i][0] = Boolean.FALSE;
+			rowData[i][1] = selectionList.get(i);
+			String str = ((Selection) rowData[i][1]).getString();
 		}
 		// populate the colors
 		int noOfColors = question.selections.length;
@@ -126,11 +127,11 @@ public class EdgeColorPanel extends JPanel {
 			int green = rand.nextInt(255);
 			int blue = rand.nextInt(255);
 			Color color = new Color(red, green, blue);
-			rowData[i][1] = color;
+			rowData[i][2] = color;
 		}
 		
 
-		table = new JTable(new PropertyTableModel(rowData));
+		table = new JTable(new ChoosablePropertyTableModel(rowData));
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setRowHeight(25);
 		table.setVisible(true);
@@ -139,15 +140,16 @@ public class EdgeColorPanel extends JPanel {
 
 		TableColumnModel columnModel = table.getColumnModel();
 		LabelRenderer selectionRenderer = new LabelRenderer();
-		columnModel.getColumn(0).setCellRenderer(selectionRenderer);
+		columnModel.getColumn(1).setCellRenderer(selectionRenderer);
 
 		TableCellEditor colorEditor = new ColorEditor();
-		columnModel.getColumn(1).setCellEditor(colorEditor);
+		columnModel.getColumn(2).setCellEditor(colorEditor);
 		ColorRenderer colorButtonRenderer = new ColorRenderer(true);
-		columnModel.getColumn(1).setCellRenderer(colorButtonRenderer);
+		columnModel.getColumn(2).setCellRenderer(colorButtonRenderer);
 		
-		columnModel.getColumn(0).setMaxWidth(200);
-		columnModel.getColumn(1).setMaxWidth(150);
+		columnModel.getColumn(0).setMaxWidth(50);
+		columnModel.getColumn(1).setMaxWidth(200);
+		columnModel.getColumn(2).setMaxWidth(150);
 	}
 
 	private void updateEdgeColor() {
@@ -155,14 +157,15 @@ public class EdgeColorPanel extends JPanel {
 		int noOfAlters = EgoClient.interview.getNumAlters();
 		Question question = (Question) questionCombo.getSelectedItem();
 		for (int i = 0; i < question.selections.length; i++) {
-			Selection selection = question.selections[i];
-			
-			GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
-			EdgeProperty edgeProperty = new EdgeProperty();
-			edgeProperty.setColor((Color)table.getValueAt(i, 1));
-			edgeProperty.setProperty(EdgeProperty.Property.Color);
-			graphRenderer.addQAsettings(graphQuestion, edgeProperty);
-			graphRenderer.updateGraphSettings();
+			if(((Boolean)table.getValueAt(i,0)) == true) {
+				Selection selection = question.selections[i];
+				GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
+				EdgeProperty edgeProperty = new EdgeProperty();
+				edgeProperty.setColor((Color)table.getValueAt(i, 2));
+				edgeProperty.setProperty(EdgeProperty.Property.Color);
+				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
+				graphRenderer.updateGraphSettings();
+			}
 		}
 	}
 
