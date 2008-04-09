@@ -243,4 +243,22 @@ public class GraphSettings {
 	public void emptyEdgeSettingsMap() {
 		edgeSettingsMap.clear();
 	}
+
+	public void printEdgeMap() {
+		Iterator iterator = getEdgeIterator();
+		System.out.println("***********Edge Map************");
+		while(iterator.hasNext()) {
+			Edge e = (Edge)iterator.next();
+			System.out.println(e.toString() + ":" + edgeSettingsMap.get(e).toString());
+		}
+	}
+
+	public boolean isEdgeVisible(Edge edge) {
+		EdgeProperty edgeProperty = edgeSettingsMap.get(edge);
+		return edgeProperty.isVisible();
+	}
+
+	public void setEdgeVisible(Edge edge, boolean b) {
+		edgeSettingsMap.get(edge).setVisible(b);
+		}
 }

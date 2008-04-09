@@ -212,57 +212,21 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * creates the nodes for every alter creates edges for entries in adjacency
 	 * matrix
 	 */
-	 public void updateEdges(){
+	public void updateEdges() {
 		graph.removeAllEdges();
 		Iterator edgeIterator = graphSettings.getEdgeIterator();
-		while(edgeIterator.hasNext()) {
-			Edge edge = (Edge)edgeIterator.next();
-			Iterator iterator = graph.getEdges().iterator();
-			while(iterator.hasNext()) {
-				if(iterator.next().equals(edge))
-					System.out.println("Skipping an existing edge");
-					return;
-			}
+		while (edgeIterator.hasNext()) {
+			Edge edge = (Edge) edgeIterator.next();
 			try {
-			graph.addEdge(edge);
-			} catch(edu.uci.ics.jung.exceptions.ConstraintViolationException ex) {
+				if (graphSettings.isEdgeVisible(edge)) {
+					graph.addEdge(edge);
+				}
+			} catch (edu.uci.ics.jung.exceptions.ConstraintViolationException ex) {
 				System.err.println(ex.getMessage());
 			}
 		}
-		
-//		int counter = 0;
-//		if (!vertexPair.isEmpty()) {
-//			for (Pair alterPair : vertexPair) {
-//				UndirectedSparseEdge edge = new UndirectedSparseEdge(
-//						_vertexArray[(Integer) alterPair.getFirst()],
-//						_vertexArray[(Integer) alterPair.getSecond()]);
-//				edgeMap.put(edge, edgePropertyList.get(counter));
-//
-//				edgeLabelMap.put(edge,
-//						((Integer) stats.proximityMatrix[(Integer) alterPair
-//								.getFirst()][(Integer) alterPair.getSecond()])
-//								.toString());
-//
-//				counter++;
-//				graph.addEdge(edge);
-//
-//			}
-//			return;
-//		}
-//		for (int i = 0; i < adjacencyMatrix.length; ++i) {
-//			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
-//				if (adjacencyMatrix[i][j] > 0) {
-//					UndirectedSparseEdge edge = new UndirectedSparseEdge(
-//							_vertexArray[i], _vertexArray[j]);
-//					graph.addEdge(edge);
-//
-//					edgeLabelMap.put(edge,
-//							((Integer) stats.proximityMatrix[i][j]).toString());
-//
-//				}
-//			}
-//		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -322,9 +286,9 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getDrawPaint(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Paint getDrawPaint(Edge e) {
-		Color fillColor = graphSettings.getEdgeColor(e);
+		Color edgeColor = graphSettings.getEdgeColor(e);
 		ConstantEdgePaintFunction cvpf = new ConstantEdgePaintFunction(
-				Color.BLACK, fillColor);
+				edgeColor, null);
 		return cvpf.getDrawPaint(e);
 	}
 
@@ -334,9 +298,9 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getFillPaint(edu.uci.ics.jung.graph.Edge)
 	 */
 	public Paint getFillPaint(Edge e) {
-		Color fillColor = graphSettings.getEdgeColor(e);
+		Color edgeColor = graphSettings.getEdgeColor(e);
 		ConstantEdgePaintFunction cvpf = new ConstantEdgePaintFunction(
-				Color.BLACK, null);
+				edgeColor, null);
 		return cvpf.getFillPaint(e);
 	}
 
@@ -380,7 +344,7 @@ public class GraphRenderer extends PluggableRenderer implements
 	 */
 	public String getLabel(ArchetypeEdge e) {
 
-		return graphSettings.getEdgeLabel((Edge)e);
+		return graphSettings.getEdgeLabel((Edge) e);
 	}
 
 	/**
@@ -502,7 +466,7 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	public void updateGraphSettings() {
 		Iterator iterator = graphSettings.getQAsettingsIterator();
-		graphSettings.emptyEdgeSettingsMap();
+		// graphSettings.emptyEdgeSettingsMap();
 		graph.removeAllEdges();
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
@@ -575,31 +539,103 @@ public class GraphRenderer extends PluggableRenderer implements
 				EdgeProperty.Property prop = edgeProperty.getProperty();
 				GraphData graphData = new GraphData();
 				List<Pair> vPair = graphData.getAlterPairs(graphQuestion);
+//				System.out.println("Property to be updated:" + prop
+//						+ " GraphQuestion:" + graphQuestion.toString());
 				switch (prop) {
 				case Color:
 					for (Pair pair : vPair) {
-						UndirectedSparseEdge edge = new UndirectedSparseEdge(
-								_vertexArray[(Integer) pair.getFirst()],
-								_vertexArray[(Integer) pair.getSecond()]);
-						graphSettings.setEdgeColor(edge, edgeProperty
-								.getColor());
+						Iterator edgeIterator = graphSettings.getEdgeIterator();
+						// System.out.println("Size of edge
+						// iterator:"+edgeIterator.hasNext());
+						boolean edgeUpdated = false;
+						while (edgeIterator.hasNext()) {
+							Edge edge = (Edge) edgeIterator.next();
+							// System.out.println("Edge:" + edge.toString());
+							if ((edge.getEndpoints().getFirst()
+									.equals(_vertexArray[(Integer) pair
+											.getFirst()]))
+									&& (edge.getEndpoints().getSecond()
+											.equals(_vertexArray[(Integer) pair
+													.getSecond()]))) {
+								// System.out.println(edge.toString()
+								// + " already exists...updating color");
+
+								graphSettings.setEdgeColor(edge, edgeProperty
+										.getColor());
+								graphSettings.setEdgeVisible(edge, edgeProperty.isVisible());
+								edgeUpdated = true;
+								break;
+							}
+						}
+						if (edgeUpdated == false) {
+							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
+									_vertexArray[(Integer) pair.getFirst()],
+									_vertexArray[(Integer) pair.getSecond()]);
+							// System.out.println(newEdge.toString()
+							// + " created with chosen color");
+							graphSettings.setEdgeColor(newEdge, edgeProperty
+									.getColor());
+							graphSettings.setEdgeVisible(newEdge, edgeProperty.isVisible());
+						}
 					}
+
 					break;
 				case Shape:
 					for (Pair pair : vPair) {
-						UndirectedSparseEdge edge = new UndirectedSparseEdge(
-								_vertexArray[(Integer) pair.getFirst()],
-								_vertexArray[(Integer) pair.getSecond()]);
-						graphSettings.setEdgeShape(edge, edgeProperty
-								.getShape());
+						Iterator edgeIterator = graphSettings.getEdgeIterator();
+						boolean edgeUpdated = false;
+						while (edgeIterator.hasNext()) {
+							Edge edge = (Edge) edgeIterator.next();
+							if ((edge.getEndpoints().getFirst()
+									.equals(_vertexArray[(Integer) pair
+											.getFirst()]))
+									&& (edge.getEndpoints().getSecond()
+											.equals(_vertexArray[(Integer) pair
+													.getSecond()]))) {
+								graphSettings.setEdgeShape(edge, edgeProperty
+										.getShape());
+								graphSettings.setEdgeVisible(edge, edgeProperty.isVisible());
+								edgeUpdated = true;
+								break;
+							}
+						}
+						if (edgeUpdated == false) {
+							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
+									_vertexArray[(Integer) pair.getFirst()],
+									_vertexArray[(Integer) pair.getSecond()]);
+							graphSettings.setEdgeShape(newEdge, edgeProperty
+									.getShape());
+							graphSettings.setEdgeVisible(newEdge, edgeProperty.isVisible());
+						}
 					}
 					break;
 				case Size:
 					for (Pair pair : vPair) {
-						UndirectedSparseEdge edge = new UndirectedSparseEdge(
-								_vertexArray[(Integer) pair.getFirst()],
-								_vertexArray[(Integer) pair.getSecond()]);
-						graphSettings.setEdgeSize(edge, edgeProperty.getSize());
+						Iterator edgeIterator = graphSettings.getEdgeIterator();
+						boolean edgeUpdated = false;
+						while (edgeIterator.hasNext()) {
+							Edge edge = (Edge) edgeIterator.next();
+							if ((edge.getEndpoints().getFirst()
+									.equals(_vertexArray[(Integer) pair
+											.getFirst()]))
+									&& (edge.getEndpoints().getSecond()
+											.equals(_vertexArray[(Integer) pair
+													.getSecond()]))) {
+								graphSettings.setEdgeSize(edge, edgeProperty
+										.getSize());
+								graphSettings.setEdgeVisible(edge, edgeProperty.isVisible());
+								edgeUpdated = true;
+								break;
+							}
+						}
+						if (edgeUpdated == false) {
+							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
+									_vertexArray[(Integer) pair.getFirst()],
+									_vertexArray[(Integer) pair.getSecond()]);
+							graphSettings.setEdgeSize(newEdge, edgeProperty
+									.getSize());
+							graphSettings.setEdgeVisible(newEdge, edgeProperty.isVisible());
+						}
 					}
 				}
 			}

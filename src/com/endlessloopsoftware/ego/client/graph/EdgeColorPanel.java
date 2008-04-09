@@ -39,7 +39,11 @@ public class EdgeColorPanel extends JPanel {
 
 	private JButton applyButton;
 
+	public static boolean[][] edgesSelected;
+
 	List<Selection> selectionList = new ArrayList<Selection>();
+
+	List<Question> qList = new ArrayList<Question>();
 
 	public EdgeColorPanel(GraphRenderer renderer) {
 		this.graphRenderer = renderer;
@@ -57,7 +61,7 @@ public class EdgeColorPanel extends JPanel {
 		questionLabel.setVisible(true);
 
 		// create questionCombo
-		List<Question> qList = new ArrayList<Question>();
+
 		Study study = EgoClient.interview.getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
@@ -96,12 +100,21 @@ public class EdgeColorPanel extends JPanel {
 			}
 		});
 
+		Question question = (Question) questionCombo.getSelectedItem();
+		edgesSelected = new boolean[qList.size()][question.selections.length];
+		for(int i = 0; i<qList.size(); i++) {
+			for (int j =0; j<question.selections.length;j++) {
+				edgesSelected[i][j] = false;
+			}
+		}
+		
 		createTable();
 		drawPanel();
 
 	}
 
 	private void createTable() {
+
 		Question question = (Question) questionCombo.getSelectedItem();
 		int category = Question.ALTER_PAIR_QUESTION;
 		int noOfRows = question.selections.length;
@@ -129,7 +142,6 @@ public class EdgeColorPanel extends JPanel {
 			Color color = new Color(red, green, blue);
 			rowData[i][2] = color;
 		}
-		
 
 		table = new JTable(new ChoosablePropertyTableModel(rowData));
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
@@ -146,25 +158,41 @@ public class EdgeColorPanel extends JPanel {
 		columnModel.getColumn(2).setCellEditor(colorEditor);
 		ColorRenderer colorButtonRenderer = new ColorRenderer(true);
 		columnModel.getColumn(2).setCellRenderer(colorButtonRenderer);
-		
+
 		columnModel.getColumn(0).setMaxWidth(50);
 		columnModel.getColumn(1).setMaxWidth(200);
 		columnModel.getColumn(2).setMaxWidth(150);
 	}
 
 	private void updateEdgeColor() {
-
-		int noOfAlters = EgoClient.interview.getNumAlters();
+		
 		Question question = (Question) questionCombo.getSelectedItem();
+		
+		int selectedQuestionIndex = qList.indexOf(question);
+
 		for (int i = 0; i < question.selections.length; i++) {
-			if(((Boolean)table.getValueAt(i,0)) == true) {
-				Selection selection = question.selections[i];
-				GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
+			Selection selection = question.selections[i];
+			GraphQuestion graphQuestion = new GraphQuestion(question,
+					selection, Question.ALTER_PAIR_QUESTION);
+
+			if (((Boolean) table.getValueAt(i, 0)) == true) {
 				EdgeProperty edgeProperty = new EdgeProperty();
-				edgeProperty.setColor((Color)table.getValueAt(i, 2));
 				edgeProperty.setProperty(EdgeProperty.Property.Color);
+				edgeProperty.setColor((Color) table.getValueAt(i, 2));
+				edgeProperty.setVisible(true);
+				edgesSelected[selectedQuestionIndex][i] = true;
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
+			}
+			else {
+				edgesSelected[selectedQuestionIndex][i] = false;
+				if(EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] = false 
+						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i]) {
+					EdgeProperty edgeProperty = new EdgeProperty();
+					edgeProperty.setVisible(false);
+					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
+					graphRenderer.updateGraphSettings();
+				}
 			}
 		}
 	}
@@ -173,25 +201,22 @@ public class EdgeColorPanel extends JPanel {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.add(layout.createParallelGroup()
-				.add(questionLabel).add(questionCombo)
-				.add(table.getTableHeader()).add(table)
-				.add(applyButton));
+		hGroup.add(layout.createParallelGroup().add(questionLabel).add(
+				questionCombo).add(table.getTableHeader()).add(table).add(
+				applyButton));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionLabel));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionCombo));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionLabel));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionCombo));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(table));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(applyButton));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(table));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				applyButton));
 
 		layout.setVerticalGroup(vGroup);
 	}
