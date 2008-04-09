@@ -14,7 +14,7 @@ public class EdgeProperty extends GraphProperty{
 	}
 	
 	private Property property = null;
-	private boolean visible = true;
+	private boolean visible = false;
 	
 	public EdgeProperty()
 	{

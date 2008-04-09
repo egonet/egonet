@@ -39,9 +39,14 @@ public class EdgeSizePanel extends JPanel {
 
 	private JButton applyButton;
 
-	String[] sizes = { "1", "2", "3", "4", "5"};
+
+	String[] sizes = { "1", "2", "3", "4", "5" };
 
 	List<Selection> selectionList = new ArrayList<Selection>();
+
+	public static boolean[][] edgesSelected;
+
+	List<Question> qList = new ArrayList<Question>();
 
 	public EdgeSizePanel(GraphRenderer renderer) {
 		this.graphRenderer = renderer;
@@ -100,10 +105,18 @@ public class EdgeSizePanel extends JPanel {
 		applyButton.setVisible(true);
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateNodeSize();
+				updateEdgeSize();
 			}
 		});
 
+		Question question = (Question) questionCombo.getSelectedItem();
+		edgesSelected = new boolean[qList.size()][question.selections.length];
+		for(int i = 0; i<qList.size(); i++) {
+			for (int j =0; j<question.selections.length;j++) {
+				edgesSelected[i][j] = false;
+			}
+		}
+		
 		createTable();
 		drawPanel();
 
@@ -160,24 +173,37 @@ public class EdgeSizePanel extends JPanel {
 		columnModel.getColumn(2).setMaxWidth(80);
 	}
 
-	private void updateNodeSize() {
-		int noOfAlters = EgoClient.interview.getNumAlters();
+	private void updateEdgeSize() {
+
 		Question question = (Question) questionCombo.getSelectedItem();
+
+		int selectedQuestionIndex = qList.indexOf(question);
 		for (int i = 0; i < question.selections.length; i++) {
-			if(((Boolean)table.getValueAt(i,0)) == true) {
-				Selection selection = question.selections[i];
-				List<Integer> alterList = graphData.getAlterNumbers(question,
-						selection);
-				
-				GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
+			Selection selection = question.selections[i];
+			GraphQuestion graphQuestion = new GraphQuestion(question,
+					selection, Question.ALTER_PAIR_QUESTION);
+
+			if (((Boolean) table.getValueAt(i, 0)) == true) {
 				EdgeProperty edgeProperty = new EdgeProperty();
+				edgeProperty.setProperty(EdgeProperty.Property.Size);
 				String sizeStr = (String) table.getValueAt(i, 2);
 				int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
 				edgeProperty.setSize(size);
-				edgeProperty.setProperty(EdgeProperty.Property.Size);
+				edgeProperty.setVisible(true);
+				edgesSelected[selectedQuestionIndex][i] = true;
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
+			} else {
+				edgesSelected[selectedQuestionIndex][i] = false;
+				if (EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false
+						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] == false) {
+					EdgeProperty edgeProperty = new EdgeProperty();
+					edgeProperty.setVisible(false);
+					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
+					graphRenderer.updateGraphSettings();
+				}
 			}
+
 		}
 	}
 
@@ -185,25 +211,22 @@ public class EdgeSizePanel extends JPanel {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.add(layout.createParallelGroup()
-				.add(questionLabel).add(questionCombo)
-				.add(table.getTableHeader()).add(table)
-				.add(applyButton));
+		hGroup.add(layout.createParallelGroup().add(questionLabel).add(
+				questionCombo).add(table.getTableHeader()).add(table).add(
+				applyButton));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionLabel));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionCombo));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionLabel));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionCombo));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(table));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(applyButton));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(table));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				applyButton));
 
 		layout.setVerticalGroup(vGroup);
 	}

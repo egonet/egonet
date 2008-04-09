@@ -104,7 +104,7 @@ public class NodeColorPanel extends JPanel {
 	private void createTable() {
 		Question question = (Question) questionCombo.getSelectedItem();
 		int category = Question.ALTER_QUESTION;
-		System.out.println("Question:" + question.getString());
+	//	System.out.println("Question:" + question.getString());
 		int noOfRows = question.selections.length;
 		Object[][] rowData = new Object[noOfRows][2];
 		/* change the list of selections based on the selected question */
