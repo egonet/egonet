@@ -51,6 +51,17 @@ public class ClientFrame extends JFrame {
 
 	private final JMenu jMenuHelp = new JMenu("Help");
 
+	private final JMenu jMenuGraph = new JMenu("Graph");
+
+	private final JMenuItem graphProperties = new JMenuItem(
+			"Graph Properties");
+
+	private final JMenuItem nodeProperties = new JMenuItem(
+			"Node Properties");
+
+	private final JMenuItem edgeProperties = new JMenuItem(
+			"Edge Properties");
+
 	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
 	private final JMenuItem saveStudySummary = new JMenuItem(
@@ -71,12 +82,14 @@ public class ClientFrame extends JFrame {
 			"Save Weighted Adjacency Matrix");
 
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as JPEG image");
-	
-	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
+
+	public final JMenuItem saveGraphSettings = new JMenuItem(
+			"Save graph settings");
 
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
-	
-	public final JMenuItem recalculateStatistics = new JMenuItem("Recalculate Statistics");
+
+	public final JMenuItem recalculateStatistics = new JMenuItem(
+			"Recalculate Statistics");
 
 	public final JMenuItem close = new JMenuItem("Return to Main Menu");
 
@@ -97,7 +110,7 @@ public class ClientFrame extends JFrame {
 	// Component initialization
 	private void jbInit() throws Exception {
 		this.setSize(new Dimension(700, 600));
-		this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
+		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Networks Study Tool");
 
 		createMenuBar(EgoClient.SELECT);
@@ -128,12 +141,13 @@ public class ClientFrame extends JFrame {
 			}
 		});
 
-		saveGraphSettings.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveGraphSettings_actionPerformed(e);
-			}
-		});
-		
+		saveGraphSettings
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						saveGraphSettings_actionPerformed(e);
+					}
+				});
+
 		saveInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -143,17 +157,17 @@ public class ClientFrame extends JFrame {
 				}
 			}
 		});
-		
-		recalculateStatistics.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				EgoClient.interview = EgoClient.storage.readInterview();
-				if(EgoClient.interview != null)
-					ViewInterviewPanel.gotoPanel();
-			}
-		});
-		
-		close
-		.addActionListener(new java.awt.event.ActionListener() {
+
+		recalculateStatistics
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						EgoClient.interview = EgoClient.storage.readInterview();
+						if (EgoClient.interview != null)
+							ViewInterviewPanel.gotoPanel();
+					}
+				});
+
+		close.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SourceSelectPanel.gotoPanel(false);
 			}
@@ -178,10 +192,12 @@ public class ClientFrame extends JFrame {
 
 	// Help | About action performed
 	public void jMenuHelpAbout_actionPerformed(ActionEvent e) {
-		JOptionPane.showMessageDialog(this,
-				"Egonet is an egocentric network study tool." +
-				"\n\nThanks to: Dr. Chris McCarty, University of Florida",
-				"About Egonet", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane
+				.showMessageDialog(
+						this,
+						"Egonet is an egocentric network study tool."
+								+ "\n\nThanks to: Dr. Chris McCarty, University of Florida",
+						"About Egonet", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	// Overridden so we can exit when window is closed
@@ -196,6 +212,7 @@ public class ClientFrame extends JFrame {
 		jMenuBar1.removeAll();
 		jMenuFile.removeAll();
 		jMenuHelp.removeAll();
+		jMenuGraph.removeAll();
 
 		// File Menu
 		if (mode == EgoClient.VIEW_SUMMARY) {
@@ -212,16 +229,21 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
-			//jMenuFile.add(saveGraphSettings);
+			// jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
 			jMenuFile.add(close);
+			
+			jMenuGraph.add(graphProperties);
+			jMenuGraph.add(nodeProperties);
+			jMenuGraph.add(edgeProperties);
+			
 		} else {
 			jMenuFile.add(exit);
 		}
 		jMenuBar1.add(jMenuFile);
-
+		//jMenuBar1.add(jMenuGraph);
 		// Help Menu
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuBar1.add(jMenuHelp);
@@ -272,7 +294,7 @@ public class ClientFrame extends JFrame {
 		}
 
 	}
-	
+
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = EgoClient.interview.getName() + "_graphSettings";
@@ -289,16 +311,17 @@ public class ClientFrame extends JFrame {
 
 		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
 		// Files",".jpeg");
-		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings", "settings");
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings",
+				"settings");
 		fileChooser.addChoosableFileFilter(filter);
 
 		int returnValue = fileChooser.showSaveDialog(this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
 			System.out.println(settingsFile.getName());
-			//obtain the iterator for QA settings
+			// obtain the iterator for QA settings
 			Iterator iterator;
-			
+
 		}
 	}
 }
