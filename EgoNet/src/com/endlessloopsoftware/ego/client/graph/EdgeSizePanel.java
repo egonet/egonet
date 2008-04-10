@@ -64,7 +64,7 @@ public class EdgeSizePanel extends JPanel {
 		questionLabel.setVisible(true);
 
 		// create questionCombo
-		List<Question> qList = new ArrayList<Question>();
+		//List<Question> qList = new ArrayList<Question>();
 		Study study = EgoClient.interview.getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
@@ -178,6 +178,9 @@ public class EdgeSizePanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 
 		int selectedQuestionIndex = qList.indexOf(question);
+		
+		System.out.println("SizePanel:SelectedQuestionIndex:" + selectedQuestionIndex  + " " + question.toString());
+
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
 			GraphQuestion graphQuestion = new GraphQuestion(question,
@@ -194,10 +197,15 @@ public class EdgeSizePanel extends JPanel {
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
 			} else {
+				
 				edgesSelected[selectedQuestionIndex][i] = false;
 				if (EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false
-						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] == false) {
+						&& EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
+					edgeProperty.setProperty(EdgeProperty.Property.Size);
+				//	String sizeStr = (String) table.getValueAt(i, 2);
+				//	int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+				//	edgeProperty.setSize(size);
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 					graphRenderer.updateGraphSettings();
