@@ -176,7 +176,7 @@ Question question = (Question) questionCombo.getSelectedItem();
 		
 		
 		int selectedQuestionIndex = qList.indexOf(question);
-
+		System.out.println("ShapePanel:SelectedQuestionIndex:" + selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
 			GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
@@ -195,6 +195,8 @@ Question question = (Question) questionCombo.getSelectedItem();
 				if(EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false 
 						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] ==false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
+					edgeProperty.setProperty(EdgeProperty.Property.Shape);
+				//	edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i, 2));
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 					graphRenderer.updateGraphSettings();
