@@ -104,7 +104,8 @@ public class NodeColorPanel extends JPanel {
 	private void createTable() {
 		Question question = (Question) questionCombo.getSelectedItem();
 		int category = Question.ALTER_QUESTION;
-	//	System.out.println("Question:" + question.getString());
+		System.out.println("Question:" + question + " Selected index:"
+				+ questionCombo.getSelectedIndex());
 		int noOfRows = question.selections.length;
 		Object[][] rowData = new Object[noOfRows][2];
 		/* change the list of selections based on the selected question */
@@ -129,7 +130,6 @@ public class NodeColorPanel extends JPanel {
 			Color color = new Color(red, green, blue);
 			rowData[i][1] = color;
 		}
-		
 
 		table = new JTable(new PropertyTableModel(rowData));
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
@@ -146,7 +146,7 @@ public class NodeColorPanel extends JPanel {
 		columnModel.getColumn(1).setCellEditor(colorEditor);
 		ColorRenderer colorButtonRenderer = new ColorRenderer(true);
 		columnModel.getColumn(1).setCellRenderer(colorButtonRenderer);
-		
+
 		columnModel.getColumn(0).setMaxWidth(200);
 		columnModel.getColumn(1).setMaxWidth(150);
 	}
@@ -157,40 +157,38 @@ public class NodeColorPanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
-			
-			GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_QUESTION);
+
+			GraphQuestion graphQuestion = new GraphQuestion(question,
+					selection, Question.ALTER_QUESTION);
 			NodeProperty nodeProperty = new NodeProperty();
-			nodeProperty.setColor((Color)table.getValueAt(i, 1));
+			nodeProperty.setColor((Color) table.getValueAt(i, 1));
 			nodeProperty.setProperty(NodeProperty.Property.Color);
 			graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 			graphRenderer.updateGraphSettings();
 		}
-//		graphRenderer.getVv().repaint();
+		// graphRenderer.getVv().repaint();
 	}
 
 	private void drawPanel() {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.add(layout.createParallelGroup()
-				.add(questionLabel).add(questionCombo)
-				.add(table.getTableHeader()).add(table)
-				.add(applyButton));
+		hGroup.add(layout.createParallelGroup().add(questionLabel).add(
+				questionCombo).add(table.getTableHeader()).add(table).add(
+				applyButton));
 
 		layout.setHorizontalGroup(hGroup);
 
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionLabel));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(questionCombo));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionLabel));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				questionCombo));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				table.getTableHeader()));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(table));
-		vGroup.add(layout.createParallelGroup(
-				GroupLayout.BASELINE).add(applyButton));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(table));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				applyButton));
 
 		layout.setVerticalGroup(vGroup);
 	}
