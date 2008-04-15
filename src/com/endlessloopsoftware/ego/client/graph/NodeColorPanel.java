@@ -67,7 +67,8 @@ public class NodeColorPanel extends JPanel {
 			if (questionType == Question.ALTER_QUESTION) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.selections.length >= 1)
+				if (currentQuestion.answerType == Question.CATEGORICAL
+						|| currentQuestion.answerType == Question.TEXT)
 					qList.add(currentQuestion);
 			}
 		}
@@ -101,35 +102,89 @@ public class NodeColorPanel extends JPanel {
 
 	}
 
+	private Object[][] getRowData() {
+		Question question;
+		question = (Question) questionCombo.getSelectedItem();
+
+		// System.out.println("Question examining:" + question.UniqueId);
+
+		if (question.answerType == Question.CATEGORICAL) {
+			int category = Question.ALTER_QUESTION;
+			int noOfRows = question.selections.length;
+			Object[][] rowData = new Object[noOfRows][2];
+			/* change the list of selections based on the selected question */
+			if (!selectionList.isEmpty()) {
+				selectionList.removeAll(selectionList);
+			}
+			for (Selection selection : question.selections) {
+				selectionList.add(selection);
+			}
+			for (int i = 0; i < noOfRows; i++) {
+				rowData[i][0] = selectionList.get(i);
+			}
+			int noOfColors = question.selections.length;
+			Random rand = new Random();
+			for (int i = 0; i < noOfColors; i++) {
+				int red = rand.nextInt(255);
+				int green = rand.nextInt(255);
+				int blue = rand.nextInt(255);
+				Color color = new Color(red, green, blue);
+				rowData[i][1] = color;
+			}
+			return rowData;
+
+		} else {
+			// System.out.println("Populating text answers!!!");
+			if (!selectionList.isEmpty()) {
+				selectionList.removeAll(selectionList);
+			}
+			Answer[] answers = EgoClient.interview.get_answers();
+			for (int i = 0; i < answers.length; i++) {
+				// System.out.println("Question examining:"
+				// + answers[i].questionId + "," + question.UniqueId);
+				if (answers[i].questionId.equals(question.UniqueId)) {
+
+					if (answers[i].string == null
+							|| isPresentInSelectionList(answers[i].string)) {
+						continue;
+					}
+					Selection selection = new Selection();
+					selection.setString(answers[i].string);
+					// System.out.println("Selection:" + selection);
+					selectionList.add(selection);
+				}
+
+			}
+			Object[][] rowData = new Object[selectionList.size()][2];
+			for (int i = 0; i < selectionList.size(); i++) {
+				rowData[i][0] = selectionList.get(i);
+			}
+			int noOfColors = selectionList.size();
+			Random rand = new Random();
+			for (int i = 0; i < noOfColors; i++) {
+				int red = rand.nextInt(255);
+				int green = rand.nextInt(255);
+				int blue = rand.nextInt(255);
+				Color color = new Color(red, green, blue);
+				rowData[i][1] = color;
+			}
+			return rowData;
+		}
+	}
+
+	private boolean isPresentInSelectionList(String str) {
+		for (int i = 0; i < selectionList.size(); i++) {
+			if (selectionList.get(i).getString().equals(str))
+				return true;
+		}
+		return false;
+	}
+
 	private void createTable() {
-		Question question = (Question) questionCombo.getSelectedItem();
-		int category = Question.ALTER_QUESTION;
-		System.out.println("Question:" + question + " Selected index:"
-				+ questionCombo.getSelectedIndex());
-		int noOfRows = question.selections.length;
-		Object[][] rowData = new Object[noOfRows][2];
-		/* change the list of selections based on the selected question */
-		if (!selectionList.isEmpty()) {
-			selectionList.removeAll(selectionList);
-		}
-		for (Selection selection : question.selections) {
-			selectionList.add(selection);
-		}
-		// populate the responses
-		for (int i = 0; i < noOfRows; i++) {
-			rowData[i][0] = selectionList.get(i);
-			String str = ((Selection) rowData[i][0]).getString();
-		}
+
+		Object[][] rowData = getRowData();
+
 		// populate the colors
-		int noOfColors = question.selections.length;
-		Random rand = new Random();
-		for (int i = 0; i < noOfColors; i++) {
-			int red = rand.nextInt(255);
-			int green = rand.nextInt(255);
-			int blue = rand.nextInt(255);
-			Color color = new Color(red, green, blue);
-			rowData[i][1] = color;
-		}
 
 		table = new JTable(new PropertyTableModel(rowData));
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
@@ -155,16 +210,30 @@ public class NodeColorPanel extends JPanel {
 
 		int noOfAlters = EgoClient.interview.getNumAlters();
 		Question question = (Question) questionCombo.getSelectedItem();
-		for (int i = 0; i < question.selections.length; i++) {
-			Selection selection = question.selections[i];
+		if (question.answerType == Question.CATEGORICAL) {
+			for (int i = 0; i < question.selections.length; i++) {
+				Selection selection = question.selections[i];
 
-			GraphQuestion graphQuestion = new GraphQuestion(question,
-					selection, Question.ALTER_QUESTION);
-			NodeProperty nodeProperty = new NodeProperty();
-			nodeProperty.setColor((Color) table.getValueAt(i, 1));
-			nodeProperty.setProperty(NodeProperty.Property.Color);
-			graphRenderer.addQAsettings(graphQuestion, nodeProperty);
-			graphRenderer.updateGraphSettings();
+				GraphQuestion graphQuestion = new GraphQuestion(question,
+						selection, Question.ALTER_QUESTION);
+				NodeProperty nodeProperty = new NodeProperty();
+				nodeProperty.setColor((Color) table.getValueAt(i, 1));
+				nodeProperty.setProperty(NodeProperty.Property.Color);
+				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
+				graphRenderer.updateGraphSettings();
+			}
+		}else if (question.answerType == Question.TEXT) {
+			System.out.println("Applying labels for text questions");
+			for (int i =0;i < selectionList.size() ; i++) {
+				Selection selection = selectionList.get(i);
+				NodeProperty nodeProperty = new NodeProperty();
+				nodeProperty.setColor((Color) table.getValueAt(i, 1));
+				nodeProperty.setProperty(NodeProperty.Property.Color);
+				GraphQuestion graphQuestion = new GraphQuestion(question,
+						selection, Question.ALTER_QUESTION);
+				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
+				graphRenderer.updateGraphSettings();
+			}
 		}
 		// graphRenderer.getVv().repaint();
 	}
