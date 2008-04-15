@@ -67,7 +67,6 @@ public class NodeLabelPanel extends JPanel {
 				if (currentQuestion.answerType == Question.CATEGORICAL
 						|| currentQuestion.answerType == Question.TEXT)
 					qList.add(currentQuestion);
-				System.out.println("Added Question");
 			}
 		}
 		questionCombo = new JComboBox(qList.toArray());
@@ -218,10 +217,18 @@ public class NodeLabelPanel extends JPanel {
 					nodeProperty.setProperty(NodeProperty.Property.Label);
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();
-				} 
-			}
-			else if(question.answerType == Question.TEXT) {
+				}
+			} else if (question.answerType == Question.TEXT) {
 				System.out.println("Applying labels for text questions");
+				for (Selection selection : selectionList) {
+					NodeProperty nodeProperty = new NodeProperty();
+					nodeProperty.setLabel(selection.getString());
+					nodeProperty.setProperty(NodeProperty.Property.Label);
+					GraphQuestion graphQuestion = new GraphQuestion(question,
+							selection, Question.ALTER_QUESTION);
+					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
+					graphRenderer.updateGraphSettings();
+				}
 			}
 		}
 		graphRenderer.getVv().repaint();
