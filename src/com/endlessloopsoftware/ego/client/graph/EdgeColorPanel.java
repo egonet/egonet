@@ -102,12 +102,12 @@ public class EdgeColorPanel extends JPanel {
 
 		Question question = (Question) questionCombo.getSelectedItem();
 		edgesSelected = new boolean[qList.size()][question.selections.length];
-		for(int i = 0; i<qList.size(); i++) {
-			for (int j =0; j<question.selections.length;j++) {
+		for (int i = 0; i < qList.size(); i++) {
+			for (int j = 0; j < question.selections.length; j++) {
 				edgesSelected[i][j] = false;
 			}
 		}
-		
+
 		createTable();
 		drawPanel();
 
@@ -165,11 +165,12 @@ public class EdgeColorPanel extends JPanel {
 	}
 
 	private void updateEdgeColor() {
-		
+
 		Question question = (Question) questionCombo.getSelectedItem();
-		
+
 		int selectedQuestionIndex = qList.indexOf(question);
-		System.out.println("ColorePanel:SelectedQuestionIndex:" + selectedQuestionIndex + " " + question.toString());
+		System.out.println("ColorePanel:SelectedQuestionIndex:"
+				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
 			GraphQuestion graphQuestion = new GraphQuestion(question,
@@ -183,14 +184,13 @@ public class EdgeColorPanel extends JPanel {
 				edgesSelected[selectedQuestionIndex][i] = true;
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
-			}
-			else {
+			} else {
 				edgesSelected[selectedQuestionIndex][i] = false;
-				if(EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false 
-						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] ==false) {
+				if (EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false
+						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
 					edgeProperty.setProperty(EdgeProperty.Property.Color);
-				//	edgeProperty.setColor((Color) table.getValueAt(i, 2));
+					//edgeProperty.setColor((Color) table.getValueAt(i, 2));
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 					graphRenderer.updateGraphSettings();

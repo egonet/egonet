@@ -175,6 +175,8 @@ public class GraphTabPanel extends JPanel {
 
 		showWeightChkBox = new JCheckBox("Show Edge Weights");
 		showWeightChkBox.setSelected(false);
+		showWeightChkBox.setVisible(false);
+		showWeightChkBox.setEnabled(false);
 		showWeightChkBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
