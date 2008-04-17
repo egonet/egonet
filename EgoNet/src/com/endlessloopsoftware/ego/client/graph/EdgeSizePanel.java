@@ -203,9 +203,9 @@ public class EdgeSizePanel extends JPanel {
 						&& EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
 					edgeProperty.setProperty(EdgeProperty.Property.Size);
-				//	String sizeStr = (String) table.getValueAt(i, 2);
-				//	int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
-				//	edgeProperty.setSize(size);
+//					String sizeStr = (String) table.getValueAt(i, 2);
+//					int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+//					edgeProperty.setSize(size);
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 					graphRenderer.updateGraphSettings();
