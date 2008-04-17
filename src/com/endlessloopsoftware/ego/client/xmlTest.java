@@ -1,6 +1,5 @@
 package com.endlessloopsoftware.ego.client;
 
-import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -38,10 +37,6 @@ public class xmlTest {
 			// step 3.1: set up transformer
 			TransformerFactory tranFactory = TransformerFactory.newInstance();
 			Transformer aTransformer = tranFactory.newTransformer();
-
-			// step 3.2: Create output file
-			File file = new File(
-					"/home/sonam/Desktop/EgonetStudies/xml/test.xml");
 
 			// step 3.3: Write the DOM document to the file
 			Source src = new DOMSource(doc);

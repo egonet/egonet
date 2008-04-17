@@ -1,23 +1,26 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import edu.uci.ics.jung.graph.ArchetypeVertex;
-import edu.uci.ics.jung.graph.ArchetypeEdge;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-import edu.uci.ics.jung.utils.Pair;
 
 import java.util.*;
-import java.util.List;
 import java.awt.*;
 import java.io.*;
 
 import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Answer;
-import org.egonet.util.listbuilder.Selection;
 
 import com.endlessloopsoftware.ego.client.*;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
+
+import org.w3c.dom.*;
+
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 
 public class GraphSettings {
 
@@ -66,7 +69,7 @@ public class GraphSettings {
 							renderer.get_vertexArray()[i], renderer
 									.get_vertexArray()[j]);
 					renderer.getGraph().addEdge(edge);
-				//	System.out.println("Adding Edge");
+					// System.out.println("Adding Edge");
 					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
 							.toString();
 					EdgeProperty edgeProperty = new EdgeProperty(label,
@@ -76,6 +79,41 @@ public class GraphSettings {
 				}
 			}
 		}
+
+		createSettingsFile();
+
+	}
+
+	private void createSettingsFile() {
+		try {
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+
+			Element studyElement = doc.createElement("GraphSettings");
+			String studyID = ((Long) EgoClient.study.getStudyId()).toString();
+			studyElement.setAttribute("StudyId", studyID);
+			doc.appendChild(studyElement);
+
+			TransformerFactory tranFactory = TransformerFactory.newInstance();
+			Transformer aTransformer = tranFactory.newTransformer();
+
+			final File currentDirectory = new File(EgoClient.storage
+					.getPackageFile().getParent(), "Graphs");
+			currentDirectory.mkdir();
+
+			String[] name = EgoClient.interview.getName();
+			String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+			File file = new File(currentDirectory.getAbsolutePath() + fileName);
+
+			Source src = new DOMSource(doc);
+			Result dest = new StreamResult(file);
+			aTransformer.transform(src, dest);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {
@@ -179,6 +217,7 @@ public class GraphSettings {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
 				nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
+		updateSettingsFile(entry);
 		displaySettings();
 	}
 
@@ -187,7 +226,33 @@ public class GraphSettings {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
 				edgeProperty, GraphSettingType.Edge);
 		QAsettings.add(entry);
+		updateSettingsFile(entry);
 		displaySettings();
+	}
+
+	private void updateSettingsFile(GraphSettingsEntry entry) {
+		try {
+			final File currentDirectory = new File(EgoClient.storage
+					.getPackageFile().getParent(), "Graphs");
+			String[] name = EgoClient.interview.getName();
+			String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+			File file = new File(currentDirectory.getAbsolutePath() + fileName);
+
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.parse(file);
+			Element rootElement = doc.getDocumentElement();
+			entry.writeEntryElement(doc, rootElement);
+			
+			TransformerFactory tranFactory = TransformerFactory.newInstance();
+			Transformer aTransformer = tranFactory.newTransformer();
+			Source src = new DOMSource(doc);
+			Result dest = new StreamResult(file);
+			aTransformer.transform(src, dest);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private void displaySettings() {
@@ -236,10 +301,11 @@ public class GraphSettings {
 	public Iterator getEdgeIterator() {
 		return edgeSettingsMap.keySet().iterator();
 	}
+
 	public static void writeSettings() {
 		// Iterator iterator = getQAsettingsIterator();
 	}
-	
+
 	public void emptyEdgeSettingsMap() {
 		edgeSettingsMap.clear();
 	}
@@ -247,9 +313,10 @@ public class GraphSettings {
 	public void printEdgeMap() {
 		Iterator iterator = getEdgeIterator();
 		System.out.println("***********Edge Map************");
-		while(iterator.hasNext()) {
-			Edge e = (Edge)iterator.next();
-			System.out.println(e.toString() + ":" + edgeSettingsMap.get(e).toString());
+		while (iterator.hasNext()) {
+			Edge e = (Edge) iterator.next();
+			System.out.println(e.toString() + ":"
+					+ edgeSettingsMap.get(e).toString());
 		}
 	}
 
@@ -260,5 +327,5 @@ public class GraphSettings {
 
 	public void setEdgeVisible(Edge edge, boolean b) {
 		edgeSettingsMap.get(edge).setVisible(b);
-		}
+	}
 }
