@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Packaging Generator" default="_packaging_generation_">
+	<target name="_packaging_generation_" depends="N65540,N65581,N65598,N65713" />
+	<target name="N65540" description="EgoEJB.jar">
+		<jar destfile="EgoEJB.jar">
+			<zipfileset dir="src/META-INF" prefix="META-INF">
+				<include name="ejb-jar.xml"/>
+			</zipfileset>
+			<zipfileset dir="src/META-INF" prefix="META-INF">
+				<include name="jboss.xml"/>
+			</zipfileset>
+			<zipfileset dir="src/META-INF" prefix="META-INF">
+				<include name="jbosscmp-jdbc.xml"/>
+			</zipfileset>
+			<zipfileset dir="bin" includes="com/endlessloopsoftware/egonet/framework/*.class,com/endlessloopsoftware/egonet/*.class,com/endlessloopsoftware/egonet/ejb/*.class,com/endlessloopsoftware/egonet/data/*.class,com/endlessloopsoftware/egonet/interfaces/*.class,com/endlessloopsoftware/egonet/util/*.class"/>
+		</jar>
+	</target>
+	<target name="N65581" description="egoapplet.jar">
+		<jar destfile="egoapplet.jar">
+			<zipfileset dir="bin" includes="com/endlessloopsoftware/egonet/web/applet/*.class"/>
+		</jar>
+	</target>
+	<target name="N65598" description="EgoWeb.war">
+		<jar destfile="EgoWeb.war">
+			<zipfileset dir="." prefix="lib">
+				<include name="egoapplet.jar"/>
+			</zipfileset>
+			<zipfileset dir="bin" prefix="WEB-INF/classes" includes="com/endlessloopsoftware/egonet/web/**/*.class,com/endlessloopsoftware/egonet/web/*.class" excludes="com/endlessloopsoftware/egonet/web/applet/*.class"/>
+			<zipfileset dir="lib/strutslib" prefix="WEB-INF/lib" excludes="javax.servlet.jar,jbossall-client.jar,jboss-j2ee.jar"/>
+			<zipfileset dir="lib/strutslib" prefix="lib"/>
+			<zipfileset dir="resources" prefix="WEB-INF/classes/com/endlessloopsoftware/egonet/web/resources"/>
+			<zipfileset dir="lib/images" prefix="images"/>
+			<zipfileset dir="lib/config" prefix="config"/>
+			<zipfileset dir="bin" includes="*.class"/>
+			<zipfileset dir="lib/appletlib" prefix="lib" includes="*.jar" excludes="javax.servlet.jar,jbossall-client.jar,jboss-j2ee.jar"/>
+			<zipfileset dir="WEB-INF" prefix="WEB-INF" excludes="CVS,**/CVS"/>
+			<zipfileset dir="docroot"/>
+			<zipfileset dir="lib/appletlib" prefix="WEB-INF/lib" includes="*.jar" excludes="javax.servlet.jar,jbossall-client.jar,jboss-j2ee.jar"/>
+		</jar>
+	</target>
+	<target name="N65713" description="EgoNet.ear">
+		<jar destfile="EgoNet.ear">
+			<zipfileset dir="src/META-INF" prefix="META-INF">
+				<include name="application.xml"/>
+			</zipfileset>
+			<zipfileset dir=".">
+				<include name="EgoEJB.jar"/>
+			</zipfileset>
+			<zipfileset dir=".">
+				<include name="EgoWeb.war"/>
+			</zipfileset>
+		</jar>
+	</target>
+</project>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss PUBLIC "-//JBoss//DTD JBOSS 4.0//EN" "http://www.jboss.org/j2ee/dtd/jboss_4_0.dtd">
+
+<jboss>
+
+   <enterprise-beans>
+
+     <!--
+       To add beans that you have deployment descriptor info for, add
+       a file to your XDoclet merge directory called jboss-beans.xml that contains
+       the <session></session>, <entity></entity> and <message-driven></message-driven>
+       markup for those beans.
+     -->
+
+      <entity>
+         <ejb-name>AnswerEJB</ejb-name>
+         <jndi-name>AnswerEJBHome</jndi-name>
+         <local-jndi-name>AnswerEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>StudyEJB</ejb-name>
+         <jndi-name>StudyEJBHome</jndi-name>
+         <local-jndi-name>StudyEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>QuestionLinkEJB</ejb-name>
+         <jndi-name>QuestionLinkEJBHome</jndi-name>
+         <local-jndi-name>QuestionLinkEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>SelectionEJB</ejb-name>
+         <jndi-name>SelectionEJBHome</jndi-name>
+         <local-jndi-name>SelectionEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>QuestionEJB</ejb-name>
+         <jndi-name>QuestionEJBHome</jndi-name>
+         <local-jndi-name>QuestionEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>ConfigurationEJB</ejb-name>
+         <jndi-name>ConfigurationEJBHome</jndi-name>
+         <local-jndi-name>ConfigurationEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+      <entity>
+         <ejb-name>InterviewEJB</ejb-name>
+         <jndi-name>InterviewEJBHome</jndi-name>
+         <local-jndi-name>InterviewEJBLocalHome</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+
+      </entity>
+
+      <session>
+         <ejb-name>InterviewSB</ejb-name>
+         <jndi-name>ejb/InterviewSB</jndi-name>
+         <local-jndi-name>InterviewSBLocal</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+      </session>
+      <session>
+         <ejb-name>QuestionSB</ejb-name>
+         <jndi-name>QuestionSB</jndi-name>
+         <local-jndi-name>QuestionSBLocal</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+      </session>
+      <session>
+         <ejb-name>ConfigurationSB</ejb-name>
+         <jndi-name>ejb/ConfigurationSB</jndi-name>
+         <local-jndi-name>ConfigurationSBLocal</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+      </session>
+      <session>
+         <ejb-name>StudySB</ejb-name>
+         <jndi-name>ejb/StudySB</jndi-name>
+         <local-jndi-name>StudySBLocal</local-jndi-name>
+
+        <method-attributes>
+        </method-attributes>
+      </session>
+
+    <!--
+      write a merge file jboss-webservices.ent for webservice-description 
+    -->
+
+   </enterprise-beans>
+
+     <!--
+       To specify your own assembly descriptor info here, add a file to your
+       XDoclet merge directory called jboss-assembly-descriptor.xml that contains
+       the <assembly-descriptor></assembly-descriptor> markup.
+     -->
+   <assembly-descriptor>
+    <!-- message destinations -->
+     <!--
+       To specify additional message-destination elements, add a file in the merge
+       directory called jboss-message-destinations.ent that contains them.
+     -->
+   </assembly-descriptor>
+
+   <resource-managers>
+   </resource-managers>
+
+  <!--
+    | for container settings, you can merge in jboss-container.xml
+    | this can contain <invoker-proxy-bindings/> and <container-configurations/>
+  -->
+
+</jboss>
