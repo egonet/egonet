@@ -28,8 +28,6 @@ public class StructuralMeasuresPanel extends JPanel {
 
 	private GraphRenderer graphRenderer;
 
-	private GraphData graphData;
-
 	public static enum StructuralMeasures {
 		DegreeCentrality, BetweennessCentrality
 	};
@@ -40,7 +38,6 @@ public class StructuralMeasuresPanel extends JPanel {
 		this.setLayout(layout);
 		layout.setAutocreateGaps(true);
 		layout.setAutocreateContainerGaps(true);
-		graphData = new GraphData();
 		createComponents();
 	}
 

@@ -35,8 +35,6 @@ public class EdgeShapePanel extends JPanel {
 
 	private GraphRenderer graphRenderer;
 
-	private GraphData graphData;
-
 	private JButton applyButton;
 
 	List<Selection> selectionList = new ArrayList<Selection>();
@@ -51,7 +49,6 @@ public class EdgeShapePanel extends JPanel {
 		this.setLayout(layout);
 		layout.setAutocreateGaps(true);
 		layout.setAutocreateContainerGaps(true);
-		graphData = new GraphData();
 		createComponents();
 	}
 

@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
 import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
@@ -79,12 +80,9 @@ public class GraphSettings {
 				}
 			}
 		}
-
-		createSettingsFile();
-
 	}
 
-	private void createSettingsFile() {
+	public void saveSettingsFile(File file) {
 		try {
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
@@ -95,25 +93,21 @@ public class GraphSettings {
 			studyElement.setAttribute("StudyId", studyID);
 			doc.appendChild(studyElement);
 
+			for(GraphSettingsEntry entry : QAsettings)
+			    entry.writeEntryElement(doc, studyElement);
+            
 			TransformerFactory tranFactory = TransformerFactory.newInstance();
 			Transformer aTransformer = tranFactory.newTransformer();
-
-			final File currentDirectory = new File(EgoClient.storage
-					.getPackageFile().getParent(), "Graphs");
-			currentDirectory.mkdir();
-
-			String[] name = EgoClient.interview.getName();
-			String fileName = "/" + name[0] + "_" + name[1] + ".xml";
-			File file = new File(currentDirectory.getAbsolutePath() + fileName);
+			aTransformer.setOutputProperty("indent", "yes");
+			aTransformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
 			Source src = new DOMSource(doc);
 			Result dest = new StreamResult(file);
 			aTransformer.transform(src, dest);
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Throwable ex) {
+			throw new RuntimeException(ex);
 		}
-
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {
@@ -217,7 +211,7 @@ public class GraphSettings {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
 				nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
-		updateSettingsFile(entry);
+		//updateSettingsFile(entry);
 		displaySettings();
 	}
 
@@ -226,33 +220,8 @@ public class GraphSettings {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
 				edgeProperty, GraphSettingType.Edge);
 		QAsettings.add(entry);
-		updateSettingsFile(entry);
+		//updateSettingsFile(entry);
 		displaySettings();
-	}
-
-	private void updateSettingsFile(GraphSettingsEntry entry) {
-		try {
-			final File currentDirectory = new File(EgoClient.storage
-					.getPackageFile().getParent(), "Graphs");
-			String[] name = EgoClient.interview.getName();
-			String fileName = "/" + name[0] + "_" + name[1] + ".xml";
-			File file = new File(currentDirectory.getAbsolutePath() + fileName);
-
-			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-			Document doc = docBuilder.parse(file);
-			Element rootElement = doc.getDocumentElement();
-			entry.writeEntryElement(doc, rootElement);
-			
-			TransformerFactory tranFactory = TransformerFactory.newInstance();
-			Transformer aTransformer = tranFactory.newTransformer();
-			Source src = new DOMSource(doc);
-			Result dest = new StreamResult(file);
-			aTransformer.transform(src, dest);
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	private void displaySettings() {
@@ -268,7 +237,7 @@ public class GraphSettings {
 				.println("\n-------------------------------------------------------");
 	}
 
-	public Iterator getQAsettingsIterator() {
+	public Iterator<GraphSettingsEntry> getQAsettingsIterator() {
 		return QAsettings.iterator();
 	}
 
@@ -298,7 +267,7 @@ public class GraphSettings {
 		return alterToolTip[alterIndex];
 	}
 
-	public Iterator getEdgeIterator() {
+	public Iterator<Edge> getEdgeIterator() {
 		return edgeSettingsMap.keySet().iterator();
 	}
 
@@ -311,10 +280,10 @@ public class GraphSettings {
 	}
 
 	public void printEdgeMap() {
-		Iterator iterator = getEdgeIterator();
+		Iterator<Edge> iterator = getEdgeIterator();
 		System.out.println("***********Edge Map************");
 		while (iterator.hasNext()) {
-			Edge e = (Edge) iterator.next();
+			Edge e = iterator.next();
 			System.out.println(e.toString() + ":"
 					+ edgeSettingsMap.get(e).toString());
 		}

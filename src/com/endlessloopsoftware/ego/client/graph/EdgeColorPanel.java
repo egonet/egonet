@@ -35,8 +35,6 @@ public class EdgeColorPanel extends JPanel {
 
 	private GraphRenderer graphRenderer;
 
-	private GraphData graphData;
-
 	private JButton applyButton;
 
 	public static boolean[][] edgesSelected;
@@ -51,7 +49,6 @@ public class EdgeColorPanel extends JPanel {
 		this.setLayout(layout);
 		layout.setAutocreateGaps(true);
 		layout.setAutocreateContainerGaps(true);
-		graphData = new GraphData();
 		createComponents();
 	}
 

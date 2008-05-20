@@ -17,6 +17,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
 
@@ -53,48 +65,37 @@ public class ClientFrame extends JFrame {
 
 	private final JMenu jMenuGraph = new JMenu("Graph");
 
-	private final JMenuItem graphProperties = new JMenuItem(
-			"Graph Properties");
+	private final JMenuItem graphProperties = new JMenuItem("Graph Properties");
 
-	private final JMenuItem nodeProperties = new JMenuItem(
-			"Node Properties");
+	private final JMenuItem nodeProperties = new JMenuItem("Node Properties");
 
-	private final JMenuItem edgeProperties = new JMenuItem(
-			"Edge Properties");
+	private final JMenuItem edgeProperties = new JMenuItem("Edge Properties");
 
 	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
-	private final JMenuItem saveStudySummary = new JMenuItem(
-			"Save Study Summary");
+	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
 
 	private final JMenuItem exit = new JMenuItem("Exit");
 
-	public final JMenuItem saveAlterSummary = new JMenuItem(
-			"Save Alter Summary");
+	public final JMenuItem saveAlterSummary = new JMenuItem("Save Alter Summary");
 
-	public final JMenuItem saveTextSummary = new JMenuItem(
-			"Save Text Answer Summary");
+	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
 
-	public final JMenuItem saveAdjacencyMatrix = new JMenuItem(
-			"Save Adjacency Matrix");
+	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
 
-	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem(
-			"Save Weighted Adjacency Matrix");
+	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as JPEG image");
 
-	public final JMenuItem saveGraphSettings = new JMenuItem(
-			"Save graph settings");
+	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 
-	public final JMenuItem recalculateStatistics = new JMenuItem(
-			"Recalculate Statistics");
+	public final JMenuItem recalculateStatistics = new JMenuItem("Recalculate Statistics");
 
 	public final JMenuItem close = new JMenuItem("Return to Main Menu");
 
-	public final JMenuItem saveInterviewStatistics = new JMenuItem(
-			"Save Interview Statistics");
+	public final JMenuItem saveInterviewStatistics = new JMenuItem("Save Interview Statistics");
 
 	// Construct the frame
 	public ClientFrame() {
@@ -229,7 +230,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
-			// jMenuFile.add(saveGraphSettings);
+			jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
@@ -296,32 +297,29 @@ public class ClientFrame extends JFrame {
 	}
 
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
-		String fileName;
-		fileName = EgoClient.interview.getName() + "_graphSettings";
-		File currentDirectory = new File(EgoClient.storage.getPackageFile()
-				.getParent()
-				+ "/Graphs");
-		currentDirectory.mkdir();
 
+        String[] name = EgoClient.interview.getName();
+        String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+
+        final File currentDirectory = new File(EgoClient.storage.getPackageFile().getParent(), "Graphs");
+        currentDirectory.mkdir();        
+        File file = new File(currentDirectory.getAbsolutePath() + fileName);
+            
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(currentDirectory);
 		fileChooser.setSelectedFile(new File(fileName + ".settings"));
 		fileChooser.setDialogTitle("Save Graph Settings");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setSelectedFile(file);
 
-		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
-		// Files",".jpeg");
-		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings",
-				"settings");
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings", "settings");
 		fileChooser.addChoosableFileFilter(filter);
-
+		
 		int returnValue = fileChooser.showSaveDialog(this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
-			System.out.println(settingsFile.getName());
-			// obtain the iterator for QA settings
-			Iterator iterator;
-
+			
+			GraphRenderer.getGraphSettings().saveSettingsFile(settingsFile);
 		}
 	}
 }

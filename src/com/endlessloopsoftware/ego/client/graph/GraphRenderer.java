@@ -1,5 +1,6 @@
 package com.endlessloopsoftware.ego.client.graph;
 
+import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.List;
@@ -60,7 +61,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		EdgePaintFunction, EdgeStringer, VertexStringer, EdgeStrokeFunction,
 		ToolTipFunction {
 
-	private GraphSettings graphSettings;
+	private static GraphSettings graphSettings;
 
 	private static VisualizationViewer visualizationViewer;
 
@@ -770,4 +771,14 @@ public class GraphRenderer extends PluggableRenderer implements
 	public Iterator getSettingsIterator() {
 		return graphSettings.getQAsettingsIterator();
 	}
+
+    public static GraphSettings getGraphSettings()
+    {
+        return graphSettings;
+    }
+
+    public static VisualizationViewer getVisualizationViewer()
+    {
+        return visualizationViewer;
+    }
 }
