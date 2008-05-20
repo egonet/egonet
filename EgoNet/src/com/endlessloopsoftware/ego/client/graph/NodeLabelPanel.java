@@ -37,8 +37,6 @@ public class NodeLabelPanel extends JPanel {
 
 	private GraphRenderer graphRenderer;
 
-	private GraphData graphData;
-
 	List<Selection> selectionList = new ArrayList<Selection>();
 
 	public NodeLabelPanel(GraphRenderer renderer) {
@@ -47,7 +45,6 @@ public class NodeLabelPanel extends JPanel {
 		this.setLayout(layout);
 		layout.setAutocreateGaps(true);
 		layout.setAutocreateContainerGaps(true);
-		graphData = new GraphData();
 		createComponents();
 	}
 

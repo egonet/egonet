@@ -5,6 +5,10 @@ import org.w3c.dom.Element;
 
 public class GraphSettingsEntry {
 
+    public enum GraphSettingType {
+        Node, Edge
+    }
+    
 	GraphQuestion graphQuestion = null;
 
 	GraphProperty property = null;
