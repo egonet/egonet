@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -85,7 +86,7 @@ public class ClientFrame extends JFrame {
 
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
-	public final JMenuItem saveGraph = new JMenuItem("Save Graph as JPEG image");
+	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 
 	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 
@@ -278,20 +279,28 @@ public class ClientFrame extends JFrame {
 
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(currentDirectory);
-		fileChooser.setSelectedFile(new File(fileName + ".jpeg"));
+		fileChooser.setSelectedFile(new File(fileName + ".jpg"));
 		fileChooser.setDialogTitle("Save Graph");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
-		// Files",".jpeg");
+		//ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG Image",".jpg");
 		FileFilter imageFilter = new ImageFilter();
 		fileChooser.addChoosableFileFilter(imageFilter);
 
-		int returnValue = fileChooser.showSaveDialog(this);
-		if (returnValue == JFileChooser.APPROVE_OPTION) {
+		int returnValue = JFileChooser.APPROVE_OPTION;
+		while (returnValue == JFileChooser.APPROVE_OPTION) {
+		    fileChooser.showSaveDialog(this);
 			File imageFile = fileChooser.getSelectedFile();
-			System.out.println(imageFile.getName());
-			GraphData.writeJPEGImage(imageFile);
+
+			String fmt = ImageFilter.getExtension(imageFile);
+			if(fmt != null && imageFilter.accept(imageFile))
+			{
+    			System.out.println(imageFile.getName());
+    			GraphData.writeImage(imageFile,fmt);
+    			break;
+			} else {
+			    JOptionPane.showMessageDialog(this, "I don't recognize that image format. Please try again.");
+			}
 		}
 
 	}

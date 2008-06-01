@@ -41,9 +41,6 @@ public class Answer implements Cloneable {
 
 	public static final int ALL_ADJACENT = -2;
 
-	private Answer() {
-	}
-
 	public Answer(Long Id) {
 		this(Id, null);
 	}

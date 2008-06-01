@@ -271,7 +271,7 @@ public class GraphData {
 		}
 	}
 
-	public static void writeJPEGImage(File imageFile) {
+	public static void writeImage(File imageFile, String format) {
 		int width = GraphRenderer.getVv().getWidth();
 		int height = GraphRenderer.getVv().getHeight();
 
@@ -283,7 +283,7 @@ public class GraphData {
 		graphics.dispose();
 
 		try {
-			ImageIO.write(bi, "jpeg", imageFile);
+			ImageIO.write(bi, format, imageFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
