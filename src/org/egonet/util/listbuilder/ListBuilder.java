@@ -14,7 +14,7 @@ import java.util.Observer;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ListBuilder<T> extends JPanel implements Observer {
+public class ListBuilder extends JPanel implements Observer {
 	/**
 	 * Contains a list of Selection items that can be observed as the contents
 	 * of the list change.
@@ -279,7 +279,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 
 			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter"))
+				if ((keyEvent.getKeyCode() == KeyEvent.VK_ENTER))
 					lastName.grabFocus();
 			}
 		});
@@ -294,11 +294,9 @@ public class ListBuilder<T> extends JPanel implements Observer {
 
 			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")
-						&& isLetUserPickValues())
+				if ((keyEvent.getKeyCode() == KeyEvent.VK_ENTER) && isLetUserPickValues())
 					value.grabFocus();
-				else if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals(
-						"Enter"))
+				else if ((keyEvent.getKeyCode() == KeyEvent.VK_ENTER))
 					firstName.grabFocus();
 			}
 		});
@@ -312,8 +310,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 
 			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")
-						&& isLetUserPickValues())
+				if ((keyEvent.getKeyCode() == KeyEvent.VK_ENTER) && isLetUserPickValues())
 					value.grabFocus();
 			}
 		});
@@ -332,7 +329,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 //						" when=" + keyEvent.getWhen() + " modifiers=" + keyEvent.getModifiers() +
 //						" keyCode=" + keyEvent.getKeyCode() + " keyChar=" + keyEvent.getKeyChar());
 				// if you typed on value, blank the selection
-				if (KeyEvent.getKeyText(keyEvent.getKeyCode()).equals("Enter")) {
+				if ((keyEvent.getKeyCode() == KeyEvent.VK_ENTER)) {
 					if (isNameList())
 						firstName.grabFocus();
 					else
@@ -365,10 +362,8 @@ public class ListBuilder<T> extends JPanel implements Observer {
 	 */
 	private void saveDataForSelectionOfList(KeyEvent keyEvent) {
 		Object selectionObject = jList.getSelectedValue();
-		boolean itemSelectedFromList = selectionObject != null
-				&& selectionObject instanceof Selection;
-		boolean enterPressed = KeyEvent.getKeyText(keyEvent.getKeyCode())
-				.equals("Enter");
+		boolean itemSelectedFromList = selectionObject != null && selectionObject instanceof Selection;
+		boolean enterPressed = (keyEvent.getKeyCode() == KeyEvent.VK_ENTER);
 		boolean shouldBlank = (keyEvent.getSource() == value)
 				|| (keyEvent.getSource() == lastName && isNameList() && !isLetUserPickValues())
 				|| (keyEvent.getSource() == itemName && !isNameList() && !isLetUserPickValues());
@@ -451,11 +446,10 @@ public class ListBuilder<T> extends JPanel implements Observer {
 		buttonAdd.setEnabled(false);
 		buttonAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				// simulate "Enter" key being pressed at last name
+				// simulate enter key being pressed at last name
 				if(isNameList()) {
 						try {
-							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0,
-									KeyEvent.VK_ENTER, '\n');
+							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0, KeyEvent.VK_ENTER, '\n');
 							saveDataForSelectionOfList(keyEvent);
 						} catch (Exception ex) {
 							ex.printStackTrace(System.err);
@@ -541,7 +535,7 @@ public class ListBuilder<T> extends JPanel implements Observer {
 		build();
 	}
 
-	public ObservableList getElementList() {
+	public ObservableList<Selection> getElementList() {
 		return elementList;
 	}
 
