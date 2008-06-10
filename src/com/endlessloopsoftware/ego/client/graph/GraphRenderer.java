@@ -165,7 +165,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		graphMouse = new DefaultModalGraphMouse();
 
 		// create the model that drives layouts and view updates
-		visualizationModel = new DefaultVisualizationModel(new FRLayout(graph));
+		visualizationModel = new DefaultVisualizationModel(new ELSFRLayout2(graph));
 
 		// create the regular viewer and scroller
 		visualizationViewer = new VisualizationViewer(visualizationModel, this);

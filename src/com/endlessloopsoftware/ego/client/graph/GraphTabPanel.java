@@ -119,7 +119,7 @@ public class GraphTabPanel extends JPanel {
 
 		layoutCombo.setPreferredSize(new Dimension(20, 20));
 		layoutCombo.setMaximumSize(new Dimension(20, 30));
-		layoutCombo.setSelectedItem(FRLayout.class);
+		layoutCombo.setSelectedItem(ELSFRLayout2.class);
 		layoutCombo.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// call renderer to render the graph with selected layout
