@@ -96,7 +96,9 @@ public class GraphTabPanel extends JPanel {
 		layoutOptions.add(KKLayout.class); // Kamada-Kawai
 		layoutOptions.add(FRLayout.class); // // Fruchterman-Reingold
 		layoutOptions.add(CircleLayout.class); // Vertices randomly on a circle
-		// layoutOptions.add(SpringLayout.class); // Simple force-directed spring-embedder
+		//layoutOptions.add(SpringLayout.class); // Simple force-directed spring-embedder
+		//layoutOptions.add(ELSFRLayout.class);
+		layoutOptions.add(ELSFRLayout2.class);
 		layoutOptions.add(ISOMLayout.class); // Meyer's "Self-Organizing Map" layout
 		Class[] layoutList = (Class[]) layoutOptions.toArray(new Class[0]);
 

@@ -149,12 +149,14 @@ public class EgoStore extends Observable {
 		jNewStudyChooser.setDialogTitle("Select Study Definition File");
 
 		if (getPackageFile() != null) {
-			jNewStudyChooser.setCurrentDirectory(getPackageFile()
-					.getParentFile());
+			jNewStudyChooser.setCurrentDirectory(getPackageFile().getParentFile());
 		} else {
-			if (prefs != null)
-				directory = new File(prefs.get(FILE_PREF, "."));
-			directory = new File(".");
+			String userHome = ".";
+			try { 
+				userHome = System.getProperty("user.home",".");
+			} catch (Throwable t) {	}
+			//if (prefs != null) directory = new File(prefs.get(FILE_PREF, "."));
+			directory = new File(userHome);
 			jNewStudyChooser.setCurrentDirectory(directory);
 		}
 

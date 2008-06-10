@@ -7,6 +7,7 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
+import java.awt.Dimension;
 import java.util.Iterator;
 
 import cern.colt.matrix.DoubleMatrix1D;
@@ -63,11 +64,11 @@ public class ELSFRLayout
          }
       }
    }
-
+   
    /**
-    * Returns the current temperature and number of iterations elapsed, as a
-    * string.
-    */
+	 * Returns the current temperature and number of iterations elapsed, as a
+	 * string.
+	 */
    public String getStatus()
    {
       return status;
@@ -124,7 +125,7 @@ public class ELSFRLayout
       for (Iterator iter = getVisibleVertices().iterator(); iter.hasNext();)
       {
          Vertex v1 = (Vertex) iter.next();
-         if (dontMove(v1))
+         if (isLocked(v1))
             continue;
          calcRepulsion(v1);
       }
@@ -144,7 +145,7 @@ public class ELSFRLayout
       for (Iterator iter = getVisibleVertices().iterator(); iter.hasNext();)
       {
          Vertex v = (Vertex) iter.next();
-         if (dontMove(v))
+         if (isLocked(v))
             continue;
          calcPositions(v);
       }
@@ -228,7 +229,7 @@ public class ELSFRLayout
       for (Iterator iter2 = getVisibleVertices().iterator(); iter2.hasNext();)
       {
          Vertex v2 = (Vertex) iter2.next();
-         if (dontMove(v2))
+         if (isLocked(v2))
             continue;
          if (v1 != v2)
          {

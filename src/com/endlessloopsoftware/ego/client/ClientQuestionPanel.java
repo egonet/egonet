@@ -565,8 +565,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerButtons[i].setText("("
 							+ question.selections[i].getValue() + ") "
 							+ question.selections[i].getString());
-					System.out.println("Question selection index=" + i + ", " + "Text : "
-							+ answerButtons[i].getText());
+					//System.out.println("Question selection index=" + i + ", " + "Text : " + answerButtons[i].getText());
 					answerButtons[i].setVisible(true);
 					answerButtons[i]
 							.setEnabled((EgoClient.uiPath == EgoClient.DO_INTERVIEW)
