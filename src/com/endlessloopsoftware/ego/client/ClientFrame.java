@@ -7,9 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.Iterator;
-
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -18,24 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
-
-import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.graph.*;
-import com.endlessloopsoftware.elsutils.AboutBox;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
 
@@ -289,7 +271,7 @@ public class ClientFrame extends JFrame {
 
 		int returnValue = JFileChooser.APPROVE_OPTION;
 		while (returnValue == JFileChooser.APPROVE_OPTION) {
-		    fileChooser.showSaveDialog(this);
+			returnValue = fileChooser.showSaveDialog(this);
 			File imageFile = fileChooser.getSelectedFile();
 
 			String fmt = ImageFilter.getExtension(imageFile);
