@@ -19,8 +19,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.jboss.logging.Logger;
-
-import com.endlessloopsoftware.egonet.InterviewPosition;
 import com.endlessloopsoftware.egonet.interfaces.InterviewSBLocal;
 import com.endlessloopsoftware.egonet.web.WebShared;
 
@@ -42,20 +40,8 @@ public final class TutorialAction extends ELSAction
 			throws IOException, ServletException
 	{
 		Logger             logger   = Logger.getLogger(this.getClass());
-		InterviewPosition  position = null;
 		
 		logger.debug("TutorialAction::perform");
-		
-		// Lookup Interview
-		try 
-		{
-			position = WebShared.retrieveInterviewPosition(request);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			throw new IOException(e.getMessage());
-		}
 		
 		return (mapping.findForward(WebShared.FORWARD_POSITION));
 	}

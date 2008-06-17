@@ -1,12 +1,10 @@
 package com.endlessloopsoftware.ego.client;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import javax.swing.filechooser.*;
 
 public class ImageFilter extends FileFilter {

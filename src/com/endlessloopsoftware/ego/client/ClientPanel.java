@@ -9,7 +9,6 @@ package com.endlessloopsoftware.ego.client;
  */
 
 import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
@@ -28,14 +27,9 @@ import com.endlessloopsoftware.ego.Study;
 public class ClientPanel 
 	extends JPanel
 {
- 	
-  private final 			GridBagLayout gridBagLayout1        = new GridBagLayout();
-
-	
-	private JLabel 			titleLabel;
+ 	private JLabel 			titleLabel;
 	private JButton 		selectStudyButton;
 	private JButton 		statisticsButton;
-	private JButton			gradientStatisticsButton;
 	private JButton 		viewInterviewButton;
 	private JButton 		startInterviewButton;
 
@@ -54,7 +48,6 @@ public class ClientPanel
 			selectStudyButton    = (JButton) DialogResource.getComponentByName(panel, "SelectStudy");
 			viewInterviewButton 	= (JButton) DialogResource.getComponentByName(panel, "ViewInterview");
 			statisticsButton 		= (JButton) DialogResource.getComponentByName(panel, "SummaryStatistics");
-			gradientStatisticsButton = (JButton)DialogResource.getComponentByName(panel,"GradientStatistics");
 			startInterviewButton = (JButton) DialogResource.getComponentByName(panel, "StartInterview");
 			titleLabel 				= (JLabel) DialogResource.getComponentByName(panel, "Title");
 			studyNameLabel       = (JLabel) DialogResource.getComponentByName(panel, "StudyName");

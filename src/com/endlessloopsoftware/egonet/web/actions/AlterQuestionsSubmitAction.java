@@ -27,8 +27,6 @@ import org.jboss.logging.Logger;
 
 import com.endlessloopsoftware.egonet.interfaces.InterviewEJBLocal;
 import com.endlessloopsoftware.egonet.interfaces.InterviewSBLocal;
-import com.endlessloopsoftware.egonet.interfaces.InterviewSBLocalHome;
-import com.endlessloopsoftware.egonet.interfaces.InterviewSBUtil;
 import com.endlessloopsoftware.egonet.util.AnswerDataValue;
 import com.endlessloopsoftware.egonet.util.InterviewDataValue;
 import com.endlessloopsoftware.egonet.web.WebShared;
@@ -106,27 +104,7 @@ public final class AlterQuestionsSubmitAction extends ELSAction
 		}
 		
 		return (mapping.findForward(WebShared.FORWARD_SUCCESS));
-	}
-	
-	// Grab Interview
-	private InterviewSBLocal getInterviewSB()
-	{
-		if (_interviewSB == null)
-		{	
-			try
-			{
-				InterviewSBLocalHome interviewSBHome = InterviewSBUtil.getLocalHome();
-				_interviewSB = interviewSBHome.create();
-			} 
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		return _interviewSB;
-	}
-	
+	}	
 }
 
 

@@ -12,26 +12,16 @@ import java.io.File;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.Set;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import edu.uci.ics.jung.graph.ArchetypeEdge;
-import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.EdgeStringer;
 import edu.uci.ics.jung.graph.decorators.StringLabeller;
 import edu.uci.ics.jung.graph.decorators.VertexFontFunction;
 import edu.uci.ics.jung.visualization.*;
-import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-import edu.uci.ics.jung.visualization.contrib.KKLayout;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 
 import javax.imageio.ImageIO;
@@ -287,32 +277,6 @@ public class GraphData {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/*
-		 * Color bg = GraphRenderer.getVv().getBackground(); Rectangle rect =
-		 * calculateGraphRect(); Dimension size = rect.getSize();
-		 * size.setSize(size.width + OFFSET * 2, size.height + OFFSET * 2);
-		 * BufferedImage bi = new BufferedImage(size.width, size.height,
-		 * BufferedImage.TYPE_INT_BGR); Graphics2D graphics =
-		 * bi.createGraphics(); graphics.setColor(bg); graphics.fillRect(0, 0,
-		 * size.width, size.height); Dimension visibleSize =
-		 * GraphRenderer.getVv().getSize();
-		 *  // Hide the visualization viewer, resize it to entire graph size and
-		 * move the graph to // upper most left corner of the viewr.
-		 * GraphRenderer.getVv().setVisible(false);
-		 * GraphRenderer.getVv().setSize(size);
-		 * GraphRenderer.getVv().getViewTransformer().translate(OFFSET -
-		 * rect.getX(), OFFSET - rect.getY());
-		 * 
-		 * GraphRenderer.getVv().paint(graphics);
-		 *  // Return the previous size and location and redisplay the graph
-		 * GraphRenderer.getVv().getViewTransformer().translate(rect.getX() -
-		 * OFFSET, rect.getY() - OFFSET);
-		 * GraphRenderer.getVv().setSize(visibleSize);
-		 * GraphRenderer.getVv().setVisible(true);
-		 * 
-		 * try { ImageIO.write(bi, "jpeg", imageFile); } catch (IOException e) {
-		 * e.printStackTrace(); }
-		 */
 	}
 
 	public static StringLabeller getStringLabeller(Graph graph) {

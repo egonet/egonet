@@ -6,7 +6,6 @@ import javax.swing.table.TableColumnModel;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
 import java.util.*;
 import java.awt.event.*;
 
@@ -15,21 +14,16 @@ import org.egonet.util.table.LabelTableModel;
 import org.egonet.util.table.LabelRenderer;
 import com.endlessloopsoftware.ego.*;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 
 public class NodeLabelPanel extends JPanel {
 
 	private JComboBox questionCombo;
-
-	private JLabel questionLabel;
 
 	private JRadioButton questionRadio;
 
 	private JRadioButton alterNamesRadio;
 
 	private JButton applyButton;
-
-	private LabelTableModel tableModel;
 
 	private JTable table;
 
@@ -126,7 +120,6 @@ public class NodeLabelPanel extends JPanel {
 		// System.out.println("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Question.CATEGORICAL) {
-			int category = Question.ALTER_QUESTION;
 			int noOfRows = question.selections.length;
 			Selection[] rowData = new Selection[noOfRows];
 			/* change the list of selections based on the selected question */

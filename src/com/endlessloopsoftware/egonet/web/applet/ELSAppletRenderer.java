@@ -11,7 +11,6 @@ package com.endlessloopsoftware.egonet.web.applet;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 
 import com.endlessloopsoftware.egonet.web.WebShared;
@@ -30,7 +29,6 @@ public class ELSAppletRenderer extends AbstractRenderer
    private String        mSizeKey;
 
    private String        mode;
-   private GradientPaint paint   = null;
    private int           mDefaultNodeSize;
    private double        maxRank = -1;
    private double        minRank = -1;
@@ -169,7 +167,6 @@ public class ELSAppletRenderer extends AbstractRenderer
          label = label.substring(0, 14);
       }
 
-      int nodeSize = mDefaultNodeSize;
       if (mSizeKey != null)
       {
       	   try

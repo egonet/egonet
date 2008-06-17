@@ -37,7 +37,6 @@ import com.endlessloopsoftware.ego.client.statistics.models.DegreeModel;
 import com.endlessloopsoftware.ego.client.statistics.models.InterviewSummaryModel;
 import com.endlessloopsoftware.ego.client.statistics.models.QSummaryModel;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
-import com.endlessloopsoftware.ego.client.graph.GraphPanel;
 
 
 

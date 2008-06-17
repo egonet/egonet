@@ -84,7 +84,7 @@ public class Statistics
 	  //int numAlters = 2;
       int      alterindex;
       float    maxfloat, meanfloat;
-      int      maxint, meanint;
+      int      maxint;
       float    sizefloat;
       
 		try
@@ -277,32 +277,6 @@ public class Statistics
 		{
 			ex.printStackTrace();
 		}
-
-		/*********
-		 * test code
-		 */
-		/*
-		long l = System.currentTimeMillis();
-		int[][] testmatrix = new int[80][80];
-		for (int i = 0; i < 80; ++i)
-		{
-			for (int j = i; j < 80; ++j)
-			{
-				int v = (int)(Math.random() * 2);
-				testmatrix[i][j] = v;
-				testmatrix[j][i] = v;
-			}
-		
-			testmatrix[i][i] = 1;
-		}
-		generateProximityMatrix(testmatrix);
-		generateBetweennessArray(testmatrix);
-		Set testCliqueSet = identifyCliques(testmatrix);
-		identifyComponents(testCliqueSet);
-		generateDegreeArray(testmatrix);
-		l = System.currentTimeMillis() - l;
-		System.out.println(l);
-		*/
 		
 		return stats;
 	}
@@ -312,14 +286,6 @@ public class Statistics
 		for (int i = 0; i < this.adjacencyMatrix.length; ++i)
 		{
 			matrix[i][i] = 0;
-		}
-	}
-
-	private void setIdentity(int[][] matrix)
-	{
-		for (int i = 0; i < this.adjacencyMatrix.length; ++i)
-		{
-			matrix[i][i] = 1;
 		}
 	}
 
@@ -556,7 +522,6 @@ public class Statistics
    {
       int[] newarray    = new int[ce];
       int   nod, fixp   = 0;
-      int   db          = -1;
       int   newne, newce, i, j, count, pos = 0, p, s = 0, sel, minnod;
 
       minnod   = ce;
@@ -589,12 +554,10 @@ public class Statistics
             if (i < ne)
             {
                s = pos;
-               db = 0;
             }
             else
             {
                s     = i;
-               db    = 1;
                nod   = 1;
             }
          }
@@ -965,9 +928,7 @@ public class Statistics
 	{
 		List qList;
 		Iterator qIt;
-		int parsePtr;
-		String s;
-
+		
 		qList = _interview.getEgoAnswers();
 		qIt = qList.iterator();
 		while (qIt.hasNext())

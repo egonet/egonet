@@ -11,7 +11,6 @@ package com.endlessloopsoftware.egonet.web.servlet;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 
 import edu.uci.ics.jung.graph.Edge;
@@ -26,8 +25,6 @@ import edu.uci.ics.jung.visualization.AbstractRenderer;
 public class ELSRenderer extends AbstractRenderer
 {
    private String mSizeKey;
-
-   private GradientPaint paint   = null;
    private int mDefaultNodeSize;
    private double maxRank = -1;
    private double minRank = -1;

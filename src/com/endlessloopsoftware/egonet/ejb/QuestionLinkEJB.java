@@ -17,8 +17,6 @@ import javax.ejb.RemoveException;
 
 import com.endlessloopsoftware.egonet.data.QuestionLinkDataValue;
 import com.endlessloopsoftware.egonet.interfaces.QuestionEJBLocal;
-import com.endlessloopsoftware.egonet.interfaces.QuestionEJBLocalHome;
-import com.endlessloopsoftware.egonet.interfaces.QuestionEJBUtil;
 import com.endlessloopsoftware.egonet.interfaces.QuestionLinkEJBPK;
 
 /**
@@ -129,7 +127,6 @@ public abstract class QuestionLinkEJB implements EntityBean {
 		this.setQuestionLinkDataValue(data);
 
 		try {
-			QuestionEJBLocalHome questionHome = QuestionEJBUtil.getLocalHome();
 			// QuestionEJBLocal question = questionHome.findByPrimaryKey(new
 			// QuestionEJBPK(data.getQuestionId(), studyId));
 			this.setQuestion(question);

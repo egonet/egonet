@@ -5,8 +5,6 @@ import java.util.*;
 import javax.swing.*;
 
 import com.endlessloopsoftware.ego.client.graph.GraphTabPanel;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import com.endlessloopsoftware.ego.client.statistics.StatisticsFrame;
 
 public class GraphPanel extends javax.swing.JPanel {
 	private JSplitPane mainSplitPane;

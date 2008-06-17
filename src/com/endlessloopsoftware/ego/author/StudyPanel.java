@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,8 +27,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-
-import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.elsutils.documents.WholeNumberDocument;
 
 /**
@@ -37,7 +34,6 @@ import com.endlessloopsoftware.elsutils.documents.WholeNumberDocument;
  */
 public class StudyPanel extends JPanel
 {
-	private final EgoFrame 			frame;
 	private final GridBagLayout	study_layout				= new GridBagLayout();
 	private final JLabel				study_path_label			= new JLabel("Study Path:");
 	private final JLabel				study_path_field			= new JLabel("< none selected >");
@@ -60,7 +56,6 @@ public class StudyPanel extends JPanel
 	 */
 	public StudyPanel(EgoFrame parent)
 	{
-		frame 	= parent;
 
 		try
 		{

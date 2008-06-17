@@ -41,7 +41,6 @@ public class QuestionDataValue
    private boolean citationHasBeenSet = false;
    private Set AnswerDataValues = new java.util.HashSet();
    private com.endlessloopsoftware.egonet.data.QuestionLinkDataValue QuestionLinkDataValue;
-   private boolean QuestionLinkDataValueHasBeenSet = false;
    private Set SelectionDataValues = new java.util.TreeSet();
 
    private com.endlessloopsoftware.egonet.interfaces.QuestionEJBPK pk;
@@ -93,7 +92,6 @@ public class QuestionDataValue
 	  this.AnswerDataValues = otherValue.AnswerDataValues;
 	// TODO Clone is better no ?
 	  this.QuestionLinkDataValue = otherValue.QuestionLinkDataValue;
-	  QuestionLinkDataValueHasBeenSet = true;
 	// TODO Clone is better no ?
 	  this.SelectionDataValues = otherValue.SelectionDataValues;
 
@@ -340,7 +338,6 @@ public class QuestionDataValue
    public void setQuestionLinkDataValue( com.endlessloopsoftware.egonet.data.QuestionLinkDataValue QuestionLinkDataValue )
    {
 	  this.QuestionLinkDataValue = QuestionLinkDataValue;
-	  QuestionLinkDataValueHasBeenSet = true;
    }
    protected Set addedSelectionDataValues = new java.util.HashSet();
    protected Set onceAddedSelectionDataValues = new java.util.HashSet();

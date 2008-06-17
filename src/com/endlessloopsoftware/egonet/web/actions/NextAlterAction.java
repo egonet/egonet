@@ -52,14 +52,12 @@ public final class NextAlterAction
    {
       InterviewPosition    position;
       StudyEJBLocal        study;
-      int                  start;
 
       logger.debug(this.getClass().getName() + "::PERFORM");
 
       try
       {
          position = WebShared.retrieveInterviewPosition(request);
-         start = position.getGlobalPosition();
          study = getStudy();
 
          /* Update Interview if were down to 1 alter needed */

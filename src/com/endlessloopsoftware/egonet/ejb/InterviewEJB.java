@@ -482,7 +482,6 @@ public abstract class InterviewEJB
    {
       try
       {
-         AnswerEJBPK pk = new AnswerEJBPK(added.getId());
          AnswerEJBLocalHome home = AnswerEJBUtil.getLocalHome();
          AnswerEJBLocal relation = home.create(added);
          getAnswers().add(relation);

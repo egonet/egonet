@@ -46,7 +46,6 @@ public class Study extends Observable
    private List[]            _questionOrder  = new List[Question.NUM_QUESTION_TYPES];
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
-   private int               _totalQuestions = -1;
    private static Properties _prop           = new Properties();
 
   /**
@@ -915,7 +914,7 @@ public class Study extends Observable
 	 */
 	public void readQuestions(Document document)
 	{
-		Element root, question;
+		Element root;
 		Elements questions;
 
 		/**

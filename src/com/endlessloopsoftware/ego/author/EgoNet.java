@@ -1,8 +1,5 @@
 package com.endlessloopsoftware.ego.author;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-
 import javax.swing.JFrame;
 
 import com.endlessloopsoftware.ego.Shared;

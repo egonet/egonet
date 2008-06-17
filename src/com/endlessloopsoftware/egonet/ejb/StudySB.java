@@ -130,7 +130,7 @@ public class StudySB extends EgoSB
 			// Make sure this study name is unique
 			StudyEJBLocal study = getLocalHome().findByStudyName(data.getStudyName());
 			
-			throw new CreateException("There is already a study with this name.\n Please choose a different Name");
+			throw new CreateException("There is already a study with this name " +study +". Please choose a different Name");
 		}
 		catch (NamingException e)
 		{

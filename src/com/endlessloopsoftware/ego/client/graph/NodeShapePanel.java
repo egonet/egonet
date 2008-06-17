@@ -10,14 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
-import java.awt.event.*;
 
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
 import com.endlessloopsoftware.ego.*;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 
 public class NodeShapePanel extends JPanel {
 
@@ -27,15 +25,11 @@ public class NodeShapePanel extends JPanel {
 
 	private JComboBox shapeCombo;
 
-	private PropertyTableModel tableModel;
-
 	private JTable table;
 
 	private GroupLayout layout;
 
 	private GraphRenderer graphRenderer;
-
-	private GraphData graphData;
 
 	private JButton applyButton;
 
@@ -47,7 +41,6 @@ public class NodeShapePanel extends JPanel {
 		this.setLayout(layout);
 		layout.setAutocreateGaps(true);
 		layout.setAutocreateContainerGaps(true);
-		graphData = new GraphData();
 		createComponents();
 	}
 
@@ -115,7 +108,6 @@ public class NodeShapePanel extends JPanel {
 		// System.out.println("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Question.CATEGORICAL) {
-			int category = Question.ALTER_QUESTION;
 			int noOfRows = question.selections.length;
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
@@ -221,14 +213,10 @@ public class NodeShapePanel extends JPanel {
 	}
 
 	private void updateNodeShape() {
-
-		int noOfAlters = EgoClient.interview.getNumAlters();
 		Question question = (Question) questionCombo.getSelectedItem();
 		if (question.answerType == Question.CATEGORICAL) {
 			for (int i = 0; i < question.selections.length; i++) {
 				Selection selection = question.selections[i];
-				List<Integer> alterList = graphData.getAlterNumbers(question,
-						selection);
 
 				GraphQuestion graphQuestion = new GraphQuestion(question,
 						selection, Question.ALTER_QUESTION);

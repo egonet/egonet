@@ -1,8 +1,5 @@
 package com.endlessloopsoftware.ego.client.statistics;
 
-import java.util.Map;
-import java.util.HashMap;
-
 /**
  * <p>Title: Egocentric Network Researcher</p>
  * <p>Description: Configuration Utilities for an Egocentric network study</p>

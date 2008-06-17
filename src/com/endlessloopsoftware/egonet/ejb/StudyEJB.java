@@ -309,7 +309,6 @@ public abstract class StudyEJB implements EntityBean
 	public InterviewPosition[] getInterviewTemplate()
 	{
       InterviewPosition[] template = null;
-      String uiType = getUIType();
       
       if (isAppletUI())
       {

@@ -70,7 +70,6 @@ public class GraphSettings {
 							renderer.get_vertexArray()[i], renderer
 									.get_vertexArray()[j]);
 					renderer.getGraph().addEdge(edge);
-					// System.out.println("Adding Edge");
 					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
 							.toString();
 					EdgeProperty edgeProperty = new EdgeProperty(label,
@@ -226,15 +225,13 @@ public class GraphSettings {
 
 	private void displaySettings() {
 
-		System.out
-				.println("---------------QA SETTINGS CONTENTS ----------------------------");
+		//System.out.println("---------------QA SETTINGS CONTENTS ----------------------------");
 		int size = QAsettings.size();
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
 			System.out.println(entry.toString());
 		}
-		System.out
-				.println("\n-------------------------------------------------------");
+		//System.out.println("\n-------------------------------------------------------");
 	}
 
 	public Iterator<GraphSettingsEntry> getQAsettingsIterator() {
@@ -253,7 +250,6 @@ public class GraphSettings {
 			String answerString = "";
 			Question question = EgoClient.study.getQuestion(answer.questionId);
 			if (question.questionType == Question.ALTER_QUESTION) {
-				// System.out.println(answer.getString());
 				questionTitle = question.title;
 				answerString = answer.string;
 				int[] alters = answer.getAlters();
@@ -277,16 +273,6 @@ public class GraphSettings {
 
 	public void emptyEdgeSettingsMap() {
 		edgeSettingsMap.clear();
-	}
-
-	public void printEdgeMap() {
-		Iterator<Edge> iterator = getEdgeIterator();
-		System.out.println("***********Edge Map************");
-		while (iterator.hasNext()) {
-			Edge e = iterator.next();
-			System.out.println(e.toString() + ":"
-					+ edgeSettingsMap.get(e).toString());
-		}
 	}
 
 	public boolean isEdgeVisible(Edge edge) {

@@ -316,45 +316,6 @@ public class QuestionLinkDataValue
 	  return result;
     }
 
-    /**
-     * Covariant function so the compiler can choose the proper one at compile time,
-     * eliminates the need for XDoclet to really understand compiletime typing.
-     *
-     * Read only collections need to be synchronized. Once we start giving out handles
-     * to these collections, they'll be used in other threads sooner or later. 
-     */
-    private static java.util.Collection wrapCollection(java.util.Collection input) {
-        return java.util.Collections.synchronizedCollection(input);
-    }
-    /**
-     * Covariant function so the compiler can choose the proper one at compile time,
-     * eliminates the need for XDoclet to really understand compiletime typing.
-     *
-     * Read only collections need to be synchronized. Once we start giving out handles
-     * to these collections, they'll be used in other threads sooner or later. 
-     */
-    private static java.util.Set wrapCollection(java.util.Set input) {
-        return java.util.Collections.synchronizedSet(input);
-    }
-    /**
-     * Covariant function. This is used in covariant form so that the compiler
-     * can do some of our conditional branches for us. If I made these functions
-     * have different names, then XDoclet would have to choose between them based on 
-     * compiletime types, that wouldn't be easy. 
-     */
-    private static java.util.Collection wrapReadOnly(java.util.Collection input) {
-        return java.util.Collections.unmodifiableCollection(input);
-    }
-    /**
-     * Covariant function. This is used in covariant form so that the compiler
-     * can do some of our conditional branches for us. If I made these functions
-     * have different names, then XDoclet would have to choose between them based on 
-     * compiletime types, that wouldn't be easy. 
-     */
-    private static java.util.Set wrapReadOnly(java.util.Set input) {
-        return java.util.Collections.unmodifiableSet(input);
-    }
-
     private final class ReadOnlyQuestionLinkDataValue 
     implements java.lang.Cloneable, java.io.Serializable 
     {

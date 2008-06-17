@@ -71,6 +71,8 @@ public class ClientFrame extends JFrame {
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 
 	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
+	
+	public final JMenuItem applyGraphSettings = new JMenuItem("Apply graph settings");
 
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 
@@ -139,6 +141,12 @@ public class ClientFrame extends JFrame {
 				} catch (FileCreateException ex) {
 					ex.printStackTrace();
 				}
+			}
+		});
+		
+		applyGraphSettings.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				applyGraphSettings_actionPerformed(e);
 			}
 		});
 
@@ -214,6 +222,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
 			jMenuFile.add(saveGraphSettings);
+			jMenuFile.add(applyGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
@@ -312,5 +321,9 @@ public class ClientFrame extends JFrame {
 			
 			GraphRenderer.getGraphSettings().saveSettingsFile(settingsFile);
 		}
+	}
+	
+	void applyGraphSettings_actionPerformed(ActionEvent e){
+		
 	}
 }

@@ -6,7 +6,6 @@
  */
 package com.endlessloopsoftware.egonet.web.servlet;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -157,7 +156,6 @@ public class InterviewDataServlet extends HttpServlet
       int[][]           matrix            = null;
       Long              interviewId;
       PrintWriter       out               = null;
-      BufferedReader    inTest            = null;
 
       try
       {

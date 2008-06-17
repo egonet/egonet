@@ -470,7 +470,6 @@ public class AnswerDataValue
 		QuestionDataValue qd	= getQuestion().getQuestionDataValue();
 		StringBuffer str 				= new StringBuffer();
 		String itemName			= name + "[" + index + "].answerString";
-		String value					= (getAnswerString() == null) ? "" : getAnswerString();
 
 		if (getQuestion().getAnswerType() == Shared.TEXT)
 		{	
@@ -577,10 +576,6 @@ public class AnswerDataValue
 	public boolean equals(Object other)
 	{
 		AnswerDataValue that = (AnswerDataValue) other;
-		
-//		logger.debug("Equating:");
-//		logger.debug("     " + this);
-//		logger.debug("     " + that);
 
 		if (	this._studyId.equals(that._studyId) &&
 				this.getQuestionId().equals(that.getQuestionId()) &&
@@ -598,10 +593,6 @@ public class AnswerDataValue
 	public int compareTo(Object arg0) 
 	{	
 		AnswerDataValue that = (AnswerDataValue) arg0;
-		
-//		logger.debug("Comparing:");
-//		logger.debug("     " + this);
-//		logger.debug("     " + that);
 		
 		int rval = this._studyId.compareTo(that._studyId);
 		

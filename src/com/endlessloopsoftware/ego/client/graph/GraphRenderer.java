@@ -12,10 +12,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 import edu.uci.ics.jung.visualization.PluggableRenderer;
-import com.endlessloopsoftware.ego.*;
 import org.egonet.util.listbuilder.Selection;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.QuestionList;
 import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 
@@ -48,9 +46,6 @@ import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.graph.ArchetypeEdge;
 import edu.uci.ics.jung.graph.decorators.EdgeShapeFunction;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.StringLabeller;
-import edu.uci.ics.jung.graph.decorators.StringLabeller.UniqueLabelException;
 import edu.uci.ics.jung.graph.impl.SparseVertex;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
@@ -75,17 +70,11 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private VisualizationModel visualizationModel;
 
-	private StringLabeller undirectedLabeler;
-
 	private Vertex[] _vertexArray = null;
-
-	private int[][] adjacencyMatrix;
 
 	private String[] alterList;
 
 	private Statistics stats;
-
-	private GraphData graphData;
 
 	private static Graph graph;
 
@@ -104,9 +93,8 @@ public class GraphRenderer extends PluggableRenderer implements
 		} catch (NullPointerException ex) {
 			ex.printStackTrace(System.err);
 		}
-		graphData = new GraphData();
+		
 		graphSettings = new GraphSettings(this);
-		adjacencyMatrix = graphData.getAdjacencyMatrix();
 		this.setVertexShapeFunction(this);
 		this.setVertexPaintFunction(this);
 		this.setEdgeShapeFunction(this);
@@ -124,13 +112,11 @@ public class GraphRenderer extends PluggableRenderer implements
 	/**
 	 * Redraws the graph with the provided layout
 	 * 
-	 * @param Class
-	 *            layout
+	 * @param Class Layout
 	 */
 	public void changeLayout(Class layout) {
 		try {
-			Constructor constructor = layout
-					.getConstructor(new Class[] { Graph.class });
+			Constructor constructor = layout.getConstructor(new Class[] { Graph.class });
 			Object o = constructor.newInstance(graph);
 			Layout l = (Layout) o;
 

@@ -6,10 +6,6 @@
  */
 package com.endlessloopsoftware.egonet.client;
 
-import java.util.Properties;
-
-import com.endlessloopsoftware.egonet.framework.ClientContextFactory;
-
 /**
  * @author admin
  *
@@ -23,10 +19,10 @@ public class TestBean
 	{
 		try
 		{
-			Properties props = ClientContextFactory.get();
+/*			Properties props = ClientContextFactory.get();
 			
-		//	AnswerEJBRemoteHome answerHome = AnswerEJBUtil.getHome(props);
-/*			AnswerDataValue data = new AnswerDataValue();
+			AnswerEJBRemoteHome answerHome = AnswerEJBUtil.getHome(props);
+			AnswerDataValue data = new AnswerDataValue();
 			data.setAlters(new int[] {1, 2});
 			data.setAnswered(true);
 			data.setAnswerString("Fred");
@@ -34,7 +30,7 @@ public class TestBean
 			data.setAnswerAdjacent(false);
 			
 			answerHome.create(data);
-*/		
+*/
 		}
 		catch (Exception e)
 		{

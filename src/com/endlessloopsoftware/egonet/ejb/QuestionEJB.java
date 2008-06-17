@@ -227,7 +227,6 @@ public abstract class QuestionEJB implements EntityBean {
 	 */
 	public void addSelection(SelectionDataValue added) throws javax.ejb.CreateException {
 		try {
-			SelectionEJBPK pk = new SelectionEJBPK(added.getId());
 
 			SelectionEJBLocalHome home = SelectionEJBUtil.getLocalHome();
 

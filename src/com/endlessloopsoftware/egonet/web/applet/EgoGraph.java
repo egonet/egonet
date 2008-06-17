@@ -36,8 +36,6 @@ import javax.swing.JApplet;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.endlessloopsoftware.egonet.interfaces.InterviewSBRemote;
 import com.endlessloopsoftware.egonet.util.QuestionDataValue;
 import com.endlessloopsoftware.egonet.util.SelectionDataValue;
 import com.endlessloopsoftware.egonet.web.WebShared;
@@ -73,7 +71,6 @@ public class EgoGraph
    public static final String    LINKED      = "Linked";
    public static final Integer   NONE        = new Integer(-1);
    
-	private InterviewSBRemote _interviewSB;
    private int[][]           _matrix;
    private String[]          _alters;
    private int               _baseIndex;

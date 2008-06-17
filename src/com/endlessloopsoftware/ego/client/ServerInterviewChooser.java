@@ -18,7 +18,6 @@ import javax.ejb.FinderException;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ProgressMonitor;
@@ -58,7 +57,6 @@ public class ServerInterviewChooser
    // Declare beans.
    private JButton                loadInterviews;
    private JButton                select;
-   private JPasswordField         serverPassword;
    private JTextField             serverURL;
    private JTree                  interviewTree;
 
@@ -81,7 +79,6 @@ public class ServerInterviewChooser
 		// Attach beans to fields.
 		loadInterviews = (JButton) DialogResource.getComponentByName(panel, 			 "LoadInterviews");
 		select 			= (JButton) DialogResource.getComponentByName(panel, 			 "Select");
-		serverPassword = (JPasswordField) DialogResource.getComponentByName(panel,  "serverPassword");
 		serverURL 		= (JTextField) DialogResource.getComponentByName(panel, 		 "serverURL");
 		interviewTree 	= (JTree) DialogResource.getComponentByName(panel, 			    "interviewTree");
 

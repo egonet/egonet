@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -38,7 +36,6 @@ import electric.xml.Element;
 import electric.xml.Elements;
 
 public class Interview {
-	private final static Logger logger = Logger.getLogger("Interview");
 
 	private final Answer[] _answers;
 
@@ -256,27 +253,6 @@ public class Interview {
 	 */
 	public int getNumQuestions() {
 		return _numAnswers;
-	}
-
-	/***************************************************************************
-	 * Returns current answer from an interview Note, multiple answers may refer
-	 * to same question
-	 * 
-	 * @return i question index
-	 */
-	private Answer getCurrentAnswer() {
-		return _answers[_qIndex];
-	}
-
-	/***************************************************************************
-	 * Sets current answer from an interview
-	 * 
-	 * @param a
-	 *            new Answer
-	 */
-	private void setCurrentAnswer(Answer a) {
-		/** @todo Validate answer */
-		_answers[_qIndex] = a;
 	}
 
 	/***************************************************************************
@@ -611,9 +587,7 @@ public class Interview {
 	 */
 	public boolean isLastAlterPrompt() {
 		boolean b = false;
-		Question q = (Question) _study.getQuestions().getQuestion(
-				_answers[_qIndex].questionId);
-
+		
 		b = (getQuestion(_qIndex).questionType == Question.ALTER_PROMPT)
 				&& hasNext()
 				&& (getQuestion(_qIndex + 1).questionType != Question.ALTER_PROMPT);
@@ -642,68 +616,6 @@ public class Interview {
 		}
 
 		return s;
-	}
-
-	/***************************************************************************
-	 * Returns alter or alter pair from the index into an interview
-	 * 
-	 * @param index
-	 *            question index
-	 * @return pair int array containing alter pair
-	 * @throws NoSuchElementException
-	 */
-	private int[] calculateAlterPair(int index) {
-		int na = EgoClient.study.getNumAlters();
-		int strip = 0;
-		int primary = -1;
-		int secondary = -1;
-		int[] rval = new int[2];
-
-		try {
-			/* Start by stripping ego and alter prompt questions */
-			strip = EgoClient.study.getQuestionOrder(Question.EGO_QUESTION)
-					.size()
-					+ EgoClient.study.getQuestionOrder(Question.ALTER_PROMPT)
-							.size();
-
-			if (index < strip) {
-				throw new NoSuchElementException();
-			}
-
-			index -= strip;
-
-			/* Check alter questions */
-			strip = na
-					* EgoClient.study.getQuestionOrder(Question.ALTER_QUESTION)
-							.size();
-
-			if (index < strip) {
-				/* It's an alter question */
-				primary = index
-						/ EgoClient.study.getQuestionOrder(
-								Question.ALTER_QUESTION).size();
-				secondary = -1;
-			} else {
-				index -= strip;
-
-				if (index >= _numAlterPairs) {
-					throw new NoSuchElementException();
-				}
-
-				primary = 1;
-				while ((na - primary) < index) {
-					index -= primary;
-					primary++;
-				}
-			}
-		} catch (NoSuchElementException ex) {
-			primary = -1;
-			secondary = -1;
-		}
-
-		rval[0] = primary;
-		rval[1] = secondary;
-		return (rval);
 	}
 
 	private Question getQuestion(int index) {

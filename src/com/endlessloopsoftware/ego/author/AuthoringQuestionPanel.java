@@ -617,8 +617,6 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	 */
 	void set_selections_button_actionPerformed(ActionEvent e)
 	{
-		Point 		loc 	= getLocationOnScreen();
-		
 		//selectionsDialog.setSize(800,600);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		selectionsDialog.setSize(screenSize);

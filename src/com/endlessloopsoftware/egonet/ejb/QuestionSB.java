@@ -44,9 +44,6 @@ import com.endlessloopsoftware.egonet.util.QuestionDataValue;
  */
 public class QuestionSB extends EgoSB
 {
-   private final static Long CORRECTION_ID      = new Long(49);
-   private final static Long CORRECTION_STUDY   = new Long(-1);
-   
 	private QuestionEJBLocalHome getLocalHome()
 				throws javax.naming.NamingException
 	{

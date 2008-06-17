@@ -10,14 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
-import java.awt.event.*;
 
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
 import com.endlessloopsoftware.ego.*;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 
 public class EdgeSizePanel extends JPanel {
 
@@ -26,8 +24,6 @@ public class EdgeSizePanel extends JPanel {
 	private JComboBox questionCombo;
 
 	private JComboBox sizeCombo;
-
-	private ChoosablePropertyTableModel tableModel;
 
 	private JTable table;
 
@@ -121,7 +117,6 @@ public class EdgeSizePanel extends JPanel {
 
 	private void createTable() {
 		Question question = (Question) questionCombo.getSelectedItem();
-		int category = Question.ALTER_PAIR_QUESTION;
 		int noOfRows = question.selections.length;
 		Object[][] rowData = new Object[noOfRows][3];
 		/* change the list of selections based on the selected question */
@@ -135,7 +130,6 @@ public class EdgeSizePanel extends JPanel {
 		for (int i = 0; i < noOfRows; i++) {
 			rowData[i][0] = Boolean.FALSE;
 			rowData[i][1] = selectionList.get(i);
-			String str = ((Selection) rowData[i][1]).getString();
 		}
 		// populate the shapes
 		int noOfSizes = question.selections.length;

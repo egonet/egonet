@@ -50,7 +50,6 @@ public class CompositionalStatsModel extends StatTableModel
 
 		while (it.hasNext())
 		{
-			String[] names;
 			Set s = (Set) it.next();
 
 			componentArray[index] = new Integer[s.size()];

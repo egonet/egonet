@@ -29,8 +29,6 @@ public class EgoClient
 	public static final int		DO_INTERVIEW		= 1;
 	public static final int		VIEW_INTERVIEW		= 2;
 	public static final int		VIEW_SUMMARY		= 3;
-	
-	private boolean				packFrame			= false;
 
 	//Construct the application
 	public EgoClient()

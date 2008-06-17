@@ -51,15 +51,10 @@ public class EgoStore extends Observable {
 
 	private boolean loaded = false;
 
-	private boolean interviewLoaded = false;
-
 	private Document packageDocument = null;
 
 	private static final FileFilter packageFilter = new ExtensionFileFilter(
 			"Study Definition Files", "ego");
-
-	private static final FileFilter interviewFilter = new ExtensionFileFilter(
-			"Interview Files", "int");
 
 	private static final String FILE_PREF = "FILE_PREF";
 
@@ -273,8 +268,6 @@ public class EgoStore extends Observable {
 
 	public void selectInterview() {
 
-		int option = -1;
-
 		final File currentDirectory = new File(getPackageFile().getParent(),
 				"/Interviews/");
 
@@ -444,19 +437,15 @@ public class EgoStore extends Observable {
 			studyId = Long
 					.parseLong(document.getRoot().getAttribute("StudyId"));
 			if (studyId != EgoClient.study.getStudyId()) {
-				interviewLoaded = false;
 				interview = null;
 				throw (new FileMismatchException());
 			}
 			interview = Interview.readInterview(document.getRoot());
-			interviewLoaded = true;
 		} catch (CorruptedInterviewException ex) {
-			interviewLoaded = false;
 			interview = null;
 
 			throw (new FileReadException());
 		} catch (ParseException ex) {
-			interviewLoaded = false;
 			interview = null;
 
 			throw (new FileReadException());

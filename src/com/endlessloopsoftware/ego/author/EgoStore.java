@@ -16,10 +16,8 @@ package com.endlessloopsoftware.ego.author;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
@@ -168,7 +166,12 @@ public class EgoStore
 
                   if (confirm != JOptionPane.OK_OPTION)
                   {
+                	  //do not overwrite
                      throw new FileCreateException(true);
+                  }else{
+                	  //delete the existing file and create a new one 
+                	  newStudyFile.delete();
+                	  newStudyFile.createNewFile();                	  
                   }
                }
 
@@ -186,6 +189,7 @@ public class EgoStore
             }
             catch (java.io.IOException e)
             {
+            	e.printStackTrace();
                JOptionPane.showMessageDialog(
                		EgoNet.frame,
                		"Unable to create study file.",
@@ -281,8 +285,6 @@ public class EgoStore
    {
       JFileChooser jNewStudyChooser = new JFileChooser();
       File 				newFile;
- //     FileReader 	file = null;
-      Study 			newStudy = null;
 
       jNewStudyChooser.setCurrentDirectory(DirList.getLibraryDirectory());
       jNewStudyChooser.addChoosableFileFilter(readQuestionFilter);
@@ -319,9 +321,7 @@ public class EgoStore
     */
    public void saveStudyFile()
    {
- //     FileWriter file = null;
-      PrintWriter out = null;
-      File studyFile = getStudyFile();
+	   File studyFile = getStudyFile();
 
       try
       {
@@ -392,8 +392,6 @@ public class EgoStore
 	{
 		JFileChooser 	jNewQuestionsChooser = new JFileChooser("Save Study As...");
 		File 				newStudyFile;
-	//	FileWriter 		file 						= null;
-		PrintWriter 	out 						= null;
 		boolean 			complete					= false;
 
 		jNewQuestionsChooser.setCurrentDirectory(getStudyFile().getParentFile());
@@ -457,49 +455,6 @@ public class EgoStore
 		}
 	}
 
-   /*********************************************************************************
-    * Reads in study information from an XML DOM
-    * and arrays of question orders
-    * 
-    * @param document
-    *            XML tree containing study data
-    */
-   private void readStudyData(Document document)
-   {
-    //  String data;
-
-      Element root = document.getRoot();
-      root = root.getElement("Study");
-
-      if (root.getElement("name") != null)
-      {
-      	EgoNet.study.setStudyName(root.getTextString("name"));
-      }
-
-      if (root.getElement("numalters") != null)
-      {
-      	EgoNet.study.setNumAlters(root.getInt("numalters"));
-      }
-
-      Elements elements = root.getElements("questionorder");
-      while (elements.hasMoreElements())
-      {
-         int qOrderId;
-         List questionOrder;
-         Elements ids;
-
-         Element element = elements.next();
-         qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
-         questionOrder = (EgoNet.study.getQuestionOrderArray())[qOrderId];
-
-         ids = element.getElements("id");
-         while (ids.hasMoreElements())
-         {
-            questionOrder.add(new Long(ids.next().getLong()));
-         }
-      }
-   }
-
    /************************************************************************************************************************************************************
     * Writes Study information to a file for later retrieval Includes files paths and arrays of question orders
     * 
@@ -532,7 +487,7 @@ public class EgoStore
    private void readQuestions(Document document)
    {
     //  File f;
-      Element root, question;
+      Element root;
       Elements questions;
 
       /**

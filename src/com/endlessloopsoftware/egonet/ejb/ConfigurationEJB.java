@@ -13,8 +13,6 @@ import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
 
-import org.jboss.logging.Logger;
-
 import com.endlessloopsoftware.egonet.interfaces.ConfigurationEJBPK;
 import com.endlessloopsoftware.egonet.interfaces.StudyEJBLocal;
 import com.endlessloopsoftware.elsutils.security.SymmetricKeyEncryption;
@@ -64,8 +62,6 @@ import com.endlessloopsoftware.elsutils.security.SymmetricKeyEncryption;
  */
 public abstract class ConfigurationEJB implements EntityBean
 {
-   private final transient Logger log = Logger.getLogger(this.getClass());
-
    // There is only one instance of this bean
    private static final Byte ID = new Byte((byte) 1);
    public static final ConfigurationEJBPK pk = new ConfigurationEJBPK(ID);

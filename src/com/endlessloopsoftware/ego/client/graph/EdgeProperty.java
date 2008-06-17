@@ -2,8 +2,6 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.*;
 
-import com.endlessloopsoftware.ego.client.graph.NodeProperty.Property;
-
 public class EdgeProperty extends GraphProperty{
 
 	public static enum EdgeShape {Line, QuadCurve, CubicCurve}

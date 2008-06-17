@@ -147,8 +147,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	/* Question Iteration Variables */
 	private Question question;
 
-	private String alterName, pairName;
-
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * 
@@ -727,10 +725,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				+ String.valueOf(tempdate.getYear() + 1900) + " " + hours + " "
 				+ minutes + " " + seconds;
 		return timestamp;
-	}
-
-	private void questionButtonDone_actionPerformed(ActionEvent e) {
-		SourceSelectPanel.gotoPanel(false);
 	}
 
 	private void numberKey_actionPerformed(ActionEvent e) {

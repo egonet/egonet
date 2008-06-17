@@ -95,8 +95,6 @@ public abstract class QuestionEJBCMP
    {
 	  try
 	  {
-		  com.endlessloopsoftware.egonet.interfaces.SelectionEJBPK pk = new com.endlessloopsoftware.egonet.interfaces.SelectionEJBPK(added.getId());
-
 		 com.endlessloopsoftware.egonet.interfaces.SelectionEJBLocalHome home = com.endlessloopsoftware.egonet.interfaces.SelectionEJBUtil.getLocalHome();
 
 		 com.endlessloopsoftware.egonet.interfaces.SelectionEJBLocal relation = home.create(added);

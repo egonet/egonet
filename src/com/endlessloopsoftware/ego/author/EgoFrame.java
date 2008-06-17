@@ -19,9 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
 
 import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.Study;
-import com.endlessloopsoftware.elsutils.AboutBox;
 
 /**
  * <p>
@@ -48,7 +46,6 @@ public class EgoFrame extends JFrame implements Observer {
 	int curTab = 0;
 
 	private JPanel contentPane;
-	private boolean waitCursor = false;
 
 	private final JMenuBar jEgonetMenuBar = new JMenuBar();
 	private final JMenu jMenuFile = new JMenu("File");
@@ -469,7 +466,6 @@ public class EgoFrame extends JFrame implements Observer {
 	}
 
 	protected void setWaitCursor(boolean waitCursor) {
-		this.waitCursor = waitCursor;
 
 		if (waitCursor) {
 			this.getGlassPane().setVisible(true);
