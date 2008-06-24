@@ -70,7 +70,7 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private VisualizationModel visualizationModel;
 
-	private Vertex[] _vertexArray = null;
+	private Vertex[] vertexArray = null;
 
 	private String[] alterList;
 
@@ -85,10 +85,10 @@ public class GraphRenderer extends PluggableRenderer implements
 		stats = EgoClient.interview.getStats();
 		try {
 			alterList = stats.alterList;
-			_vertexArray = new Vertex[alterList.length];
+			vertexArray = new Vertex[alterList.length];
 			for (int i = 0; i < alterList.length; ++i) {
-				_vertexArray[i] = new SparseVertex();
-				graph.addVertex(_vertexArray[i]);
+				vertexArray[i] = new SparseVertex();
+				graph.addVertex(vertexArray[i]);
 			}
 		} catch (NullPointerException ex) {
 			ex.printStackTrace(System.err);
@@ -128,7 +128,6 @@ public class GraphRenderer extends PluggableRenderer implements
 			// TODO: change required with spring layout not FR layout
 			if (l instanceof SpringLayout) {
 				SpringLayout springLayout = (SpringLayout) l;
-				// springLayout.setMaxIterations(1000);
 			}
 			visualizationViewer.stop();
 			visualizationViewer.setGraphLayout(l, false);
@@ -252,8 +251,8 @@ public class GraphRenderer extends PluggableRenderer implements
 		visualizationViewer.repaint();
 	}
 
-	public Vertex[] get_vertexArray() {
-		return _vertexArray;
+	public Vertex[] getvertexArray() {
+		return vertexArray;
 	}
 
 	/**
@@ -471,25 +470,25 @@ public class GraphRenderer extends PluggableRenderer implements
 				switch (prop) {
 				case Color:
 					for (int alter : alterList) {
-						graphSettings.setNodeColor(_vertexArray[alter],
+						graphSettings.setNodeColor(vertexArray[alter],
 								nodeProperty.getColor());
 					}
 					break;
 				case Shape:
 					for (int alter : alterList) {
-						graphSettings.setNodeShape(_vertexArray[alter],
+						graphSettings.setNodeShape(vertexArray[alter],
 								nodeProperty.getShape());
 					}
 					break;
 				case Size:
 					for (int alter : alterList) {
-						graphSettings.setNodeSize(_vertexArray[alter],
+						graphSettings.setNodeSize(vertexArray[alter],
 								nodeProperty.getSize());
 					}
 					break;
 				case Label:
 					for (int alter : alterList) {
-						graphSettings.setNodeLabel(_vertexArray[alter],
+						graphSettings.setNodeLabel(vertexArray[alter],
 								nodeProperty.getLabel());
 					}
 					break;
@@ -539,10 +538,10 @@ public class GraphRenderer extends PluggableRenderer implements
 							Edge edge = (Edge) edgeIterator.next();
 							// System.out.println("Edge:" + edge.toString());
 							if ((edge.getEndpoints().getFirst()
-									.equals(_vertexArray[(Integer) pair
+									.equals(vertexArray[(Integer) pair
 											.getFirst()]))
 									&& (edge.getEndpoints().getSecond()
-											.equals(_vertexArray[(Integer) pair
+											.equals(vertexArray[(Integer) pair
 													.getSecond()]))) {
 								// System.out.println(edge.toString()
 								// + " already exists...updating color");
@@ -556,8 +555,8 @@ public class GraphRenderer extends PluggableRenderer implements
 						}
 						if (edgeUpdated == false) {
 							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
-									_vertexArray[(Integer) pair.getFirst()],
-									_vertexArray[(Integer) pair.getSecond()]);
+									vertexArray[(Integer) pair.getFirst()],
+									vertexArray[(Integer) pair.getSecond()]);
 							// System.out.println(newEdge.toString()
 							// + " created with chosen color");
 							graphSettings.setEdgeColor(newEdge, edgeProperty
@@ -574,10 +573,10 @@ public class GraphRenderer extends PluggableRenderer implements
 						while (edgeIterator.hasNext()) {
 							Edge edge = (Edge) edgeIterator.next();
 							if ((edge.getEndpoints().getFirst()
-									.equals(_vertexArray[(Integer) pair
+									.equals(vertexArray[(Integer) pair
 											.getFirst()]))
 									&& (edge.getEndpoints().getSecond()
-											.equals(_vertexArray[(Integer) pair
+											.equals(vertexArray[(Integer) pair
 													.getSecond()]))) {
 								graphSettings.setEdgeShape(edge, edgeProperty
 										.getShape());
@@ -588,8 +587,8 @@ public class GraphRenderer extends PluggableRenderer implements
 						}
 						if (edgeUpdated == false) {
 							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
-									_vertexArray[(Integer) pair.getFirst()],
-									_vertexArray[(Integer) pair.getSecond()]);
+									vertexArray[(Integer) pair.getFirst()],
+									vertexArray[(Integer) pair.getSecond()]);
 							graphSettings.setEdgeShape(newEdge, edgeProperty
 									.getShape());
 							graphSettings.setEdgeVisible(newEdge, edgeProperty.isVisible());
@@ -603,10 +602,10 @@ public class GraphRenderer extends PluggableRenderer implements
 						while (edgeIterator.hasNext()) {
 							Edge edge = (Edge) edgeIterator.next();
 							if ((edge.getEndpoints().getFirst()
-									.equals(_vertexArray[(Integer) pair
+									.equals(vertexArray[(Integer) pair
 											.getFirst()]))
 									&& (edge.getEndpoints().getSecond()
-											.equals(_vertexArray[(Integer) pair
+											.equals(vertexArray[(Integer) pair
 													.getSecond()]))) {
 								graphSettings.setEdgeSize(edge, edgeProperty
 										.getSize());
@@ -617,8 +616,8 @@ public class GraphRenderer extends PluggableRenderer implements
 						}
 						if (edgeUpdated == false) {
 							UndirectedSparseEdge newEdge = new UndirectedSparseEdge(
-									_vertexArray[(Integer) pair.getFirst()],
-									_vertexArray[(Integer) pair.getSecond()]);
+									vertexArray[(Integer) pair.getFirst()],
+									vertexArray[(Integer) pair.getSecond()]);
 							graphSettings.setEdgeSize(newEdge, edgeProperty
 									.getSize());
 							graphSettings.setEdgeVisible(newEdge, edgeProperty.isVisible());
@@ -662,10 +661,10 @@ public class GraphRenderer extends PluggableRenderer implements
 			if (property == NodeProperty.Property.Color) {
 				Color nodeColor = new Color(grayPercentage, grayPercentage,
 						grayPercentage);
-				graphSettings.setNodeColor(_vertexArray[i], nodeColor);
+				graphSettings.setNodeColor(vertexArray[i], nodeColor);
 			} else if (property == NodeProperty.Property.Size) {
 				int size = Math.round(1 + 2 * scaledDegreeCentrality[i]);
-				graphSettings.setNodeSize(_vertexArray[i], size);
+				graphSettings.setNodeSize(vertexArray[i], size);
 			}
 		}
 	}
@@ -694,10 +693,10 @@ public class GraphRenderer extends PluggableRenderer implements
 			if (property == NodeProperty.Property.Color) {
 				Color nodeColor = new Color(grayPercentage, grayPercentage,
 						grayPercentage);
-				graphSettings.setNodeColor(_vertexArray[i], nodeColor);
+				graphSettings.setNodeColor(vertexArray[i], nodeColor);
 			} else if (property == NodeProperty.Property.Size) {
 				int size = Math.round(1 + 2 * scaledBetweennessCentrality[i]);
-				graphSettings.setNodeSize(_vertexArray[i], size);
+				graphSettings.setNodeSize(vertexArray[i], size);
 			}
 		}
 	}
@@ -711,19 +710,19 @@ public class GraphRenderer extends PluggableRenderer implements
 		// 4: Size
 		switch (updateParam) {
 		case 1:
-			graphSettings.setNodeLabel(_vertexArray[nodeIndex],
+			graphSettings.setNodeLabel(vertexArray[nodeIndex],
 					(String) updateValue);
 			break;
 		case 2:
-			graphSettings.setNodeColor(_vertexArray[nodeIndex],
+			graphSettings.setNodeColor(vertexArray[nodeIndex],
 					(Color) updateValue);
 			break;
 		case 3:
-			graphSettings.setNodeShape(_vertexArray[nodeIndex],
+			graphSettings.setNodeShape(vertexArray[nodeIndex],
 					(NodeProperty.NodeShape) updateValue);
 			break;
 		case 4:
-			graphSettings.setNodeSize(_vertexArray[nodeIndex], Integer
+			graphSettings.setNodeSize(vertexArray[nodeIndex], Integer
 					.parseInt((String) updateValue));
 			break;
 
@@ -763,6 +762,11 @@ public class GraphRenderer extends PluggableRenderer implements
         return graphSettings;
     }
 
+    public static void setGraphSettings(GraphSettings gs){
+    	
+    	graphSettings = gs;
+    }
+    
     public static VisualizationViewer getVisualizationViewer()
     {
         return visualizationViewer;

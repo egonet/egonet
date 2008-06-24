@@ -1,11 +1,13 @@
 package com.endlessloopsoftware.ego.client;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -13,13 +15,28 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.egonet.util.listbuilder.Selection;
+import org.w3c.dom.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
+import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
+import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
+import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
 
 /**
  * <p>
@@ -56,31 +73,40 @@ public class ClientFrame extends JFrame {
 
 	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
-	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
+	private final JMenuItem saveStudySummary = new JMenuItem(
+			"Save Study Summary");
 
 	private final JMenuItem exit = new JMenuItem("Exit");
 
-	public final JMenuItem saveAlterSummary = new JMenuItem("Save Alter Summary");
+	public final JMenuItem saveAlterSummary = new JMenuItem(
+			"Save Alter Summary");
 
-	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
+	public final JMenuItem saveTextSummary = new JMenuItem(
+			"Save Text Answer Summary");
 
-	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
+	public final JMenuItem saveAdjacencyMatrix = new JMenuItem(
+			"Save Adjacency Matrix");
 
-	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
+	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem(
+			"Save Weighted Adjacency Matrix");
 
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 
-	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
-	
-	public final JMenuItem applyGraphSettings = new JMenuItem("Apply graph settings");
+	public final JMenuItem saveGraphSettings = new JMenuItem(
+			"Save graph settings");
+
+	public final JMenuItem applyGraphSettings = new JMenuItem(
+			"Apply graph settings");
 
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 
-	public final JMenuItem recalculateStatistics = new JMenuItem("Recalculate Statistics");
+	public final JMenuItem recalculateStatistics = new JMenuItem(
+			"Recalculate Statistics");
 
 	public final JMenuItem close = new JMenuItem("Return to Main Menu");
 
-	public final JMenuItem saveInterviewStatistics = new JMenuItem("Save Interview Statistics");
+	public final JMenuItem saveInterviewStatistics = new JMenuItem(
+			"Save Interview Statistics");
 
 	// Construct the frame
 	public ClientFrame() {
@@ -143,12 +169,18 @@ public class ClientFrame extends JFrame {
 				}
 			}
 		});
-		
-		applyGraphSettings.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				applyGraphSettings_actionPerformed(e);
-			}
-		});
+
+		applyGraphSettings
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							applyGraphSettings_actionPerformed(e);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
 
 		recalculateStatistics
 				.addActionListener(new java.awt.event.ActionListener() {
@@ -227,16 +259,16 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
 			jMenuFile.add(close);
-			
+
 			jMenuGraph.add(graphProperties);
 			jMenuGraph.add(nodeProperties);
 			jMenuGraph.add(edgeProperties);
-			
+
 		} else {
 			jMenuFile.add(exit);
 		}
 		jMenuBar1.add(jMenuFile);
-		//jMenuBar1.add(jMenuGraph);
+		// jMenuBar1.add(jMenuGraph);
 		// Help Menu
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuBar1.add(jMenuHelp);
@@ -274,7 +306,8 @@ public class ClientFrame extends JFrame {
 		fileChooser.setDialogTitle("Save Graph");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-		//ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG Image",".jpg");
+		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
+		// Image",".jpg");
 		FileFilter imageFilter = new ImageFilter();
 		fileChooser.addChoosableFileFilter(imageFilter);
 
@@ -284,13 +317,14 @@ public class ClientFrame extends JFrame {
 			File imageFile = fileChooser.getSelectedFile();
 
 			String fmt = ImageFilter.getExtension(imageFile);
-			if(fmt != null && imageFilter.accept(imageFile))
-			{
-    			System.out.println(imageFile.getName());
-    			GraphData.writeImage(imageFile,fmt);
-    			break;
+			if (fmt != null && imageFilter.accept(imageFile)) {
+				System.out.println(imageFile.getName());
+				GraphData.writeImage(imageFile, fmt);
+				break;
 			} else {
-			    JOptionPane.showMessageDialog(this, "I don't recognize that image format. Please try again.");
+				JOptionPane
+						.showMessageDialog(this,
+								"I don't recognize that image format. Please try again.");
 			}
 		}
 
@@ -298,13 +332,14 @@ public class ClientFrame extends JFrame {
 
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 
-        String[] name = EgoClient.interview.getName();
-        String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+		String[] name = EgoClient.interview.getName();
+		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
-        final File currentDirectory = new File(EgoClient.storage.getPackageFile().getParent(), "Graphs");
-        currentDirectory.mkdir();        
-        File file = new File(currentDirectory.getAbsolutePath() + fileName);
-            
+		final File currentDirectory = new File(EgoClient.storage
+				.getPackageFile().getParent(), "Graphs");
+		currentDirectory.mkdir();
+		File file = new File(currentDirectory.getAbsolutePath() + fileName);
+
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(currentDirectory);
 		fileChooser.setSelectedFile(new File(fileName + ".settings"));
@@ -312,18 +347,114 @@ public class ClientFrame extends JFrame {
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fileChooser.setSelectedFile(file);
 
-		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings", "settings");
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings",
+				"settings");
 		fileChooser.addChoosableFileFilter(filter);
-		
+
 		int returnValue = fileChooser.showSaveDialog(this);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File settingsFile = fileChooser.getSelectedFile();
-			
+
 			GraphRenderer.getGraphSettings().saveSettingsFile(settingsFile);
 		}
 	}
-	
-	void applyGraphSettings_actionPerformed(ActionEvent e){
+
+	void applyGraphSettings_actionPerformed(ActionEvent e) throws Exception {
+
+		// Add a file chooser
+		String file = "src/com/endlessloopsoftware/ego/client/test.xml";
+		parseXMLFile(file);
+
+	}
+
+	public void parseXMLFile(String fileName) throws SAXException, IOException,
+			ParserConfigurationException {
+		GraphSettings graphSettings = GraphRenderer.getGraphSettings();
+
+		GraphSettingsEntry graphSettingEntry = null;
+
+		java.util.List<GraphSettingsEntry> graphSettingEntryList = graphSettings.getQAsettings();
+
+		//graphSettingEntryList = Collections.synchronizedList(new ArrayList<GraphSettingsEntry>());
 		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder builder = factory.newDocumentBuilder();
+
+		Document document = builder.parse(fileName);
+
+		NodeList entryNodeList = document.getDocumentElement().getChildNodes();
+		for (int i = 0; i < entryNodeList.getLength(); i++) {
+			Node entryNode = entryNodeList.item(i);
+			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element entryElement = (Element) entryNode;
+
+				Element graphElement = (Element) entryElement
+						.getElementsByTagName("GraphQuestion").item(0);
+				Element propertyElement = (Element) entryElement
+						.getElementsByTagName("Property").item(0);
+
+				Element questionElement = (Element) graphElement
+						.getElementsByTagName("Question").item(0);
+				Element selectionElement = (Element) graphElement
+						.getElementsByTagName("Selection").item(0);
+				Element categoryElement = (Element) graphElement
+						.getElementsByTagName("Category").item(0);
+
+				Element colorElement = (Element) propertyElement
+						.getElementsByTagName("Color").item(0);
+				Element shapeElement = (Element) propertyElement
+						.getElementsByTagName("Shape").item(0);
+				Element sizeElement = (Element) propertyElement
+						.getElementsByTagName("Size").item(0);
+
+				Element propertyTypeElement = (Element) entryElement
+						.getElementsByTagName("PropertyType").item(0);
+
+				System.out
+						.println("Id: " + questionElement.getAttribute("id")
+								+ ", Text: "
+								+ selectionElement.getAttribute("text")
+								+ ", Category: "
+								+ categoryElement.getAttribute("category")
+								+ ", Color: "
+								+ colorElement.getAttribute("color")
+								+ ", Shape: "
+								+ shapeElement.getAttribute("shape")
+								+ ", Size: " + sizeElement.getAttribute("size")
+								+ ", Type: "
+								+ propertyTypeElement.getAttribute("Type"));
+
+				Question question = new Question();
+				question.UniqueId = Long.parseLong(questionElement
+						.getAttribute("id"));
+
+				Selection selection = new Selection();
+				selection.setString(selectionElement.getAttribute("text"));
+
+				GraphQuestion gq = new GraphQuestion(question, selection,
+						Integer.parseInt(categoryElement
+								.getAttribute("category")));
+
+				if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
+					EdgeProperty ep = new EdgeProperty();
+					ep.setColor(Color.decode(colorElement.getAttribute("color")));
+					ep.setSize(Integer.parseInt(sizeElement.getAttribute("size")));
+					ep.setShape(EdgeShape.CubicCurve);
+
+					graphSettingEntry = new GraphSettingsEntry(gq, ep,
+							GraphSettingType.Edge);
+
+				} else {
+					System.out.println("Property is of Type Node");
+					//Similar to Edge
+				}
+				graphSettingEntryList.add(graphSettingEntry);
+
+			}
+		}
+		graphSettings.setQAsettings(graphSettingEntryList);
+		GraphRenderer.setGraphSettings(graphSettings);
+
 	}
 }

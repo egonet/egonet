@@ -144,7 +144,7 @@ public class GraphTabPanel extends JPanel {
 		bgcolorButton = new JButton();
 		bgcolorButton.setText(" ");
 		bgcolorButton.setBackground(vv.getBackground());
-		Color chosenColor;
+		
 		bgcolorButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// code displaying a color box/palette to choose from

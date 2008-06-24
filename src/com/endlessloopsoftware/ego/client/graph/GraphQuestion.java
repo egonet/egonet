@@ -14,6 +14,7 @@ public class GraphQuestion {
 
 	//used only for ALTER QUESTIONS
 	private List<Integer> alterList = new ArrayList<Integer>();
+	
 	/**
 	 * EGO_QUESTION = 1; ALTER_PROMPT = 2; ALTER_QUESTION = 3;
 	 * ALTER_PAIR_QUESTION = 4;
@@ -22,6 +23,12 @@ public class GraphQuestion {
 	
 	private boolean showLabel = false; 
 
+	public GraphQuestion(Question question, Selection selection, int category) {
+		this.question = question;
+		this.category = category;
+		this.selection = selection;
+	}
+	
 	public boolean isShowLabel() {
 		return showLabel;
 	}
@@ -30,11 +37,7 @@ public class GraphQuestion {
 		this.showLabel = showLabel;
 	}
 
-	public GraphQuestion(Question question, Selection selection, int category) {
-		this.question = question;
-		this.category = category;
-		this.selection = selection;
-	}
+	
 
 	public Selection getSelection() {
 		return selection;
@@ -87,6 +90,4 @@ public class GraphQuestion {
 		this.alterList = alterList;
 	}
 	
-	
-
 }

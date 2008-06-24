@@ -18,7 +18,7 @@ public class EgoClient
 {
 	public static Study			study				= new Study();
 	public static EgoStore		storage				= new EgoStore();
-	public static ClientFrame	frame				= new ClientFrame();
+	public static ClientFrame	frame = new ClientFrame();
 	public static Interview		interview			= null;
 	public static int			uiPath;
 
@@ -34,7 +34,6 @@ public class EgoClient
 	public EgoClient()
 	{
       SourceSelectPanel.gotoPanel(true);
-
 		frame.setVisible(true);
 		frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 
@@ -48,13 +47,6 @@ public class EgoClient
 	//Main method
 	public static void main(String[] args)
 	{
-		// save this -- it might be useful for the web part later
-		/*System.setProperty("java.security.policy", "security.policy");
-		if(System.getSecurityManager() == null) {
-		     System.setSecurityManager(new java.rmi.RMISecurityManager());
-		}*/
-		
-		//if(true) return;
 		Shared.configureUI();
 		new EgoClient();
 	}

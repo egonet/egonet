@@ -16,7 +16,7 @@ public class ELSFRLayout2 extends FRLayout {
 	protected void initializeLocation(Vertex v, Coordinates coord, Dimension d) {
 		super.initializeLocation(v, coord, d);
 		if (v.getIncidentEdges().size() == 0) {
-			System.out.println("BEFORE: v="+v+",coord="+coord+",d="+d+",x="+xIsolate+",y="+yIsolate);
+			//System.out.println("BEFORE: v="+v+",coord="+coord+",d="+d+",x="+xIsolate+",y="+yIsolate);
 			lockVertex(v);
 		    
 			// can expand to the right
@@ -41,7 +41,6 @@ public class ELSFRLayout2 extends FRLayout {
 		    }
 		    
 		    coord.setLocation(xIsolate,yIsolate);
-		    System.out.println("AFTER: v="+v+",coord="+coord+",d="+d+",x="+xIsolate+",y="+yIsolate);
 		}
 	}
 }

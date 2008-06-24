@@ -57,7 +57,7 @@ public class GraphSettings {
 					shape, size);
 			String toolTipText = getAlterInfo(i);
 			nodeProperty.setToolTipText(toolTipText);
-			nodeSettingsMap.put(renderer.get_vertexArray()[i], nodeProperty);
+			nodeSettingsMap.put(renderer.getvertexArray()[i], nodeProperty);
 		}
 		// initialize edges with default settings
 		renderer.getGraph().removeAllEdges();
@@ -67,8 +67,8 @@ public class GraphSettings {
 			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
 				if (adjacencyMatrix[i][j] > 0) {
 					UndirectedSparseEdge edge = new UndirectedSparseEdge(
-							renderer.get_vertexArray()[i], renderer
-									.get_vertexArray()[j]);
+							renderer.getvertexArray()[i], renderer
+									.getvertexArray()[j]);
 					renderer.getGraph().addEdge(edge);
 					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
 							.toString();
@@ -210,7 +210,6 @@ public class GraphSettings {
 		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
 				nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
-		//updateSettingsFile(entry);
 		displaySettings();
 	}
 
@@ -224,14 +223,12 @@ public class GraphSettings {
 	}
 
 	private void displaySettings() {
-
-		//System.out.println("---------------QA SETTINGS CONTENTS ----------------------------");
+		
 		int size = QAsettings.size();
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
 			System.out.println(entry.toString());
 		}
-		//System.out.println("\n-------------------------------------------------------");
 	}
 
 	public Iterator<GraphSettingsEntry> getQAsettingsIterator() {
@@ -282,5 +279,36 @@ public class GraphSettings {
 
 	public void setEdgeVisible(Edge edge, boolean b) {
 		edgeSettingsMap.get(edge).setVisible(b);
+	}
+
+	public Map<Edge, EdgeProperty> getEdgeSettingsMap()
+	{
+		return edgeSettingsMap;
+	}
+
+	public void setEdgeSettingsMap(Map<Edge, EdgeProperty> edgeSettingsMap)
+	{
+		this.edgeSettingsMap = edgeSettingsMap;
+	}
+
+	public Map<ArchetypeVertex, NodeProperty> getNodeSettingsMap()
+	{
+		return nodeSettingsMap;
+	}
+
+	public void setNodeSettingsMap(
+			Map<ArchetypeVertex, NodeProperty> nodeSettingsMap)
+	{
+		this.nodeSettingsMap = nodeSettingsMap;
+	}
+
+	public java.util.List<GraphSettingsEntry> getQAsettings()
+	{
+		return QAsettings;
+	}
+
+	public void setQAsettings(java.util.List<GraphSettingsEntry> asettings)
+	{
+		QAsettings = asettings;
 	}
 }

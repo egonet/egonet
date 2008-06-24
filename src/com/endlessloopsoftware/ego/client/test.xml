@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<GraphSettings StudyId="1197927178325">
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Not at all likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-2474570"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Somewhat likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-2600400"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Very likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-6567173"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198182804377"/>
+            <Selection text="Male"/>
+            <Category category="3"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-10131241"/>
+            <Shape shape="Circle"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Node"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198182804377"/>
+            <Selection text="Female"/>
+            <Category category="3"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-8251347"/>
+            <Shape shape="Circle"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Node"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Not at all likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Somewhat likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="QuadCurve"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+    <Entry>
+        <GraphQuestion>
+            <Question id="1198183373253"/>
+            <Selection text="Very likely"/>
+            <Category category="4"/>
+        </GraphQuestion>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="CubicCurve"/>
+            <Size size="1"/>
+        </Property>
+        <PropertyType Type="Edge"/>
+    </Entry>
+</GraphSettings>

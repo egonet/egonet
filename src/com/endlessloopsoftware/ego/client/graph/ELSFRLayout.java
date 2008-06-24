@@ -7,7 +7,6 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
 import cern.colt.matrix.DoubleMatrix1D;
