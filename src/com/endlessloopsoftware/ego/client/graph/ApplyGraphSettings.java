@@ -36,10 +36,6 @@ public class ApplyGraphSettings extends JPanel {
 	private GraphRenderer graphRenderer;
 
 	private JButton applyButton;
-	
-	private JLabel testLabel1;
-	private JLabel testLabel2;
-	private JLabel testLabel3;
 
 	List<Selection> selectionList = new ArrayList<Selection>();
 
@@ -59,13 +55,6 @@ public class ApplyGraphSettings extends JPanel {
 		// create apply button
 		applyButton = new JButton("Apply Settings");
 		applyButton.setVisible(true);
-		testLabel1 = new JLabel("Test1");
-		testLabel2 = new JLabel("Test2");
-		testLabel3 = new JLabel("Test3");
-		
-		testLabel1.setVisible(true);
-		testLabel2.setVisible(true);
-		testLabel3.setVisible(true);
 		
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -198,11 +187,12 @@ public class ApplyGraphSettings extends JPanel {
 		this.removeAll();
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.add(layout.createParallelGroup().add(applyButton).add(testLabel1));
+		hGroup.add(layout.createParallelGroup().add(applyButton));
 			
 		layout.setHorizontalGroup(hGroup);
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-		vGroup.add(layout.createParallelGroup().add(testLabel2).add(testLabel3));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				applyButton));
 				
 		layout.setVerticalGroup(vGroup);
 	}

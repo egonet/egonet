@@ -101,9 +101,9 @@ public class ClientFrame extends JFrame {
 	public final JMenuItem saveGraphSettings = new JMenuItem(
 			"Save graph settings");
 
-	public final JMenuItem applyGraphSettings = new JMenuItem(
+	/*public final JMenuItem applyGraphSettings = new JMenuItem(
 			"Apply graph settings");
-
+*/
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 
 	public final JMenuItem recalculateStatistics = new JMenuItem(
@@ -176,7 +176,7 @@ public class ClientFrame extends JFrame {
 			}
 		});
 
-		applyGraphSettings
+		/*applyGraphSettings
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
@@ -188,7 +188,7 @@ public class ClientFrame extends JFrame {
 					}
 				});
 
-		recalculateStatistics
+*/		recalculateStatistics
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						EgoClient.interview = EgoClient.storage.readInterview();
@@ -260,7 +260,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
 			jMenuFile.add(saveGraph);
 			jMenuFile.add(saveGraphSettings);
-			jMenuFile.add(applyGraphSettings);
+			//jMenuFile.add(applyGraphSettings);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
 			jMenuFile.addSeparator();
@@ -365,15 +365,7 @@ public class ClientFrame extends JFrame {
 		}
 	}
 
-	void applyGraphSettings_actionPerformed(ActionEvent e) throws Exception {
-
-		// Add a file chooser
-		String file = "src/com/endlessloopsoftware/ego/client/test.xml";
-		//parseXMLFile(file);
-
-	}
-
-	public void parseXMLFile(String fileName) throws SAXException, IOException,
+	/*private void parseXMLFile(String fileName) throws SAXException, IOException,
 			ParserConfigurationException {
 		GraphSettingsEntry graphSettingEntry = null;
 
@@ -450,5 +442,5 @@ public class ClientFrame extends JFrame {
 
 		GraphRenderer.graphSettings.setQAsettings(graphSettingEntryList);
 		//GraphRenderer.updateGraphSettings();
-	}
+	}*/
 }

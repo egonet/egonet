@@ -202,7 +202,6 @@ public class GraphRenderer extends PluggableRenderer implements
 		graph.removeAllEdges();
 		Iterator edgeIterator = graphSettings.getEdgeIterator();
 		while (edgeIterator.hasNext()) {
-			System.out.println("Inside while for edge iterator");
 			Edge edge = (Edge) edgeIterator.next();
 			try {
 				if (graphSettings.isEdgeVisible(edge)) {
