@@ -56,7 +56,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		EdgePaintFunction, EdgeStringer, VertexStringer, EdgeStrokeFunction,
 		ToolTipFunction {
 
-	private static GraphSettings graphSettings;
+	public static GraphSettings graphSettings;
 
 	private static VisualizationViewer visualizationViewer;
 
@@ -70,7 +70,7 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private VisualizationModel visualizationModel;
 
-	private Vertex[] vertexArray = null;
+	private static Vertex[] vertexArray = null;
 
 	private String[] alterList;
 
@@ -198,10 +198,11 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * creates the nodes for every alter creates edges for entries in adjacency
 	 * matrix
 	 */
-	public void updateEdges() {
+	public  void updateEdges() {
 		graph.removeAllEdges();
 		Iterator edgeIterator = graphSettings.getEdgeIterator();
 		while (edgeIterator.hasNext()) {
+			System.out.println("Inside while for edge iterator");
 			Edge edge = (Edge) edgeIterator.next();
 			try {
 				if (graphSettings.isEdgeVisible(edge)) {
@@ -213,11 +214,6 @@ public class GraphRenderer extends PluggableRenderer implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see edu.uci.ics.jung.graph.decorators.VertexStringer#getLabel(edu.uci.ics.jung.graph.ArchetypeVertex)
-	 */
 	public String getLabel(ArchetypeVertex v) {
 		return graphSettings.getNodeLabel(v);
 	}
@@ -523,29 +519,28 @@ public class GraphRenderer extends PluggableRenderer implements
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.Property prop = edgeProperty.getProperty();
+				//System.out.println("prop value is " +prop.toString());
+				
 				GraphData graphData = new GraphData();
 				List<Pair> vPair = graphData.getAlterPairs(graphQuestion);
-//				System.out.println("Property to be updated:" + prop
-//						+ " GraphQuestion:" + graphQuestion.toString());
+				//System.out.println("Property to be updated:" + prop
+				//		+ " GraphQuestion:" + graphQuestion.toString());
 				switch (prop) {
 				case Color:
 					for (Pair pair : vPair) {
 						Iterator edgeIterator = graphSettings.getEdgeIterator();
-						// System.out.println("Size of edge
-						// iterator:"+edgeIterator.hasNext());
 						boolean edgeUpdated = false;
 						while (edgeIterator.hasNext()) {
 							Edge edge = (Edge) edgeIterator.next();
-							// System.out.println("Edge:" + edge.toString());
+							 //System.out.println("Edge:" + edge.toString());
 							if ((edge.getEndpoints().getFirst()
 									.equals(vertexArray[(Integer) pair
 											.getFirst()]))
 									&& (edge.getEndpoints().getSecond()
 											.equals(vertexArray[(Integer) pair
 													.getSecond()]))) {
-								// System.out.println(edge.toString()
-								// + " already exists...updating color");
-
+							
+								 //System.out.println("EDGE color is " +edgeProperty.getColor());
 								graphSettings.setEdgeColor(edge, edgeProperty
 										.getColor());
 								graphSettings.setEdgeVisible(edge, edgeProperty.isVisible());

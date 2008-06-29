@@ -304,11 +304,11 @@ public class GraphSettings {
 
 	public java.util.List<GraphSettingsEntry> getQAsettings()
 	{
-		return QAsettings;
+		return this.QAsettings;
 	}
 
 	public void setQAsettings(java.util.List<GraphSettingsEntry> asettings)
 	{
-		QAsettings = asettings;
+		this.QAsettings = asettings;
 	}
 }

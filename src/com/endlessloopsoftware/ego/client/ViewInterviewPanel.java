@@ -46,7 +46,7 @@ public class ViewInterviewPanel
             Shared.setWaitCursor(EgoClient.frame, true);
 		   	  	progressMonitor.setProgress(5);
 		      	EgoClient.frame.setContentPane(new ViewInterviewPanel(progressMonitor));
-		      	progressMonitor.setProgress(75);
+		      	progressMonitor.setProgress(95);
 	         EgoClient.frame.createMenuBar(EgoClient.VIEW_INTERVIEW);
 	         EgoClient.frame.pack();
 	        // EgoClient.frame.setSize(640, 530);

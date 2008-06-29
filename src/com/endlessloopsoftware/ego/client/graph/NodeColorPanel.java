@@ -200,6 +200,8 @@ public class NodeColorPanel extends JPanel {
 
 	private void updateNodeColor() {
 		Question question = (Question) questionCombo.getSelectedItem();
+		System.out.println("Question combo" +question.UniqueId);
+		
 		if (question.answerType == Question.CATEGORICAL) {
 			for (int i = 0; i < question.selections.length; i++) {
 				Selection selection = question.selections[i];

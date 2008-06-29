@@ -9,6 +9,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -32,6 +36,8 @@ import org.xml.sax.SAXException;
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
 import com.endlessloopsoftware.ego.Question;
+import com.endlessloopsoftware.ego.QuestionList;
+import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
@@ -363,27 +369,25 @@ public class ClientFrame extends JFrame {
 
 		// Add a file chooser
 		String file = "src/com/endlessloopsoftware/ego/client/test.xml";
-		parseXMLFile(file);
+		//parseXMLFile(file);
 
 	}
 
 	public void parseXMLFile(String fileName) throws SAXException, IOException,
 			ParserConfigurationException {
-		GraphSettings graphSettings = GraphRenderer.getGraphSettings();
-
 		GraphSettingsEntry graphSettingEntry = null;
 
-		java.util.List<GraphSettingsEntry> graphSettingEntryList = graphSettings.getQAsettings();
-
-		//graphSettingEntryList = Collections.synchronizedList(new ArrayList<GraphSettingsEntry>());
-		
+		java.util.List<GraphSettingsEntry> graphSettingEntryList = Collections
+				.synchronizedList(new ArrayList<GraphSettingsEntry>());
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
 		DocumentBuilder builder = factory.newDocumentBuilder();
-
 		Document document = builder.parse(fileName);
-
 		NodeList entryNodeList = document.getDocumentElement().getChildNodes();
+
+		Study study = EgoClient.interview.getStudy();
+		QuestionList questionList = study.getQuestions();
+		Map<Long, Question> questionMap = questionList.getQuestionMap();
+
 		for (int i = 0; i < entryNodeList.getLength(); i++) {
 			Node entryNode = entryNodeList.item(i);
 			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -411,50 +415,40 @@ public class ClientFrame extends JFrame {
 				Element propertyTypeElement = (Element) entryElement
 						.getElementsByTagName("PropertyType").item(0);
 
-				System.out
-						.println("Id: " + questionElement.getAttribute("id")
-								+ ", Text: "
-								+ selectionElement.getAttribute("text")
-								+ ", Category: "
-								+ categoryElement.getAttribute("category")
-								+ ", Color: "
-								+ colorElement.getAttribute("color")
-								+ ", Shape: "
-								+ shapeElement.getAttribute("shape")
-								+ ", Size: " + sizeElement.getAttribute("size")
-								+ ", Type: "
-								+ propertyTypeElement.getAttribute("Type"));
+				Question question = questionMap.get(Long
+						.parseLong(questionElement.getAttribute("id")));
 
-				Question question = new Question();
-				question.UniqueId = Long.parseLong(questionElement
-						.getAttribute("id"));
+				for (int j = 0; j < question.selections.length; j++) {
+					Selection selection = question.selections[j];
+					GraphQuestion gq = new GraphQuestion(question, selection,
+							Integer.parseInt(categoryElement.getAttribute("category")));
 
-				Selection selection = new Selection();
-				selection.setString(selectionElement.getAttribute("text"));
+					if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
+						EdgeProperty ep = new EdgeProperty();
+						
+						ep.setColor(Color.decode(colorElement
+								.getAttribute("color")));
+						
+						ep.setSize(Integer.parseInt(sizeElement
+								.getAttribute("size")));
+						ep.setShape(EdgeShape.CubicCurve);
+						
+						ep.setProperty(EdgeProperty.Property.Color);
 
-				GraphQuestion gq = new GraphQuestion(question, selection,
-						Integer.parseInt(categoryElement
-								.getAttribute("category")));
+						System.out.println("Color is " +ep.getColor());
+						graphSettingEntry = new GraphSettingsEntry(gq, ep,
+								GraphSettingType.Edge);
+						graphSettingEntryList.add(graphSettingEntry);
 
-				if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
-					EdgeProperty ep = new EdgeProperty();
-					ep.setColor(Color.decode(colorElement.getAttribute("color")));
-					ep.setSize(Integer.parseInt(sizeElement.getAttribute("size")));
-					ep.setShape(EdgeShape.CubicCurve);
-
-					graphSettingEntry = new GraphSettingsEntry(gq, ep,
-							GraphSettingType.Edge);
-
-				} else {
-					System.out.println("Property is of Type Node");
-					//Similar to Edge
+					} else {
+						System.out.println("Property is of Type Node");
+					}
 				}
-				graphSettingEntryList.add(graphSettingEntry);
 
 			}
 		}
-		graphSettings.setQAsettings(graphSettingEntryList);
-		GraphRenderer.setGraphSettings(graphSettings);
 
+		GraphRenderer.graphSettings.setQAsettings(graphSettingEntryList);
+		//GraphRenderer.updateGraphSettings();
 	}
 }

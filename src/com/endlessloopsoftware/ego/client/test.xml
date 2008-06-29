@@ -72,7 +72,7 @@
             <Category category="4"/>
         </GraphQuestion>
         <Property>
-            <Color color="-16777216"/>
+            <Color color="-8251347"/>
             <Shape shape="Line"/>
             <Size size="1"/>
         </Property>
@@ -85,7 +85,7 @@
             <Category category="4"/>
         </GraphQuestion>
         <Property>
-            <Color color="-16777216"/>
+            <Color color="-8251347"/>
             <Shape shape="QuadCurve"/>
             <Size size="1"/>
         </Property>
@@ -98,7 +98,7 @@
             <Category category="4"/>
         </GraphQuestion>
         <Property>
-            <Color color="-16777216"/>
+            <Color color="-8251347"/>
             <Shape shape="CubicCurve"/>
             <Size size="1"/>
         </Property>
