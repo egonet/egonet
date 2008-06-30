@@ -40,7 +40,7 @@ public class ApplyGraphSettings extends JPanel {
 	List<Selection> selectionList = new ArrayList<Selection>();
 
 	private GroupLayout layout;
-	
+
 	public ApplyGraphSettings(GraphRenderer renderer) {
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
@@ -51,11 +51,11 @@ public class ApplyGraphSettings extends JPanel {
 
 	}
 
-	private void createComponents(){
+	private void createComponents() {
 		// create apply button
 		applyButton = new JButton("Apply Settings");
 		applyButton.setVisible(true);
-		
+
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -75,10 +75,11 @@ public class ApplyGraphSettings extends JPanel {
 				}
 			}
 		});
-		
+
 		drawPanel();
-		
+
 	}
+
 	/*
 	 * private void updateNodeColor() { Question question = (Question)
 	 * questionCombo.getSelectedItem(); System.out.println("Question combo"
@@ -105,11 +106,13 @@ public class ApplyGraphSettings extends JPanel {
 	 * graphRenderer.getVv().repaint(); }
 	 */
 
-	private void updateEdgeColor() throws ParserConfigurationException, SAXException, IOException {
+	private void updateEdgeColor() throws ParserConfigurationException,
+			SAXException, IOException {
 
 		GraphSettingsEntry graphSettingEntry = null;
-		java.util.List<GraphSettingsEntry> graphSettingEntryList = Collections
-				.synchronizedList(new ArrayList<GraphSettingsEntry>());
+		/*java.util.List<GraphSettingsEntry> graphSettingEntryList = Collections
+		 .synchronizedList(new ArrayList<GraphSettingsEntry>());
+		 */
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder
@@ -149,35 +152,42 @@ public class ApplyGraphSettings extends JPanel {
 
 				Question question = questionMap.get(Long
 						.parseLong(questionElement.getAttribute("id")));
+				int category = Integer.parseInt(categoryElement
+						.getAttribute("category"));
 
 				for (int j = 0; j < question.selections.length; j++) {
 					Selection selection = question.selections[j];
-					GraphQuestion graphQuestion = new GraphQuestion(question,
-							selection, Integer.parseInt(categoryElement
-									.getAttribute("category")));
-					
-					if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
-						EdgeProperty ep = new EdgeProperty();
-						
-						ep.setColor(Color.decode(colorElement
-								.getAttribute("color")));
-						
-						ep.setSize(Integer.parseInt(sizeElement
-								.getAttribute("size")));
-						ep.setShape(EdgeShape.CubicCurve);
-						
-						ep.setProperty(EdgeProperty.Property.Color);
 
-						System.out.println("Color is " +ep.getColor());
-						graphSettingEntry = new GraphSettingsEntry(graphQuestion, ep,
-								GraphSettingType.Edge);
-						graphRenderer.addQAsettings(graphQuestion, ep);
+					
+					//if(selection.getString().equals(selectionElement.toString())){
+					
+					//System.out.println(selectionElement.toString());
+					GraphQuestion graphQuestion = new GraphQuestion(question,
+							selection, category);
+
+					if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
+						EdgeProperty epColor = new EdgeProperty();
+
+						epColor.setColor(Color.decode(colorElement
+								.getAttribute("color")));
+						epColor.setProperty(EdgeProperty.Property.Shape);
+						epColor.setSize(Integer.parseInt(sizeElement
+								.getAttribute("size")));
+						epColor.setShape(EdgeShape.CubicCurve);
+						epColor.setVisible(true);
+
+						System.out.println("Color is " + epColor.getColor());
 						
-						//graphSettingEntryList.add(graphSettingEntry);
-						//GraphRenderer.graphSettings.setQAsettings(graphSettingEntryList);
+						graphSettingEntry = new GraphSettingsEntry(
+								graphQuestion, epColor, GraphSettingType.Edge);
+						
+						graphRenderer.addQAsettings(graphQuestion, epColor);
 						graphRenderer.updateGraphSettings();
+					} else {
+						//do same for node property
 					}
 
+				//}
 				}
 			}
 		}
@@ -188,12 +198,12 @@ public class ApplyGraphSettings extends JPanel {
 
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 		hGroup.add(layout.createParallelGroup().add(applyButton));
-			
+
 		layout.setHorizontalGroup(hGroup);
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				applyButton));
-				
+
 		layout.setVerticalGroup(vGroup);
 	}
 }

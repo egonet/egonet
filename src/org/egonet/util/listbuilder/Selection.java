@@ -70,4 +70,9 @@ public class Selection {
 		}
 		return false;
 	}
+	
+	public int hashCode()
+	{
+		return this.index;
+	}
 }

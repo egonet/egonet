@@ -227,7 +227,7 @@ public class GraphSettings {
 		int size = QAsettings.size();
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			System.out.println(entry.toString());
+			//System.out.println(entry.toString());
 		}
 	}
 
