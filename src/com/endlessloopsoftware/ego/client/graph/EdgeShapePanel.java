@@ -170,11 +170,11 @@ Question question = (Question) questionCombo.getSelectedItem();
 		System.out.println("ShapePanel:SelectedQuestionIndex:" + selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
-			GraphQuestion graphQuestion = new GraphQuestion(question, selection, Question.ALTER_PAIR_QUESTION);
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, Question.ALTER_PAIR_QUESTION);
 			if(((Boolean)table.getValueAt(i,0)) == true) {
 				
 				EdgeProperty edgeProperty = new EdgeProperty();
-				edgeProperty.setProperty(EdgeProperty.Property.Shape);
+				edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Shape);
 				edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i, 2));
 				edgeProperty.setVisible(true);
 				edgesSelected[selectedQuestionIndex][i] = true;
@@ -186,7 +186,7 @@ Question question = (Question) questionCombo.getSelectedItem();
 				if(EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false 
 						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] ==false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
-					edgeProperty.setProperty(EdgeProperty.Property.Shape);
+					edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Shape);
 				//	edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i, 2));
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);

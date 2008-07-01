@@ -214,12 +214,12 @@ public class NodeSizePanel extends JPanel {
 			for (int i = 0; i < question.selections.length; i++) {
 				Selection selection = question.selections[i];
 
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setSize(Integer.parseInt((String) table
 						.getValueAt(i, 1)));
-				nodeProperty.setProperty(NodeProperty.Property.Size);
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Size);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}
@@ -231,8 +231,8 @@ public class NodeSizePanel extends JPanel {
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setSize(Integer.parseInt((String) table
 						.getValueAt(i, 1)));
-				nodeProperty.setProperty(NodeProperty.Property.Size);
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Size);
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();

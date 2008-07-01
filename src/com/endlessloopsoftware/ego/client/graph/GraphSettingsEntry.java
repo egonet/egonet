@@ -1,7 +1,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.w3c.dom.*;
-import org.w3c.dom.Element;
+
+import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgePropertyType;
+import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodePropertyType;
 
 public class GraphSettingsEntry {
 
@@ -9,27 +11,27 @@ public class GraphSettingsEntry {
         Node, Edge
     }
     
-	GraphQuestion graphQuestion = null;
+	GraphQuestionSelectionPair graphQuestion = null;
 
 	GraphProperty property = null;
 
 	GraphSettingType type;
 
-	public GraphSettingsEntry(GraphQuestion gq, NodeProperty np,
+	public GraphSettingsEntry(GraphQuestionSelectionPair gq, NodeProperty np,
 			GraphSettingType type) {
 		this.graphQuestion = gq;
 		this.property = np;
 		this.type = type;
 	}
 
-	public GraphSettingsEntry(GraphQuestion gq, EdgeProperty ep,
+	public GraphSettingsEntry(GraphQuestionSelectionPair gq, EdgeProperty ep,
 			GraphSettingType type) {
 		this.graphQuestion = gq;
 		this.property = ep;
 		this.type = type;
 	}
 
-	public GraphQuestion getGraphQuestion() {
+	public GraphQuestionSelectionPair getGraphQuestion() {
 		return graphQuestion;
 	}
 
@@ -38,9 +40,7 @@ public class GraphSettingsEntry {
 	}
 
 	public String toString() {
-		String string = "";
-		string = graphQuestion.toString() + "||" + property.toString();
-		return string;
+		return "[questionSelectionPair=("+graphQuestion.toString() + "),(property=" + property.toString() + ")]";
 	}
 
 	public GraphSettingType getType() {
@@ -51,15 +51,14 @@ public class GraphSettingsEntry {
 		Element entryElement = doc.createElement("Entry");
 
 		// Record Graph Question (Question , Answer)
-		Element graphQuestionElement = doc.createElement("GraphQuestion");
+		Element graphQuestionElement = doc.createElement("GraphQuestionSelectionPair");
 		// Question
 		Element questionElement = doc.createElement("Question");
 		questionElement.setAttribute("id", graphQuestion.getQuestion().UniqueId
 				.toString());
 		// Selection
 		Element selectionElement = doc.createElement("Selection");
-		selectionElement.setAttribute("text", graphQuestion.getSelection()
-				.getString());
+		selectionElement.setAttribute("text", graphQuestion.getSelection().getString());
 		// Type
 		Element categoryElement = doc.createElement("Category");
 		String category = ((Integer) graphQuestion.getCategory()).toString();
@@ -71,43 +70,51 @@ public class GraphSettingsEntry {
 
 		// Record Property(Color Shape Size Label)
 		Element propertyElement = doc.createElement("Property");
-		// Color
-		Element colorElement = doc.createElement("Color");
-		String rgb = ((Integer) property.getColor().getRGB()).toString();
-		colorElement.setAttribute("color", rgb);
-		// Shape
-		Element shapeElement = doc.createElement("Shape");
-		Element visibileElement = doc.createElement("Visibile");
+		propertyElement.setAttribute("type", type.toString());
 		
-		if (property.getClass() == NodeProperty.class) {
-			String shape = ((NodeProperty) property).getShape().toString();
-			shapeElement.setAttribute("shape", shape);
-			visibileElement.setAttribute("visible", "true");
+		if (property instanceof NodeProperty) {
+			NodeProperty np = ((NodeProperty) property);
+			if(np.getProperty().equals(NodePropertyType.Color))
+			{
+				String rgb = ((Integer) property.getColor().getRGB()).toString();
+				propertyElement.setAttribute("color", rgb);
+			} else if(np.getProperty().equals(NodePropertyType.Label)) {
+				// doesn't save label yet!
+			} else if(np.getProperty().equals(NodePropertyType.Shape)) {
+				String shape = np.getShape().toString();
+				propertyElement.setAttribute("shape", shape);
+			} else if(np.getProperty().equals(NodePropertyType.Size)) {
+				String size = ((Integer) property.getSize()).toString();
+				propertyElement.setAttribute("size", size);
+			}
+				
+			// no visible property on nodes
 		} else {
-			String shape = ((EdgeProperty) property).getShape().toString();
-			shapeElement.setAttribute("shape", shape);
+
+			EdgeProperty ep = ((EdgeProperty) property);
+			if(ep.getProperty().equals(EdgePropertyType.Color))
+			{
+				String rgb = ((Integer) property.getColor().getRGB()).toString();
+				propertyElement.setAttribute("color", rgb);
+			} else if(ep.getProperty().equals(EdgePropertyType.Label)) {
+				// doesn't save label yet!
+			} else if(ep.getProperty().equals(EdgePropertyType.Shape)) {
+				String shape = ep.getShape().toString();
+				propertyElement.setAttribute("shape", shape);
+			} else if(ep.getProperty().equals(EdgePropertyType.Size)) {
+				String size = ((Integer) property.getSize()).toString();
+				propertyElement.setAttribute("size", size);
+			}
+			
+			Element visibileElement = doc.createElement("Visible");
 			if (((EdgeProperty) property).isVisible())
 				visibileElement.setAttribute("visible", "true");
 			else
 				visibileElement.setAttribute("visible", "false");
+			propertyElement.appendChild(visibileElement);
 		}
-		// Size
-		Element sizeElement = doc.createElement("Size");
-		String size = ((Integer) property.getSize()).toString();
-		sizeElement.setAttribute("size", size);
 		
-		//type
-		Element propertyTypeElement = doc.createElement("PropertyType");
-		propertyTypeElement.setAttribute("type", type.toString());
 		
-		// Append all five to property Element
-		propertyElement.appendChild(colorElement);
-		propertyElement.appendChild(shapeElement);
-		propertyElement.appendChild(sizeElement);
-		propertyElement.appendChild(visibileElement);
-		propertyElement.appendChild(propertyTypeElement);
-
-		// Append all three for entry element
 		entryElement.appendChild(graphQuestionElement);
 		entryElement.appendChild(propertyElement);
 

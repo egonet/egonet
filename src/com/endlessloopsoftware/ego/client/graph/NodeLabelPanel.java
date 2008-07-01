@@ -200,11 +200,11 @@ public class NodeLabelPanel extends JPanel {
 			Question question = (Question) questionCombo.getSelectedItem();
 			if (question.answerType == Question.CATEGORICAL) {
 				for (Selection selection : question.selections) {
-					GraphQuestion graphQuestion = new GraphQuestion(question,
+					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 							selection, Question.ALTER_QUESTION);
 					NodeProperty nodeProperty = new NodeProperty();
 					nodeProperty.setLabel(selection.getString());
-					nodeProperty.setProperty(NodeProperty.Property.Label);
+					nodeProperty.setProperty(NodeProperty.NodePropertyType.Label);
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();
 				}
@@ -213,8 +213,8 @@ public class NodeLabelPanel extends JPanel {
 				for (Selection selection : selectionList) {
 					NodeProperty nodeProperty = new NodeProperty();
 					nodeProperty.setLabel(selection.getString());
-					nodeProperty.setProperty(NodeProperty.Property.Label);
-					GraphQuestion graphQuestion = new GraphQuestion(question,
+					nodeProperty.setProperty(NodeProperty.NodePropertyType.Label);
+					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 							selection, Question.ALTER_QUESTION);
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();

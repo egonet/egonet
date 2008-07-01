@@ -451,11 +451,11 @@ public class GraphRenderer extends PluggableRenderer implements
 		graph.removeAllEdges();
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
-			GraphQuestion graphQuestion = entry.getGraphQuestion();
+			GraphQuestionSelectionPair graphQuestion = entry.getGraphQuestion();
 			if ((graphQuestion.getCategory() == Question.ALTER_QUESTION)
 					&& (entry.getType() == GraphSettingType.Node)) {
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
-				NodeProperty.Property prop = nodeProperty.getProperty();
+				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
 				Question question = graphQuestion.getQuestion();
 				Selection selection = graphQuestion.getSelection();
 				GraphData graphData = new GraphData();
@@ -492,23 +492,23 @@ public class GraphRenderer extends PluggableRenderer implements
 			// measure
 			{
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
-				NodeProperty.Property prop = nodeProperty.getProperty();
+				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
 				if (graphQuestion.getSelection().getString() == "DegreeCentrality") {
 					switch (prop) {
 					case Color:
-						applyDegreeCentrality(NodeProperty.Property.Color);
+						applyDegreeCentrality(NodeProperty.NodePropertyType.Color);
 						break;
 					case Size:
-						applyDegreeCentrality(NodeProperty.Property.Size);
+						applyDegreeCentrality(NodeProperty.NodePropertyType.Size);
 						break;
 					}
 				} else { // Degree centrality
 					switch (prop) {
 					case Color:
-						applyBetweennessCentrality(NodeProperty.Property.Color);
+						applyBetweennessCentrality(NodeProperty.NodePropertyType.Color);
 						break;
 					case Size:
-						applyBetweennessCentrality(NodeProperty.Property.Size);
+						applyBetweennessCentrality(NodeProperty.NodePropertyType.Size);
 						break;
 					}
 				}
@@ -517,7 +517,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			else if ((graphQuestion.getCategory() == Question.ALTER_PAIR_QUESTION)
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
-				EdgeProperty.Property prop = edgeProperty.getProperty();
+				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();
 				//System.out.println("prop value is " +prop.toString());
 				
 				GraphData graphData = new GraphData();
@@ -634,7 +634,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		return max;
 	}
 
-	private void applyDegreeCentrality(NodeProperty.Property property) {
+	private void applyDegreeCentrality(NodeProperty.NodePropertyType property) {
 
 		float[] degreeCentrality = new float[EgoClient.interview.getNumAlters()];
 		float[] scaledDegreeCentrality = new float[EgoClient.interview
@@ -652,18 +652,18 @@ public class GraphRenderer extends PluggableRenderer implements
 
 		for (int i = 0; i < scaledDegreeCentrality.length; i++) {
 			float grayPercentage = 1 - scaledDegreeCentrality[i];
-			if (property == NodeProperty.Property.Color) {
+			if (property == NodeProperty.NodePropertyType.Color) {
 				Color nodeColor = new Color(grayPercentage, grayPercentage,
 						grayPercentage);
 				graphSettings.setNodeColor(vertexArray[i], nodeColor);
-			} else if (property == NodeProperty.Property.Size) {
+			} else if (property == NodeProperty.NodePropertyType.Size) {
 				int size = Math.round(1 + 2 * scaledDegreeCentrality[i]);
 				graphSettings.setNodeSize(vertexArray[i], size);
 			}
 		}
 	}
 
-	private void applyBetweennessCentrality(NodeProperty.Property property) {
+	private void applyBetweennessCentrality(NodeProperty.NodePropertyType property) {
 
 		float[] betweennessCentrality = new float[EgoClient.interview
 				.getNumAlters()];
@@ -684,11 +684,11 @@ public class GraphRenderer extends PluggableRenderer implements
 
 		for (int i = 0; i < scaledBetweennessCentrality.length; i++) {
 			float grayPercentage = 1 - scaledBetweennessCentrality[i];
-			if (property == NodeProperty.Property.Color) {
+			if (property == NodeProperty.NodePropertyType.Color) {
 				Color nodeColor = new Color(grayPercentage, grayPercentage,
 						grayPercentage);
 				graphSettings.setNodeColor(vertexArray[i], nodeColor);
-			} else if (property == NodeProperty.Property.Size) {
+			} else if (property == NodeProperty.NodePropertyType.Size) {
 				int size = Math.round(1 + 2 * scaledBetweennessCentrality[i]);
 				graphSettings.setNodeSize(vertexArray[i], size);
 			}
@@ -723,12 +723,12 @@ public class GraphRenderer extends PluggableRenderer implements
 		}
 	}
 
-	public void addQAsettings(GraphQuestion graphQuestion,
+	public void addQAsettings(GraphQuestionSelectionPair graphQuestion,
 			NodeProperty nodeProperty) {
 		graphSettings.addQAsetting(graphQuestion, nodeProperty);
 	}
 
-	public void addQAsettings(GraphQuestion graphQuestion,
+	public void addQAsettings(GraphQuestionSelectionPair graphQuestion,
 			EdgeProperty edgeProperty) {
 		graphSettings.addQAsetting(graphQuestion, edgeProperty);
 	}

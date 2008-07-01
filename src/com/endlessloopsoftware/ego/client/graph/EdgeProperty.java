@@ -9,11 +9,11 @@ public class EdgeProperty extends GraphProperty{
 	public static enum EdgeShape {Line, QuadCurve, CubicCurve}
 	EdgeShape shape;
 	
-	public static enum Property {
+	public static enum EdgePropertyType {
 		Color, Shape, Size, Label
 	}
 	
-	private Property property = null;
+	private EdgePropertyType property = null;
 	private boolean visible = false;
 	
 	public EdgeProperty()
@@ -56,16 +56,14 @@ public class EdgeProperty extends GraphProperty{
 
 	public String toString()
 	{
-		String str;
-		str = this.shape.toString() + " " + this.color.toString() + " " + this.size;
-		return str;
+		return "[edge property,type="+property.name()+",shape="+shape+",visible="+visible+"]";
 	}
 	
-	public Property getProperty() {
+	public EdgePropertyType getProperty() {
 		return property;
 	}
 
-	public void setProperty(Property property) {
+	public void setProperty(EdgePropertyType property) {
 		this.property = property;
 	}
 

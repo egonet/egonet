@@ -3,12 +3,7 @@ package com.endlessloopsoftware.ego.client.graph;
 import java.awt.*;
 
 
-public class GraphProperty {
-
-//	public static final int SHAPE = 1;
-//	public static final int SIZE = 2;
-//	public static final int COLOR = 3;
-//	public static final int ALL = 4;
+public abstract class GraphProperty {
 	
 	Color color;
 	int size;
@@ -45,6 +40,11 @@ public class GraphProperty {
 	}
 	public void setSize(int size) {
 		this.size = size;
+	}
+	
+	public String toString()
+	{
+		return "[color="+color+",size="+size+",label="+label+",default="+defaultSetting+"]";
 	}
 	
 }

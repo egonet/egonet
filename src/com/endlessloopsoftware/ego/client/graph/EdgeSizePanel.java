@@ -174,12 +174,12 @@ public class EdgeSizePanel extends JPanel {
 
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
-			GraphQuestion graphQuestion = new GraphQuestion(question,
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 					selection, Question.ALTER_PAIR_QUESTION);
 
 			if (((Boolean) table.getValueAt(i, 0)) == true) {
 				EdgeProperty edgeProperty = new EdgeProperty();
-				edgeProperty.setProperty(EdgeProperty.Property.Size);
+				edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Size);
 				String sizeStr = (String) table.getValueAt(i, 2);
 				int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
 				edgeProperty.setSize(size);
@@ -193,7 +193,7 @@ public class EdgeSizePanel extends JPanel {
 				if (EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false
 						&& EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
-					edgeProperty.setProperty(EdgeProperty.Property.Size);
+					edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Size);
 //					String sizeStr = (String) table.getValueAt(i, 2);
 //					int size = sizeStr != null ? Integer.parseInt(sizeStr) : -1;
 //					edgeProperty.setSize(size);

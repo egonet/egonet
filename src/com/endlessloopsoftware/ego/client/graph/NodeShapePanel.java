@@ -218,12 +218,12 @@ public class NodeShapePanel extends JPanel {
 			for (int i = 0; i < question.selections.length; i++) {
 				Selection selection = question.selections[i];
 
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setShape((NodeProperty.NodeShape) table
 						.getValueAt(i, 1));
-				nodeProperty.setProperty(NodeProperty.Property.Shape);
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Shape);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}
@@ -235,8 +235,8 @@ public class NodeShapePanel extends JPanel {
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setShape((NodeProperty.NodeShape) table
 						.getValueAt(i, 1));
-				nodeProperty.setProperty(NodeProperty.Property.Shape);
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Shape);
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();

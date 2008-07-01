@@ -69,7 +69,7 @@ public class GraphData {
 	 * @param graphQuestion
 	 * @return Pair AlterPairList
 	 */
-	public List<Pair> getAlterPairs(GraphQuestion graphQuestion) {
+	public List<Pair> getAlterPairs(GraphQuestionSelectionPair graphQuestion) {
 		List<Pair> alterPairList = new ArrayList<Pair>();
 		List<Integer> alterNumbers = new ArrayList<Integer>();
 		alterNumbers = getAlterNumbers(graphQuestion);
@@ -112,7 +112,7 @@ public class GraphData {
 	 *            ALTER_QUESTION or ALTER_PAIR_QUESTION
 	 * @return
 	 */
-	public List<Integer> getAlterNumbers(GraphQuestion graphQuestion) {
+	public List<Integer> getAlterNumbers(GraphQuestionSelectionPair graphQuestion) {
 
 		List<Integer> alterNumbers = new ArrayList<Integer>();
 		Long QID = graphQuestion.getQuestion().UniqueId;
@@ -188,7 +188,7 @@ public class GraphData {
 	 *            ALTER_QUESTION or ALTER_PAIR_QUESTION
 	 * @return
 	 */
-	public List<String> getAlterNames(GraphQuestion graphQuestion) {
+	public List<String> getAlterNames(GraphQuestionSelectionPair graphQuestion) {
 
 		List<String> alterNames = new ArrayList<String>();
 		Long QID = graphQuestion.getQuestion().UniqueId;

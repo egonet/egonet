@@ -55,7 +55,7 @@ public class StructuralMeasuresPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				StructuralMeasures measure = (StructuralMeasures) structuralCombo_1
 						.getSelectedItem();
-				NodeProperty.Property param = NodeProperty.Property.Size;
+				NodeProperty.NodePropertyType param = NodeProperty.NodePropertyType.Size;
 				System.out.println("Size by : " + measure.toString());
 				addStructuralElement(measure, param);
 				graphRenderer.updateGraphSettings();
@@ -65,7 +65,7 @@ public class StructuralMeasuresPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				StructuralMeasures measure = (StructuralMeasures) structuralCombo_2
 						.getSelectedItem();
-				NodeProperty.Property param = NodeProperty.Property.Color;
+				NodeProperty.NodePropertyType param = NodeProperty.NodePropertyType.Color;
 				addStructuralElement(measure, param);
 				graphRenderer.updateGraphSettings();
 				System.out.println("Color by : " + measure.toString());
@@ -77,7 +77,7 @@ public class StructuralMeasuresPanel extends JPanel {
 	}
 
 	private void addStructuralElement(StructuralMeasures measure,
-			NodeProperty.Property property) {
+			NodeProperty.NodePropertyType property) {
 
 		Question question = new Question("Structural_Properties");
 		Selection selection = null;
@@ -91,7 +91,7 @@ public class StructuralMeasuresPanel extends JPanel {
 		}
 		// the 3rd argument to constructor is 0 to say that it is a structural
 		// question
-		GraphQuestion gq = new GraphQuestion(question, selection, 0);
+		GraphQuestionSelectionPair gq = new GraphQuestionSelectionPair(question, selection, 0);
 		NodeProperty nodeProperty = new NodeProperty();
 		nodeProperty.setColor(Color.BLACK);
 		nodeProperty.setSize(15);

@@ -5,7 +5,7 @@ import java.util.*;
 import com.endlessloopsoftware.ego.*;
 import org.egonet.util.listbuilder.Selection;
 
-public class GraphQuestion {
+public class GraphQuestionSelectionPair {
 
 	// public static enum QuestionCategory { EGO, ALTER, ALTERPAIR }
 	private Question question;
@@ -23,7 +23,7 @@ public class GraphQuestion {
 	
 	private boolean showLabel = false; 
 
-	public GraphQuestion(Question question, Selection selection, int category) {
+	public GraphQuestionSelectionPair(Question question, Selection selection, int category) {
 		this.question = question;
 		this.category = category;
 		this.selection = selection;
@@ -64,14 +64,14 @@ public class GraphQuestion {
 	}
 
 	public String toString() {
-		return (this.question.title + " " + this.selection.getString());
+		return "[title="+this.question.title + ",selection=" + this.selection.getString()+"]";
 	}
 
 	public boolean equals(Object obj) {
-		if(!(obj instanceof GraphQuestion))
+		if(!(obj instanceof GraphQuestionSelectionPair))
 			return false;
 		
-		GraphQuestion gq = (GraphQuestion)obj;
+		GraphQuestionSelectionPair gq = (GraphQuestionSelectionPair)obj;
 		return (this.question.equals(gq.question)
 				&& this.selection.equals(gq.selection)
 				&& this.category == gq.category);

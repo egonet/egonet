@@ -206,11 +206,11 @@ public class NodeColorPanel extends JPanel {
 			for (int i = 0; i < question.selections.length; i++) {
 				Selection selection = question.selections[i];
 
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setColor((Color) table.getValueAt(i, 1));
-				nodeProperty.setProperty(NodeProperty.Property.Color);
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Color);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}
@@ -220,8 +220,8 @@ public class NodeColorPanel extends JPanel {
 				Selection selection = selectionList.get(i);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setColor((Color) table.getValueAt(i, 1));
-				nodeProperty.setProperty(NodeProperty.Property.Color);
-				GraphQuestion graphQuestion = new GraphQuestion(question,
+				nodeProperty.setProperty(NodeProperty.NodePropertyType.Color);
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();

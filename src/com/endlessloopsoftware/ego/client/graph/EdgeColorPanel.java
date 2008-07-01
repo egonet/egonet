@@ -164,12 +164,12 @@ public class EdgeColorPanel extends JPanel {
 				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.selections.length; i++) {
 			Selection selection = question.selections[i];
-			GraphQuestion graphQuestion = new GraphQuestion(question,
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 					selection, Question.ALTER_PAIR_QUESTION);
 
 			if (((Boolean) table.getValueAt(i, 0)) == true) {
 				EdgeProperty edgeProperty = new EdgeProperty();
-				edgeProperty.setProperty(EdgeProperty.Property.Color);
+				edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Color);
 				edgeProperty.setColor((Color) table.getValueAt(i, 2));
 				edgeProperty.setVisible(true);
 				edgesSelected[selectedQuestionIndex][i] = true;
@@ -180,7 +180,7 @@ public class EdgeColorPanel extends JPanel {
 				if (EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false
 						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
-					edgeProperty.setProperty(EdgeProperty.Property.Color);
+					edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Color);
 					//edgeProperty.setColor((Color) table.getValueAt(i, 2));
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);

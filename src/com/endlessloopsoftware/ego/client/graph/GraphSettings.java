@@ -113,6 +113,7 @@ public class GraphSettings {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadSettingsFile(File file) throws ParserConfigurationException, SAXException, IOException
 	{
 
@@ -130,93 +131,70 @@ public class GraphSettings {
 			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element entryElement = (Element) entryNode;
 
-				Element graphElement = (Element) entryElement
-				.getElementsByTagName("GraphQuestion").item(0);
-				Element propertyElement = (Element) entryElement
-				.getElementsByTagName("Property").item(0);
+				Element graphElement = (Element) entryElement.getElementsByTagName("GraphQuestionSelectionPair").item(0);
+				Element propertyElement = (Element) entryElement.getElementsByTagName("Property").item(0);
 
-				Element questionElement = (Element) graphElement
-				.getElementsByTagName("Question").item(0);
-				Element selectionElement = (Element) graphElement
-				.getElementsByTagName("Selection").item(0);
-				Element categoryElement = (Element) graphElement
-				.getElementsByTagName("Category").item(0);
+				Element questionElement = (Element) graphElement.getElementsByTagName("Question").item(0);
+				Element selectionElement = (Element) graphElement.getElementsByTagName("Selection").item(0);
+				Element categoryElement = (Element) graphElement.getElementsByTagName("Category").item(0);
 
-				Element colorElement = (Element) propertyElement
-				.getElementsByTagName("Color").item(0);
-				Element shapeElement = (Element) propertyElement
-				.getElementsByTagName("Shape").item(0);
-				Element sizeElement = (Element) propertyElement
-				.getElementsByTagName("Size").item(0);
+				
+				String typeElement = propertyElement.getAttribute("type");
+				
+				String colorElement = propertyElement.getAttribute("color");
+				String shapeElement = propertyElement.getAttribute("shape");
+				String sizeElement = propertyElement.getAttribute("size");
 
-				Element visibleElement = (Element) propertyElement
-				.getElementsByTagName("Visibile").item(0);
-				Element typeElement = (Element) propertyElement
-				.getElementsByTagName("PropertyType").item(0);
+				String visibleElement = propertyElement.getAttribute("visible");
+				
 
-				Question question = questionMap.get(Long
-						.parseLong(questionElement.getAttribute("id")));
-				int category = Integer.parseInt(categoryElement
-						.getAttribute("category"));
+				Question question = questionMap.get(Long.parseLong(questionElement.getAttribute("id")));
+				int category = Integer.parseInt(categoryElement.getAttribute("category"));
 
 				for (int j = 0; j < question.selections.length; j++) {
 					Selection selection = question.selections[j];
 
-					if (selection.getString().equals(
-							selectionElement.getAttribute("text"))) {
-						GraphQuestion graphQuestion = new GraphQuestion(
-								question, selection, category);
+					if (selection.getString().equals(selectionElement.getAttribute("text"))) {
+						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, category);
 
-						if (typeElement.getAttribute("type").equals("Edge")) {
-							EdgeProperty epColor = new EdgeProperty();
-							EdgeProperty epShape = new EdgeProperty();
-							EdgeProperty epSize = new EdgeProperty();
+						if (typeElement.equals("Edge")) {
+							EdgeProperty prop = new EdgeProperty();
 
-							epColor.setColor(Color.decode(colorElement
-									.getAttribute("color")));
-							epColor.setProperty(EdgeProperty.Property.Color);
+							
+							if(!sizeElement.equals(""))
+							{
+								prop.setSize(Integer.parseInt(sizeElement));
+								prop.setProperty(EdgeProperty.EdgePropertyType.Size);
+							} else if(!colorElement.equals("")) {
+								prop.setColor(Color.decode(colorElement));
+								prop.setProperty(EdgeProperty.EdgePropertyType.Color);
+							} else if(!shapeElement.equals("")) {
+								prop.setShapeFromString(shapeElement.toString());
+								prop.setProperty(EdgeProperty.EdgePropertyType.Shape);
+							} else if(!visibleElement.equals("")) {
+								prop.setVisible(visibleElement.equals("true"));
+							}
 
-							epShape.setShapeFromString(shapeElement.toString());
-							epShape.setProperty(EdgeProperty.Property.Shape);
-
-							epSize.setSize(Integer.parseInt(sizeElement
-									.getAttribute("size")));
-							epSize.setProperty(EdgeProperty.Property.Size);
-
-							epColor.setVisible(visibleElement.getAttribute(
-							"visible").equals("true"));
-							epSize.setVisible(visibleElement.getAttribute(
-							"visible").equals("true"));
-							epShape.setVisible(visibleElement.getAttribute(
-							"visible").equals("true"));
-
-							addQAsetting(graphQuestion, epColor);
-							addQAsetting(graphQuestion, epShape);
-							addQAsetting(graphQuestion, epSize);
+							addQAsetting(graphQuestion, prop);
 
 						} else {
 							// do same for node property
+							NodeProperty prop = new NodeProperty();
 
-							NodeProperty npColor = new NodeProperty();
-							NodeProperty npShape = new NodeProperty();
-							NodeProperty npSize = new NodeProperty();
+							if(!sizeElement.equals(""))
+							{
+								prop.setSize(Integer.parseInt(sizeElement));
+								prop.setProperty(NodeProperty.NodePropertyType.Size);
+							} else if(!colorElement.equals(""))
+							{
+								prop.setColor(Color.decode(colorElement));
+								prop.setProperty(NodeProperty.NodePropertyType.Color);
+							} else if(!shapeElement.equals("")) {
+								prop.setShapeFromString(shapeElement.toString());
+								prop.setProperty(NodeProperty.NodePropertyType.Shape);
+							}
 
-							npColor.setColor(Color.decode(colorElement
-									.getAttribute("color")));
-							npColor.setProperty(NodeProperty.Property.Color);
-
-
-							npShape.setShapeFromString(shapeElement.toString());
-							npShape.setProperty(NodeProperty.Property.Shape);
-
-							npSize.setSize(Integer.parseInt(sizeElement
-									.getAttribute("size")));
-							npSize.setProperty(NodeProperty.Property.Size);
-
-							addQAsetting(graphQuestion, npColor);
-							addQAsetting(graphQuestion, npShape);
-							addQAsetting(graphQuestion, npSize);
-
+							addQAsetting(graphQuestion, prop);
 						}
 
 					}
@@ -322,29 +300,25 @@ public class GraphSettings {
 		edgeSettingsMap.get(edge).setLabel(edgeLabel);
 	}
 
-	public void addQAsetting(GraphQuestion graphQuestion,
-			NodeProperty nodeProperty) {
-		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
-				nodeProperty, GraphSettingType.Node);
+	public void addQAsetting(GraphQuestionSelectionPair graphQuestion, NodeProperty nodeProperty) {
+		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion, nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
 		displaySettings();
 	}
 
-	public void addQAsetting(GraphQuestion graphQuestion,
-			EdgeProperty edgeProperty) {
-		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
-				edgeProperty, GraphSettingType.Edge);
+	public void addQAsetting(GraphQuestionSelectionPair graphQuestion, EdgeProperty edgeProperty) {
+		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion, edgeProperty, GraphSettingType.Edge);
 		QAsettings.add(entry);
-		//updateSettingsFile(entry);
 		displaySettings();
 	}
 
 	private void displaySettings() {
 		
 		int size = QAsettings.size();
+		System.out.println("Graph settings ("+size+" entries):");
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			//System.out.println(entry.toString());
+			System.out.println("Entry " + i + ": " + entry.toString());
 		}
 	}
 

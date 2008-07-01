@@ -8,7 +8,7 @@ public class NodeProperty extends GraphProperty {
 		Circle, Square, Pentagon, Hexagon, Triangle, Star, RoundedRectangle
 	}
 	
-	public static enum Property {
+	public static enum NodePropertyType {
 		Color, Shape, Size, Label
 	}
 	public NodeProperty(String label, Color color, NodeShape shape, int size) {
@@ -24,7 +24,7 @@ public class NodeProperty extends GraphProperty {
 
 	private boolean showLabel = false;
 
-	private Property property = null;
+	private NodePropertyType property = null;
 	
 	private String toolTipText = "";
 	
@@ -36,11 +36,11 @@ public class NodeProperty extends GraphProperty {
 		this.toolTipText = toolTipText;
 	}
 
-	public Property getProperty() {
+	public NodePropertyType getProperty() {
 		return property;
 	}
 
-	public void setProperty(Property property) {
+	public void setProperty(NodePropertyType property) {
 		this.property = property;
 	}
 
@@ -75,13 +75,11 @@ public class NodeProperty extends GraphProperty {
 		}
 	}
 
-	public String toString() {
-		String str;
-		str = this.shape.toString() + " " + this.color.toString() + " "
-				+ this.size + " " + this.label + " "  + this.property;
-		return str;
+	public String toString()
+	{
+		return "[node property,type="+property.name()+",shape="+shape+",label="+label+",showlabel="+showLabel+",tooltip="+toolTipText.substring(0, Math.min(toolTipText.length(),5))+"]";
 	}
-
+	
 	public boolean isShowLabel() {
 		return showLabel;
 	}
