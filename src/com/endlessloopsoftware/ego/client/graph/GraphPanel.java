@@ -71,6 +71,7 @@ public class GraphPanel extends javax.swing.JPanel {
 		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
 		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
 		tabs.add("Structural Measures", new StructuralMeasuresPanel(graphRenderer));
+		tabs.add("Apply Graph Settings", new ApplyGraphSetting(graphRenderer));
 
 		topRightPanel.add(tabs);
 	}
