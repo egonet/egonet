@@ -63,7 +63,6 @@ public class GraphPanel extends javax.swing.JPanel {
 		JTabbedPane tabs = new JTabbedPane();
 
 		tabs.add("Graph", new GraphTabPanel(graphRenderer));
-		// tabs.add("Node", new NodePanel(graphRenderer));
 		tabs.add("Edge Color", new EdgeColorPanel(graphRenderer));
 		tabs.add("Edge Shape", new EdgeShapePanel(graphRenderer));
 		tabs.add("Edge Size", new EdgeSizePanel(graphRenderer));
@@ -71,9 +70,7 @@ public class GraphPanel extends javax.swing.JPanel {
 		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
 		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
 		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
-		tabs.add("Apply Graph Settings", new ApplyGraphSettings(graphRenderer));
-		tabs.add("Structural Measures", new StructuralMeasuresPanel(
-				graphRenderer));
+		tabs.add("Structural Measures", new StructuralMeasuresPanel(graphRenderer));
 
 		topRightPanel.add(tabs);
 	}

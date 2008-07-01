@@ -39,20 +39,20 @@ public class ViewInterviewPanel
       final ProgressMonitor progressMonitor = new ProgressMonitor(EgoClient.frame, "Calculating Statistics", "", 0, 100);
    		final SwingWorker worker = new SwingWorker() 
 		{
-	      public Object construct() 
-			{
-		      	// Build Screen
-		      	EgoClient.frame.setVisible(false);
-            Shared.setWaitCursor(EgoClient.frame, true);
-		   	  	progressMonitor.setProgress(5);
-		      	EgoClient.frame.setContentPane(new ViewInterviewPanel(progressMonitor));
-		      	progressMonitor.setProgress(95);
-	         EgoClient.frame.createMenuBar(EgoClient.VIEW_INTERVIEW);
-	         EgoClient.frame.pack();
-	        // EgoClient.frame.setSize(640, 530);
-	         EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-	         
-	         return EgoClient.frame;
+   			public Object construct() 
+   			{
+   				// Build Screen
+   				EgoClient.frame.setVisible(false);
+   				Shared.setWaitCursor(EgoClient.frame, true);
+   				progressMonitor.setProgress(5);
+   				EgoClient.frame.setContentPane(new ViewInterviewPanel(progressMonitor));
+   				progressMonitor.setProgress(95);
+   				EgoClient.frame.createMenuBar(EgoClient.VIEW_INTERVIEW);
+   				EgoClient.frame.pack();
+   				// EgoClient.frame.setSize(640, 530);
+   				EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
+
+   				return EgoClient.frame;
 	      }
 	      
 	      public void finished()

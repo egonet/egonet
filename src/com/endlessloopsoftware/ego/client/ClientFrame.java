@@ -79,32 +79,24 @@ public class ClientFrame extends JFrame {
 
 	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
-	private final JMenuItem saveStudySummary = new JMenuItem(
-			"Save Study Summary");
+	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
 
 	private final JMenuItem exit = new JMenuItem("Exit");
 
-	public final JMenuItem saveAlterSummary = new JMenuItem(
-			"Save Alter Summary");
+	public final JMenuItem saveAlterSummary = new JMenuItem("Save Alter Summary");
 
-	public final JMenuItem saveTextSummary = new JMenuItem(
-			"Save Text Answer Summary");
+	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
 
-	public final JMenuItem saveAdjacencyMatrix = new JMenuItem(
-			"Save Adjacency Matrix");
+	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
 
-	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem(
-			"Save Weighted Adjacency Matrix");
+	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
-	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 
-	public final JMenuItem saveGraphSettings = new JMenuItem(
-			"Save graph settings");
-
-	/*public final JMenuItem applyGraphSettings = new JMenuItem(
-			"Apply graph settings");
-*/
+	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
+	public final JMenuItem applyGraphSettings = new JMenuItem("Load/Apply graph settings");
+	
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
+	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 
 	public final JMenuItem recalculateStatistics = new JMenuItem(
 			"Recalculate Statistics");
@@ -176,7 +168,7 @@ public class ClientFrame extends JFrame {
 			}
 		});
 
-		/*applyGraphSettings
+		applyGraphSettings
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
@@ -188,7 +180,7 @@ public class ClientFrame extends JFrame {
 					}
 				});
 
-*/		recalculateStatistics
+		recalculateStatistics
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						EgoClient.interview = EgoClient.storage.readInterview();
@@ -258,11 +250,16 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(saveTextSummary);
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
-			jMenuFile.add(saveGraph);
+
+			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
-			//jMenuFile.add(applyGraphSettings);
+			jMenuFile.add(applyGraphSettings);
+
+			jMenuFile.addSeparator();
+			jMenuFile.add(saveGraph);
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(recalculateStatistics);
+			
 			jMenuFile.addSeparator();
 			jMenuFile.add(close);
 
@@ -337,7 +334,6 @@ public class ClientFrame extends JFrame {
 	}
 
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
-
 		String[] name = EgoClient.interview.getName();
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
@@ -364,6 +360,37 @@ public class ClientFrame extends JFrame {
 			GraphRenderer.getGraphSettings().saveSettingsFile(settingsFile);
 		}
 	}
+	
+	protected void applyGraphSettings_actionPerformed(ActionEvent e) {
+		String[] name = EgoClient.interview.getName();
+		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+
+		final File currentDirectory = new File(EgoClient.storage.getPackageFile().getParent(), "Graphs");
+		currentDirectory.mkdir();
+		File file = new File(currentDirectory.getAbsolutePath() + fileName);
+
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(currentDirectory);
+		fileChooser.setSelectedFile(new File(fileName));
+		fileChooser.setDialogTitle("Load Graph Settings");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setSelectedFile(file);
+
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings","xml");
+		fileChooser.addChoosableFileFilter(filter);
+
+		int returnValue = fileChooser.showOpenDialog(this);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File settingsFile = fileChooser.getSelectedFile();
+
+			try {
+				GraphRenderer.getGraphSettings().loadSettingsFile(settingsFile);
+			} catch (Throwable cause) {
+				cause.printStackTrace();
+			}
+		}
+	}
+
 
 	/*private void parseXMLFile(String fileName) throws SAXException, IOException,
 			ParserConfigurationException {

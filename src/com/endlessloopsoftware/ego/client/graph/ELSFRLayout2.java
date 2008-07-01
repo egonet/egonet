@@ -12,7 +12,7 @@ public class ELSFRLayout2 extends FRLayout {
         super(g);
     }
     
-    private int xIsolate=0,yIsolate=0;
+    private int xIsolate=25,yIsolate=0;
 	protected void initializeLocation(Vertex v, Coordinates coord, Dimension d) {
 		super.initializeLocation(v, coord, d);
 		if (v.getIncidentEdges().size() == 0) {
@@ -37,7 +37,6 @@ public class ELSFRLayout2 extends FRLayout {
 		    else
 		    {
 		    	yIsolate+=25;
-		    	xIsolate+=25; //part of the circle is hidden when xIsolate is 0
 		    }
 		    
 		    coord.setLocation(xIsolate,yIsolate);

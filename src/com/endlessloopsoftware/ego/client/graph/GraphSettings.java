@@ -11,12 +11,16 @@ import java.io.*;
 
 import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Answer;
+import com.endlessloopsoftware.ego.QuestionList;
+import com.endlessloopsoftware.ego.Study;
 
 import com.endlessloopsoftware.ego.client.*;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 
+import org.egonet.util.listbuilder.Selection;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -107,6 +111,119 @@ public class GraphSettings {
 		} catch (Throwable ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+	
+	public void loadSettingsFile(File file) throws ParserConfigurationException, SAXException, IOException
+	{
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.parse(file);
+		NodeList entryNodeList = document.getDocumentElement().getChildNodes();
+
+		Study study = EgoClient.interview.getStudy();
+		QuestionList questionList = study.getQuestions();
+		Map<Long, Question> questionMap = questionList.getQuestionMap();
+
+		for (int i = 0; i < entryNodeList.getLength(); i++) {
+			Node entryNode = entryNodeList.item(i);
+			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element entryElement = (Element) entryNode;
+
+				Element graphElement = (Element) entryElement
+				.getElementsByTagName("GraphQuestion").item(0);
+				Element propertyElement = (Element) entryElement
+				.getElementsByTagName("Property").item(0);
+
+				Element questionElement = (Element) graphElement
+				.getElementsByTagName("Question").item(0);
+				Element selectionElement = (Element) graphElement
+				.getElementsByTagName("Selection").item(0);
+				Element categoryElement = (Element) graphElement
+				.getElementsByTagName("Category").item(0);
+
+				Element colorElement = (Element) propertyElement
+				.getElementsByTagName("Color").item(0);
+				Element shapeElement = (Element) propertyElement
+				.getElementsByTagName("Shape").item(0);
+				Element sizeElement = (Element) propertyElement
+				.getElementsByTagName("Size").item(0);
+
+				Element visibleElement = (Element) propertyElement
+				.getElementsByTagName("Visibile").item(0);
+				Element typeElement = (Element) propertyElement
+				.getElementsByTagName("PropertyType").item(0);
+
+				Question question = questionMap.get(Long
+						.parseLong(questionElement.getAttribute("id")));
+				int category = Integer.parseInt(categoryElement
+						.getAttribute("category"));
+
+				for (int j = 0; j < question.selections.length; j++) {
+					Selection selection = question.selections[j];
+
+					if (selection.getString().equals(
+							selectionElement.getAttribute("text"))) {
+						GraphQuestion graphQuestion = new GraphQuestion(
+								question, selection, category);
+
+						if (typeElement.getAttribute("type").equals("Edge")) {
+							EdgeProperty epColor = new EdgeProperty();
+							EdgeProperty epShape = new EdgeProperty();
+							EdgeProperty epSize = new EdgeProperty();
+
+							epColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							epColor.setProperty(EdgeProperty.Property.Color);
+
+							epShape.setShapeFromString(shapeElement.toString());
+							epShape.setProperty(EdgeProperty.Property.Shape);
+
+							epSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							epSize.setProperty(EdgeProperty.Property.Size);
+
+							epColor.setVisible(visibleElement.getAttribute(
+							"visible").equals("true"));
+							epSize.setVisible(visibleElement.getAttribute(
+							"visible").equals("true"));
+							epShape.setVisible(visibleElement.getAttribute(
+							"visible").equals("true"));
+
+							addQAsetting(graphQuestion, epColor);
+							addQAsetting(graphQuestion, epShape);
+							addQAsetting(graphQuestion, epSize);
+
+						} else {
+							// do same for node property
+
+							NodeProperty npColor = new NodeProperty();
+							NodeProperty npShape = new NodeProperty();
+							NodeProperty npSize = new NodeProperty();
+
+							npColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							npColor.setProperty(NodeProperty.Property.Color);
+
+
+							npShape.setShapeFromString(shapeElement.toString());
+							npShape.setProperty(NodeProperty.Property.Shape);
+
+							npSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							npSize.setProperty(NodeProperty.Property.Size);
+
+							addQAsetting(graphQuestion, npColor);
+							addQAsetting(graphQuestion, npShape);
+							addQAsetting(graphQuestion, npSize);
+
+						}
+
+					}
+				}
+			}
+		}
+		renderer.updateGraphSettings();
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {
