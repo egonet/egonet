@@ -77,30 +77,40 @@ public class GraphSettingsEntry {
 		colorElement.setAttribute("color", rgb);
 		// Shape
 		Element shapeElement = doc.createElement("Shape");
+		Element visibileElement = doc.createElement("Visibile");
+		
 		if (property.getClass() == NodeProperty.class) {
 			String shape = ((NodeProperty) property).getShape().toString();
 			shapeElement.setAttribute("shape", shape);
+			visibileElement.setAttribute("visible", "true");
 		} else {
 			String shape = ((EdgeProperty) property).getShape().toString();
 			shapeElement.setAttribute("shape", shape);
+			if (((EdgeProperty) property).isVisible())
+				visibileElement.setAttribute("visible", "true");
+			else
+				visibileElement.setAttribute("visible", "false");
 		}
 		// Size
 		Element sizeElement = doc.createElement("Size");
 		String size = ((Integer) property.getSize()).toString();
 		sizeElement.setAttribute("size", size);
-		// Append all three to property Element
+		
+		//type
+		Element propertyTypeElement = doc.createElement("PropertyType");
+		propertyTypeElement.setAttribute("type", type.toString());
+		
+		// Append all five to property Element
 		propertyElement.appendChild(colorElement);
 		propertyElement.appendChild(shapeElement);
 		propertyElement.appendChild(sizeElement);
-
-		// Record property type (Node/Edge)
-		Element propertyTypeElement = doc.createElement("PropertyType");
-		propertyTypeElement.setAttribute("Type", type.toString());
+		propertyElement.appendChild(visibileElement);
+		propertyElement.appendChild(propertyTypeElement);
 
 		// Append all three for entry element
 		entryElement.appendChild(graphQuestionElement);
 		entryElement.appendChild(propertyElement);
-		entryElement.appendChild(propertyTypeElement);
+
 		rootElement.appendChild(entryElement);
 	}
 

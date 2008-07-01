@@ -2,6 +2,8 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.*;
 
+import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
+
 public class EdgeProperty extends GraphProperty{
 
 	public static enum EdgeShape {Line, QuadCurve, CubicCurve}
@@ -42,6 +44,16 @@ public class EdgeProperty extends GraphProperty{
 		this.shape = shape;
 	}
 	
+	public void setShapeFromString(String nodeShape){
+		if(nodeShape.equalsIgnoreCase("Line")){
+			this.shape = EdgeShape.Line;
+		}else if(nodeShape.equalsIgnoreCase("QuadCurve")){
+			this.shape = EdgeShape.QuadCurve;
+		}else {
+			this.shape = EdgeShape.CubicCurve;
+		}
+	}
+
 	public String toString()
 	{
 		String str;

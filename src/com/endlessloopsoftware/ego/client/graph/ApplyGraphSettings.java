@@ -30,6 +30,7 @@ import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
+import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 
 public class ApplyGraphSettings extends JPanel {
 
@@ -80,39 +81,9 @@ public class ApplyGraphSettings extends JPanel {
 
 	}
 
-	/*
-	 * private void updateNodeColor() { Question question = (Question)
-	 * questionCombo.getSelectedItem(); System.out.println("Question combo"
-	 * +question.UniqueId);
-	 * 
-	 * if (question.answerType == Question.CATEGORICAL) { for (int i = 0; i <
-	 * question.selections.length; i++) { Selection selection =
-	 * question.selections[i];
-	 * 
-	 * GraphQuestion graphQuestion = new GraphQuestion(question, selection,
-	 * Question.ALTER_QUESTION); NodeProperty nodeProperty = new NodeProperty();
-	 * nodeProperty.setColor((Color) table.getValueAt(i, 1));
-	 * nodeProperty.setProperty(NodeProperty.Property.Color);
-	 * graphRenderer.addQAsettings(graphQuestion, nodeProperty);
-	 * graphRenderer.updateGraphSettings(); } }else if (question.answerType ==
-	 * Question.TEXT) { System.out.println("Applying labels for text
-	 * questions"); for (int i =0;i < selectionList.size() ; i++) { Selection
-	 * selection = selectionList.get(i); NodeProperty nodeProperty = new
-	 * NodeProperty(); nodeProperty.setColor((Color) table.getValueAt(i, 1));
-	 * nodeProperty.setProperty(NodeProperty.Property.Color); GraphQuestion
-	 * graphQuestion = new GraphQuestion(question, selection,
-	 * Question.ALTER_QUESTION); graphRenderer.addQAsettings(graphQuestion,
-	 * nodeProperty); graphRenderer.updateGraphSettings(); } } //
-	 * graphRenderer.getVv().repaint(); }
-	 */
-
 	private void updateEdgeColor() throws ParserConfigurationException,
 			SAXException, IOException {
 
-		GraphSettingsEntry graphSettingEntry = null;
-		/*java.util.List<GraphSettingsEntry> graphSettingEntryList = Collections
-		 .synchronizedList(new ArrayList<GraphSettingsEntry>());
-		 */
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder
@@ -147,7 +118,9 @@ public class ApplyGraphSettings extends JPanel {
 				Element sizeElement = (Element) propertyElement
 						.getElementsByTagName("Size").item(0);
 
-				Element propertyTypeElement = (Element) entryElement
+				Element visibleElement = (Element) propertyElement
+						.getElementsByTagName("Visibile").item(0);
+				Element typeElement = (Element) propertyElement
 						.getElementsByTagName("PropertyType").item(0);
 
 				Question question = questionMap.get(Long
@@ -158,39 +131,68 @@ public class ApplyGraphSettings extends JPanel {
 				for (int j = 0; j < question.selections.length; j++) {
 					Selection selection = question.selections[j];
 
-					
-					//if(selection.getString().equals(selectionElement.toString())){
-					
-					//System.out.println(selectionElement.toString());
-					GraphQuestion graphQuestion = new GraphQuestion(question,
-							selection, category);
+					if (selection.getString().equals(
+							selectionElement.getAttribute("text"))) {
+						GraphQuestion graphQuestion = new GraphQuestion(
+								question, selection, category);
 
-					if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
-						EdgeProperty epColor = new EdgeProperty();
+						if (typeElement.getAttribute("type").equals("Edge")) {
+							EdgeProperty epColor = new EdgeProperty();
+							EdgeProperty epShape = new EdgeProperty();
+							EdgeProperty epSize = new EdgeProperty();
 
-						epColor.setColor(Color.decode(colorElement
-								.getAttribute("color")));
-						epColor.setProperty(EdgeProperty.Property.Shape);
-						epColor.setSize(Integer.parseInt(sizeElement
-								.getAttribute("size")));
-						epColor.setShape(EdgeShape.CubicCurve);
-						epColor.setVisible(true);
+							epColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							epColor.setProperty(EdgeProperty.Property.Color);
 
-						System.out.println("Color is " + epColor.getColor());
-						
-						graphSettingEntry = new GraphSettingsEntry(
-								graphQuestion, epColor, GraphSettingType.Edge);
-						
-						graphRenderer.addQAsettings(graphQuestion, epColor);
-						graphRenderer.updateGraphSettings();
-					} else {
-						//do same for node property
+							epShape.setShapeFromString(shapeElement.toString());
+							epShape.setProperty(EdgeProperty.Property.Shape);
+
+							epSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							epSize.setProperty(EdgeProperty.Property.Size);
+
+							epColor.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+							epSize.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+							epShape.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+
+							graphRenderer.addQAsettings(graphQuestion, epColor);
+							graphRenderer.addQAsettings(graphQuestion, epShape);
+							graphRenderer.addQAsettings(graphQuestion, epSize);
+
+						} else {
+							// do same for node property
+
+							NodeProperty npColor = new NodeProperty();
+							NodeProperty npShape = new NodeProperty();
+							NodeProperty npSize = new NodeProperty();
+
+							npColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							npColor.setProperty(NodeProperty.Property.Color);
+
+							
+							npShape.setShapeFromString(shapeElement.toString());
+							npShape.setProperty(NodeProperty.Property.Shape);
+
+							npSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							npSize.setProperty(NodeProperty.Property.Size);
+
+							graphRenderer.addQAsettings(graphQuestion, npColor);
+							graphRenderer.addQAsettings(graphQuestion, npShape);
+							graphRenderer.addQAsettings(graphQuestion, npSize);
+
+						}
+
 					}
-
-				//}
 				}
 			}
 		}
+		graphRenderer.updateGraphSettings();
 	}
 
 	private void drawPanel() {

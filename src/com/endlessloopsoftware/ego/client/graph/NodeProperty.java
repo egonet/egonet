@@ -55,7 +55,24 @@ public class NodeProperty extends GraphProperty {
 
 	public void setShape(NodeShape shape) {
 		this.shape = shape;
-		// System.out.println("Shape updated to "+ this.shape.toString());
+	}
+	
+	public void setShapeFromString(String nodeShape){
+		if(nodeShape.equalsIgnoreCase("Circle")){
+			this.shape = NodeShape.Circle;
+		}else if(nodeShape.equalsIgnoreCase("Square")){
+			this.shape = NodeShape.Square;
+		}else if(nodeShape.equalsIgnoreCase("Pentagon")){
+			this.shape = NodeShape.Pentagon;
+		}else if(nodeShape.equalsIgnoreCase("Hexagon")){
+			this.shape = NodeShape.Hexagon;
+		}else if(nodeShape.equalsIgnoreCase("Triangle")){
+			this.shape = NodeShape.Triangle;
+		}else if (nodeShape.equalsIgnoreCase("Star")){
+			this.shape = NodeShape.Star;
+		}else {
+			this.shape = NodeShape.RoundedRectangle;
+		}
 	}
 
 	public String toString() {
