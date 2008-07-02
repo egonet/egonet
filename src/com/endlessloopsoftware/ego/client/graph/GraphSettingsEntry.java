@@ -106,12 +106,12 @@ public class GraphSettingsEntry {
 				propertyElement.setAttribute("size", size);
 			}
 			
-			Element visibileElement = doc.createElement("Visible");
+			Element visibleElement = doc.createElement("Visible");
 			if (((EdgeProperty) property).isVisible())
-				visibileElement.setAttribute("visible", "true");
+				visibleElement.setAttribute("visible", "true");
 			else
-				visibileElement.setAttribute("visible", "false");
-			propertyElement.appendChild(visibileElement);
+				visibleElement.setAttribute("visible", "false");
+			propertyElement.appendChild(visibleElement);
 		}
 		
 		

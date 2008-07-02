@@ -99,39 +99,48 @@ public class GraphSettings {
 			doc.appendChild(studyElement);
 
 			Element graphElement = doc.createElement("GraphElement");
-			
+
 			// layoutElement
 			Element layoutElement = doc.createElement("Layout");
-			layoutElement.setAttribute("layout", renderer.getVv().getLayout().getClass().getName());
-			System.out.println("renderer.getVv().getLayout().getClass().getName() " +renderer.getVv().getLayout().getClass().getName());
-			
+			layoutElement.setAttribute("layout", renderer
+					.getVisualizationModel().getGraphLayout().getClass()
+					.getName());
+			System.out
+					.println("renderer.getVv().getLayout().getClass().getName() "
+							+ renderer.getVisualizationModel().getGraphLayout()
+									.getClass().getName());
+
 			// zoomElement
 			Element zoomElement = doc.createElement("Zoom");
-			zoomElement.setAttribute("zoom", renderer.getVv().getLayout().getClass().toString());
-			
+			zoomElement.setAttribute("zoom", renderer.getVv().getLayout()
+					.getClass().toString());
+
 			// backGroundElement
 			Element backGroundElement = doc.createElement("Background");
-			String background = ((Integer) renderer.getVisualizationViewer().getBackground().getRGB()).toString();
+			String background = ((Integer) renderer.getVisualizationViewer()
+					.getBackground().getRGB()).toString();
 			backGroundElement.setAttribute("background", background);
-			
+
 			// showNodeLabelElement
 			Element showNodeLabelElement = doc.createElement("ShowNodeLabel");
-			showNodeLabelElement.setAttribute("shownodelabel", renderer.getShowNodeLabels()? "true" : "false");
-			
+			showNodeLabelElement.setAttribute("shownodelabel", renderer
+					.getShowNodeLabels() ? "true" : "false");
+
 			graphElement.appendChild(layoutElement);
 			graphElement.appendChild(backGroundElement);
 			graphElement.appendChild(zoomElement);
 			graphElement.appendChild(showNodeLabelElement);
-			
+
 			studyElement.appendChild(graphElement);
-			
-			for(GraphSettingsEntry entry : QAsettings)
-			    entry.writeEntryElement(doc, studyElement);
-            
+
+			for (GraphSettingsEntry entry : QAsettings)
+				entry.writeEntryElement(doc, studyElement);
+
 			TransformerFactory tranFactory = TransformerFactory.newInstance();
 			Transformer aTransformer = tranFactory.newTransformer();
 			aTransformer.setOutputProperty("indent", "yes");
-			aTransformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			aTransformer.setOutputProperty(
+					"{http://xml.apache.org/xslt}indent-amount", "4");
 
 			Source src = new DOMSource(doc);
 			Result dest = new StreamResult(file);
@@ -141,10 +150,10 @@ public class GraphSettings {
 			throw new RuntimeException(ex);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void loadSettingsFile(File file) throws ParserConfigurationException, SAXException, IOException
-	{
+	public void loadSettingsFile(File file)
+			throws ParserConfigurationException, SAXException, IOException {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -155,34 +164,46 @@ public class GraphSettings {
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
 
-		Element graphElement = (Element) nodeList.item(0);
-		
-		Element layoutElement = (Element) graphElement.getElementsByTagName("Layout").item(0);
-		Element zoomElement = (Element) graphElement.getElementsByTagName("Zoom").item(0);
-		Element backgroundElement = (Element) graphElement.getElementsByTagName("Background").item(0);
-		Element showNodeLabelElement = (Element) graphElement.getElementsByTagName("ShowNodeLabel").item(0);
-		
-		try {
-			renderer.changeLayout(Class.forName(layoutElement.getAttribute("layout")));
-		} catch (ClassNotFoundException e) {
-			System.out.println("Specified class is not a Layout class");
-			e.printStackTrace();
-		}
-		
-		renderer.getVv().setBackground(Color.decode(backgroundElement
-				.getAttribute("background")));
-		if(showNodeLabelElement.getAttribute("shownodelabel").equals("true"))
-				renderer.drawNodeLabels();
-		
 		for (int i = 1; i < nodeList.getLength(); i++) {
 			Node entryNode = nodeList.item(i);
-			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+
+			if (entryNode.getNodeType() == Node.ELEMENT_NODE
+					&& ((Element) entryNode).getTagName()
+							.equals("GraphElement")) {
+				Element graphElement = (Element) entryNode;
+
+				Element layoutElement = (Element) graphElement
+						.getElementsByTagName("Layout").item(0);
+				Element zoomElement = (Element) graphElement
+						.getElementsByTagName("Zoom").item(0);
+				Element backgroundElement = (Element) graphElement
+						.getElementsByTagName("Background").item(0);
+				Element showNodeLabelElement = (Element) graphElement
+						.getElementsByTagName("ShowNodeLabel").item(0);
+
+				try {
+					renderer.changeLayout(Class.forName(layoutElement
+							.getAttribute("layout")));
+				} catch (ClassNotFoundException e) {
+					System.out.println("Specified class is not a Layout class");
+					e.printStackTrace();
+				}
+
+				renderer.getVv().setBackground(
+						Color.decode(backgroundElement
+								.getAttribute("background")));
+				if (showNodeLabelElement.getAttribute("shownodelabel").equals(
+						"true"))
+					renderer.drawNodeLabels();
+			}
+
+			if (entryNode.getNodeType() == Node.ELEMENT_NODE
+					&& ((Element) entryNode).getTagName().equals("Entry")) {
 				Element entryElement = (Element) entryNode;
 
 				Element graphQuestionSelectionElement = (Element) entryElement
-						.getElementsByTagName("GraphQuestionSelectionPair").item(0);
-				Element propertyElement = (Element) entryElement
-						.getElementsByTagName("Property").item(0);
+						.getElementsByTagName("GraphQuestionSelectionPair")
+						.item(0);
 
 				Element questionElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Question").item(0);
@@ -191,17 +212,11 @@ public class GraphSettings {
 				Element categoryElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Category").item(0);
 
-				Element colorElement = (Element) propertyElement
-						.getElementsByTagName("Color").item(0);
-				Element shapeElement = (Element) propertyElement
-						.getElementsByTagName("Shape").item(0);
-				Element sizeElement = (Element) propertyElement
-						.getElementsByTagName("Size").item(0);
+				Element propertyElement = (Element) entryElement
+						.getElementsByTagName("Property").item(0);
 
 				Element visibleElement = (Element) propertyElement
-						.getElementsByTagName("Visibile").item(0);
-				Element typeElement = (Element) propertyElement
-						.getElementsByTagName("PropertyType").item(0);
+						.getElementsByTagName("Visible").item(0);
 
 				Question question = questionMap.get(Long
 						.parseLong(questionElement.getAttribute("id")));
@@ -216,32 +231,45 @@ public class GraphSettings {
 						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(
 								question, selection, category);
 
-						if (typeElement.getAttribute("type").equals("Edge")) {
-							EdgeProperty epColor = new EdgeProperty();
-							EdgeProperty epShape = new EdgeProperty();
-							EdgeProperty epSize = new EdgeProperty();
+						if (propertyElement.getAttribute("type").equals("Edge")) {
 
-							epColor.setColor(Color.decode(colorElement
-									.getAttribute("color")));
-							epColor.setProperty(EdgePropertyType.Color);
+							System.out.println(propertyElement
+									.getAttribute("color"));
+							if (!propertyElement.getAttribute("color").equals(
+									"")) {
+								EdgeProperty epColor = new EdgeProperty();
+								epColor.setColor(Color.decode(propertyElement
+										.getAttribute("color")));
+								epColor.setProperty(EdgePropertyType.Color);
 
-							epSize.setSize(Integer.parseInt(sizeElement
-									.getAttribute("size")));
-							epSize.setProperty(EdgePropertyType.Size);
+								epColor.setVisible(visibleElement.getAttribute(
+										"visible").equals("true"));
+								renderer.addQAsettings(graphQuestion, epColor);
+							}
 
-							epShape.setShapeFromString(shapeElement.getAttribute("shape"));
-							epShape.setProperty(EdgePropertyType.Shape);
+							if (!propertyElement.getAttribute("size")
+									.equals("")) {
+								EdgeProperty epSize = new EdgeProperty();
+								epSize.setSize(Integer.parseInt(propertyElement
+										.getAttribute("size")));
+								epSize.setProperty(EdgePropertyType.Size);
 
-							epColor.setVisible(visibleElement.getAttribute(
-									"visible").equals("true"));
-							epSize.setVisible(visibleElement.getAttribute(
-									"visible").equals("true"));
-							epShape.setVisible(visibleElement.getAttribute(
-									"visible").equals("true"));
+								epSize.setVisible(visibleElement.getAttribute(
+										"visible").equals("true"));
+								renderer.addQAsettings(graphQuestion, epSize);
+							}
 
-							renderer.addQAsettings(graphQuestion, epColor);
-							renderer.addQAsettings(graphQuestion, epShape);
-							renderer.addQAsettings(graphQuestion, epSize);
+							if (!propertyElement.getAttribute("shape").equals(
+									"")) {
+								EdgeProperty epShape = new EdgeProperty();
+								epShape.setShapeFromString(propertyElement
+										.getAttribute("shape"));
+								epShape.setProperty(EdgePropertyType.Shape);
+
+								epShape.setVisible(visibleElement.getAttribute(
+										"visible").equals("true"));
+								renderer.addQAsettings(graphQuestion, epShape);
+							}
 
 						} else {
 							// do same for node property
@@ -250,14 +278,15 @@ public class GraphSettings {
 							NodeProperty npShape = new NodeProperty();
 							NodeProperty npSize = new NodeProperty();
 
-							npColor.setColor(Color.decode(colorElement
+							npColor.setColor(Color.decode(propertyElement
 									.getAttribute("color")));
 							npColor.setProperty(NodePropertyType.Color);
 
-							npShape.setShapeFromString(shapeElement.getAttribute("shape"));
+							npShape.setShapeFromString(propertyElement
+									.getAttribute("shape"));
 							npShape.setProperty(NodePropertyType.Shape);
 
-							npSize.setSize(Integer.parseInt(sizeElement
+							npSize.setSize(Integer.parseInt(propertyElement
 									.getAttribute("size")));
 							npSize.setProperty(NodePropertyType.Size);
 
@@ -272,7 +301,7 @@ public class GraphSettings {
 			}
 		}
 		renderer.updateGraphSettings();
-		
+
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {
@@ -371,25 +400,29 @@ public class GraphSettings {
 		edgeSettingsMap.get(edge).setLabel(edgeLabel);
 	}
 
-	public void addQAsetting(GraphQuestionSelectionPair graphQuestion, NodeProperty nodeProperty) {
-		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion, nodeProperty, GraphSettingType.Node);
+	public void addQAsetting(GraphQuestionSelectionPair graphQuestion,
+			NodeProperty nodeProperty) {
+		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
+				nodeProperty, GraphSettingType.Node);
 		QAsettings.add(entry);
 		displaySettings();
 	}
 
-	public void addQAsetting(GraphQuestionSelectionPair graphQuestion, EdgeProperty edgeProperty) {
-		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion, edgeProperty, GraphSettingType.Edge);
+	public void addQAsetting(GraphQuestionSelectionPair graphQuestion,
+			EdgeProperty edgeProperty) {
+		GraphSettingsEntry entry = new GraphSettingsEntry(graphQuestion,
+				edgeProperty, GraphSettingType.Edge);
 		QAsettings.add(entry);
 		displaySettings();
 	}
 
 	private void displaySettings() {
-		
+
 		int size = QAsettings.size();
-		System.out.println("Graph settings ("+size+" entries):");
+		System.out.println("Graph settings (" + size + " entries):");
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			//System.out.println("Entry " + i + ": " + entry.toString());
+			// System.out.println("Entry " + i + ": " + entry.toString());
 		}
 	}
 
@@ -443,34 +476,28 @@ public class GraphSettings {
 		edgeSettingsMap.get(edge).setVisible(b);
 	}
 
-	public Map<Edge, EdgeProperty> getEdgeSettingsMap()
-	{
+	public Map<Edge, EdgeProperty> getEdgeSettingsMap() {
 		return edgeSettingsMap;
 	}
 
-	public void setEdgeSettingsMap(Map<Edge, EdgeProperty> edgeSettingsMap)
-	{
+	public void setEdgeSettingsMap(Map<Edge, EdgeProperty> edgeSettingsMap) {
 		this.edgeSettingsMap = edgeSettingsMap;
 	}
 
-	public Map<ArchetypeVertex, NodeProperty> getNodeSettingsMap()
-	{
+	public Map<ArchetypeVertex, NodeProperty> getNodeSettingsMap() {
 		return nodeSettingsMap;
 	}
 
 	public void setNodeSettingsMap(
-			Map<ArchetypeVertex, NodeProperty> nodeSettingsMap)
-	{
+			Map<ArchetypeVertex, NodeProperty> nodeSettingsMap) {
 		this.nodeSettingsMap = nodeSettingsMap;
 	}
 
-	public java.util.List<GraphSettingsEntry> getQAsettings()
-	{
+	public java.util.List<GraphSettingsEntry> getQAsettings() {
 		return this.QAsettings;
 	}
 
-	public void setQAsettings(java.util.List<GraphSettingsEntry> asettings)
-	{
+	public void setQAsettings(java.util.List<GraphSettingsEntry> asettings) {
 		this.QAsettings = asettings;
 	}
 }
