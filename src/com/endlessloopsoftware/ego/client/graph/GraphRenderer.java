@@ -80,6 +80,8 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	public static boolean showEdgeWeights = false;
 
+	private boolean showNodeLabels = true;
+	
 	public GraphRenderer() {
 		graph = new UndirectedSparseGraph();
 		stats = EgoClient.interview.getStats();
@@ -765,4 +767,12 @@ public class GraphRenderer extends PluggableRenderer implements
     {
         return visualizationViewer;
     }
+
+	public boolean getShowNodeLabels() {
+		return showNodeLabels;
+	}
+
+	public void setShowNodeLabels(boolean showNodeLabels) {
+		this.showNodeLabels = showNodeLabels;
+	}
 }

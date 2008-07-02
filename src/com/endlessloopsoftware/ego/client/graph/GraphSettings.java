@@ -15,7 +15,9 @@ import com.endlessloopsoftware.ego.QuestionList;
 import com.endlessloopsoftware.ego.Study;
 
 import com.endlessloopsoftware.ego.client.*;
+import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodePropertyType;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
+import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgePropertyType;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 
 import org.egonet.util.listbuilder.Selection;
@@ -96,6 +98,33 @@ public class GraphSettings {
 			studyElement.setAttribute("StudyId", studyID);
 			doc.appendChild(studyElement);
 
+			Element graphElement = doc.createElement("GraphElement");
+			
+			//layoutElement, modeElement, backGroundElement, zoomElement, showNodeLabelElement
+			
+			// layoutElement
+			Element layoutElement = doc.createElement("Layout");
+			layoutElement.setAttribute("layout", renderer.getVv().getLayout().getClass().toString());
+			
+			// backGroundElement
+			Element backGroundElement = doc.createElement("Backgroud");
+			backGroundElement.setAttribute("background", renderer.getVisualizationViewer().getBackground().toString());
+			
+			// zoomElement
+			Element zoomElement = doc.createElement("Zoom");
+			zoomElement.setAttribute("zoom", renderer.getVisualizationViewer().getLayout().toString());
+			
+			// layoutElement
+			Element showNodeLabelElement = doc.createElement("ShowNodeLabel");
+			showNodeLabelElement.setAttribute("shownodelabel", renderer.getShowNodeLabels()? "true" : "false");
+			
+			graphElement.appendChild(layoutElement);
+			graphElement.appendChild(backGroundElement);
+			graphElement.appendChild(zoomElement);
+			graphElement.appendChild(showNodeLabelElement);
+			
+			studyElement.appendChild(graphElement);
+			
 			for(GraphSettingsEntry entry : QAsettings)
 			    entry.writeEntryElement(doc, studyElement);
             
@@ -131,70 +160,92 @@ public class GraphSettings {
 			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element entryElement = (Element) entryNode;
 
-				Element graphElement = (Element) entryElement.getElementsByTagName("GraphQuestionSelectionPair").item(0);
-				Element propertyElement = (Element) entryElement.getElementsByTagName("Property").item(0);
+				Element graphElement = (Element) entryElement
+						.getElementsByTagName("GraphQuestionSelectionPair").item(0);
+				Element propertyElement = (Element) entryElement
+						.getElementsByTagName("Property").item(0);
 
-				Element questionElement = (Element) graphElement.getElementsByTagName("Question").item(0);
-				Element selectionElement = (Element) graphElement.getElementsByTagName("Selection").item(0);
-				Element categoryElement = (Element) graphElement.getElementsByTagName("Category").item(0);
+				Element questionElement = (Element) graphElement
+						.getElementsByTagName("Question").item(0);
+				Element selectionElement = (Element) graphElement
+						.getElementsByTagName("Selection").item(0);
+				Element categoryElement = (Element) graphElement
+						.getElementsByTagName("Category").item(0);
 
-				
-				String typeElement = propertyElement.getAttribute("type");
-				
-				String colorElement = propertyElement.getAttribute("color");
-				String shapeElement = propertyElement.getAttribute("shape");
-				String sizeElement = propertyElement.getAttribute("size");
+				Element colorElement = (Element) propertyElement
+						.getElementsByTagName("Color").item(0);
+				Element shapeElement = (Element) propertyElement
+						.getElementsByTagName("Shape").item(0);
+				Element sizeElement = (Element) propertyElement
+						.getElementsByTagName("Size").item(0);
 
-				String visibleElement = propertyElement.getAttribute("visible");
-				
+				Element visibleElement = (Element) propertyElement
+						.getElementsByTagName("Visibile").item(0);
+				Element typeElement = (Element) propertyElement
+						.getElementsByTagName("PropertyType").item(0);
 
-				Question question = questionMap.get(Long.parseLong(questionElement.getAttribute("id")));
-				int category = Integer.parseInt(categoryElement.getAttribute("category"));
+				Question question = questionMap.get(Long
+						.parseLong(questionElement.getAttribute("id")));
+				int category = Integer.parseInt(categoryElement
+						.getAttribute("category"));
 
 				for (int j = 0; j < question.selections.length; j++) {
 					Selection selection = question.selections[j];
 
-					if (selection.getString().equals(selectionElement.getAttribute("text"))) {
-						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, category);
+					if (selection.getString().equals(
+							selectionElement.getAttribute("text"))) {
+						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(
+								question, selection, category);
 
-						if (typeElement.equals("Edge")) {
-							EdgeProperty prop = new EdgeProperty();
+						if (typeElement.getAttribute("type").equals("Edge")) {
+							EdgeProperty epColor = new EdgeProperty();
+							EdgeProperty epShape = new EdgeProperty();
+							EdgeProperty epSize = new EdgeProperty();
 
-							
-							if(!sizeElement.equals(""))
-							{
-								prop.setSize(Integer.parseInt(sizeElement));
-								prop.setProperty(EdgeProperty.EdgePropertyType.Size);
-							} else if(!colorElement.equals("")) {
-								prop.setColor(Color.decode(colorElement));
-								prop.setProperty(EdgeProperty.EdgePropertyType.Color);
-							} else if(!shapeElement.equals("")) {
-								prop.setShapeFromString(shapeElement.toString());
-								prop.setProperty(EdgeProperty.EdgePropertyType.Shape);
-							} else if(!visibleElement.equals("")) {
-								prop.setVisible(visibleElement.equals("true"));
-							}
+							epColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							epColor.setProperty(EdgePropertyType.Color);
 
-							addQAsetting(graphQuestion, prop);
+							epSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							epSize.setProperty(EdgePropertyType.Size);
+
+							epShape.setShapeFromString(shapeElement.getAttribute("shape"));
+							epShape.setProperty(EdgePropertyType.Shape);
+
+							epColor.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+							epSize.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+							epShape.setVisible(visibleElement.getAttribute(
+									"visible").equals("true"));
+
+							renderer.addQAsettings(graphQuestion, epColor);
+							renderer.addQAsettings(graphQuestion, epShape);
+							renderer.addQAsettings(graphQuestion, epSize);
 
 						} else {
 							// do same for node property
-							NodeProperty prop = new NodeProperty();
 
-							if(!sizeElement.equals(""))
-							{
-								prop.setSize(Integer.parseInt(sizeElement));
-								prop.setProperty(NodeProperty.NodePropertyType.Size);
-							} else if(!colorElement.equals(""))
-							{
-								prop.setColor(Color.decode(colorElement));
-								prop.setProperty(NodeProperty.NodePropertyType.Color);
-							} else if(!shapeElement.equals("")) {
-								prop.setShapeFromString(shapeElement.toString());
-								prop.setProperty(NodeProperty.NodePropertyType.Shape);
-							}
+							NodeProperty npColor = new NodeProperty();
+							NodeProperty npShape = new NodeProperty();
+							NodeProperty npSize = new NodeProperty();
 
-							addQAsetting(graphQuestion, prop);
+							npColor.setColor(Color.decode(colorElement
+									.getAttribute("color")));
+							npColor.setProperty(NodePropertyType.Color);
+
+							npShape.setShapeFromString(shapeElement.getAttribute("shape"));
+							npShape.setProperty(NodePropertyType.Shape);
+
+							npSize.setSize(Integer.parseInt(sizeElement
+									.getAttribute("size")));
+							npSize.setProperty(NodePropertyType.Size);
+
+							renderer.addQAsettings(graphQuestion, npColor);
+							renderer.addQAsettings(graphQuestion, npShape);
+							renderer.addQAsettings(graphQuestion, npSize);
+
 						}
 
 					}
@@ -202,6 +253,7 @@ public class GraphSettings {
 			}
 		}
 		renderer.updateGraphSettings();
+		
 	}
 
 	public int getNodeSize(ArchetypeVertex node) {

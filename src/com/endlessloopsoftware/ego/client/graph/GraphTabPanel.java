@@ -121,8 +121,7 @@ public class GraphTabPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// call renderer to render the graph with selected layout
 				JComboBox cb = (JComboBox) e.getSource();
-				Class layoutC = (Class) cb.getSelectedItem();
-				Class lay = layoutC;
+				Class lay = (Class) cb.getSelectedItem();
 				graphRenderer.changeLayout(lay);
 			}
 		});
@@ -181,9 +180,11 @@ public class GraphTabPanel extends JPanel {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					GraphRenderer.showEdgeWeights = true;
 					graphRenderer.drawEdgeLabels();
+					graphRenderer.setShowNodeLabels(true);
 
 				} else
 					graphRenderer.hideEdgeLabels();
+					graphRenderer.setShowNodeLabels(false);
 			}
 		});
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <GraphSettings StudyId="1197927178325">
     <Entry>
-        <GraphQuestion>
+        <GraphQuestionSelectionPair>
             <Question id="1198183373253"/>
             <Selection text="Not at all likely"/>
             <Category category="4"/>
-        </GraphQuestion>
+        </GraphQuestionSelectionPair>
         <Property>
             <Color color="-16777216"/>
             <Shape shape="Line"/>
@@ -15,11 +15,11 @@
         </Property>
     </Entry>
     <Entry>
-        <GraphQuestion>
+        <GraphQuestionSelectionPair>
             <Question id="1198183373253"/>
             <Selection text="Somewhat likely"/>
             <Category category="4"/>
-        </GraphQuestion>
+        </GraphQuestionSelectionPair>
         <Property>
             <Color color="-16777216"/>
             <Shape shape="QuadCurve"/>
@@ -29,11 +29,53 @@
         </Property>
     </Entry>
     <Entry>
-        <GraphQuestion>
+        <GraphQuestionSelectionPair>
             <Question id="1198183373253"/>
             <Selection text="Very likely"/>
             <Category category="4"/>
-        </GraphQuestion>
+        </GraphQuestionSelectionPair>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="CubicCurve"/>
+            <Size size="1"/>
+            <Visibile visible="true"/>
+            <PropertyType type="Edge"/>
+        </Property>
+    </Entry>
+    <Entry>
+        <GraphQuestionSelectionPair>
+            <Question id="1198183373253"/>
+            <Selection text="Not at all likely"/>
+            <Category category="4"/>
+        </GraphQuestionSelectionPair>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+            <Visibile visible="true"/>
+            <PropertyType type="Edge"/>
+        </Property>
+    </Entry>
+    <Entry>
+        <GraphQuestionSelectionPair>
+            <Question id="1198183373253"/>
+            <Selection text="Somewhat likely"/>
+            <Category category="4"/>
+        </GraphQuestionSelectionPair>
+        <Property>
+            <Color color="-16777216"/>
+            <Shape shape="Line"/>
+            <Size size="1"/>
+            <Visibile visible="false"/>
+            <PropertyType type="Edge"/>
+        </Property>
+    </Entry>
+    <Entry>
+        <GraphQuestionSelectionPair>
+            <Question id="1198183373253"/>
+            <Selection text="Very likely"/>
+            <Category category="4"/>
+        </GraphQuestionSelectionPair>
         <Property>
             <Color color="-16777216"/>
             <Shape shape="CubicCurve"/>
