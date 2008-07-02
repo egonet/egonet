@@ -100,21 +100,21 @@ public class GraphSettings {
 
 			Element graphElement = doc.createElement("GraphElement");
 			
-			//layoutElement, modeElement, backGroundElement, zoomElement, showNodeLabelElement
-			
 			// layoutElement
 			Element layoutElement = doc.createElement("Layout");
-			layoutElement.setAttribute("layout", renderer.getVv().getLayout().getClass().toString());
-			
-			// backGroundElement
-			Element backGroundElement = doc.createElement("Backgroud");
-			backGroundElement.setAttribute("background", renderer.getVisualizationViewer().getBackground().toString());
+			layoutElement.setAttribute("layout", renderer.getVv().getLayout().getClass().getName());
+			System.out.println("renderer.getVv().getLayout().getClass().getName() " +renderer.getVv().getLayout().getClass().getName());
 			
 			// zoomElement
 			Element zoomElement = doc.createElement("Zoom");
-			zoomElement.setAttribute("zoom", renderer.getVisualizationViewer().getLayout().toString());
+			zoomElement.setAttribute("zoom", renderer.getVv().getLayout().getClass().toString());
 			
-			// layoutElement
+			// backGroundElement
+			Element backGroundElement = doc.createElement("Background");
+			String background = ((Integer) renderer.getVisualizationViewer().getBackground().getRGB()).toString();
+			backGroundElement.setAttribute("background", background);
+			
+			// showNodeLabelElement
 			Element showNodeLabelElement = doc.createElement("ShowNodeLabel");
 			showNodeLabelElement.setAttribute("shownodelabel", renderer.getShowNodeLabels()? "true" : "false");
 			
@@ -149,27 +149,46 @@ public class GraphSettings {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(file);
-		NodeList entryNodeList = document.getDocumentElement().getChildNodes();
+		NodeList nodeList = document.getDocumentElement().getChildNodes();
 
 		Study study = EgoClient.interview.getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
 
-		for (int i = 0; i < entryNodeList.getLength(); i++) {
-			Node entryNode = entryNodeList.item(i);
+		Element graphElement = (Element) nodeList.item(0);
+		
+		Element layoutElement = (Element) graphElement.getElementsByTagName("Layout").item(0);
+		Element zoomElement = (Element) graphElement.getElementsByTagName("Zoom").item(0);
+		Element backgroundElement = (Element) graphElement.getElementsByTagName("Background").item(0);
+		Element showNodeLabelElement = (Element) graphElement.getElementsByTagName("ShowNodeLabel").item(0);
+		
+		try {
+			renderer.changeLayout(Class.forName(layoutElement.getAttribute("layout")));
+		} catch (ClassNotFoundException e) {
+			System.out.println("Specified class is not a Layout class");
+			e.printStackTrace();
+		}
+		
+		renderer.getVv().setBackground(Color.decode(backgroundElement
+				.getAttribute("background")));
+		if(showNodeLabelElement.getAttribute("shownodelabel").equals("true"))
+				renderer.drawNodeLabels();
+		
+		for (int i = 1; i < nodeList.getLength(); i++) {
+			Node entryNode = nodeList.item(i);
 			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element entryElement = (Element) entryNode;
 
-				Element graphElement = (Element) entryElement
+				Element graphQuestionSelectionElement = (Element) entryElement
 						.getElementsByTagName("GraphQuestionSelectionPair").item(0);
 				Element propertyElement = (Element) entryElement
 						.getElementsByTagName("Property").item(0);
 
-				Element questionElement = (Element) graphElement
+				Element questionElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Question").item(0);
-				Element selectionElement = (Element) graphElement
+				Element selectionElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Selection").item(0);
-				Element categoryElement = (Element) graphElement
+				Element categoryElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Category").item(0);
 
 				Element colorElement = (Element) propertyElement
@@ -370,7 +389,7 @@ public class GraphSettings {
 		System.out.println("Graph settings ("+size+" entries):");
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			System.out.println("Entry " + i + ": " + entry.toString());
+			//System.out.println("Entry " + i + ": " + entry.toString());
 		}
 	}
 
