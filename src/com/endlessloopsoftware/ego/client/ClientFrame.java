@@ -344,13 +344,12 @@ public class ClientFrame extends JFrame {
 
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(currentDirectory);
-		fileChooser.setSelectedFile(new File(fileName + ".settings"));
+		fileChooser.setSelectedFile(new File(fileName));
 		fileChooser.setDialogTitle("Save Graph Settings");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fileChooser.setSelectedFile(file);
 
-		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings",
-				"settings");
+		ExtensionFileFilter filter = new ExtensionFileFilter("Graph Settings","xml");
 		fileChooser.addChoosableFileFilter(filter);
 
 		int returnValue = fileChooser.showSaveDialog(this);
