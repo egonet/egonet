@@ -274,26 +274,32 @@ public class GraphSettings {
 						} else {
 							// do same for node property
 
-							NodeProperty npColor = new NodeProperty();
-							NodeProperty npShape = new NodeProperty();
-							NodeProperty npSize = new NodeProperty();
+                            if (!propertyElement.getAttribute("color").equals(""))
+                            {
+                                NodeProperty npColor = new NodeProperty();
 
-							npColor.setColor(Color.decode(propertyElement
-									.getAttribute("color")));
-							npColor.setProperty(NodePropertyType.Color);
+                                npColor.setColor(Color.decode(propertyElement.getAttribute("color")));
+                                npColor.setProperty(NodePropertyType.Color);
+                                renderer.addQAsettings(graphQuestion, npColor);
+                            }
 
-							npShape.setShapeFromString(propertyElement
-									.getAttribute("shape"));
-							npShape.setProperty(NodePropertyType.Shape);
+                            if (!propertyElement.getAttribute("size").equals(""))
+                            {
+                                NodeProperty npSize = new NodeProperty();
+                                npSize.setSize(Integer.parseInt(propertyElement.getAttribute("size")));
+                                npSize.setProperty(NodePropertyType.Size);
 
-							npSize.setSize(Integer.parseInt(propertyElement
-									.getAttribute("size")));
-							npSize.setProperty(NodePropertyType.Size);
+                                renderer.addQAsettings(graphQuestion, npSize);
+                            }
 
-							renderer.addQAsettings(graphQuestion, npColor);
-							renderer.addQAsettings(graphQuestion, npShape);
-							renderer.addQAsettings(graphQuestion, npSize);
+                            if (!propertyElement.getAttribute("shape").equals(""))
+                            {
+                                NodeProperty npShape = new NodeProperty();
+                                npShape.setShapeFromString(propertyElement.getAttribute("shape"));
+                                npShape.setProperty(NodePropertyType.Shape);
 
+                                renderer.addQAsettings(graphQuestion, npShape);
+                            }
 						}
 
 					}
