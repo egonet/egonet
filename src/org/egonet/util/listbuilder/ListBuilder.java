@@ -7,6 +7,8 @@ import java.awt.event.*;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Iterator;
@@ -59,7 +61,7 @@ public class ListBuilder extends JPanel implements Observer {
 	 * available, however, so they may delete items and then they will again be
 	 * allowed to add items up to the max size of the list.
 	 */
-	private int maxSize = 10;
+	private int maxSize = -1;
 
 	private String elementName = "";
 
@@ -399,11 +401,18 @@ public class ListBuilder extends JPanel implements Observer {
 							"Value problem", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				elementList.add(selection);
-
-				// someone HAS pressed enter
-				jList.clearSelection();
-				clearTextFields();
+				
+				if(maxSize != -1 && elementList.size() + 1 > maxSize)
+				{
+					JOptionPane.showMessageDialog(this,
+							"You cannot add any more alters!",
+							"Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
+				} else {
+					elementList.add(selection);
+					// someone HAS pressed enter
+					jList.clearSelection();
+					clearTextFields();
+				}
 			}
 		}
 	}
@@ -567,19 +576,19 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	public Selection[] getSelections() {
-		int ct = 0;
-		for (Object o : elementList.toArray())
+		
+		List<Selection> selectionList = new ArrayList<Selection>();
+		for(int i = 0 ; i < elementList.size() && ((maxSize != -1 && i < maxSize) || maxSize == -1); i++)
+		{
+			Object o = elementList.get(i);
 			if (o.getClass().equals(Selection.class))
-				ct++;
-
-		Selection[] arr = new Selection[ct];
-		int i = 0;
-		for (Object o : elementList.toArray()) {
-			if (o.getClass().equals(Selection.class)) {
-				arr[i] = (Selection) o;
-				i++;
-			}
+				selectionList.add((Selection)o);
 		}
+
+		int i = 0;
+		Selection[] arr = new Selection[selectionList.size()];
+		for (Selection sel : selectionList)
+				arr[i++] = sel;
 
 		return arr;
 	}
@@ -643,17 +652,13 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	public String[] getListStrings() {
-		int len = elementList.size();
-		String[] listStrings = new String[len];
-		int i = 0;
-		for (Iterator iterator = elementList.iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
-			if (!(element instanceof Selection))
-				element = new Selection();
 
-			Selection selection = (Selection) element;
+		Selection [] listSelections = getListSelections();
+		String[] listStrings = new String[listSelections.length];
+		
+		int i = 0;
+		for (Selection selection : listSelections)
 			listStrings[i++] = selection.getString();
-		}
 
 		return listStrings;
 	}
@@ -680,4 +685,5 @@ public class ListBuilder extends JPanel implements Observer {
 		else
 			firstName.requestFocusInWindow();
 	}
+
 }

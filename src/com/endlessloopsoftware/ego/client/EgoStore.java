@@ -268,8 +268,22 @@ public class EgoStore extends Observable {
 
 	public void selectInterview() {
 
-		final File currentDirectory = new File(getPackageFile().getParent(),
-				"/Interviews/");
+		File packageFile = getPackageFile();
+		File parentFile = packageFile.getParentFile();
+		File interviewFile = new File(parentFile, "/Interviews/");
+		
+		File guessLocation = new File(".");
+		if(parentFile.exists() && parentFile.isDirectory() && parentFile.canRead())
+			guessLocation = parentFile;
+		
+		if(interviewFile.exists() && interviewFile.isDirectory() && interviewFile.canRead())
+			guessLocation = interviewFile;
+		
+		final File currentDirectory = guessLocation;
+		
+		
+		
+		
 
 		final int numFiles = currentDirectory.list().length;
 
