@@ -416,8 +416,10 @@ public class EgoStore extends Observable {
 		try {
 			interview = readInterview(getInterviewFile());
 		} catch (FileReadException e) {
+			String msg = (e != null && !e.getMessage().equals("") ? " " + e.getMessage() : "");
+			
 			JOptionPane.showMessageDialog(EgoClient.frame,
-					"Unable to Read Interview.", "Read Interview Error",
+					"Unable to Read Interview."+msg, "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
 		} catch (FileMismatchException e) {
 			JOptionPane.showMessageDialog(EgoClient.frame,
@@ -458,7 +460,7 @@ public class EgoStore extends Observable {
 		} catch (CorruptedInterviewException ex) {
 			interview = null;
 
-			throw (new FileReadException());
+			throw (new FileReadException(ex));
 		} catch (ParseException ex) {
 			interview = null;
 
@@ -800,8 +802,10 @@ public class EgoStore extends Observable {
 
 		if ((EgoClient.interview != null) && EgoClient.interview.isComplete()) {
 			EgoClient.interview.completeInterview();
+		} else if(EgoClient.interview == null) {
+			throw new FileCreateException("Interview for " + interviewFile.getName() + " could not be read.");
 		} else {
-			throw new FileCreateException();
+			throw new FileCreateException("Interview for " + interviewFile.getName() + " was not completed.");
 		}
 	}
 

@@ -58,7 +58,6 @@
 		<!-- Creating jar for Enet libraries -->
 		<jar jarfile="${dir.dist.Egonet}/Egonet-lib.jar">
 			<zipfileset src="${dir.lib.Enet}/commons-collections-3.2.jar" />
-			<zipfileset src="${dir.lib.Enet}/elsutils.jar" />
 			<zipfileset src="${dir.lib.Enet}/EXML.jar" />
 			<zipfileset src="${dir.lib.Enet}/FoamRuntime.jar" />
 			<zipfileset src="${dir.lib.Enet}/forms-1.1.0.jar" />

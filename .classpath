@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="lib/jung-1.7.6.jar" sourcepath="/home/martins/JavaLib/jung-1.7.6/jung-1.7.6-src.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/FoamRuntime.jar"/>
-	<classpathentry kind="lib" path="lib/elsutils.jar"/>
 	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>

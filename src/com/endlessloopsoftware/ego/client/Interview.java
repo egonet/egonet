@@ -752,9 +752,9 @@ public class Interview {
 		int index = 0;
 
 		if (interview._numAnswers != answerIter.size()) {
-			System.err
-					.println("interview.numAnswers != answerIter.size in Interview::readAnswers; ");
-			throw (new CorruptedInterviewException());
+			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview._numAnswers + "!";
+			System.err.println(err);
+			throw (new CorruptedInterviewException(err));
 		}
 
 		while (answerIter.hasMoreElements()) {

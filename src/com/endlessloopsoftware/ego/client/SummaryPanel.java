@@ -171,11 +171,15 @@ public class SummaryPanel extends JPanel
 		progress.setMinimum(0);
 		progress.setMaximum(intFiles.length * 2);
 
+		System.out.println("Files available for loading in "+intPath.getAbsolutePath()+": " + intFiles.length);
 		for (i = 0; (i < intFiles.length) && !progress.isCanceled(); i++)
 		{
+			
 			progress.setProgress(++p);
 
 			String thisIntFileName = intFiles[i];
+			System.out.println("Loading file " + thisIntFileName);
+			
 			File intFile = new File(intPath, thisIntFileName);
 			File thisIstFile, thisMatrixFile, thisWeightedMatrixFile;
 
@@ -224,6 +228,7 @@ public class SummaryPanel extends JPanel
 			}
 			catch (Exception ignored)
 			{
+				ignored.printStackTrace();
 			}
 		}
 
