@@ -1,17 +1,22 @@
-package com.endlessloopsoftware.ego.client.statistics.models;
-
-/**
- * <p>Endless Loop Software Abstract Statistics Table Model</p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: Endless Loop Software, Inc.</p>
- *
- * @author  Peter C. Schoaff
- * @version $Revision: 1.1 $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
  * 
- * $Date: 2005/08/02 19:36:11 $
- * $Id: StatTableModel.java,v 1.1 2005/08/02 19:36:11 samag Exp $
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.client.statistics.models;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 

@@ -1,15 +1,22 @@
-package com.endlessloopsoftware.ego;
-
-/**
- * <p>Title: Egocentric Networks Client Program</p>
- * <p>Description: Subject Interview Client</p>
- * <p>Copyright: Copyright (c) 2002 - 2004 </p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter Schoaff
- *
- * $Id: Study.java,v 1.1 2005/08/02 19:36:02 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego;
 import java.io.IOException;
 import java.util.*;
 
@@ -1087,96 +1094,3 @@ public class Study extends Observable
 	}
 	
 }
-
-/**
- * $Log: Study.java,v $
- * Revision 1.1  2005/08/02 19:36:02  samag
- * Initial checkin
- *
- * Revision 1.14  2004/04/11 15:19:28  admin
- * Using password to access server
- *
- * Remote study summary in seperate thread with progress monitor
- *
- * Revision 1.13  2004/04/11 00:17:13  admin
- * Improving display of Alter Prompt questions from Applet UI Interviews
- *
- * Revision 1.12  2004/04/07 00:08:31  admin
- * updating manifests, jar creation. Removing author specific objects from
- * client specific references
- *
- * Revision 1.11  2004/04/06 20:29:22  admin
- * First pass as supporting interactive applet linking interviews
- *
- * Revision 1.10  2004/04/06 14:56:02  admin
- * Work to integrate with Applet Linking UI
- *
- * Revision 1.9  2004/04/02 19:48:58  admin
- * Keep Study Id when possible
- * Store updated time in file
- *
- * Revision 1.8  2004/03/29 00:35:09  admin
- * Downloading Interviews
- * Fixing some bugs creating Interviews from Data Objects
- *
- * Revision 1.7  2004/03/28 17:31:31  admin
- * More error handling when uploading study to server
- * Server URL selection dialog for upload
- *
- * Revision 1.6  2004/03/23 14:58:47  admin
- * Update UI
- * Study creation now occurs in instantiators
- *
- * Revision 1.5  2004/03/21 20:29:37  admin
- * Warn before making incompatible changes to in use study file
- *
- * Revision 1.4  2004/03/21 14:00:38  admin
- * Cleaned up Question Panel Layout using FOAM
- *
- * Revision 1.3  2004/02/10 20:10:42  admin
- * Version 2.0 beta 3
- *
- * Revision 1.2  2004/01/23 13:36:07  admin
- * Updating Libraries
- * Allowing upload to web server
- *
- * Revision 1.1  2003/12/05 19:15:43  admin
- * Extracting Study
- * Revision 1.3 2003/12/04 15:14:08 admin Merging EgoNet
- * and EgoClient projects so that they can share some common classes more
- * easily.
- * 
- * Revision 1.2 2003/11/25 19:25:44 admin Warn before closing window
- * 
- * Revision 1.1.1.1 2003/06/08 15:09:40 admin Egocentric Network Survey
- * Authoring Module
- * 
- * Revision 1.10 2002/08/11 22:26:06 admin Final Statistics window, new file
- * handling
- * 
- * Revision 1.9 2002/08/08 17:07:26 admin Preparing to change file system
- * 
- * Revision 1.8 2002/07/25 14:54:24 admin Question Links
- * 
- * Revision 1.7 2002/07/24 14:17:10 admin xml files, links
- * 
- * Revision 1.6 2002/07/18 14:43:06 admin New Alter Prompt Panel, packages
- * 
- * Revision 1.5 2002/06/30 15:59:18 admin Moving questions in lists, between
- * lists Better category input
- * 
- * Revision 1.4 2002/06/26 15:43:43 admin More selection dialog work File
- * loading fixes
- * 
- * Revision 1.3 2002/06/25 15:41:02 admin Lots of UI work
- * 
- * Revision 1.2 2002/06/21 22:47:12 admin question lists working again
- * 
- * Revision 1.1 2002/06/21 21:53:29 admin new files
- * 
- * Revision 1.2 2002/06/16 17:53:10 admin Working with files
- * 
- * Revision 1.1 2002/06/15 14:19:51 admin Initial Checkin of question and
- * survey General file system work
- *  
- */

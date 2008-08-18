@@ -1,17 +1,22 @@
-package com.endlessloopsoftware.ego;
-
-/**
- * <p>Title: Egocentric Network Researcher</p>
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: Question.java,v 1.1 2005/08/02 19:36:02 samag Exp $
- *
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego;
 import java.util.Date;
 
 import com.endlessloopsoftware.egonet.data.QuestionLinkDataValue;
@@ -48,10 +53,6 @@ public class Question implements Cloneable {
 	public int numQAlters = -1;
 
 	public QuestionLink link = new QuestionLink();
-
-	/*
-	 * public class selection extends Selection { public boolean modified=false; }
-	 */
 
 	public Selection[] selections = new Selection[0];
 
@@ -151,13 +152,6 @@ public class Question implements Cloneable {
 			selection.setValue(selectionData[i].getValue());
 			selection.setAdjacent(selectionData[i].getAdjacent());
 
-			/*
-			 * selection selectionobj = new selection(); selectionobj.string =
-			 * selectionData[i].getText(); selectionobj.index =
-			 * selectionData[i].getIndex(); selectionobj.value =
-			 * selectionData[i].getValue(); selectionobj.adjacent =
-			 * selectionData[i].getAdjacent();
-			 */
 			if (selection.isAdjacent())
 				adjacent = true;
 			else
@@ -495,99 +489,3 @@ public class Question implements Cloneable {
 		return str;
 	}
 }
-
-/**
- * $Log: Question.java,v $ Revision 1.1 2005/08/02 19:36:02 samag Initial
- * checkin
- * 
- * Revision 1.18 2004/04/11 00:24:48 admin Fixing headers
- * 
- * Revision 1.17 2004/04/11 00:17:13 admin Improving display of Alter Prompt
- * questions from Applet UI Interviews
- * 
- * Revision 1.16 2004/04/06 20:29:22 admin First pass as supporting interactive
- * applet linking interviews
- * 
- * Revision 1.15 2004/04/06 14:56:02 admin Work to integrate with Applet Linking
- * UI
- * 
- * Revision 1.14 2004/04/01 15:11:16 admin Completing Original UI work
- * 
- * Revision 1.13 2004/03/29 16:13:38 admin Fixed bug calculating statable
- * questions
- * 
- * Revision 1.12 2004/03/29 00:35:09 admin Downloading Interviews Fixing some
- * bugs creating Interviews from Data Objects
- * 
- * Revision 1.11 2004/03/28 17:31:31 admin More error handling when uploading
- * study to server Server URL selection dialog for upload
- * 
- * Revision 1.10 2004/03/22 00:00:34 admin Extended text entry area Started work
- * on importing studies from server
- * 
- * Revision 1.9 2004/03/21 14:00:38 admin Cleaned up Question Panel Layout using
- * FOAM
- * 
- * Revision 1.8 2004/03/10 14:32:39 admin Adding client library cleaning up code
- * 
- * Revision 1.7 2004/02/10 20:10:42 admin Version 2.0 beta 3
- * 
- * Revision 1.6 2004/01/23 13:36:07 admin Updating Libraries Allowing upload to
- * web server
- * 
- * Revision 1.5 2003/12/18 19:30:05 admin Small mods to support EJB persistence
- * 
- * Revision 1.4 2003/12/09 16:17:00 admin Fixing bug reading in adjacency
- * selections Clearing identity diagonal of Weighted Adjacency Matrix
- * 
- * Revision 1.3 2003/12/08 15:57:50 admin Modified to generate matrix files on
- * survey completion or summarization Extracted statistics models
- * 
- * Revision 1.2 2003/12/05 19:15:43 admin Extracting Study
- * 
- * Revision 1.1 2003/12/04 15:14:08 admin Merging EgoNet and EgoClient projects
- * so that they can share some common classes more easily.
- * 
- * Revision 1.2 2003/11/25 19:25:43 admin Warn before closing window
- * 
- * Revision 1.1.1.1 2003/06/08 15:09:40 admin Egocentric Network Survey
- * Authoring Module
- * 
- * Revision 1.16 2002/08/30 16:50:27 admin Using Selections
- * 
- * Revision 1.15 2002/08/30 09:35:38 admin Using Selection Class
- * 
- * Revision 1.14 2002/08/11 22:26:05 admin Final Statistics window, new file
- * handling
- * 
- * Revision 1.13 2002/08/08 17:07:25 admin Preparing to change file system
- * 
- * Revision 1.12 2002/07/25 14:54:24 admin Question Links
- * 
- * Revision 1.11 2002/07/24 14:17:51 admin new files
- * 
- * Revision 1.9 2002/07/18 14:43:06 admin New Alter Prompt Panel, packages
- * 
- * Revision 1.8 2002/06/30 15:59:18 admin Moving questions in lists, between
- * lists Better category input
- * 
- * Revision 1.7 2002/06/26 15:43:43 admin More selection dialog work File
- * loading fixes
- * 
- * Revision 1.6 2002/06/26 00:10:48 admin UI Work including base question
- * coloring and category selections
- * 
- * Revision 1.5 2002/06/25 15:41:02 admin Lots of UI work
- * 
- * Revision 1.4 2002/06/21 21:52:50 admin Many changes to event handling, file
- * handling
- * 
- * Revision 1.3 2002/06/19 01:57:04 admin Much UI work done
- * 
- * Revision 1.2 2002/06/16 17:53:10 admin Working with files
- * 
- * Revision 1.1 2002/06/15 14:19:51 admin Initial Checkin of question and survey
- * General file system work
- * 
- */
-

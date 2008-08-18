@@ -1,17 +1,22 @@
-package com.endlessloopsoftware.ego.author;
-
-/**
- * <p>Title: Survey Center Database Client</p>
- * <p>Description: Database Manipulation program for Survey Center Suite</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: QuestionPanel.java,v 1.1 2005/08/02 19:36:05 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
+package com.endlessloopsoftware.ego.author;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -671,51 +676,3 @@ class QuestionListCellRenderer
 		return renderer;
 	}
 }
-
-
-/**
- * $Log: QuestionPanel.java,v $
- * Revision 1.1  2005/08/02 19:36:05  samag
- * Initial checkin
- *
- * Revision 1.12  2004/04/11 00:24:48  admin
- * Fixing headers
- *
- * Revision 1.11  2004/04/11 00:17:13  admin
- * Improving display of Alter Prompt questions from Applet UI Interviews
- *
- * Revision 1.10  2004/04/07 00:08:31  admin
- * updating manifests, jar creation. Removing author specific objects from
- * client specific references
- *
- * Revision 1.9  2004/03/28 17:31:31  admin
- * More error handling when uploading study to server
- * Server URL selection dialog for upload
- *
- * Revision 1.8  2004/03/21 20:29:37  admin
- * Warn before making incompatible changes to in use study file
- *
- * Revision 1.7  2004/03/21 14:00:38  admin
- * Cleaned up Question Panel Layout using FOAM
- *
- * Revision 1.6  2004/02/10 20:10:43  admin
- * Version 2.0 beta 3
- *
- * Revision 1.5  2003/12/08 15:57:50  admin
- * Modified to generate matrix files on survey completion or summarization
- * Extracted statistics models
- *
- * Revision 1.4  2003/12/05 19:15:43  admin
- * Extracting Study
- *
- * Revision 1.3  2003/12/04 15:14:08  admin
- * Merging EgoNet and EgoClient projects so that they can share some
- * common classes more easily.
- *
- * Revision 1.2  2003/11/25 19:25:44  admin
- * Warn before closing window
- *
- * Revision 1.1.1.1  2003/06/08 15:09:40  admin
- * Egocentric Network Survey Authoring Module
- *
- */

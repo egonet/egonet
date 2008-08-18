@@ -1,16 +1,22 @@
-package com.endlessloopsoftware.ego.client;
-
-/**
- * <p>Title: Egocentric Network Researcher</p>
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: EgoStore.java,v 1.1 2005/08/02 19:36:01 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.client;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -833,61 +839,3 @@ public class EgoStore extends Observable {
 	}
 
 }
-
-/**
- * $Log: EgoStore.java,v $ Revision 1.1 2005/08/02 19:36:01 samag Initial
- * checkin
- * 
- * Revision 1.10 2004/04/11 00:24:48 admin Fixing headers
- * 
- * Revision 1.9 2004/04/08 15:06:06 admin EgoClient now creates study summaries
- * from Server EgoAuthor now sets active study on server
- * 
- * Revision 1.8 2004/04/06 23:09:19 admin storing statistics file path in prefs
- * for server interviews
- * 
- * Revision 1.7 2004/04/02 19:48:58 admin Keep Study Id when possible Store
- * updated time in file
- * 
- * Revision 1.6 2004/04/01 21:50:52 admin Aborting interview if unable to write
- * answers to file
- * 
- * Revision 1.5 2004/03/23 14:58:48 admin Update UI Study creation now occurs in
- * instantiators
- * 
- * Revision 1.4 2004/03/19 20:28:45 admin Converted statistics frome to a panel.
- * Incorporated in a tabbed panel as part of main frame.
- * 
- * Revision 1.3 2004/02/10 20:10:43 admin Version 2.0 beta 3
- * 
- * Revision 1.2 2003/12/08 15:57:50 admin Modified to generate matrix files on
- * survey completion or summarization Extracted statistics models
- * 
- * Revision 1.1 2003/12/04 15:14:09 admin Merging EgoNet and EgoClient projects
- * so that they can share some common classes more easily.
- * 
- * Revision 1.3 2003/12/03 15:12:08 admin creating subdirectories for graph and
- * statistics
- * 
- * Revision 1.2 2003/11/25 19:23:35 admin Adding weighted matrix output First
- * checking of graph panel
- * 
- * Revision 1.1.1.1 2003/06/08 14:50:21 admin Egocentric Network client program
- * 
- * Revision 1.7 2002/09/01 20:05:11 admin UI Changes to allow selection of
- * arbitrary ALTER_PAIR question for stats all sorts of bug fixes optimized
- * statistics allow no answer for numerical questions
- * 
- * Revision 1.6 2002/08/12 19:19:15 admin Summary Screen
- * 
- * Revision 1.5 2002/08/11 22:29:37 admin statistics frame, new file structure
- * 
- * Revision 1.4 2002/07/31 20:19:36 admin Statistics
- * 
- * Revision 1.3 2002/07/25 14:55:50 admin question Links
- * 
- * Revision 1.2 2002/07/22 02:53:21 admin Interview implemented and working
- * 
- * Revision 1.1.1.1 2002/07/19 15:51:30 admin Client Module for EgoNet project
- * 
- */

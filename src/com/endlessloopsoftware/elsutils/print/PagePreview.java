@@ -1,11 +1,20 @@
-/**
- * Endless Loop Software Utilities
- * Copyright (c) 2003, Endless Loop Software, Inc.
- *
- *  @author     $Author: schoaff $
- *  @date      	$Date: 2006-03-09 09:42:46 -0500 (Thu, 09 Mar 2006) $
- *  @version    $Id: PagePreview.java 2 2006-03-09 14:42:46Z schoaff $
- *
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.elsutils.print;
 
@@ -40,7 +49,6 @@ public class PagePreview extends JDialog implements ActionListener
 	private final static 	double 		DEFAULT_ZOOM_FACTOR_STEP 	= 0.5;
 	private 				JLabel		pageNum						= new JLabel("Page #1");
 	private					JButton		print;
-	private					JButton		close;
 	protected 				Pageable 	pageable;
 
 	public PagePreview(String title, JFrame owner, Pageable pageable, double zoom)

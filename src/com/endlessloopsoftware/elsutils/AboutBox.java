@@ -1,3 +1,21 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.endlessloopsoftware.elsutils;
 
 import java.awt.*;
@@ -16,30 +34,6 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-/*******************************************************************************
- * Endless Loop Software Utilities Copyright (c) 2003, Endless Loop Software,
- * Inc.
- * 
- * @author $Author: schoaff $ @date $Date: 2006-03-09 09:42:46 -0500 (Thu, 09 Mar 2006) $
- * @version $Id: AboutBox.java 2 2006-03-09 14:42:46Z schoaff $
- * 
- * 
- * $Log: AboutBox.java,v $
- * Revision 1.1.1.1  2005/10/23 16:21:25  schoaff
- * Checking from IntelliJ IDEA
- *
- * Revision 1.1.1.1  2005/03/23 13:22:21  schoaff
- * New CVS Repository
- * Revision 1.3 2003/11/25 19:40:24 admin Cleaning up
- * AboutBox Making ListBuilder work on OSX by removing debugging graphport
- * 
- * Revision 1.2 2003/09/16 15:26:31 admin Improved DateChooser and PhoneBean
- * 
- * Revision 1.1.1.1 2003/09/13 18:12:13 admin Endless Loop Software Utilities
- * 
- * Revision 1.4 2003/06/27 12:36:43 admin Adding headers
- *  
- */
 public class AboutBox extends JDialog implements ActionListener
 {
 	private final JButton		button1		= new JButton("OK");

@@ -1,8 +1,20 @@
-/*
- * Created on Jan 23, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego;
 
@@ -10,13 +22,6 @@ import java.awt.Cursor;
 //import java.awt.Dimension;
 
 import javax.swing.JFrame;
-//import javax.swing.UIManager;
-
-/*
- * import com.jgoodies.plaf.FontSizeHints;
- * import com.jgoodies.plaf.LookUtils;
- * import com.jgoodies.plaf.Options;
- */
 
 /**
  * @author admin
@@ -44,35 +49,6 @@ public final class Shared
 			"Application.useSystemFontSettings";
 	
 	/* end of code added by sonam */
-	public static void configureUI()
-	{
-		
-		/*
-		 * Commented by sonam : 08/20/2007
-		 * UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-		 * Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
-		 * Options.setDefaultIconSize(new Dimension(18, 18));
-		 * String lafName = LookUtils.IS_OS_WINDOWS_XP ? 
-				Options.getCrossPlatformLookAndFeelClassName() : 
-				Options.getSystemLookAndFeelClassName();
-		 */
-		
-		/*
-		UIManager.put(USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-		String lafName = (System.getProperty("os.name").toLowerCase()=="windows xp") ? 
-				UIManager.getCrossPlatformLookAndFeelClassName() : 
-				UIManager.getSystemLookAndFeelClassName();
-		try
-		{
-			UIManager.setLookAndFeel(lafName);
-		}
-		catch (Exception e)
-		{
-			System.err.println("Can't set look & feel:" + e);
-		}
- 		*/	
-	
-	}
    
    public static void setWaitCursor(JFrame frame, boolean waitCursor)
    {

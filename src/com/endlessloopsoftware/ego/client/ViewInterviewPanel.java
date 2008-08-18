@@ -1,9 +1,20 @@
-/**
- * <p>Copyright: Copyright (c) 2002 - 2004 </p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter Schoaff
- *
- * $Id: ViewInterviewPanel.java,v 1.1 2005/08/02 19:36:00 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego.client;
 
@@ -74,29 +85,3 @@ public class ViewInterviewPanel
 	   return graphPanel.getSettingsIterator();
    }
 }
-
-
-/**
- * $Log: ViewInterviewPanel.java,v $
- * Revision 1.1  2005/08/02 19:36:00  samag
- * Initial checkin
- *
- * Revision 1.5  2004/03/29 00:35:10  admin
- * Downloading Interviews
- * Fixing some bugs creating Interviews from Data Objects
- *
- * Revision 1.4  2004/03/28 17:31:32  admin
- * More error handling when uploading study to server
- * Server URL selection dialog for upload
- *
- * Revision 1.3  2004/03/21 15:38:08  admin
- * Using progress bar while bringing up Summary Panel
- *
- * Revision 1.2  2004/03/21 15:17:42  admin
- * Using progress Bar while bringing up question panel
- *
- * Revision 1.1  2004/03/19 20:28:45  admin
- * Converted statistics frome to a panel. Incorporated in a tabbed panel
- * as part of main frame.
- *
- */

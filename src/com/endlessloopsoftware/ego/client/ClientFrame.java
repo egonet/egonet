@@ -1,66 +1,44 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.endlessloopsoftware.ego.client;
 
 import java.awt.AWTEvent;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import org.egonet.util.listbuilder.Selection;
-import org.w3c.dom.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.QuestionList;
-import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
-import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
-import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
 
-/**
- * <p>
- * Title: Egocentric Network Researcher
- * </p>
- * <p>
- * Description: Configuration Utilities for an Egocentric network study
- * </p>
- * <p>
- * Copyright: Copyright (c) 2004
- * </p>
- * <p>
- * Company: Endless Loop Software
- * </p>
- * 
- * @author Peter C. Schoaff
- * @version 2.1
- */
 
 public class ClientFrame extends JFrame {
 	private final JMenuBar jMenuBar1 = new JMenuBar();
@@ -271,8 +249,6 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(exit);
 		}
 		jMenuBar1.add(jMenuFile);
-		// jMenuBar1.add(jMenuGraph);
-		// Help Menu
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuBar1.add(jMenuHelp);
 
@@ -309,8 +285,6 @@ public class ClientFrame extends JFrame {
 		fileChooser.setDialogTitle("Save Graph");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-		// ExtensionFileFilter jpegFilter = new ExtensionFileFilter("JPEG
-		// Image",".jpg");
 		FileFilter imageFilter = new ImageFilter();
 		fileChooser.addChoosableFileFilter(imageFilter);
 
@@ -389,84 +363,4 @@ public class ClientFrame extends JFrame {
 			}
 		}
 	}
-
-
-	/*private void parseXMLFile(String fileName) throws SAXException, IOException,
-			ParserConfigurationException {
-		GraphSettingsEntry graphSettingEntry = null;
-
-		java.util.List<GraphSettingsEntry> graphSettingEntryList = Collections
-				.synchronizedList(new ArrayList<GraphSettingsEntry>());
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(fileName);
-		NodeList entryNodeList = document.getDocumentElement().getChildNodes();
-
-		Study study = EgoClient.interview.getStudy();
-		QuestionList questionList = study.getQuestions();
-		Map<Long, Question> questionMap = questionList.getQuestionMap();
-
-		for (int i = 0; i < entryNodeList.getLength(); i++) {
-			Node entryNode = entryNodeList.item(i);
-			if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element entryElement = (Element) entryNode;
-
-				Element graphElement = (Element) entryElement
-						.getElementsByTagName("GraphQuestion").item(0);
-				Element propertyElement = (Element) entryElement
-						.getElementsByTagName("Property").item(0);
-
-				Element questionElement = (Element) graphElement
-						.getElementsByTagName("Question").item(0);
-				Element selectionElement = (Element) graphElement
-						.getElementsByTagName("Selection").item(0);
-				Element categoryElement = (Element) graphElement
-						.getElementsByTagName("Category").item(0);
-
-				Element colorElement = (Element) propertyElement
-						.getElementsByTagName("Color").item(0);
-				Element shapeElement = (Element) propertyElement
-						.getElementsByTagName("Shape").item(0);
-				Element sizeElement = (Element) propertyElement
-						.getElementsByTagName("Size").item(0);
-
-				Element propertyTypeElement = (Element) entryElement
-						.getElementsByTagName("PropertyType").item(0);
-
-				Question question = questionMap.get(Long
-						.parseLong(questionElement.getAttribute("id")));
-
-				for (int j = 0; j < question.selections.length; j++) {
-					Selection selection = question.selections[j];
-					GraphQuestion gq = new GraphQuestion(question, selection,
-							Integer.parseInt(categoryElement.getAttribute("category")));
-
-					if (propertyTypeElement.getAttribute("Type").equals("Edge")) {
-						EdgeProperty ep = new EdgeProperty();
-						
-						ep.setColor(Color.decode(colorElement
-								.getAttribute("color")));
-						
-						ep.setSize(Integer.parseInt(sizeElement
-								.getAttribute("size")));
-						ep.setShape(EdgeShape.CubicCurve);
-						
-						ep.setProperty(EdgeProperty.Property.Color);
-
-						System.out.println("Color is " +ep.getColor());
-						graphSettingEntry = new GraphSettingsEntry(gq, ep,
-								GraphSettingType.Edge);
-						graphSettingEntryList.add(graphSettingEntry);
-
-					} else {
-						System.out.println("Property is of Type Node");
-					}
-				}
-
-			}
-		}
-
-		GraphRenderer.graphSettings.setQAsettings(graphSettingEntryList);
-		//GraphRenderer.updateGraphSettings();
-	}*/
 }

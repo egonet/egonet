@@ -1,9 +1,20 @@
-/**
- * <p>Copyright: Copyright (c) 2002 - 2004 </p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter Schoaff
- *
- * $Id: ServerInterviewChooser.java,v 1.1 2005/08/02 19:36:00 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego.client;
 
@@ -415,54 +426,3 @@ public class ServerInterviewChooser
 	}
 
 }
-
-/**
- * $Log: ServerInterviewChooser.java,v $
- * Revision 1.1  2005/08/02 19:36:00  samag
- * Initial checkin
- *
- * Revision 1.11  2004/04/11 15:19:28  admin
- * Using password to access server
- *
- * Remote study summary in seperate thread with progress monitor
- *
- * Revision 1.10  2004/04/08 15:06:07  admin
- * EgoClient now creates study summaries from Server
- * EgoAuthor now sets active study on server
- *
- * Revision 1.9  2004/04/07 00:08:31  admin
- * updating manifests, jar creation. Removing author specific objects from
- * client specific references
- *
- * Revision 1.8  2004/04/06 15:43:26  admin
- * Moving matrix generation into interview to support Applet Linking UI.
- * An interview generated with applet linking will have no meaningful alter pair
- * questions. The adjacency matrix will be returned in an Athenian manner from
- * the server.
- *
- * Revision 1.7  2004/04/06 14:56:02  admin
- * Work to integrate with Applet Linking UI
- *
- * Revision 1.6  2004/03/29 00:35:09  admin
- * Downloading Interviews
- * Fixing some bugs creating Interviews from Data Objects
- *
- * Revision 1.5  2004/03/28 17:31:32  admin
- * More error handling when uploading study to server
- * Server URL selection dialog for upload
- *
- * Revision 1.4  2004/03/23 14:58:48  admin
- * Update UI
- * Study creation now occurs in instantiators
- *
- * Revision 1.3  2004/03/22 20:09:17  admin
- * Includes interviews in selection box
- *
- * Revision 1.2  2004/03/22 00:00:34  admin
- * Extended text entry area
- * Started work on importing studies from server
- *
- * Revision 1.1  2004/03/20 18:13:59  admin
- * Adding remote selection dialog
- *
- */

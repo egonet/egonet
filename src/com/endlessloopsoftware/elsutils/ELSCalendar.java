@@ -1,3 +1,21 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.endlessloopsoftware.elsutils;
 
 import java.text.ParseException;
@@ -5,33 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
-/**
- * <p>Endless Loop Software Calendar Utilities</p>
- * <p>Description: Routines for managing a date only calendar </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: Endless Loop Software</p>
- *
- * <p>This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * <p>This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * <p>You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * @author 	Peter C. Schoaff
- * @version $Revision: 1.1.1.1 $
- *
- * $Date: 2006-03-09 09:42:46 -0500 (Thu, 09 Mar 2006) $
- * $Header: /public_cvs/elsutils/src/com/endlessloopsoftware/elsutils/ELSCalendar.java,v 1.1.1.1 2005/10/23 16:21:25 schoaff Exp $
- */
 
 
 public class ELSCalendar

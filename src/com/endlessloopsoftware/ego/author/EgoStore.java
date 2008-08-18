@@ -1,19 +1,22 @@
-package com.endlessloopsoftware.ego.author;
-
-
-/**
- * <p>Title: Egocentric Network Researcher</p>
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: EgoStore.java,v 1.1 2005/08/02 19:36:04 samag Exp $
- *
- *
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.author;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
@@ -599,121 +602,3 @@ public class EgoStore
       }
    }
 }
-
-
-/********************
- *
- * $Log: EgoStore.java,v $
- * Revision 1.1  2005/08/02 19:36:04  samag
- * Initial checkin
- *
- * Revision 1.16  2004/04/11 00:24:48  admin
- * Fixing headers
- *
- * Revision 1.15  2004/04/02 20:02:51  admin
- * Maintaining InUse State in study files
- *
- * Revision 1.14  2004/04/02 19:48:58  admin
- * Keep Study Id when possible
- * Store updated time in file
- *
- * Revision 1.13  2004/04/01 21:50:52  admin
- * Aborting interview if unable to write answers to file
- *
- * Revision 1.12  2004/03/23 14:58:48  admin
- * Update UI
- * Study creation now occurs in instantiators
- *
- * Revision 1.11  2004/03/22 00:00:34  admin
- * Extended text entry area
- * Started work on importing studies from server
- *
- * Revision 1.10  2004/03/21 20:29:37  admin
- * Warn before making incompatible changes to in use study file
- *
- * Revision 1.9  2004/03/21 14:00:38  admin
- * Cleaned up Question Panel Layout using FOAM
- *
- * Revision 1.8  2004/02/26 21:19:17  admin
- * adding jardescs
- *
- * Revision 1.7  2004/02/10 20:10:43  admin
- * Version 2.0 beta 3
- *
- * Revision 1.6  2004/01/23 13:36:07  admin
- * Updating Libraries
- * Allowing upload to web server
- *
- * Revision 1.5  2003/12/05 19:15:43  admin
- * Extracting Study
- *
- * Revision 1.4  2003/12/04 15:14:08  admin
- * Merging EgoNet and EgoClient projects so that they can share some
- * common classes more easily.
- *
- * Revision 1.3  2003/11/25 19:29:53  admin
- * Formatting
- *
- * Revision 1.2  2003/11/25 19:25:44  admin
- * Warn before closing window
- *
- * Revision 1.1.1.1  2003/06/08 15:09:40  admin
- * Egocentric Network Survey Authoring Module
- *
- * Revision 1.17  2002/09/01 20:06:16  admin
- * Structural question now selected in client. Visual feedback for alter pair
- * categorical questions.
- *
- * Revision 1.16  2002/08/30 09:30:37  admin
- * Allowing user to select study file name. Using it for study name.
- *
- * Revision 1.15  2002/08/11 22:26:05  admin
- * Final Statistics window, new file handling
- *
- * Revision 1.14  2002/08/08 17:07:25  admin
- * Preparing to change file system
- *
- * Revision 1.13  2002/07/25 14:54:24  admin
- * Question Links
- *
- * Revision 1.12  2002/07/24 14:17:09  admin
- * xml files, links
- *
- * Revision 1.11  2002/07/18 14:43:06  admin
- * New Alter Prompt Panel, packages
- *
- * Revision 1.10  2002/06/30 15:59:18  admin
- * Moving questions in lists, between lists
- * Better category input
- *
- * Revision 1.9  2002/06/26 15:43:42  admin
- * More selection dialog work
- * File loading fixes
- *
- * Revision 1.8  2002/06/26 00:10:48  admin
- * UI Work including base question coloring and category selections
- *
- * Revision 1.7  2002/06/25 15:41:01  admin
- * Lots of UI work
- *
- * Revision 1.6  2002/06/21 22:47:12  admin
- * question lists working again
- *
- * Revision 1.5  2002/06/21 21:52:50  admin
- * Many changes to event handling, file handling
- *
- * Revision 1.4  2002/06/19 01:57:04  admin
- * Much UI work done
- *
- * Revision 1.3  2002/06/16 17:52:01  admin
- * New Project, Open Project methods
- * DirList class w/method
- *
- * Revision 1.2  2002/06/15 14:19:50  admin
- * Initial Checkin of question and survey
- * General file system work
- *
- * Revision 1.1  2002/06/14 20:34:35  admin
- * Created
- *
- */

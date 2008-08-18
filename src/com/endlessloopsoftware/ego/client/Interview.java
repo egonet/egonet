@@ -1,13 +1,22 @@
-package com.endlessloopsoftware.ego.client;
-
-/**
- * <p>Copyright: Copyright (c) 2002 - 2004 </p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter Schoaff
- *
- * $Id: Interview.java,v 1.1 2005/08/02 19:35:59 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.client;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1022,20 +1031,3 @@ public class Interview {
 	}
 
 }
-
-/**
- * $Log: Interview.java,v $ Revision 1.1 2005/08/02 19:35:59 samag Initial
- * checkin
- * 
- * Revision 1.12 2004/04/11 00:17:13 admin Improving display of Alter Prompt
- * questions from Applet UI Interviews
- * 
- * Revision 1.11 2004/04/08 15:06:07 admin EgoClient now creates study summaries
- * from Server EgoAuthor now sets active study on server
- * 
- * Revision 1.10 2004/04/06 20:29:22 admin First pass as supporting interactive
- * applet linking interviews
- * 
- * Revision 1.9 2004/04/06 15:46:11 admin cvs tags in headers
- * 
- */

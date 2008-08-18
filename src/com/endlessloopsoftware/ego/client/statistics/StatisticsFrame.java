@@ -1,17 +1,22 @@
-package com.endlessloopsoftware.ego.client.statistics;
-
-/**
- * <p>Title: Egocentric Network Researcher</p>
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: StatisticsFrame.java,v 1.1 2005/08/02 19:36:05 samag Exp $
- *
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.client.statistics;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,10 +64,6 @@ public class StatisticsFrame extends JPanel {
 
 	private JPanel qSummaryPanel = null;
 
-//	private JPanel graphPanel = new GraphPanel();
-
-	//private JComboBox alterQuestionMenu = new JComboBox();
-
 	public StatisticsFrame() {
 		try {
 			jbInit();
@@ -77,9 +78,6 @@ public class StatisticsFrame extends JPanel {
 		/***********************************************************************
 		 * Fill in alter pair question selection menu
 		 **********************************************************************/
-		//String s = alterQuestionMenu.getActionCommand();
-		//alterQuestionMenu.setActionCommand("Initialization");
-
 		Iterator questions = EgoClient.study.getQuestionOrder(
 				Question.ALTER_PAIR_QUESTION).iterator();
 		while (questions.hasNext()) {
@@ -125,10 +123,6 @@ public class StatisticsFrame extends JPanel {
 				panel.add(tabs, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.9,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
-				/*panel.add(alterQuestionMenu, new GridBagConstraints(0, 1, 1, 1,
-						0.2, 0.1, GridBagConstraints.SOUTHEAST,
-						GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 6, 6));
-						*/
 
 				/*******************************************************************
 				 * Event Handlers
@@ -178,7 +172,6 @@ public class StatisticsFrame extends JPanel {
 				updateAll();
 			}
 		}
-		//alterQuestionMenu.setActionCommand(s);
 
 		/***********************************************************************
 		 * Check that there is at least one statable question, if not abort this
@@ -210,9 +203,6 @@ public class StatisticsFrame extends JPanel {
 						stats);
 				((StatisticsArrayPanel) component).getTableModel().update();
 			} 
-//			else if (component instanceof GraphPanel) {
-//				((GraphPanel) component).init(this);
-//			}
 		}
 	}
 
@@ -308,17 +298,3 @@ public class StatisticsFrame extends JPanel {
 		}
 	}
 }
-
-/**
- * $Log: StatisticsFrame.java,v $ Revision 1.1 2005/08/02 19:36:05 samag Initial
- * checkin
- * 
- * Revision 1.9 2004/04/11 00:24:48 admin Fixing headers
- * 
- * Revision 1.8 2004/04/06 20:29:22 admin First pass as supporting interactive
- * applet linking interviews
- * 
- * Revision 1.7 2004/04/01 15:11:16 admin Completing Original UI work
- * 
- */
-

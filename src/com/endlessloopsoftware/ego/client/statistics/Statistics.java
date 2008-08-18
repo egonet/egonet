@@ -1,13 +1,22 @@
-package com.endlessloopsoftware.ego.client.statistics;
-
-/**
- * <p>Copyright: Copyright (c) 2002 - 2004, Endless Loop Software, Inc. </p>
- * <p>Company: Endless Loop Software, Inc.</p>
- * @author Peter Schoaff
- *
- * $Id: Statistics.java,v 1.1 2005/08/02 19:36:06 samag Exp $
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package com.endlessloopsoftware.ego.client.statistics;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -990,61 +999,3 @@ public class Statistics
       return _study;
    }
 }
-
-/**
- * $Log: Statistics.java,v $
- * Revision 1.1  2005/08/02 19:36:06  samag
- * Initial checkin
- *
- * Revision 1.14  2004/04/08 15:06:07  admin
- * EgoClient now creates study summaries from Server
- * EgoAuthor now sets active study on server
- *
- * Revision 1.13  2004/04/06 20:29:22  admin
- * First pass as supporting interactive applet linking interviews
- *
- * Revision 1.12  2004/04/06 15:46:11  admin
- * cvs tags in headers
- * 
- * revision 1.11
- * Moving matrix generation into interview to support Applet Linking UI.
- * An interview generated with applet linking will have no meaningful alter pair
- * questions. The adjacency matrix will be returned in an Athenian manner from
- * the server.
- * 
- * revision 1.10
- * Work to integrate with Applet Linking UI
- * 
- * revision 1.9
- * Fixed the components: It was looking at cliques before.Now it will look
- * at all the different components in the graph.
- * Added display of Components and Cliques
- * 
- * revision 1.8
- * Adding client library
- * cleaning up code
- * 
- * revision 1.7
- * Added some structural measures
- * 
- * revision 1.6
- * Version 2.0 beta 3
- * 
- * revision 1.5
- * Making sure all libraries are available
- * 
- * revision 1.4
- * Fixing bug reading in adjacency selections
- * Clearing identity diagonal of Weighted Adjacency Matrix
- * 
- * revision 1.3
- * Modified to generate matrix files on survey completion or summarization
- * Extracted statistics models
- * 
- * revision 1.2
- * Extracting Study
- * 
- * revision 1.1
- * Merging EgoNet and EgoClient projects so that they can share some
- * common classes more easily.
- */

@@ -1,3 +1,21 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.endlessloopsoftware.ego.author;
 
 import java.awt.Dimension;
@@ -16,21 +34,6 @@ import com.endlessloopsoftware.ego.Question;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 
-/**
- * <p>Title: Egocentric Network Researcher</p>
- * <p>Description: Configuration Utilities for an Egocentric network study</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: Endless Loop Software</p>
- * @author Peter C. Schoaff
- * @version 1.0
- *
- * $Id: CategoryInputPane.java,v 1.1 2005/08/02 19:36:04 samag Exp $
- *
- */
-
-/**
- * Dialog box for collecting categorical answer selections
- */
 public class CategoryInputPane extends JDialog {
 	private final JList parentList;
 
@@ -212,11 +215,3 @@ public class CategoryInputPane extends JDialog {
 		this.setVisible(true);
 	}
 }
-
-/**
- * $Log: CategoryInputPane.java,v $ Revision 1.1 2005/08/02 19:36:04 samag
- * Initial checkin
- * 
- * Revision 1.11 2004/04/11 00:24:48 admin Fixing headers
- * 
- */

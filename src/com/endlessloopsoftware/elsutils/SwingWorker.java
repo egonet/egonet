@@ -1,19 +1,25 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.endlessloopsoftware.elsutils;
 
 import javax.swing.SwingUtilities;
 
-/**
- * This is the 3rd version of SwingWorker (also known as
- * SwingWorker 3), an abstract class that you subclass to
- * perform GUI-related work in a dedicated thread.  For
- * instructions on using this class, see:
- *
- * http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html
- *
- * Note that the API changed slightly in the 3rd version:
- * You must now invoke start() on the SwingWorker after
- * creating it.
- */
 public abstract class SwingWorker
 {
 	private Object value;  // see getValue(), setValue()
