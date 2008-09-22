@@ -29,6 +29,8 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.endlessloopsoftware.ego.Question;
 import org.egonet.util.listbuilder.ListBuilder;
@@ -46,7 +48,7 @@ public class CategoryInputPane extends JDialog {
 
 	private final JButton jCancelButton = new JButton("Cancel");
 
-	private Box box1;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Constructor for CategoryInputPane
@@ -71,45 +73,27 @@ public class CategoryInputPane extends JDialog {
 	 *             No idea, sorry
 	 */
 	private void jbInit() throws Exception {
-		box1 = Box.createHorizontalBox();
-		this.getContentPane().setLayout(gridBagLayout1);
+		JPanel panel = new JPanel();
+		
+		panel.setLayout(gridBagLayout1);
 		this.setModal(true);
 		this.setTitle("Category Options");
-		//this.setSize(800, 600);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setSize(screenSize);
-		// Center the window
-		Dimension frameSize = this.getSize();
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		this.setLocation((screenSize.width - frameSize.width) / 2,
-				(screenSize.height - frameSize.height) / 2);
 
-		this.getContentPane().add(
+		panel.add(
 				listBuilder,
 				new GridBagConstraints(0, 0, 4, 1, 1.0, 0.9,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(
+		panel.add(
 				jCancelButton,
-				new GridBagConstraints(3, 1, 1, 1, 0.2, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new GridBagConstraints(2, 1, 2, 1, 0.2, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 						new Insets(10, 0, 10, 10), 0, 0));
-		this.getContentPane().add(
+		panel.add(
 				jOKButton,
-				new GridBagConstraints(2, 1, 1, 1, 0.2, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new GridBagConstraints(0, 1, 2, 1, 0.2, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 						new Insets(10, 20, 10, 0), 26, 0));
-		this.getContentPane().add(
-				box1,
-				new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
-						GridBagConstraints.CENTER,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
-						40, 0));
 
 		jOKButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -123,7 +107,8 @@ public class CategoryInputPane extends JDialog {
 			}
 		});
 
-		this.pack();
+		scrollPane = new JScrollPane(panel);
+		this.getContentPane().add(scrollPane);
 	}
 
 	void OKButton_actionPerformed(ActionEvent e) {
@@ -169,16 +154,17 @@ public class CategoryInputPane extends JDialog {
 			EgoNet.study.setCompatible(compatible);
 
 			EgoNet.frame.fillCurrentPanel();
-			this.hide();
+			this.setVisible(false);
 		}
 
 	}
 
 	void cancelButton_actionPerformed(ActionEvent e) {
-		this.hide();
+		this.setVisible(false);
 	}
 
 	void activate() {
+		System.out.println("before activate lb.pref=" + disp());
 		Question q = (Question) parentList.getSelectedValue();
 
 		if (q != null) {
@@ -196,22 +182,38 @@ public class CategoryInputPane extends JDialog {
 						+ "to the options list. Press OK to set options or Cancel to undo changes.");
 		listBuilder.setNameList(q.questionType == Question.ALTER_PROMPT);
 		listBuilder.setLetUserPickValues(true);
-		listBuilder
-				.setPresetListsActive(q.answerType == Question.CATEGORICAL);
+		listBuilder.setPresetListsActive(q.answerType == Question.CATEGORICAL);
 		
 //		boolean preset = (q.answerType == Question.CATEGORICAL) ? true : false;
 //		System.out.println("Is question categorical? " + preset);
 //		
-		listBuilder
-				.setAdjacencyActive(q.questionType == Question.ALTER_PAIR_QUESTION);
-		
+		listBuilder.setAdjacencyActive(q.questionType == Question.ALTER_PAIR_QUESTION);
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setPreferredSize(screenSize);
+		// Center the window
+		Dimension frameSize = this.getSize();
+
+		this.setLocation((screenSize.width - frameSize.width) / 2,
+				(screenSize.height - frameSize.height) / 2);
+		
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
 
+		System.out.println("initial lb.pref=" + disp());
+		
 		/* Pack since we've modified the GUI elements */
-		this.pack();
+		validate();
+		pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack();
+		
+		System.out.println("after invalidate and pack lb.pref " + disp());
+		
 		this.setVisible(true);
+		
+		System.out.println("after it was visible lb.pref " + disp());
+	}
+	
+	private String disp()
+	{
+		return "[pref="+listBuilder.getPreferredSize()+",min="+listBuilder.getMinimumSize()+",max="+listBuilder.getMaximumSize()+"]";
 	}
 }

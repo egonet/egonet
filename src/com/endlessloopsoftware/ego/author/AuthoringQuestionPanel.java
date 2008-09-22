@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.author;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -61,6 +62,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	private final JTextArea				question_citation_field			= new NoTabTextArea();
 	private final JTextField				question_title_field				= new JTextField();
 	private final JButton					question_new_button				= new JButton("New");
+	private final JButton					question_duplicate_button				= new JButton("Duplicate");
 	private final JButton					question_link_button				= new JButton("Set Link");
 	private final JButton					question_delete_button			= new JButton("Delete");
 	private final JLabel					question_central_label			= new JLabel();
@@ -184,6 +186,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 		question_panel_right.add(question_delete_button, new GridBagConstraints(2, 11, 1, 1, 0.33, 0.0
 			,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+		question_panel_right.add(question_duplicate_button, new GridBagConstraints(3, 11, 1, 1, 0.33, 0.0
+				,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 
 		question_list.setModel(new DefaultListModel());
 		EgoNet.study.fillList(questionType, (DefaultListModel) question_list.getModel());
@@ -200,6 +204,10 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			public void actionPerformed(ActionEvent e) {
 				question_delete_button_actionPerformed(e);}});
 
+		question_duplicate_button.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				question_duplicate_button_actionPerformed(e);}});
+		
 		question_link_button.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				question_link_button_actionPerformed(e);}});
@@ -327,12 +335,12 @@ public class AuthoringQuestionPanel extends EgoQPanel
 				question_type_menu.setEnabled(true);
 				question_answer_type_menu.setEnabled(q.questionType != Question.ALTER_PROMPT);
 				
-				System.out.println("AnswerType : " + answerTypes[q.answerType]);
 				question_answer_type_button.setEnabled(q.answerType == Question.CATEGORICAL);
 				question_question_field.setEditable(true);
 				question_citation_field.setEditable(true);
 				question_title_field.setEditable(true);
 				question_delete_button.setEnabled(true);
+				question_duplicate_button.setEnabled(true);
 				question_link_button.setEnabled(true);
 
 				/* Box only appears on alter pair page */
@@ -406,6 +414,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
 				question_title_field.setEditable(false);
 				question_delete_button.setEnabled(false);
 				question_link_button.setEnabled(false);
+				
+				question_duplicate_button.setEnabled(false);
 			}
 		}
 
@@ -548,6 +558,55 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			}
 		}
 	}
+	
+	/****
+	 * Event handler for dupe question button
+	 * @param e Action Event
+	 */
+	private void question_duplicate_button_actionPerformed(ActionEvent e)
+	{
+		Question	q_old = (Question) question_list.getSelectedValue();
+		if(q_old==null)
+		{
+			JOptionPane.showMessageDialog(EgoNet.frame, "Select a question first!",
+						"Dupe Question", JOptionPane.OK_OPTION);
+			return;
+		}
+
+		if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+		{
+			Question q = new Question();
+	
+			q.questionType = q_old.questionType;
+			q.title = new String(Question.questionTypeString(questionType) + ": "+q_old.title+
+					(q_old.title != null && q_old.title.endsWith("Duplicate Question") ? "" : " (Duplicate Question)")
+						);
+			q.answerType = q_old.answerType;
+			q.citation = q_old.citation;
+			q.statable = q_old.statable;
+			q.text = q_old.text;
+	
+			try
+			{
+				EgoNet.study.addQuestion(q);
+				q.selections = Arrays.copyOf(q_old.selections, q_old.selections.length);
+			}
+			catch (DuplicateQuestionException e1)
+			{
+            e1.printStackTrace();
+			}
+			
+			fillPanel();
+			question_list.setSelectedValue(q, true);
+	
+			question_title_field.requestFocus();
+			question_title_field.setSelectionStart(0);
+			question_title_field.setSelectionEnd(question_title_field.getText().length());
+	
+			EgoNet.study.setModified(true);
+			EgoNet.study.setCompatible(false);
+		}
+	}
 
 	/**
 	 * Opens Set Link Dialog
@@ -622,10 +681,6 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	 */
 	void set_selections_button_actionPerformed(ActionEvent e)
 	{
-		//selectionsDialog.setSize(800,600);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		selectionsDialog.setSize(screenSize);
-		selectionsDialog.pack();
 		selectionsDialog.activate();
 	}
 

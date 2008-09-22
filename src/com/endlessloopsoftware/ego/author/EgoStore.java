@@ -260,7 +260,7 @@ public class EgoStore
          {
             if (!f.canRead())
             {
-               throw new FileReadException();
+               throw new FileReadException("Cannot read study file");
             }
             else
             {

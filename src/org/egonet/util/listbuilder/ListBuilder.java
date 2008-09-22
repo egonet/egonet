@@ -21,11 +21,15 @@ package org.egonet.util.listbuilder;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import java.awt.FlowLayout;
 import java.awt.event.*;
+
+import com.endlessloopsoftware.ego.author.CategoryInputPane;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -148,6 +152,7 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	private void build() {
+		System.out.println("Build start");
 		// purge anything old
 		removeAll();
 
@@ -160,7 +165,7 @@ public class ListBuilder extends JPanel implements Observer {
 		// is NOT editable, we only use the main panel i.e. "this"
 		if (!editable) {
 			FormLayout layout = new FormLayout(
-					"2dlu, fill:min(pref;200dlu):grow, 2dlu",
+					"2dlu, fill:max(pref;200dlu):grow, 2dlu",
 					"2dlu, fill:pref:grow, 2dlu");
 			setLayout(layout);
 			add(jScrollPane, constraints.xy(2, 2));
@@ -170,8 +175,8 @@ public class ListBuilder extends JPanel implements Observer {
 
 		// is editable, so we start using subpanels for layouts
 		FormLayout mainLayout = new FormLayout(
-				"2dlu, fill:min(pref;300dlu):grow, 2dlu",
-				"2dlu, fill:pref:grow, 2dlu, fill:max(pref;2dlu), 2dlu");
+				"2dlu, fill:max(pref;300dlu):grow, 2dlu",
+				"2dlu, fill:pref:grow, 2dlu, fill:max(pref;2dlu):grow, 2dlu");
 		setLayout(mainLayout);
 
 		// combine top and bottom panels
@@ -211,7 +216,8 @@ public class ListBuilder extends JPanel implements Observer {
 						+ selection.getValue());
 			}
 		});
-
+		this.validate();
+		System.out.println("Build complete");
 	}
 
 	private JComponent buildTop() {
@@ -232,7 +238,7 @@ public class ListBuilder extends JPanel implements Observer {
 		panelTopRight = new JPanel();
 		FormLayout panelTopRightLayout = new FormLayout(
 				"2dlu, fill:75dlu:grow, 2dlu",
-				"2dlu, fill:20dlu:grow, 2dlu, fill:pref:grow, 2dlu, pref:grow, 2dlu, fill:pref:grow, 2dlu");
+				"2dlu, fill:20dlu:grow, 2dlu, 35dlu, 2dlu, pref:grow, 2dlu, fill:pref:grow, 2dlu");
 		panelTopRight.setLayout(panelTopRightLayout);
 
 		JLabel labelTitle = new JLabel(title);
@@ -242,6 +248,8 @@ public class ListBuilder extends JPanel implements Observer {
 		labelDescription.setEditable(false);
 		labelDescription.setLineWrap(true);
 		labelDescription.setWrapStyleWord(true);
+		//labelDescription.setRows(5); labelDescription.setColumns(30);
+		
 		JScrollPane sp = new JScrollPane(labelDescription);
 		panelTopRight.add(sp, constraints.xy(2, 4));
 
@@ -465,7 +473,9 @@ public class ListBuilder extends JPanel implements Observer {
 
 	private JComponent buildBottom() {
 		// button panel
-		panelButtons = new JPanel();
+
+		ButtonBarBuilder builder = new ButtonBarBuilder();
+
 		buttonAdd = new JButton("Add to list");
 		buttonAdd.setEnabled(false);
 		buttonAdd.addActionListener(new ActionListener() {
@@ -500,8 +510,9 @@ public class ListBuilder extends JPanel implements Observer {
 				jList.clearSelection();
 			}
 		});
-		panelButtons.add(buttonAdd);
-		panelButtons.add(buttonDelete);
+		
+		builder.addGridded(buttonAdd);
+		builder.addGridded(buttonDelete);
 
 		if (isAdjacencyActive()) {
 			buttonAdjacency = new JButton("Mark selected item adjacent");
@@ -518,13 +529,15 @@ public class ListBuilder extends JPanel implements Observer {
 					jList.repaint();
 				}
 			});
-			panelButtons.add(buttonAdjacency);
+			builder.addGridded(buttonAdjacency);
 		}
 
+		panelButtons = builder.getPanel();
 		return panelButtons;
 	}
 
 	public static void main(String[] args) {
+	
 		ListBuilder listBuilder = new ListBuilder();
 
 		listBuilder.setName("name field");
@@ -541,12 +554,10 @@ public class ListBuilder extends JPanel implements Observer {
 		listBuilder.setNameList(false);
 		listBuilder.setAdjacencyActive(true);
 
-		JFrame frame = new JFrame();
-		frame.add(listBuilder);
-
-		frame.setSize(400, 500);
+		
+		CategoryInputPane frame = new CategoryInputPane(new JList());
 		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
 	}
 
@@ -565,6 +576,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public void setElementList(ObservableList<Selection> elementList) {
 		this.elementList = elementList;
+		build();
 	}
 
 	public String getElementName() {
@@ -581,6 +593,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public void setMaxListSize(int maxSize) {
 		setMaxSize(maxSize);
+		build();
 	}
 
 	public int getMaxSize() {
@@ -613,6 +626,7 @@ public class ListBuilder extends JPanel implements Observer {
 	public void setSelections(Selection[] selections) {
 		elementList.removeAll();
 		elementList.addAll(selections);
+		build();
 	}
 
 	public Selection[] getListSelections() {
@@ -663,9 +677,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public void setPresetListsActive(boolean presetListsActive) {
 		this.presetListsActive = presetListsActive;
-		System.out.println("Set presets on");
 		build();
-		System.out.println("Completed new build");
 	}
 
 	public String[] getListStrings() {
@@ -685,6 +697,7 @@ public class ListBuilder extends JPanel implements Observer {
 		for (int i = 0; i < listStrings.length; i++) {
 			elementList.add(new Selection(listStrings[i], i, i, false));
 		}
+		build();
 	}
 
 	public boolean isLetUserPickValues() {
