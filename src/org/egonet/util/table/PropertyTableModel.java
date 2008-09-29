@@ -28,7 +28,6 @@ public class PropertyTableModel extends AbstractTableModel{
 
 	public PropertyTableModel(Object[][] data) {
 		super();
-		this.rowData = new Selection[data.length][data[0].length];
 		this.rowData = data;
 	}
 

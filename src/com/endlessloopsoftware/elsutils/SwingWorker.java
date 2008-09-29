@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.elsutils;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public abstract class SwingWorker
@@ -137,6 +138,10 @@ public abstract class SwingWorker
 				try
 				{
 					setValue(construct());
+				}
+				catch(Throwable cause) {
+					JOptionPane.showMessageDialog(null, cause.toString());
+					throw new RuntimeException(cause);
 				}
 				finally
 				{

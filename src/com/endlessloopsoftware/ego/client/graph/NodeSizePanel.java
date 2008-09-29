@@ -122,8 +122,10 @@ public class NodeSizePanel extends JPanel {
 	}
 
 	private Object[][] getRowData() {
-		Question question;
-		question = (Question) questionCombo.getSelectedItem();
+		if(questionCombo.getSelectedIndex() == -1)
+			return new Object[0][0];
+		
+		Question question = (Question) questionCombo.getSelectedItem();;
 
 		// System.out.println("Question examining:" + question.UniqueId);
 

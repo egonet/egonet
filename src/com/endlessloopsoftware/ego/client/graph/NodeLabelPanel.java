@@ -132,9 +132,10 @@ public class NodeLabelPanel extends JPanel {
 	}
 
 	private Selection[] getRowData() {
-		Question question;
-		question = (Question) questionCombo.getSelectedItem();
-
+		if(questionCombo.getSelectedIndex() == -1)
+			return new Selection[0];
+		
+		Question question = (Question) questionCombo.getSelectedItem();
 		// System.out.println("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Question.CATEGORICAL) {
