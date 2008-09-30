@@ -158,6 +158,24 @@ public class GraphRenderer extends PluggableRenderer implements
 		}
 	}
 
+	public void changeLayoutSize(int x, int y) {
+		try {
+			Dimension dim = visualizationViewer.getGraphLayout().getCurrentSize();
+			Layout layout = visualizationViewer.getGraphLayout();
+			
+			layout.resize(new Dimension(dim.width + x, dim.height + y));			
+			
+			visualizationViewer.stop();
+			visualizationViewer.setGraphLayout(layout, true);
+			visualizationViewer.restart();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	
 	/**
 	 * create the main viewable Graph by for display on a panel use the JUNG
 	 * classes

@@ -228,7 +228,17 @@ public class GraphTabPanel extends JPanel {
 		
 		layoutSize = new JLabel("Layout Size:");
 		increaseLayoutSize = new JButton("+");
+		increaseLayoutSize.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				graphRenderer.changeLayoutSize(100, 100);
+			}
+		});
 		decreaseLayoutSize = new JButton("-");
+		decreaseLayoutSize.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				graphRenderer.changeLayoutSize(-100, -100);
+			}
+		});
 
 		// display in the panel using GroupLayout
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
