@@ -56,11 +56,13 @@ import java.util.Date;
  */
 public class ClientQuestionPanel extends JPanel implements Observer {
 	/* Lists */
-	private final static int MAX_BUTTONS = 5;
+	private final static int MAX_BUTTONS = 9;
 
-	private final JRadioButton[] answerButtons = { new JRadioButton(),
-			new JRadioButton(), new JRadioButton(), new JRadioButton(),
-			new JRadioButton(), new JRadioButton() };
+	private final JRadioButton[] answerButtons = { 
+			new JRadioButton(), new JRadioButton(), new JRadioButton(), 
+			new JRadioButton(),	new JRadioButton(), new JRadioButton(), 
+			new JRadioButton(), new JRadioButton(), new JRadioButton()
+			, new JRadioButton()};
 
 	private final KeyStroke enter = KeyStroke
 			.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -522,7 +524,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						|| (EgoClient.uiPath == EgoClient.VIEW_INTERVIEW));
 				answerPanel.setVisible(true);
 				numericalTextField.requestFocusInWindow();
-			} else if (question.selections.length <= 5) {
+			} else if (question.selections.length <= 9) {
 				questionText.setText(question.text);
 
 				answerPanel.showCard(RADIO_CARD);
@@ -660,7 +662,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				break;
 
 			case Question.CATEGORICAL:
-				if (question.selections.length <= 5) {
+				if (question.selections.length <= 9) {
 					int button = selectedButtonIndex(answerButtons);
 					answer.answered = (button != MAX_BUTTONS);
 
@@ -891,9 +893,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	class RadioPanel extends JPanel {
 		public RadioPanel() {
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-					"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d");
+					"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d");
 
-			layout.setRowGroups(new int[][] { { 1, 3, 5, 7, 9 } });
+			layout.setRowGroups(new int[][] { { 1, 3, 5, 7, 9, 11, 13, 15 } });
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
