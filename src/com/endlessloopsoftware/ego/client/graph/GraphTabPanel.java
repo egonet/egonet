@@ -74,6 +74,12 @@ public class GraphTabPanel extends JPanel {
 
 	private JButton zoomOutButton;
 	
+	private JLabel layoutSize;
+	
+	private JButton increaseLayoutSize;
+	
+	private JButton decreaseLayoutSize;
+	
 	private ScalingControl scaler;
 
 	private Graph g;
@@ -219,8 +225,12 @@ public class GraphTabPanel extends JPanel {
                 scaler.scale(vv, 1/1.1f, vv.getCenter());
             }
         });
+		
+		layoutSize = new JLabel("Layout Size:");
+		increaseLayoutSize = new JButton("+");
+		decreaseLayoutSize = new JButton("-");
 
-		// disply in the panel using GroupLayout
+		// display in the panel using GroupLayout
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 
 		// The sequential group in turn contains two parallel groups.
@@ -235,6 +245,11 @@ public class GraphTabPanel extends JPanel {
 		
 		hGroup.add(layout.createParallelGroup().add(layoutCombo).add(modeCombo)
 				.add(bgcolorButton).add(zoomInButton).add(zoomOutButton));
+		
+		hGroup.add(layout.createParallelGroup().add(layoutSize));
+		
+		hGroup.add(layout.createParallelGroup().add(increaseLayoutSize).add(decreaseLayoutSize));
+		
 		layout.setHorizontalGroup(hGroup);
 
 		// Create a sequential group for the vertical axis.
@@ -254,8 +269,9 @@ public class GraphTabPanel extends JPanel {
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				bgcolorLabel).add(bgcolorButton));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
-				zoomLabel).add(zoomInButton));
-		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(zoomOutButton));
+				zoomLabel).add(zoomInButton).add(layoutSize).add(increaseLayoutSize));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				zoomOutButton).add(decreaseLayoutSize));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				showLabelChkBox));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
