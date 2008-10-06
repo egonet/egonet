@@ -916,14 +916,7 @@ public class Statistics
 
 			for (int j = 0; j < alterSummary[0].length; ++j)
 			{
-				try
-				{
 					w.print(", " + alterSummary[i][j]);
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
 			}
 			w.println(", " + degreeArray[i] + ", " + closenessArray[i] + ", " + betweennessArray[i]);
 		}
