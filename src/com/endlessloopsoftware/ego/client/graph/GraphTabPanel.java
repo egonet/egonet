@@ -80,6 +80,8 @@ public class GraphTabPanel extends JPanel {
 	
 	private JButton decreaseLayoutSize;
 	
+	private JButton reiterate;
+	
 	private ScalingControl scaler;
 
 	private Graph g;
@@ -230,16 +232,23 @@ public class GraphTabPanel extends JPanel {
 		increaseLayoutSize = new JButton("+");
 		increaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				graphRenderer.changeLayoutSize(100, 100);
+				graphRenderer.changeLayoutSize(50, 50);
 			}
 		});
 		decreaseLayoutSize = new JButton("-");
 		decreaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				graphRenderer.changeLayoutSize(-100, -100);
+				graphRenderer.changeLayoutSize(-50, -50);
 			}
 		});
 
+		reiterate = new JButton("Reiterate");
+		reiterate.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				graphRenderer.reiterate();
+			}
+		});
+		
 		// display in the panel using GroupLayout
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 
@@ -260,6 +269,8 @@ public class GraphTabPanel extends JPanel {
 		
 		hGroup.add(layout.createParallelGroup().add(increaseLayoutSize).add(decreaseLayoutSize));
 		
+		hGroup.add(layout.createParallelGroup().add(reiterate));
+		
 		layout.setHorizontalGroup(hGroup);
 
 		// Create a sequential group for the vertical axis.
@@ -279,7 +290,7 @@ public class GraphTabPanel extends JPanel {
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				bgcolorLabel).add(bgcolorButton));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
-				zoomLabel).add(zoomInButton).add(layoutSize).add(increaseLayoutSize));
+				zoomLabel).add(zoomInButton).add(layoutSize).add(increaseLayoutSize).add(reiterate));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				zoomOutButton).add(decreaseLayoutSize));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
