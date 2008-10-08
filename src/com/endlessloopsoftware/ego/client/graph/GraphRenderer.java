@@ -171,6 +171,9 @@ public class GraphRenderer extends PluggableRenderer implements
 			Layout layout = visualizationViewer.getGraphLayout();
 			
 			if(dim.width + x < 5 || dim.height + y < 5){
+				new JOptionPane().showMessageDialog(null, 
+						new String("Layout Size Out of Bounds"), "Error", 
+						JOptionPane.ERROR_MESSAGE);
 				System.out.println("Less than 5");
 			}
 			else{

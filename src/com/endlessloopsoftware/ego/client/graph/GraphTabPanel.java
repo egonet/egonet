@@ -22,6 +22,7 @@ import org.jdesktop.layout.GroupLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,6 +30,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -232,13 +234,42 @@ public class GraphTabPanel extends JPanel {
 		increaseLayoutSize = new JButton("+");
 		increaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				graphRenderer.changeLayoutSize(50, 50);
-			}
+				if (!SwingUtilities.isEventDispatchThread()){
+					try {
+						SwingUtilities.invokeAndWait(new Runnable(){
+							public void run(){
+								increaseLayoutSize.paintImmediately(new Rectangle());
+							}
+						});
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				new Thread(new Runnable(){
+					public void run() {
+						graphRenderer.changeLayoutSize(50, 50);						
+					}					
+				}).run();						
+			}			
 		});
 		decreaseLayoutSize = new JButton("-");
 		decreaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				graphRenderer.changeLayoutSize(-50, -50);
+				SwingWorker worker = new SwingWorker(){
+					@Override
+					protected Object doInBackground() throws Exception {
+						graphRenderer.changeLayoutSize(-50, -50);
+						return null;
+					}					
+				};
+				worker.run();
+				decreaseLayoutSize.paintImmediately(new Rectangle());
+				
 			}
 		});
 
