@@ -234,28 +234,18 @@ public class GraphTabPanel extends JPanel {
 		increaseLayoutSize = new JButton("+");
 		increaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if (!SwingUtilities.isEventDispatchThread()){
-					try {
-						SwingUtilities.invokeAndWait(new Runnable(){
-							public void run(){
-								increaseLayoutSize.paintImmediately(new Rectangle());
-							}
-						});
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-				
-				new Thread(new Runnable(){
-					public void run() {
-						graphRenderer.changeLayoutSize(50, 50);						
+				SwingWorker worker = new SwingWorker(){
+					@Override
+					protected Object doInBackground() throws Exception {
+						decreaseLayoutSize.paintImmediately(new Rectangle());
+						return null;
 					}					
-				}).run();						
-			}			
+					public void done(){
+						graphRenderer.changeLayoutSize(50, 50);
+					}
+				};
+				worker.execute();				
+			}
 		});
 		decreaseLayoutSize = new JButton("-");
 		decreaseLayoutSize.addActionListener(new ActionListener(){
@@ -263,20 +253,31 @@ public class GraphTabPanel extends JPanel {
 				SwingWorker worker = new SwingWorker(){
 					@Override
 					protected Object doInBackground() throws Exception {
-						graphRenderer.changeLayoutSize(-50, -50);
+						decreaseLayoutSize.paintImmediately(new Rectangle());
 						return null;
 					}					
+					public void done(){
+						graphRenderer.changeLayoutSize(-50, -50);
+					}
 				};
-				worker.run();
-				decreaseLayoutSize.paintImmediately(new Rectangle());
-				
+				worker.execute();				
 			}
 		});
 
 		reiterate = new JButton("Reiterate");
 		reiterate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				graphRenderer.reiterate();
+				SwingWorker worker = new SwingWorker(){
+					@Override
+					protected Object doInBackground() throws Exception {
+						reiterate.paintImmediately(new Rectangle());
+						return null;
+					}
+					public void done(){
+						graphRenderer.reiterate();
+					}			
+				};	
+				worker.execute();
 			}
 		});
 		
