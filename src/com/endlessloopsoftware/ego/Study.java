@@ -50,7 +50,10 @@ public class Study extends Observable
    private boolean           _compatible     = true;
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
-   private List[]            _questionOrder  = new List[Question.NUM_QUESTION_TYPES];
+   
+   @SuppressWarnings("unchecked")
+   private List<Long>[]            _questionOrder  = new List[Question.NUM_QUESTION_TYPES];
+   
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
    private static Properties _prop           = new Properties();
@@ -73,7 +76,7 @@ public class Study extends Observable
 
 		for (int i = 0; i < _questionOrder.length; i++)
 		{
-			_questionOrder[i] = new ArrayList();
+			_questionOrder[i] = new ArrayList<Long>();
 		}
 	}
 	
@@ -97,7 +100,7 @@ public class Study extends Observable
 			}
 			else
 			{
-				_questionOrder[i] = new ArrayList();
+				_questionOrder[i] = new ArrayList<Long>();
 			}
 		}
 
@@ -176,7 +179,7 @@ public class Study extends Observable
 	 * 
 	 * @return questionOrder array of lists
 	 */
-	public List[] getQuestionOrderArray()
+	public List<Long>[] getQuestionOrderArray()
 	{
 		return (_questionOrder);
 	}
@@ -215,7 +218,7 @@ public class Study extends Observable
 	 * @throws NoSuchElementException
 	 *             for category out of range
 	 */
-	public List getQuestionOrder(int category) throws NoSuchElementException
+	public List<Long> getQuestionOrder(int category) throws NoSuchElementException
 	{
 		if (category >= _questionOrder.length)
 		{
@@ -881,7 +884,7 @@ public class Study extends Observable
 			while (elements.hasMoreElements())
 			{
 				int qOrderId;
-				List questionOrder;
+				List<Long> questionOrder;
 				Elements ids;
 
 				Element element = elements.next();
@@ -1040,7 +1043,7 @@ public class Study extends Observable
 			
 			for (int i = 1; i < Question.NUM_QUESTION_TYPES; ++i)
 			{
-				List qorder = getQuestionOrder(i);
+				List<Long> qorder = getQuestionOrder(i);
 				questionOrder[i] = new Long[qorder.size()];
 				qorder.toArray(questionOrder[i]);
 			}

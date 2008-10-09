@@ -298,8 +298,8 @@ public class Interview {
 	 *            Unique Identifier of question
 	 * @return Set of answers using this question
 	 */
-	public Set getAnswerSubset(Long qId) {
-		Set s = new HashSet(_numAlterPairs);
+	public Set<Answer> getAnswerSubset(Long qId) {
+		Set<Answer> s = new HashSet<Answer>(_numAlterPairs);
 
 		for (int i = 0; i < _answers.length; i++) {
 			if (_answers[i].questionId.equals(qId)) {
@@ -315,8 +315,8 @@ public class Interview {
 	 * 
 	 * @return List of answers using this question
 	 */
-	public List getEgoAnswers() {
-		List l = new ArrayList();
+	public List<Answer> getEgoAnswers() {
+		List<Answer> l = new ArrayList<Answer>();
 		int index = 0;
 		Question q = _study.getQuestions().getQuestion(
 				_answers[index].questionId);

@@ -38,7 +38,7 @@ public class CompositionalStatsModel extends StatTableModel
 
 	private void initModel()
 	{
-		Iterator it = stats.componentSet.iterator();
+		Iterator<Set<Integer>> it = stats.componentSet.iterator();
 		int index = 0;
 		int maxCount = 0;
 
@@ -46,7 +46,7 @@ public class CompositionalStatsModel extends StatTableModel
 
 		while (it.hasNext())
 		{
-			Set s = (Set) it.next();
+			Set<Integer> s = it.next();
 
 			componentArray[index] = new Integer[s.size()];
 			s.toArray(componentArray[index]);

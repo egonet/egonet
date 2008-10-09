@@ -45,7 +45,7 @@ public class PronouncablePassword
 		long sum = 0;
 		int nchar;
 		long ranno;
-		int pwnum;
+		//int pwnum;
 		double pik;
 		StringBuffer password;
 		Random ran = new SecureRandom(); // new random source seeded by clock

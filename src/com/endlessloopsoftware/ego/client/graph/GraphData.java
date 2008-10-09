@@ -317,6 +317,8 @@ public class GraphData {
 				.getLayoutTransformer();
 		Graph graph = layout.getGraph();
 		StringLabeller labeller = getStringLabeller(GraphRenderer.getGraph());
+		
+		@SuppressWarnings({"unchecked"})
 		Set<Vertex> vertices = graph.getVertices();
 		Vertex mostRightVertex = vertices.iterator().next();
 

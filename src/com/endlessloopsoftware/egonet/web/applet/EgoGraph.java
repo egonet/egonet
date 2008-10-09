@@ -91,7 +91,7 @@ public class EgoGraph
    private Graph             _graph;
    private Vertex            _ego;
    private Vertex            _base;
-   private Map               _edges;
+   private Map<EdgeIdentifier,Edge>               _edges;
    private String            _mode              = WebShared.VIEW_MODE;
 
    // URL Stuff
@@ -326,7 +326,7 @@ public class EgoGraph
       log ("Build Graph with baseIndex = " + _baseIndex);
       
       Graph graph = new UndirectedSparseGraph();
-      _edges = new HashMap(_alters.length);
+      _edges = new HashMap<EdgeIdentifier,Edge>(_alters.length);
 		StringLabeller undirectedLabeler = StringLabeller.getLabeller(graph);
 		Vertex[] vertexList = new Vertex[_alters.length];
 

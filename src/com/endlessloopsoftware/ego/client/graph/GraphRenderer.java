@@ -133,19 +133,15 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * 
 	 * @param Class Layout
 	 */
-	public void changeLayout(Class layout) throws Exception {
-			Constructor constructor = layout.getConstructor(new Class[] { Graph.class });
+	public void changeLayout(Class<?> layout) throws Exception {
+			Constructor<?> constructor = layout.getConstructor(new Class<?>[] { Graph.class });
 			Object o = constructor.newInstance(graph);
 			Layout l = (Layout) o;
 
+			
 			if (l instanceof FRLayout) {
 				FRLayout frLayout = (FRLayout) l;
 				frLayout.setMaxIterations(1000);
-			}
-
-			// TODO: change required with spring layout not FR layout
-			if (l instanceof SpringLayout) {
-				SpringLayout springLayout = (SpringLayout) l;
 			}
 			visualizationViewer.stop();
 			visualizationViewer.setGraphLayout(l, false);
@@ -166,7 +162,7 @@ public class GraphRenderer extends PluggableRenderer implements
 			Layout layout = visualizationViewer.getGraphLayout();
 			
 			if(dim.width + x < 5 || dim.height + y < 5){
-				new JOptionPane().showMessageDialog(null, 
+				JOptionPane.showMessageDialog(null, 
 						new String("Layout Size Out of Bounds"), "Error", 
 						JOptionPane.ERROR_MESSAGE);
 				System.out.println("Less than 5");

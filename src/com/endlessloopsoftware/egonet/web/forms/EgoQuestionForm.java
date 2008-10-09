@@ -47,7 +47,7 @@ public class EgoQuestionForm extends ELSValidatorForm
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private StudyDataValue _study;
-	private Vector				_answers;
+	private Vector<AnswerDataValue>				_answers;
 	
 	public EgoQuestionForm()
 	{
@@ -66,7 +66,7 @@ public class EgoQuestionForm extends ELSValidatorForm
 	/**
 	 * @return Returns the answers.
 	 */
-	public Vector getAnswers() 
+	public Vector<AnswerDataValue> getAnswers() 
 	{
 		return _answers;
 	}
@@ -74,7 +74,7 @@ public class EgoQuestionForm extends ELSValidatorForm
 	/**
 	 * @return Returns the answers.
 	 */
-	public void setAnswers(Vector answers) 
+	public void setAnswers(Vector<AnswerDataValue> answers) 
 	{
 		_answers = answers;
 	}
@@ -93,7 +93,7 @@ public class EgoQuestionForm extends ELSValidatorForm
 			Map 						questionMap	= WebShared.retrieveQuestionMap(servlet);
 			InterviewPosition		position 	= WebShared.retrieveInterviewPosition(request);
 			
-			_answers = new Vector();
+			_answers = new Vector<AnswerDataValue>();
 			
 			for (int i = 0; (i < template.length) && (template[i].getGlobalPageNumber() == position.getGlobalPageNumber()); ++i)
 			{	

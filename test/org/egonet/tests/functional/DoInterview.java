@@ -25,6 +25,7 @@ public class DoInterview {
 			return;
 		
 		studyFile = chooser.getSelectedFile();
+		System.out.println(studyFile.getName());
 		
 		window = new FrameFixture(EgoNet.getInstance().getFrame());
 		window.show(); // shows the frame to test

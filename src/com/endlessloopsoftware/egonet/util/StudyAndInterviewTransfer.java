@@ -30,7 +30,7 @@ public class StudyAndInterviewTransfer
 	implements java.io.Serializable
 {
 	public String 	studyName		         = null;
-	public Set		interviewIdentifiers = new TreeSet();
+	public Set<InterviewIdentifier>		interviewIdentifiers = new TreeSet<InterviewIdentifier>();
 
 	
 	public StudyAndInterviewTransfer(String studyName)

@@ -48,7 +48,7 @@ public class QuestionList extends Observable
 	 * Returns Map containing all questions
 	 * @return questionList Map of questions
 	 */
-	public Map getQuestionMap()
+	public Map<Long, Question> getQuestionMap()
 	{
 		return(questionMap);
 	}

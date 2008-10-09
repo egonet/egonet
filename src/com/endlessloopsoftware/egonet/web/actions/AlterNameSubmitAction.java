@@ -302,10 +302,10 @@ public final class AlterNameSubmitAction
    }
 
 
-   protected Map getKeyMethodMap() 
+   protected Map<Object,Object> getKeyMethodMap() 
    {
       logger.debug("Get Key Map");
-      Map map = new HashMap();
+      Map<Object,Object> map = new HashMap<Object,Object>();
       map.put("alterprompt.button.submit",   "submit");
       map.put("alterprompt.button.complete", "complete");
       return map;

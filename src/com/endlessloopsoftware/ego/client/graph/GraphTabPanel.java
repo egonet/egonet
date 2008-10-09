@@ -30,7 +30,6 @@ import java.awt.event.ItemListener;
 
 import javax.swing.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -86,12 +85,9 @@ public class GraphTabPanel extends JPanel {
 	
 	private ScalingControl scaler;
 
-	private Graph g;
-
 	public GraphTabPanel(Graph g, VisualizationViewer vv,
 			DefaultModalGraphMouse graphMouse) {
 
-		this.g = g;
 		this.graphMouse = graphMouse;
 		this.vv = vv;
 		createComponents();
@@ -99,7 +95,7 @@ public class GraphTabPanel extends JPanel {
 
 	public GraphTabPanel(GraphRenderer gr) {
 		this.graphRenderer = gr;
-		this.g = GraphRenderer.getGraph();
+		GraphRenderer.getGraph();
 		this.graphMouse = gr.getGraphMouse();
 		this.vv = GraphRenderer.getVv();
 		createComponents();

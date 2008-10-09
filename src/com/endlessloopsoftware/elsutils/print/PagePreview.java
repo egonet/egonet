@@ -134,7 +134,7 @@ public class PagePreview extends JDialog implements ActionListener
 		private int pages;
 	}
 
-	private JButton getButton(String iconName)
+	public JButton getButton(String iconName)
 	{
 		return getButton(null, iconName, null);
 	}
@@ -262,7 +262,7 @@ class Preview extends JComponent
 		int newIndex = index + indexStep;
 		try
 		{
-			Printable printable = pageable.getPrintable(newIndex);
+			pageable.getPrintable(newIndex);
 			resize();
 			index = newIndex;
 		}

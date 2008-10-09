@@ -27,9 +27,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-//import com.jgoodies.looks.FontSizeHints;
-import com.jgoodies.looks.Options;
-
 
 /**
  * <p>Title: ListBuilder</p>
@@ -64,7 +61,7 @@ public class ListBuilder
                                            };
     private final GridBagLayout  listBuilderLayout = new GridBagLayout();
     private final JList          jList             = new JList();
-    private final ObservableList elementList       = new ObservableList();
+    private final ObservableList<Selection> elementList       = new ObservableList<Selection>();
     private final JScrollPane    listScrollPane    = new JScrollPane(jList);
     private final JLabel         firstNameLabel    = new JLabel("First Name:");
     private final JTextField     firstNameField    = new JTextField();
@@ -658,7 +655,7 @@ public class ListBuilder
     {
         JFrame      fred = new JFrame();
         ListBuilder bob = new ListBuilder();
-        String[]    s   =
+        /*String[]    s   =
                           {
                               "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
                               "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
@@ -668,7 +665,7 @@ public class ListBuilder
                               "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
                               "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
                               "Wisconsin", "Wyoming"
-                          };
+                          };*/
 
         try
         {
@@ -711,39 +708,6 @@ public class ListBuilder
         fred.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
         fred.setVisible(true);
     }
-
-   /**
-    * Configures the UI; tries to set the system look on Mac,
-    * <code>ExtWindowsLookAndFeel</code> on general Windows, and
-    * <code>Plastic3DLookAndFeel</code> on Windows XP and all other OS.<p>
-    *
-    * The JGoodies Swing Suite's <code>ApplicationStarter</code>,
-    * <code>ExtUIManager</code>, and <code>LookChoiceStrategies</code>
-    * classes provide a much more fine grained algorithm to choose and
-    * restore a look and theme.
-    */
-   private void configureUI()
-   {
-      UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-      //Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
-      Options.setDefaultIconSize(new Dimension(18, 18));
-
-//      String lafName = LookUtils.isWindowsXP() ?
-//         Options.getCrossPlatformLookAndFeelClassName() :
-//         Options.getSystemLookAndFeelClassName();
-
-      String lafName = Options.getCrossPlatformLookAndFeelClassName();
-
-      try
-      {
-         System.out.println(lafName + "\n");
-         UIManager.setLookAndFeel(lafName);
-      }
-      catch (Exception e)
-      {
-         System.err.println("Can't set look & feel:" + e);
-      };
-   }
 
 }
 

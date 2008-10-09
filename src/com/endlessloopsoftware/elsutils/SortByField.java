@@ -25,18 +25,18 @@ import java.util.Comparator;
  * <p>Description: Implements a comparator to be passed to sortable classes. It takes a class and a method name
  * for a method which fetches a comparable field and implements compare for that field.</p>
  */
-public class SortByField implements Comparator
+public class SortByField implements Comparator<Comparable>
 {
-	private final Class[]  argtypelist = new Class[0];
+	private final Class<?>[]  argtypelist = new Class<?>[0];
 	private final Object[] arglist = new Object[0];
 	Method                 method;
 
-	public SortByField(Class sortClass, String methodName) throws NoSuchMethodException
+	public SortByField(Class<?> sortClass, String methodName) throws NoSuchMethodException
 	{
 			this.method = sortClass.getMethod(methodName, argtypelist);
 	}
 
-	public int compare(Object a, Object b)
+	public int compare(Comparable a, Comparable b)
 	{
 		Comparable acomp = null;
 		Comparable bcomp = null;
@@ -45,12 +45,16 @@ public class SortByField implements Comparator
 		{
 			acomp = (Comparable) method.invoke(a, arglist);
 			bcomp = (Comparable) method.invoke(b, arglist);
+
+			@SuppressWarnings("unchecked")
+			int result = acomp.compareTo(bcomp); 
+			
+			return result;
 		}
 		catch (Exception ex)
 		{
 			throw new ClassCastException(ex.getMessage());
 		}
 
-		return (acomp.compareTo(bcomp));
 	}
 }

@@ -120,7 +120,7 @@ public class SummaryPanel extends JPanel
 		File intPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Interviews/");
 		File istPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Statistics/");
 		String[] intFiles = DirList.getDirList(intPath, "int");
-		Set istFileSet = new HashSet();
+		Set<File> istFileSet = new HashSet<File>();
 		int i = 0, p = 0;
 
 		istPath.mkdir();

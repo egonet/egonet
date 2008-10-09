@@ -50,7 +50,7 @@ public class QuestionListForm extends ELSValidatorForm
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private StudyDataValue       _study;
-	private Vector               _answers;
+	private Vector<AnswerDataValue>               _answers;
    private java.lang.Long       _interviewId;
    private java.lang.Integer    _position;
 	
@@ -87,7 +87,7 @@ public class QuestionListForm extends ELSValidatorForm
 	/**
 	 * @return Returns the answers.
 	 */
-	public Vector getAnswers() 
+	public Vector<AnswerDataValue> getAnswers() 
 	{
 		return _answers;
 	}
@@ -95,7 +95,7 @@ public class QuestionListForm extends ELSValidatorForm
 	/**
 	 * @return Returns the answers.
 	 */
-	public void setAnswers(Vector answers) 
+	public void setAnswers(Vector<AnswerDataValue> answers) 
 	{
 		_answers = answers;
 	}
@@ -117,7 +117,7 @@ public class QuestionListForm extends ELSValidatorForm
                               _interviewId   = interview.getId();
 			
 			logger.debug("Looking for questions matching " + position);
-			_answers    = new Vector();
+			_answers    = new Vector<AnswerDataValue>();
          _position   = new Integer(position.getPrimaryAlter() - 1);
 			
 			for (int i = position.getGlobalPosition(); 

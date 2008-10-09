@@ -47,9 +47,9 @@ public class Statistics
    public float[]          closenessArray          = new float[0];
    public int[]            farnessArray            = new int[0];
    public int[]            degreeArray             = new int[0];
-   public Set              cliqueSet               = new HashSet();
-   public Set              allSet                  = new HashSet();
-   public Set              componentSet            = new HashSet();
+   public Set<Stack<Integer>>       cliqueSet               = new HashSet<Stack<Integer>>();
+   public Set<Stack<Integer>>              allSet                  = new HashSet<Stack<Integer>>();
+   public Set<Set<Integer>>              componentSet            = new HashSet<Set<Integer>>();
    public AlterStats[]     alterStatArray          = new AlterStats[0];
    public Integer[][]      alterSummary            = new Integer[0][];
 
@@ -106,9 +106,9 @@ public class Statistics
             stats.betweennessArray           = new float[0];
             stats.closenessArray             = new float[0];
             stats.farnessArray               = new int[0];
-            stats.allSet                     = new HashSet(0);
-            stats.cliqueSet                  = new HashSet(0);
-            stats.componentSet               = new HashSet(0);
+            stats.allSet                     = new HashSet<Stack<Integer>>(0);
+            stats.cliqueSet                  = new HashSet<Stack<Integer>>(0);
+            stats.componentSet               = new HashSet<Set<Integer>>(0);
             stats.degreeArray                = new int[0];
             stats.alterStatArray             = new AlterStats[0];
             stats.alterSummary               = new Integer[0][];
@@ -118,9 +118,9 @@ public class Statistics
             stats.adjacencyMatrix            = interview.generateAdjacencyMatrix(q, false);
             stats.weightedAdjacencyMatrix    = interview.generateAdjacencyMatrix(q, true);
             stats.alterList                  = interview.getAlterList();
-            stats.allSet                     = new HashSet(0);
-            stats.cliqueSet                  = new HashSet(0);
-            stats.componentSet               = new HashSet(0);
+            stats.allSet                     = new HashSet<Stack<Integer>>(0);
+            stats.cliqueSet                  = new HashSet<Stack<Integer>>(0);
+            stats.componentSet               = new HashSet<Set<Integer>>(0);
             
             stats.allSet                     = stats.identifyAllConnections();
             stats.cliqueSet                  = stats.identifyCliques();
@@ -388,6 +388,7 @@ public class Statistics
 		for (s = 0; s < size; ++s)
 		{
 			Stack<Integer> S = new Stack<Integer>();
+			@SuppressWarnings({"unchecked"})
 			java.util.List<Integer>[] P = new java.util.List[size];
 			LinkedList<Integer> Q = new LinkedList<Integer>();
 			int[] spaths = new int[size];
@@ -460,13 +461,13 @@ public class Statistics
 	 * Based on Bron Kerbosch [73]
 	 * @return Set of Sets. Each Set represents one clique
 	 */
-	private Set identifyCliques()
+	private Set<Stack<Integer>> identifyCliques()
 	{
       int[][] matrix     = (int[][]) adjacencyMatrix.clone();
       int size           = matrix.length;
 		int[]  all         = new int[size];
-		Stack  compsub     = new Stack();
-		Set    cliqueSet   = new HashSet();
+		Stack<Integer>  compsub     = new Stack<Integer>();
+		Set<Stack<Integer>>    cliqueSet   = new HashSet<Stack<Integer>>();
 
 		for (int c = 0; c < size; ++c)
 		{
@@ -487,13 +488,13 @@ public class Statistics
 	 * counts the number of all fully connected groups in the graph
 	 * * @return Set of Sets. Each Set represents one fully connected graph
 	 */
-	private Set identifyAllConnections()
+	private Set<Stack<Integer>> identifyAllConnections()
 	{
       int[][] matrix  = (int[][]) adjacencyMatrix.clone();
 		int size        = matrix.length;
 		int[] all       = new int[size];
-		Stack compsub   = new Stack();
-		Set allSet      = new HashSet();
+		Stack<Integer> compsub   = new Stack<Integer>();
+		Set<Stack<Integer>> allSet      = new HashSet<Stack<Integer>>();
 
 		for (int c = 0; c < size; ++c)
 		{
@@ -526,7 +527,8 @@ public class Statistics
 		return count;
 	}
 	
-	private void extendVersion2(int[][] pMatrix, Stack compsub, Set cliqueSet, int[] old, int ne, int ce,
+	@SuppressWarnings("unchecked")
+	private void extendVersion2(int[][] pMatrix, Stack<Integer> compsub, Set<Stack<Integer>> cliqueSet, int[] old, int ne, int ce,
                                int cliqueOrAll)
    {
       int[] newarray    = new int[ce];
@@ -606,7 +608,7 @@ public class Statistics
 			}
 
 			/* Add to compsub */
-			compsub.push(new Integer(sel));
+			compsub.push(sel);
 
 			if (newce == 0)
 			{
@@ -616,7 +618,7 @@ public class Statistics
                /* Return the fully connected graph */
                if (compsub.size() >= 1)
                {
-                  cliqueSet.add(compsub.clone());
+                  cliqueSet.add((Stack<Integer>)compsub.clone());
                }
             }
             else
@@ -625,7 +627,7 @@ public class Statistics
                /* Return Clique */
                if (compsub.size() >= MINIMUM_CLIQUE)
                {
-                  cliqueSet.add(compsub.clone());
+                  cliqueSet.add((Stack<Integer>)compsub.clone());
                }
             }
 			}
@@ -651,30 +653,32 @@ public class Statistics
 	 * @param cliqueSet Set of stacks returned by identifyCliques
 	 * @return Set of Sets. Each Set represents one component
 	 */
-	private Set identifyComponents()
+	private Set<Set<Integer>> identifyComponents()
 	{
-		Set          s     = new HashSet();
-		LinkedList   list  = new LinkedList();
-		Iterator     it;
+		Set<Set<Integer>>          s     = new HashSet<Set<Integer>>();
+		LinkedList<Set<Integer>>   list  = new LinkedList<Set<Integer>>();
+		
 		boolean      merged;
 
 		/* clone stacks so this is non-destructive */
 		
-		for (it = this.allSet.iterator(); it.hasNext();)
+		for (Iterator<Stack<Integer>> it = this.allSet.iterator(); it.hasNext();)
 		{
-			list.add(new HashSet((Stack) it.next()));
+			list.add(
+					new HashSet<Integer>(it.next())
+					);
 		}
 
 		while (list.size() > 0)
 		{
 			merged = false;
-			it = list.iterator();
-			Set component = (Set) it.next();
+			Iterator<Set<Integer>> it = list.iterator();
+			Set<Integer> component = it.next();
 
 			while (it.hasNext())
 			{
-				Set intersection = new HashSet(component);
-				Set compareClique = (Set) it.next();
+				Set<Integer> intersection = new HashSet<Integer>(component);
+				Set<Integer> compareClique = it.next();
 
 				intersection.retainAll(compareClique);
 
@@ -702,8 +706,8 @@ public class Statistics
 	 */
 	private void generateAlterStatArray()
 	{
-		List qList = _study.getQuestionOrder(Question.ALTER_QUESTION);
-		Iterator qIt = qList.iterator();
+		List<Long> qList = _study.getQuestionOrder(Question.ALTER_QUESTION);
+		Iterator<Long> qIt = qList.iterator();
 		int index = 0;
 
 		alterSummary = new Integer[alterList.length][];
@@ -737,8 +741,8 @@ public class Statistics
 
 			if ((q.answerType == Question.CATEGORICAL) || (q.answerType == Question.NUMERICAL))
 			{
-				Set answerSet = _interview.getAnswerSubset(qId);
-				Iterator aIt = answerSet.iterator();
+				Set<Answer> answerSet = _interview.getAnswerSubset(qId);
+				Iterator<Answer> aIt = answerSet.iterator();
 
 				alterStatArray[index].questionId = qId;
 				alterStatArray[index].qTitle = q.title;

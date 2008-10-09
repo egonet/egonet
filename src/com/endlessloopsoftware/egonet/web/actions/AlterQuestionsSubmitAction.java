@@ -62,7 +62,7 @@ public final class AlterQuestionsSubmitAction extends ELSAction
 		QuestionListForm 		form 				= (QuestionListForm) pform;
 		InterviewEJBLocal 	interview;
 		InterviewDataValue 	interviewData;
-		List						previousAnswers;
+		List<AnswerDataValue>						previousAnswers;
 		
 		logger.debug("AlterQuestionSubmitAction::perform");
 				
@@ -80,8 +80,8 @@ public final class AlterQuestionsSubmitAction extends ELSAction
 			throw new IOException(e.getMessage());
 		}
 		
-		Vector answers = form.getAnswers();
-		for (Iterator it = answers.iterator(); it.hasNext();)
+		Vector<AnswerDataValue> answers = form.getAnswers();
+		for (Iterator<AnswerDataValue> it = answers.iterator(); it.hasNext();)
 		{
 			AnswerDataValue 	answer 	= (AnswerDataValue) it.next();
 			int					index		= Collections.binarySearch(previousAnswers, answer);

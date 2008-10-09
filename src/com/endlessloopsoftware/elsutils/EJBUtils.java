@@ -47,7 +47,7 @@ public class EJBUtils
 		return guid.toString();
 	}
 
-	private static int getInt(byte bytes[])
+	public static int getInt(byte bytes[])
 	{
 		int i = 0;
 		int j = 24;

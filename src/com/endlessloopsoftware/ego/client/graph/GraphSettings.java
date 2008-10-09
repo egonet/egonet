@@ -189,8 +189,7 @@ public class GraphSettings {
 
 				Element layoutElement = (Element) graphElement
 						.getElementsByTagName("Layout").item(0);
-				Element zoomElement = (Element) graphElement
-						.getElementsByTagName("Zoom").item(0);
+				//Element zoomElement = (Element) graphElement.getElementsByTagName("Zoom").item(0);
 				Element backgroundElement = (Element) graphElement
 						.getElementsByTagName("Background").item(0);
 				Element showNodeLabelElement = (Element) graphElement
@@ -438,12 +437,15 @@ public class GraphSettings {
 	}
 
 	private void displaySettings() {
-
+		boolean debug = false;
+		if(!debug)
+			return;
+		
 		int size = QAsettings.size();
 		System.out.println("Graph settings (" + size + " entries):");
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			// System.out.println("Entry " + i + ": " + entry.toString());
+			System.out.println("Entry " + i + ": " + entry.toString());
 		}
 	}
 

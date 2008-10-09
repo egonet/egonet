@@ -67,14 +67,14 @@ public class ShowLayouts extends JApplet {
 		public void actionPerformed(ActionEvent arg0) 
 		{
 			Object[] constructorArgs = { g };
-
-			Class layoutC = (Class) jcb.getSelectedItem();
+			
+			Class<?> layoutC = (Class<?>) jcb.getSelectedItem();
 			System.out.println("Setting to " + layoutC);
-			Class lay = layoutC;
+			
 			
 			try 
 			{
-				Constructor constructor = lay.getConstructor(constructorArgsWanted);
+				Constructor<?> constructor = layoutC.getConstructor(constructorArgsWanted);
 				Object o = constructor.newInstance(constructorArgs);
 				Layout l = (Layout) o;
 				gd.setGraphLayout(l);
@@ -82,7 +82,7 @@ public class ShowLayouts extends JApplet {
 			} 
 			catch (Exception e) 
 			{
-				System.out.println("Can't handle " + lay);
+				System.out.println("Can't handle " + layoutC);
 			}
 		}
 	}

@@ -30,6 +30,7 @@ import org.jboss.logging.Logger;
 
 import com.endlessloopsoftware.egonet.interfaces.ConfigurationSBLocal;
 import com.endlessloopsoftware.egonet.interfaces.ConfigurationSBUtil;
+import com.endlessloopsoftware.egonet.interfaces.QuestionEJBLocal;
 import com.endlessloopsoftware.egonet.interfaces.QuestionEJBPK;
 import com.endlessloopsoftware.egonet.interfaces.QuestionSBLocal;
 import com.endlessloopsoftware.egonet.interfaces.QuestionSBLocalHome;
@@ -127,10 +128,10 @@ public abstract class ELSAction extends Action
 		servlet.getServletContext().setAttribute(WebShared.QUESTION_MAP_KEY, getQuestionMap(studyDataValue));
 	}
 
-	public Map getQuestionDataValueMap(StudyDataValue study)
+	public Map<Long,QuestionDataValue> getQuestionDataValueMap(StudyDataValue study)
 	{
 		logger.debug("Filling QuestionDataValue Map");
-		Map rmap = new HashMap();
+		Map<Long,QuestionDataValue> rmap = new HashMap<Long,QuestionDataValue>();
 		
 		if (study != null)
 		{
@@ -145,11 +146,11 @@ public abstract class ELSAction extends Action
 		return rmap;
 	}
 
-	public Map getQuestionMap(StudyDataValue study)
+	public Map<Long,QuestionEJBLocal> getQuestionMap(StudyDataValue study)
 		throws CreateException, NamingException
 	{
 		logger.debug("Filling Question Map");
-		Map rmap = new HashMap();
+		Map<Long,QuestionEJBLocal> rmap = new HashMap<Long,QuestionEJBLocal>();
 		
 		/**
 		 * Prepare QuestionSBto lookup questions

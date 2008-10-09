@@ -45,7 +45,7 @@ public class PhoneBean
 	private final	JTextField	exchange 		= new JTextField(3);
 	private final	JTextField	number 			= new JTextField(4);
 	private final	JTextField	extension		= new JTextField(6);
-	private 		boolean		hasExtension	= false;
+	//private 		boolean		hasExtension	= false;
 	
 	private			String		oldNumber		= "";
 	private			String		oldExtension	= "";
@@ -64,7 +64,7 @@ public class PhoneBean
 		this.add(hyphenLabel,	cc.xy(7, 1));
 		this.add(number, 		cc.xy(9, 1));
 		
-		this.hasExtension = hasExtension;
+		//this.hasExtension = hasExtension;
 		if (hasExtension) 
 		{
 			this.add(extLabel,	cc.xy(11, 1));
