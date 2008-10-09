@@ -77,7 +77,6 @@ public class StudyPanel extends JPanel
 		this.setLayout(study_layout);
 		this.setMinimumSize(new Dimension(300, 200));
 		this.setPreferredSize(new Dimension(400, 400));
-		//frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 		study_num_alters_field.setDocument(altersDocument);
 
 		/* Question Layout */

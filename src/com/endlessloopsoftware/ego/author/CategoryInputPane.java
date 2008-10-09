@@ -122,7 +122,7 @@ public class CategoryInputPane extends JDialog {
 
 			Selection[] newSelections = listBuilder.getListSelections();
 
-			if (newSelections.length != q.selections.length) {
+			if (newSelections.length != q.getSelections().length) {
 				if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
 					compatible = false;
 					changed = true;
@@ -130,7 +130,7 @@ public class CategoryInputPane extends JDialog {
 					// If the number changed we know the list has changed, so
 					// just copy over
 					// the reference and let the loop trim the strings
-					q.selections = newSelections;
+					q.setSelections(newSelections);
 				} else {
 					// Don't make this change
 					egoNet.getFrame().fillCurrentPanel();
@@ -140,10 +140,10 @@ public class CategoryInputPane extends JDialog {
 			}
 
 			// Trim the strings, check for changes
-			for (int i = 0; i < q.selections.length; i++) {
-				if (!q.selections[i]
+			for (int i = 0; i < q.getSelections().length; i++) {
+				if (!q.getSelections()[i]
 						.equals(newSelections[i].getString().trim())) {
-					q.selections[i].setString(newSelections[i].getString()
+					q.getSelections()[i].setString(newSelections[i].getString()
 							.trim());
 					changed = true;
 				}
@@ -168,7 +168,7 @@ public class CategoryInputPane extends JDialog {
 		Question q = (Question) parentList.getSelectedValue();
 
 		if (q != null) {
-			listBuilder.setListSelections(q.selections);
+			listBuilder.setListSelections(q.getSelections());
 		} else {
 			System.err.println("Parent list had no selections");
 		}

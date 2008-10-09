@@ -21,8 +21,6 @@ package com.endlessloopsoftware.ego.client;
 import com.endlessloopsoftware.ego.Study;
 //import com.endlessloopsoftware.elsutils.Console;
 
-import javax.swing.JFrame;
-
 public class EgoClient
 {
 	private Study			study;
@@ -42,7 +40,6 @@ public class EgoClient
 		
 		frame.gotoSourceSelectPanel(true);
 		frame.setVisible(true);
-		frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 
 	}
 

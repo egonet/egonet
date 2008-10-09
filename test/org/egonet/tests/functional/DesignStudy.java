@@ -97,7 +97,7 @@ public class DesignStudy {
 		
 		
 		window.menuItemWithPath("File", "Quit").click();
-		DialogFixture dialog = WindowFinder.findDialog(DialogByTitleMatcher.withTitle("Save Study Changes")).withTimeout(10000).using(window.robot);
+		DialogFixture dialog = WindowFinder.findDialog(DialogByTitleMatcher.withTitle("Save Study Changes")).withTimeout(5000).using(window.robot);
 		dialog.button(withText("Yes")).click();
 	}
 

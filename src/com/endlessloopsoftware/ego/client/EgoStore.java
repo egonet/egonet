@@ -639,7 +639,7 @@ public class EgoStore extends Observable {
 								egoClient.getFrame(),
 								"Unable to write interview. \nYour answers are not being saved so the interview will now abort.\n Please report this error.",
 								"Interview Error", JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
+				throw new RuntimeException(e);
 			}
 		}
 	}

@@ -237,8 +237,8 @@ public class GraphSettings {
 				int category = Integer.parseInt(categoryElement
 						.getAttribute("category"));
 
-				for (int j = 0; j < question.selections.length; j++) {
-					Selection selection = question.selections[j];
+				for (int j = 0; j < question.getSelections().length; j++) {
+					Selection selection = question.getSelections()[j];
 
 					if (selection.getString().equals(
 							selectionElement.getAttribute("text"))) {

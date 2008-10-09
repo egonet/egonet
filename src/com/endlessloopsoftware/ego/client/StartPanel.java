@@ -43,6 +43,7 @@ public class StartPanel extends JPanel
 	private final JLabel titleLabel = new JLabel("What is your name?");
 	private final JLabel firstNameLabel = new JLabel("First: ");
 	private final JTextField firstNameField = new JTextField();
+	
 	private final JLabel lastNameLabel = new JLabel("Last: ");
 	private final JTextField lastNameField = new JTextField();
 	private final JButton startInterviewButton = new JButton("Start Interview");
@@ -54,6 +55,9 @@ public class StartPanel extends JPanel
 	public StartPanel(EgoClient egoClient)
 	{
 		this.egoClient = egoClient;
+		
+		firstNameField.setName("firstNameField");
+		lastNameField.setName("lastNameField");
 			jbInit();
 	}
 

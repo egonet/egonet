@@ -755,13 +755,13 @@ public class Statistics
 				}
 				else if (q.answerType == Question.CATEGORICAL)
 				{
-					alterStatArray[index].answerTotals = new int[q.selections.length];
-					alterStatArray[index].answerText = new String[q.selections.length];
+					alterStatArray[index].answerTotals = new int[q.getSelections().length];
+					alterStatArray[index].answerText = new String[q.getSelections().length];
 
-					for (int i = 0; i < q.selections.length; ++i)
+					for (int i = 0; i < q.getSelections().length; ++i)
 					{
 					//	alterStatArray[index].answerText[i] = q.selections[q.selections.length - (i + 1)].getString();
-						alterStatArray[index].answerText[i] = q.selections[i].getString();
+						alterStatArray[index].answerText[i] = q.getSelections()[i].getString();
 					}
 				}
 

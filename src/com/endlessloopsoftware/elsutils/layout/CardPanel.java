@@ -190,6 +190,20 @@ public class CardPanel extends JPanel
 		}
 		return -1;
 	}
+	
+	/**
+	 * Return the String name of the first (and one would hope - only) visible child.
+	 * If a visible child can't be found, perhaps the caller has inexlicably
+	 * hidden all of the children, then return empty string.
+	 */
+	public String getVisibleCard()
+	{
+		int displayed = getVisibleChildIndex();
+		if(displayed == -1)
+			return "";
+		
+		return getComponent(displayed).getName();
+	}
 
 	/**
 	 * Hide the currently visible child "card" and show the specified card. If

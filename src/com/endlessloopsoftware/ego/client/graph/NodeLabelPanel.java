@@ -142,13 +142,13 @@ public class NodeLabelPanel extends JPanel {
 		// System.out.println("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Question.CATEGORICAL) {
-			int noOfRows = question.selections.length;
+			int noOfRows = question.getSelections().length;
 			Selection[] rowData = new Selection[noOfRows];
 			/* change the list of selections based on the selected question */
 			if (!selectionList.isEmpty()) {
 				selectionList.removeAll(selectionList);
 			}
-			for (Selection selection : question.selections) {
+			for (Selection selection : question.getSelections()) {
 				selectionList.add(selection);
 			}
 			for (int i = 0; i < noOfRows; i++) {
@@ -221,7 +221,7 @@ public class NodeLabelPanel extends JPanel {
 		} else {
 			Question question = (Question) questionCombo.getSelectedItem();
 			if (question.answerType == Question.CATEGORICAL) {
-				for (Selection selection : question.selections) {
+				for (Selection selection : question.getSelections()) {
 					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 							selection, Question.ALTER_QUESTION);
 					NodeProperty nodeProperty = new NodeProperty();

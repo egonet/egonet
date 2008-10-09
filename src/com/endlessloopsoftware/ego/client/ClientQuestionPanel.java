@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -47,7 +48,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-// import java.text.*;
+//import java.text.*;
 import java.util.Date;
 
 /**
@@ -55,14 +56,20 @@ import java.util.Date;
  */
 public class ClientQuestionPanel extends JPanel implements Observer {
 	/* Lists */
-	private final static int MAX_BUTTONS = 5;
-
-	private final JRadioButton[] answerButtons = { new JRadioButton(),
-			new JRadioButton(), new JRadioButton(), new JRadioButton(),
-			new JRadioButton(), new JRadioButton() };
+	private final JRadioButton[] answerButtons = { 
+			new JRadioButton(), // 1
+			new JRadioButton(), // 2
+			new JRadioButton(), // 3
+			new JRadioButton(), // 4
+			new JRadioButton(), // 5
+			new JRadioButton(), // 6
+			new JRadioButton(), // 7
+			new JRadioButton(), // 8
+			new JRadioButton(), // 9
+	};
 
 	private final KeyStroke enter = KeyStroke
-			.getKeyStroke(KeyEvent.VK_ENTER, 0);
+	.getKeyStroke(KeyEvent.VK_ENTER, 0);
 
 	private final KeyStroke[] numKey = {
 			KeyStroke.getKeyStroke(KeyEvent.VK_0, 0),
@@ -99,9 +106,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private JTextArea questionText = new JTextArea();
 
-	private final JTextArea answerTextField = new NoTabTextArea();
+	private final JTextArea answerTextField = new NoTabTextArea("answerTextField");
 
-	private final JTextArea numericalTextField = new NoTabTextArea();
+	private final JTextArea numericalTextField = new NoTabTextArea("numericalTextField");
 
 	private JButton questionButtonPrevious;
 
@@ -146,7 +153,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private Question question;
 
 	private final EgoClient egoClient;
-	
+
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * 
@@ -158,12 +165,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		listBorder = BorderFactory.createCompoundBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.RAISED, Color.white, new Color(
 						178, 178, 178)), "Questions"), BorderFactory
-				.createEmptyBorder(10, 10, 10, 10));
+						.createEmptyBorder(10, 10, 10, 10));
 
 		questionPanelLeft = getLeftPanel();
 		questionPanelRight = getRightPanel();
 
-			jbInit();
+		jbInit();
 	}
 
 	/**
@@ -200,27 +207,29 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				});
 
 		questionButtonPrevious
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						questionButtonPrevious_actionPerformed(e);
-					}
-				});
+		.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				questionButtonPrevious_actionPerformed(e);
+			}
+		});
 
 		questionButtonNext
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						questionButtonNext_actionPerformed(e);
-					}
-				});
+		.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				questionButtonNext_actionPerformed(e);
+			}
+		});
 
 		answerButtonListener = new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("answerButtonListener");
 				questionAnsweredEventHandler(e);
 			}
 		};
 
 		answerMenu.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("answerMenu.addActionListener");
 				questionAnsweredEventHandler(e);
 			}
 		});
@@ -259,7 +268,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 		});
 
-		for (int i = 0; i <= MAX_BUTTONS; i++) {
+		for (int i = 0; i < answerButtons.length; i++) {
 			answerButtonGroup.add(answerButtons[i]);
 			answerButtons[i].addActionListener(answerButtonListener);
 		}
@@ -284,10 +293,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		questionProgress.setMaximum(egoClient.getInterview().getNumQuestions());
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
+		questionProgress.setStringPainted(true);
 
 		questionList.setModel(new DefaultListModel());
 		egoClient.getInterview()
-				.fillList((DefaultListModel) questionList.getModel());
+		.fillList((DefaultListModel) questionList.getModel());
 
 		if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 			questionList.setSelectedIndex(0);
@@ -296,7 +306,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		/* Differences in UI in conducting interview vs. viewing it */
 		questionPanelLeft
-				.setVisible(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW);
+		.setVisible(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW);
 
 		fillPanel();
 	}
@@ -310,7 +320,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionListScroll.setBorder(listBorder);
 		questionListScroll.setMinimumSize(new Dimension(150, 150));
 //		questionListScroll
-//				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		questionListScroll.setAutoscrolls(true);
 
 		questionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -326,21 +336,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private JPanel getRightPanel() {
 		// Load up the dialog contents.
 		JPanel panel = DialogResource
-				.load("com/endlessloopsoftware/ego/client/QuestionPanel.gui_xml");
+		.load("com/endlessloopsoftware/ego/client/QuestionPanel.gui_xml");
 
 		// Attach beans to fields.
-		questionButtonPrevious = (JButton) DialogResource.getComponentByName(
-				panel, "questionButtonPrevious");
-		questionButtonNext = (JButton) DialogResource.getComponentByName(panel,
-				"questionButtonNext");
-		titleText = (JLabel) DialogResource.getComponentByName(panel,
-				"titleText");
-		answerPanel = (CardPanel) DialogResource.getComponentByName(panel,
-				"answerPanel");
-		questionProgress = (JProgressBar) DialogResource.getComponentByName(
-				panel, "questionProgress");
-		questionText = (JTextArea) DialogResource.getComponentByName(panel,
-				"questionText");
+		questionButtonPrevious = (JButton) DialogResource.getComponentByName(panel, "questionButtonPrevious");
+		questionButtonNext = (JButton) DialogResource.getComponentByName(panel,	"questionButtonNext");
+		titleText = (JLabel) DialogResource.getComponentByName(panel, "titleText");
+		answerPanel = (CardPanel) DialogResource.getComponentByName(panel, "answerPanel");
+		questionProgress = (JProgressBar) DialogResource.getComponentByName( panel, "questionProgress");
+		questionText = (JTextArea) DialogResource.getComponentByName(panel, "questionText");
 
 		/* Set up answer panel cards */
 		answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
@@ -394,188 +398,177 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	 * question
 	 */
 	public void fillPanel() {
-		if (question != null) {
-			String[] alterNames = egoClient.getInterview().getAlterStrings(question);
-			setButtonNextState();
-			questionButtonPrevious
-					.setEnabled(egoClient.getInterview().hasPrevious());
+		if (question == null)
+			return; // danger will robinson!
 
-			switch (question.questionType) {
-			case Question.EGO_QUESTION:
-				titleText.setText("Questions About You");
-				break;
 
-			case Question.ALTER_PROMPT:
-				titleText.setText("Whom do you know?");
-				break;
+		// we may need some string substitutions for $$1 and $$2
+		String[] alterNames = egoClient.getInterview().getAlterStrings(question);
 
-			case Question.ALTER_QUESTION:
-				titleText.setText("<html><p>Questions About <nobr><b>"
-						+ alterNames[0] + "</b></nobr></p></html>");
-				break;
+		// prepare the buttons
+		setButtonNextState();
+		questionButtonPrevious.setEnabled(egoClient.getInterview().hasPrevious());
 
-			case Question.ALTER_PAIR_QUESTION:
-				titleText.setText("<html><p>Questions About <nobr><b>"
-						+ alterNames[0] + "</b></nobr> and <nobr><b>"
-						+ alterNames[1] + "</b></nobr></p></html>");
-				break;
+		switch (question.questionType) {
+		case Question.EGO_QUESTION:
+			titleText.setText("Questions About You");
+			break;
+
+		case Question.ALTER_PROMPT:
+			titleText.setText("Whom do you know?");
+			break;
+
+		case Question.ALTER_QUESTION:
+			titleText.setText("<html><p>Questions About <nobr><b>"
+					+ alterNames[0] + "</b></nobr></p></html>");
+			break;
+
+		case Question.ALTER_PAIR_QUESTION:
+			titleText.setText("<html><p>Questions About <nobr><b>"
+					+ alterNames[0] + "</b></nobr> and <nobr><b>"
+					+ alterNames[1] + "</b></nobr></p></html>");
+			break;
+		}
+
+		answerPanel.setVisible(false);
+		if ((question.questionType == Question.ALTER_PROMPT)
+				&& egoClient.getStudy().getUIType().equals(
+						Shared.TRADITIONAL_QUESTIONS)) {
+			String qs = "Enter the names of "
+				+ egoClient.getStudy().getNumAlters() + " people. ";
+
+			if (egoClient.getInterview().isLastAlterPrompt()) {
+				qs += "After entering " + egoClient.getStudy().getNumAlters()
+				+ " names you can continue.";
+			} else {
+				qs += "";
 			}
 
-			answerPanel.setVisible(false);
-			if ((question.questionType == Question.ALTER_PROMPT)
-					&& egoClient.getStudy().getUIType().equals(
-							Shared.TRADITIONAL_QUESTIONS)) {
-				String qs = "Enter the names of "
-						+ egoClient.getStudy().getNumAlters() + " people. ";
+			questionText.setText(question.text);
 
-				if (egoClient.getInterview().isLastAlterPrompt()) {
-					qs += "After entering " + egoClient.getStudy().getNumAlters()
-							+ " names you can continue.";
-				} else {
-					qs += "";
-				}
+			answerPanel.showCard(ALTER_CARD);
+			alterList.setMaxListSize(egoClient.getStudy().getNumAlters());
+			alterList.setDescription(qs);
+			alterList.setElementName("Name: ");
+			alterList.setPresetListsActive(false);
+			alterList.setNameList(true);
+			alterList.setTitle("Your Acquaintances");
 
-				questionText.setText(question.text);
+			// set alter Strings IF they exist yet
+			alterList.setListStrings(egoClient.getInterview().getAlterList());
+			alterList.setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
 
-				answerPanel.showCard(ALTER_CARD);
-				alterList.setMaxListSize(egoClient.getStudy().getNumAlters());
-				alterList.setDescription(qs);
-				alterList.setElementName("Name: ");
-				alterList.setPresetListsActive(false);
-				alterList.setNameList(true);
-				alterList.setTitle("Your Acquaintances");
-				alterList.setListStrings(egoClient.getInterview().getAlterList());
-				alterList
-						.setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
+			egoClient.getFrame().flood();
+			answerPanel.setVisible(true);
+			alterList.requestFocusOnFirstVisibleComponent();
+		} else if (question.answerType == Question.TEXT) {
+			questionText.setText(question.text);
 
-				egoClient.getFrame().flood();
-				answerPanel.setVisible(true);
-				alterList.requestFocusOnFirstVisibleComponent();
-			} else if (question.answerType == Question.TEXT) {
-				questionText.setText(question.text);
+			answerPanel.showCard(TEXT_CARD);
+			answerPanel.validate();
+			answerTextField.setDocument(plainDocument);
+			answerTextField.requestFocus();
 
-				answerPanel.showCard(TEXT_CARD);
-				answerPanel.validate();
-				answerTextField.setDocument(plainDocument);
-				answerTextField.requestFocus();
+			if (question.answer.answered) {
+				answerTextField.setText(question.answer.string);
+			} else {
+				answerTextField.setText("");
+			}
 
-				if (question.answer.answered) {
-					answerTextField.setText(question.answer.string);
-				} else {
-					answerTextField.setText("");
-				}
+			answerTextField
+			.setEditable((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+			answerPanel.setVisible(true);
+			answerTextField.requestFocusInWindow();
+		} else if (question.answerType == Question.NUMERICAL) {
+			questionText.setText(question.text);
 
-				answerTextField
-						.setEditable((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-								|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
-				answerPanel.setVisible(true);
-				answerTextField.requestFocusInWindow();
-			} else if (question.answerType == Question.NUMERICAL) {
-				questionText.setText(question.text);
+			answerPanel.showCard(NUMERICAL_CARD);
+			numericalTextField.setDocument(wholeNumberDocument);
+			numericalTextField.requestFocusInWindow();
 
-				answerPanel.showCard(NUMERICAL_CARD);
-				numericalTextField.setDocument(wholeNumberDocument);
-				numericalTextField.requestFocusInWindow();
-
-				if (question.answer.answered) {
-					if (question.answer.getValue() != -1) {
-						numericalTextField.setText(question.answer.string);
-						noAnswerBox.setSelected(false);
-					} else {
-						noAnswerBox.setSelected(true);
-						numericalTextField.setText("");
-					}
-				} else {
-					numericalTextField.setText("");
+			if (question.answer.answered) {
+				if (question.answer.getValue() != -1) {
+					numericalTextField.setText(question.answer.string);
 					noAnswerBox.setSelected(false);
+				} else {
+					noAnswerBox.setSelected(true);
+					numericalTextField.setText("");
 				}
+			} else {
+				numericalTextField.setText("");
+				noAnswerBox.setSelected(false);
+			}
 
-				boolean doInterview = (egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
-				numericalTextField.setEditable(doInterview
-						|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
-				noAnswerBox.setEnabled(doInterview
-						|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
-				answerPanel.setVisible(true);
-				numericalTextField.requestFocusInWindow();
-			} else if (question.selections.length <= 5) {
-				questionText.setText(question.text);
+			boolean doInterview = (egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
+			numericalTextField.setEditable(doInterview
+					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+			noAnswerBox.setEnabled(doInterview
+					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+			answerPanel.setVisible(true);
+			numericalTextField.requestFocusInWindow();
+		} else if(question.answerType == Question.CATEGORICAL) {
 
+			System.out.println("Displaying CATEGORICAL question: " + question.text);
+			questionText.setText(question.text);
+			
+			// can we do radio buttons or do we need the dropdown?
+			if (question.getSelections().length <= answerButtons.length) { // radio buttons!
+				System.out.println(" -- doing radio buttons!");
+				
+				
 				answerPanel.showCard(RADIO_CARD);
 
-				if (question.answer.answered && (question.answer.getValue() >= 0)) {
-					// int idx = question.selections.length -
-					// (question.answer.value + 1);
-					// if (answerButtons != null && idx < answerButtons.length
-					// && idx >= 0
-					// && answerButtons.length != 0)
-					// answerButtons[question.answer.index].setSelected(true);
-
+				System.out.println("-- answer: " + question.answer.answered + ", answer index: " + question.answer.getIndex());
+				if (question.answer.answered && (question.answer.getIndex() >= -1)) {
+					System.out.println(" -- was it actually answered with index >= -1 (not unselected)");
 					//int idx = question.selections.length - (question.answer.getValue() + 1);
 					if (answerButtons != null && answerButtons.length != 0) {
 						answerButtons[question.answer.getIndex()].setSelected(true);
-//						System.out.println("Question : "
-//								+ question.toString()
-//								+ "\n"
-//								+ "Answer : "
-//								+ question.answer.string
-//								+ "\n"
-//								+ "Answer index : "
-//								+ question.answer.index
-//								+ "\n"
-//								+ "Answerbutton[answerindex].txt : "
-//								+ answerButtons[question.answer.index]
-//										.getText());
+						System.out.println("-- YES -- setting a selection for the new loaded question's answer!");
 					}
-
 				} else {
-					answerButtons[MAX_BUTTONS].setSelected(true);
+					System.out.println("-- NO -- unsetting the buttons!");
+					for(int i = 0; i < answerButtons.length; i++)
+						answerButtons[i].setSelected(false);
 				}
 
-				for (int i = 0; i < question.selections.length; i++) {
-					// answerButtons[i].setText("(" + (i + 1) + ") " +
-					// question.selections[i].string);
-					answerButtons[i].setText("("
-							+ question.selections[i].getValue() + ") "
-							+ question.selections[i].getString());
-					//System.out.println("Question selection index=" + i + ", " + "Text : " + answerButtons[i].getText());
+				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
+					answerButtons[i].setText("(" + question.getSelections()[i].getValue() + ") " + question.getSelections()[i].getString());
 					answerButtons[i].setVisible(true);
-					answerButtons[i]
-							.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-									|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 				}
 
-				for (int i = question.selections.length; i < MAX_BUTTONS; i++) {
+				for (int i = question.getSelections().length; i < answerButtons.length; i++) {
 					answerButtons[i].setVisible(false);
 				}
 				answerPanel.setVisible(true);
-			} else {
+			} else { // drop downs!
+				System.out.println(" -- doing drop downs!");
 				questionText.setText(question.text);
 				answerPanel.showCard(MENU_CARD);
 
-				answerMenu.setActionCommand("Initialization");
+				answerMenu.setActionCommand("Initialization"); // suspend the answer listener while we mess w/ the box
 				answerMenu.removeAllItems();
-
 				answerMenu.addItem("Select an answer");
-				for (int i = 0; i < question.selections.length; i++) {
-					answerMenu.addItem(question.selections[i]);
+				
+				for (int i = 0; i < question.getSelections().length; i++) {
+					answerMenu.addItem(question.getSelections()[i]);
 				}
 
-				if (question.answer.getValue() > -1) {
-					answerMenu.setSelectedIndex(question.answer.getIndex() + 1);
-				} else {
-					answerMenu.setSelectedIndex(0);
+				if (question.answer.getIndex() > 0) {
+					answerMenu.setSelectedIndex(question.answer.getIndex()-1);
 				}
-				answerMenu.setActionCommand("User Input");
-				answerMenu
-						.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-								|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+				answerMenu.setActionCommand("User Input"); // reactive the answer listener since we're done
+				answerMenu.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+			
 				answerPanel.setVisible(true);
 				answerMenu.requestFocusInWindow();
-				//answerMenu.showPopup();
 			}
-		} else {
-			/** @todo no question, clear */
-			/** Abort study */
+			
+			
+			
+			
 		}
 	}
 
@@ -587,16 +580,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		((DefaultListModel) questionList.getModel()).removeAllElements();
 	}
 
-	/***************************************************************************
-	 * Parses answer fields to retrieve answer to question
-	 * 
-	 * @param answer
-	 *            Answer from interview to fill with correct values
+	/**
+	 * Figure out the question type and the answer type, and store the
+	 * appropriate data. Most controls that could provide selection of a
+	 * particular answer have a listener that calls this method.
 	 */
 	private void fillAnswer(Answer answer) {
 		// Don't touch values if we are just viewing interview
 		// if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 		// return;
+		
+		System.out.println("fillAnswer called for " + answer);
 
 		if (question.questionType == Question.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
@@ -635,43 +629,41 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				break;
 
 			case Question.CATEGORICAL:
-				if (question.selections.length <= 5) {
-					int button = selectedButtonIndex(answerButtons);
-					answer.answered = (button != MAX_BUTTONS);
+				if (question.getSelections().length <= answerButtons.length) {
+					int buttonIndex = selectedButtonIndex(answerButtons);
+					answer.answered = (buttonIndex != -1);
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
-						
-
-						answer.setValue((question.selections[button].getValue()));
+						System.out.println("Selected button (index: " + buttonIndex + ") with selections ("+Arrays.asList(question.getSelections())+") of size " + question.getSelections().length);
+						answer.setValue((question.getSelections()[buttonIndex].getValue()));
 						// added 11/27/2007
-						answer.setIndex(question.selections[button].getIndex());
+						answer.setIndex(question.getSelections()[buttonIndex].getIndex());
 						// answer.index = question.selections.length - question.selections[button].getIndex();
-						answer.adjacent = question.selections[button].isAdjacent();
-						answer.string = question.selections[button].getString();
+						answer.adjacent = question.getSelections()[buttonIndex].isAdjacent();
+						answer.string = question.getSelections()[buttonIndex].getString();
 						//System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
 					int selection = answerMenu.getSelectedIndex() - 1;
-					answer.answered = (selection >= 0)
-							&& (selection < question.selections.length);
+					answer.answered = (selection > 0) && (selection < question.getSelections().length+1);
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
 						//System.out.println("Timestamp: " + answer.timestamp);
 
-						answer.setValue((question.selections[selection]
-								.getValue()));
+						answer.setValue((question.getSelections()[selection]
+						                                          .getValue()));
 
 						// added 11/27/2007
-						answer.setIndex(question.selections[selection]
-								.getIndex());
+						answer.setIndex(question.getSelections()[selection]
+						                                         .getIndex());
 
-						answer.adjacent = question.selections[selection]
-								.isAdjacent();
-						answer.string = question.selections[selection]
-								.getString();
+						answer.adjacent = question.getSelections()[selection]
+						                                           .isAdjacent();
+						answer.string = question.getSelections()[selection]
+						                                         .getString();
 						// answer.timestamp =
 						// DateFormat.getDateInstance().format(new Date());
 					}
@@ -696,8 +688,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		seconds = seconds.length() < 2 ? "0" + seconds : seconds;
 
 		String timestamp = month + " " + date + " "
-				+ String.valueOf(tempdate.getYear() + 1900) + " " + hours + " "
-				+ minutes + " " + seconds;
+		+ String.valueOf(tempdate.getYear() + 1900) + " " + hours + " "
+		+ minutes + " " + seconds;
 		return timestamp;
 	}
 
@@ -708,13 +700,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			questionButtonNext_actionPerformed(e);
 
 		if (question.answerType == Question.CATEGORICAL) {
-			for (Selection sel : question.selections) {
+			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
 				// System.out.println("Selection value :" +sel.getValue());
 				if (key == sel.getValue()) {
 					// answerButtons[key - 1].setSelected(true);
 
 					answerButtons[sel.getIndex()].setSelected(true);
+					System.out.println("Number pressed w/ categorical question: numberKey_actionPerformed");
 					questionAnsweredEventHandler(e);
 					break;
 				}
@@ -772,17 +765,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 	}
 
-	private int selectedButtonIndex(JRadioButton[] button) {
-		int ri = -1;
-
+	private static int selectedButtonIndex(JRadioButton[] button) {
 		for (int i = 0; i < button.length; i++) {
 			if (button[i].isSelected()) {
-				ri = i;
-				break;
+				System.out.println("Button #"+i+" is selected -- " + button[i].getText() );
+				return i;
 			}
 		}
 
-		return (ri);
+		return -1;
 	}
 
 	private void setButtonNextState() {
@@ -795,8 +786,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			if (next == false) {
 				questionButtonNext.setText("Study Complete");
 				questionButtonNext
-						.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-								&& question.answer.answered);
+				.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+						&& question.answer.answered);
 			} else {
 				questionButtonNext.setText("Next Question");
 				questionButtonNext.setEnabled(question.answer.answered);
@@ -805,6 +796,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void questionAnsweredEventHandler(ActionEvent e) {
+		System.out.println("questionAnsweredEventHandler");
 		if (e.getActionCommand() != "Initialization") {
 			fillAnswer(question.answer);
 			setButtonNextState();
@@ -812,16 +804,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void answerTextEvent(DocumentEvent e) {
+		System.out.println("answerTextEvent");
 		fillAnswer(question.answer);
 		setButtonNextState();
 	}
 
 	public void update(Observable o, Object arg) {
+		System.out.println("update");
 		fillAnswer(question.answer);
 		setButtonNextState();
 	}
 
 	private void noAnswerBox_actionPerformed(ActionEvent e) {
+		System.out.println("noAnswerBox_actionPerformed");
 		if (noAnswerBox.isSelected()) {
 			numericalTextField.setText("");
 		}
@@ -835,12 +830,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				&& (question.answer.getAlters()[1] > (question.answer
 						.getAlters()[0] + 1))) {
 			int defaultAnswer = -1;
-			if (!question.selections[question.selections.length - 1]
-					.isAdjacent()) {
-				defaultAnswer = question.selections.length - 1;
+			if (!question.getSelections()[question.getSelections().length - 1]
+			                              .isAdjacent()) {
+				defaultAnswer = question.getSelections().length - 1;
 			} else {
-				for (int i = 0; i < question.selections.length; i++) {
-					if (!question.selections[i].isAdjacent()) {
+				for (int i = 0; i < question.getSelections().length; i++) {
+					if (!question.getSelections()[i].isAdjacent()) {
 						defaultAnswer = i;
 						break;
 					}
@@ -848,12 +843,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((defaultAnswer >= 0)
-					&& (defaultAnswer < question.selections.length)) {
-				question.answer.setValue((question.selections[defaultAnswer].getValue()));
-				question.answer.setIndex(question.selections[defaultAnswer].getIndex());
-				
-				question.answer.string = question.selections[defaultAnswer]
-						.getString();
+					&& (defaultAnswer < question.getSelections().length)) {
+				question.answer.setValue((question.getSelections()[defaultAnswer].getValue()));
+				question.answer.setIndex(question.getSelections()[defaultAnswer].getIndex());
+
+				question.answer.string = question.getSelections()[defaultAnswer]
+				                                                  .getString();
 				question.answer.adjacent = false;
 				question.answer.answered = true;
 			}
@@ -866,17 +861,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	class RadioPanel extends JPanel {
 		public RadioPanel() {
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-					"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d");
+			"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d,  4dlu, d");
 
-			layout.setRowGroups(new int[][] { { 1, 3, 5, 7, 9 } });
+			layout.setRowGroups(new int[][] { { 1, 3, 5, 7, 9, 11, 13, 15, 17 } });
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
-			builder.addLabel("Answer:");
+			builder.addLabel("List-item Answer:");
 			builder.nextColumn(2);
 			builder.add(answerButtons[0]);
 
-			for (int i = 1; i < MAX_BUTTONS; i++) {
+			for (int i = 0; i < answerButtons.length; i++) {
 				builder.nextLine(2);
 				builder.nextColumn(2);
 				builder.add(answerButtons[i]);
@@ -895,11 +890,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public TextAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-					"f:50dlu");
+			"f:50dlu");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
-			builder.addLabel("Answer:", cc.xy(1, 1, "right, top"));
+			builder.addLabel("Textual Answer:", cc.xy(1, 1, "right, top"));
 			builder.nextColumn(2);
 			builder.add(answerTextField);
 
@@ -915,11 +910,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public MenuAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-					"t:d:g");
+			"t:d:g");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
-			builder.addLabel("Answer:", cc.xy(1, 1, "right, top"));
+			builder.addLabel("Menu Answer:", cc.xy(1, 1, "right, top"));
 			builder.nextColumn(2);
 			builder.add(answerMenu);
 
@@ -935,11 +930,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public NumericalAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-					"f:d, 4dlu, d");
+			"f:d, 4dlu, d");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
-			builder.addLabel("Answer:", cc.xy(1, 1, "right, top"));
+			builder.addLabel("Numerical Answer:", cc.xy(1, 1, "right, top"));
 			builder.nextColumn(2);
 			builder.add(numericalTextField);
 			builder.nextLine(2);
@@ -966,8 +961,9 @@ class RightPanel extends JPanel {
  * Extends JTextArea to make tabs focus change events in question text areas
  */
 class NoTabTextArea extends JTextArea {
-	public NoTabTextArea() {
+	public NoTabTextArea(String name) {
 		super();
+		super.setName(name);
 		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, new HashSet<AWTKeyStroke>());
 		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, new HashSet<AWTKeyStroke>());
 	}

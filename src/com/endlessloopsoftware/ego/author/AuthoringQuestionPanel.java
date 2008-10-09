@@ -348,7 +348,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 				question_central_label.setVisible(false);
 				if (q.answerType == Question.CATEGORICAL)
 				{
-					if (q.selections.length == 0)
+					if (q.getSelections().length == 0)
 					{
 						question_central_label.setText("No Selections");
 						question_central_label.setForeground(Color.red);
@@ -359,9 +359,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
 						question_central_label.setText("No Adjacency Selections");
 						question_central_label.setForeground(Color.red);
 
-						for (int i = 0; i < q.selections.length; i++)
+						for (int i = 0; i < q.getSelections().length; i++)
 						{
-							if (q.selections[i].isAdjacent())
+							if (q.getSelections()[i].isAdjacent())
 							{
 								question_central_label.setText("Adjacency Selections Set");
 								question_central_label.setForeground(Color.black);
@@ -590,7 +590,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			try
 			{
 				egoNet.getStudy().addQuestion(q);
-				q.selections = Arrays.copyOf(q_old.selections, q_old.selections.length);
+				q.setSelections(Arrays.copyOf(q_old.getSelections(), q_old.getSelections().length));
 			}
 			catch (DuplicateQuestionException e1)
 			{

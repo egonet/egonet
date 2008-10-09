@@ -400,7 +400,7 @@ public class QuestionLinkDialog extends JDialog
 					answerTextField.setText("");
 				}
 			}
-			else if (question.selections.length <= 5)
+			else if (question.getSelections().length <= 5)
 			{
 				allAdjacentCheck.setVisible(question.questionType == Question.ALTER_PAIR_QUESTION);
 				questionText.setText(question.text);
@@ -417,7 +417,7 @@ public class QuestionLinkDialog extends JDialog
 					else
 					{
 						allAdjacentCheck.setSelected(false);
-						answerButtons[question.selections.length - (linkAnswer.getValue() + 1)].setSelected(true);
+						answerButtons[question.getSelections().length - (linkAnswer.getValue() + 1)].setSelected(true);
 					}
 				}
 				else
@@ -425,14 +425,14 @@ public class QuestionLinkDialog extends JDialog
 					answerButtons[MAX_BUTTONS].setSelected(true);
 				}
 
-				for (int i = 0; i < question.selections.length; i++)
+				for (int i = 0; i < question.getSelections().length; i++)
 				{
-					answerButtons[i].setText(question.selections[i].getString());
+					answerButtons[i].setText(question.getSelections()[i].getString());
 					answerButtons[i].setVisible(true);
 					answerButtons[i].setEnabled(linkAnswer.getValue() != Answer.ALL_ADJACENT);
 				}
 
-				for (int i = question.selections.length; i < MAX_BUTTONS; i++)
+				for (int i = question.getSelections().length; i < MAX_BUTTONS; i++)
 				{
 					answerButtons[i].setVisible(false);
 				}
@@ -446,9 +446,9 @@ public class QuestionLinkDialog extends JDialog
 				answerMenu.removeAllItems();
 
 				answerMenu.addItem("Select an answer");
-				for (int i = 0; i < question.selections.length; i++)
+				for (int i = 0; i < question.getSelections().length; i++)
 				{
-					answerMenu.addItem(question.selections[i]);
+					answerMenu.addItem(question.getSelections()[i]);
 				}
 
 				if (linkAnswer.getValue() == Answer.ALL_ADJACENT)
@@ -460,7 +460,7 @@ public class QuestionLinkDialog extends JDialog
 				{
 					allAdjacentCheck.setSelected(false);
 					answerMenu.setEnabled(true);
-					answerMenu.setSelectedIndex(question.selections.length - linkAnswer.getValue());
+					answerMenu.setSelectedIndex(question.getSelections().length - linkAnswer.getValue());
 				}
 				else
 				{
@@ -515,7 +515,7 @@ public class QuestionLinkDialog extends JDialog
 				break;
 
 			case Question.CATEGORICAL:
-				if (question.selections.length <= 5)
+				if (question.getSelections().length <= 5)
 				{
 					if (allAdjacentCheck.isSelected())
 					{
@@ -530,8 +530,8 @@ public class QuestionLinkDialog extends JDialog
 						
 						if (linkAnswer.answered)
 						{
-							linkAnswer.setValue(question.selections[button].getValue());
-							linkAnswer.setIndex(question.selections[button].getIndex());
+							linkAnswer.setValue(question.getSelections()[button].getValue());
+							linkAnswer.setIndex(question.getSelections()[button].getIndex());
 							linkAnswer.string   	= answerButtons[button].getActionCommand();
 						}
 						else
@@ -552,9 +552,9 @@ public class QuestionLinkDialog extends JDialog
 					}
 					else if (answerMenu.getSelectedIndex() > 0)
 					{
-						linkAnswer.setValue(question.selections[answerMenu.getSelectedIndex() - 1].getValue());
+						linkAnswer.setValue(question.getSelections()[answerMenu.getSelectedIndex() - 1].getValue());
 						linkAnswer.string   		= answerMenu.getSelectedItem().toString();
-						linkAnswer.answered     = (linkAnswer.getValue() < question.selections.length);
+						linkAnswer.answered     = (linkAnswer.getValue() < question.getSelections().length);
 					}
 					else
 					{

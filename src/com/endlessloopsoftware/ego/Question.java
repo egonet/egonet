@@ -54,7 +54,7 @@ public class Question implements Cloneable {
 
 	public QuestionLink link = new QuestionLink();
 
-	public Selection[] selections = new Selection[0];
+	private Selection[] selections = new Selection[0];
 
 	public Answer answer = new Answer(new Long(-1));
 
@@ -143,7 +143,7 @@ public class Question implements Cloneable {
 		boolean adjacent = false;
 		boolean nonadjacent = false;
 
-		this.selections = new Selection[selectionData.length];
+		this.setSelections(new Selection[selectionData.length]);
 		for (int i = 0; i < selectionData.length; ++i) {
 
 			Selection selection = new Selection();
@@ -157,7 +157,7 @@ public class Question implements Cloneable {
 			else
 				nonadjacent = true;
 
-			selections[i] = selection;
+			getSelections()[i] = selection;
 		}
 
 		/*
@@ -261,7 +261,7 @@ public class Question implements Cloneable {
 				boolean adjacent = false;
 				boolean nonadjacent = false;
 
-				this.selections = new Selection[selections.size()];
+				this.setSelections(new Selection[selections.size()]);
 
 				while (selections.hasMoreElements()) {
 
@@ -270,26 +270,26 @@ public class Question implements Cloneable {
 							.getAttributeValue("index"));
 
 					try {
-						this.selections[index] = new Selection();
-						this.selections[index].setString(selection
+						this.getSelections()[index] = new Selection();
+						this.getSelections()[index].setString(selection
 								.getTextString());
-						this.selections[index]
+						this.getSelections()[index]
 								.setValue(Integer.parseInt(selection
 										.getAttributeValue("value")));
 
-						this.selections[index].setAdjacent(Boolean.valueOf(
+						this.getSelections()[index].setAdjacent(Boolean.valueOf(
 								selection.getAttributeValue("adjacent"))
 								.booleanValue());
-						this.selections[index].setIndex(index);
+						this.getSelections()[index].setIndex(index);
 
 					} catch (NumberFormatException ex) {
 						System.out.println("Throwing exception");
-						this.selections[index].setValue(selections.size()
+						this.getSelections()[index].setValue(selections.size()
 								- (index + 1));
-						this.selections[index].setAdjacent(false);
+						this.getSelections()[index].setAdjacent(false);
 					}
 
-					if (this.selections[index].isAdjacent())
+					if (this.getSelections()[index].isAdjacent())
 						adjacent = true;
 					else
 						nonadjacent = true;
@@ -303,7 +303,7 @@ public class Question implements Cloneable {
 
 				/* Check to make sure all answers are contiguous */
 				for (int i = 0; i < selections.size(); i++) {
-					if (this.selections[i] == null) {
+					if (this.getSelections()[i] == null) {
 						throw (new MalformedQuestionException());
 					}
 				}
@@ -321,12 +321,12 @@ public class Question implements Cloneable {
 	public boolean selectionAdjacent(int value) {
 		boolean rval = false;
 
-		if (this.selections.length > 0) {
-			int size = this.selections.length;
+		if (this.getSelections().length > 0) {
+			int size = this.getSelections().length;
 
 			for (int i = 0; i < size; i++) {
-				if (value == this.selections[i].getValue()) {
-					rval = this.selections[i].isAdjacent();
+				if (value == this.getSelections()[i].getValue()) {
+					rval = this.getSelections()[i].isAdjacent();
 					break;
 				}
 			}
@@ -388,18 +388,18 @@ public class Question implements Cloneable {
 			e.addElement("Citation").setText(this.citation);
 		}
 
-		if (this.selections.length > 0) {
-			int size = this.selections.length;
+		if (this.getSelections().length > 0) {
+			int size = this.getSelections().length;
 			Element selections = e.addElement("Answers");
 
 			for (int i = 0; i < size; i++) {
 				Element answer = selections.addElement("AnswerText");
-				answer.setText(this.selections[i].getString());
+				answer.setText(this.getSelections()[i].getString());
 				answer.setAttribute("index", Integer.toString(i));
 				answer.setAttribute("value", Integer
-						.toString(this.selections[i].getValue()));
+						.toString(this.getSelections()[i].getValue()));
 				answer.setAttribute("adjacent",
-						this.selections[i].isAdjacent() ? "true" : "false");
+						this.getSelections()[i].isAdjacent() ? "true" : "false");
 			}
 		}
 
@@ -424,15 +424,15 @@ public class Question implements Cloneable {
 		data.setText(this.text);
 		data.setCitation(this.citation);
 
-		if (this.selections.length > 0) {
-			int size = this.selections.length;
+		if (this.getSelections().length > 0) {
+			int size = this.getSelections().length;
 
 			for (int i = 0; i < size; i++) {
 				SelectionDataValue selectionData = new SelectionDataValue();
-				selectionData.setText(this.selections[i].getString());
+				selectionData.setText(this.getSelections()[i].getString());
 				selectionData.setIndex(i);
-				selectionData.setValue(this.selections[i].getValue());
-				selectionData.setAdjacent(this.selections[i].isAdjacent());
+				selectionData.setValue(this.getSelections()[i].getValue());
+				selectionData.setAdjacent(this.getSelections()[i].isAdjacent());
 
 				data.addSelectionDataValue(selectionData);
 			}
@@ -479,5 +479,13 @@ public class Question implements Cloneable {
 		str = "ID : " + UniqueId + " Title : " + title + " text : " + text
 				+ "\nAnswer : " + answer.getString();
 		return str;
+	}
+
+	public void setSelections(Selection[] selections) {
+		this.selections = selections;
+	}
+
+	public Selection[] getSelections() {
+		return selections;
 	}
 }

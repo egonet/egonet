@@ -88,7 +88,7 @@ public class EdgeSizePanel extends JPanel {
 			if (questionType == Question.ALTER_PAIR_QUESTION) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.selections.length >= 1)
+				if (currentQuestion.getSelections().length >= 1)
 					qList.add(currentQuestion);
 			}
 		}
@@ -124,9 +124,9 @@ public class EdgeSizePanel extends JPanel {
 		});
 
 		Question question = (Question) questionCombo.getSelectedItem();
-		edgesSelected = new boolean[qList.size()][question.selections.length];
+		edgesSelected = new boolean[qList.size()][question.getSelections().length];
 		for(int i = 0; i<qList.size(); i++) {
-			for (int j =0; j<question.selections.length;j++) {
+			for (int j =0; j<question.getSelections().length;j++) {
 				edgesSelected[i][j] = false;
 			}
 		}
@@ -138,13 +138,13 @@ public class EdgeSizePanel extends JPanel {
 
 	private void createTable() {
 		Question question = (Question) questionCombo.getSelectedItem();
-		int noOfRows = question.selections.length;
+		int noOfRows = question.getSelections().length;
 		Object[][] rowData = new Object[noOfRows][3];
 		/* change the list of selections based on the selected question */
 		if (!selectionList.isEmpty()) {
 			selectionList.removeAll(selectionList);
 		}
-		for (Selection selection : question.selections) {
+		for (Selection selection : question.getSelections()) {
 			selectionList.add(selection);
 		}
 		// populate the responses
@@ -153,7 +153,7 @@ public class EdgeSizePanel extends JPanel {
 			rowData[i][1] = selectionList.get(i);
 		}
 		// populate the shapes
-		int noOfSizes = question.selections.length;
+		int noOfSizes = question.getSelections().length;
 		for (int i = 1; i <= noOfSizes; i++) {
 			if (i < sizes.length) {
 				String num = (new Integer(i)).toString();
@@ -193,8 +193,8 @@ public class EdgeSizePanel extends JPanel {
 		
 		System.out.println("SizePanel:SelectedQuestionIndex:" + selectedQuestionIndex  + " " + question.toString());
 
-		for (int i = 0; i < question.selections.length; i++) {
-			Selection selection = question.selections[i];
+		for (int i = 0; i < question.getSelections().length; i++) {
+			Selection selection = question.getSelections()[i];
 			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 					selection, Question.ALTER_PAIR_QUESTION);
 

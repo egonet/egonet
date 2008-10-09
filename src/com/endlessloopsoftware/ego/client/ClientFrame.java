@@ -105,14 +105,12 @@ public class ClientFrame extends JFrame {
 	public ClientFrame(EgoClient egoClient) {
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 		this.egoClient = egoClient;
-		
-			jbInit();
+		jbInit();
 	}
 
 	// Component initialization
 	private void jbInit() {
 		this.setSize(new Dimension(700, 600));
-		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Networks Study Tool");
 
 		createMenuBar(ClientFrame.SELECT);
@@ -391,7 +389,6 @@ public class ClientFrame extends JFrame {
 	      egoClient.getFrame().createMenuBar(ClientFrame.SELECT);
 	      egoClient.getFrame().pack();
 	      //egoClient.getFrame().setSize(600, 500);
-	      egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
 	      
 	      if (center)
 	      {
@@ -429,7 +426,6 @@ public class ClientFrame extends JFrame {
 	                egoClient.getFrame().createMenuBar(ClientFrame.VIEW_INTERVIEW);
 	                egoClient.getFrame().pack();
 	                // egoClient.getFrame().setSize(640, 530);
-	                egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
 
 	                return egoClient.getFrame();
 	          }
@@ -458,17 +454,6 @@ public class ClientFrame extends JFrame {
        	egoClient.getFrame().setVisible(false);
         egoClient.getFrame().setContentPane(new ClientQuestionPanel(egoClient));
         egoClient.getFrame().pack();
-
-        if (egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) {
-            // egoClient.getFrame().setSize(600, 530);
-            egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()
-                    | JFrame.MAXIMIZED_BOTH);
-        } else {
-            // egoClient.getFrame().setSize(640, 530);
-            egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()
-                    | JFrame.MAXIMIZED_BOTH);
-        }
-
         egoClient.getFrame().setVisible(true);
     }
     
@@ -481,7 +466,6 @@ public class ClientFrame extends JFrame {
        egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
        egoClient.getFrame().pack();
       // egoClient.getFrame().setSize(640, 530);
-       egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
        Shared.setWaitCursor(egoClient.getFrame(), false);
        egoClient.getFrame().setVisible(true);
     }
@@ -493,7 +477,6 @@ public class ClientFrame extends JFrame {
         egoClient.getFrame().setContentPane(new StartPanel(egoClient));
         egoClient.getFrame().pack();
         egoClient.getFrame().setSize(350, 350);
-        //egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = egoClient.getFrame().getSize();
         if (frameSize.height > screenSize.height)
@@ -522,7 +505,6 @@ public class ClientFrame extends JFrame {
              egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
              egoClient.getFrame().pack();
              //egoClient.getFrame().setSize(640, 530);
-             egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
              return egoClient.getFrame();
           }
 

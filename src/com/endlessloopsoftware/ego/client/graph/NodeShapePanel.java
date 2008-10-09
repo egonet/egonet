@@ -131,13 +131,13 @@ public class NodeShapePanel extends JPanel {
 		// System.out.println("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Question.CATEGORICAL) {
-			int noOfRows = question.selections.length;
+			int noOfRows = question.getSelections().length;
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
 			if (!selectionList.isEmpty()) {
 				selectionList.removeAll(selectionList);
 			}
-			for (Selection selection : question.selections) {
+			for (Selection selection : question.getSelections()) {
 				selectionList.add(selection);
 			}
 			for (int i = 0; i < noOfRows; i++) {
@@ -238,8 +238,8 @@ public class NodeShapePanel extends JPanel {
 	private void updateNodeShape() {
 		Question question = (Question) questionCombo.getSelectedItem();
 		if (question.answerType == Question.CATEGORICAL) {
-			for (int i = 0; i < question.selections.length; i++) {
-				Selection selection = question.selections[i];
+			for (int i = 0; i < question.getSelections().length; i++) {
+				Selection selection = question.getSelections()[i];
 
 				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
 						selection, Question.ALTER_QUESTION);
