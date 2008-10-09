@@ -61,6 +61,7 @@ import com.endlessloopsoftware.egonet.util.StudyDataValue;
  * 
  * 
  */
+@SuppressWarnings({"unchecked"})
 public class StudySB extends EgoSB
 {
 	private StudyEJBLocalHome getLocalHome()

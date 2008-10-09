@@ -97,6 +97,7 @@ import com.endlessloopsoftware.egonet.util.InterviewDataValue;
  * 		query 					= "SELECT OBJECT(a) FROM InterviewEJB AS a WHERE a.study=?1 AND a.firstName=?2 AND a.lastName=?3"
  * 		
  */
+@SuppressWarnings({"unchecked"})
 public abstract class InterviewEJB
    implements EntityBean
 {

@@ -54,7 +54,7 @@ public class ChoosablePropertyTableModel extends AbstractTableModel{
 			fireTableCellUpdated(rowIndex, colIndex);
 		}
 
-		public Class getColumnClass(int c) {
+		public Class<?> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
 

@@ -20,11 +20,13 @@ package com.endlessloopsoftware.ego.client;
 
 import java.awt.AWTEvent;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -32,15 +34,29 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
+import javax.swing.JTabbedPane;
+import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
+
+import com.endlessloopsoftware.elsutils.SwingWorker;
 import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
+import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
 
 
 public class ClientFrame extends JFrame {
+	
+	/**
+	 * Used to create drop down menus of different "modes"
+	 */
+	public static final int		SELECT				= 0;
+	public static final int		DO_INTERVIEW		= 1;
+	public static final int		VIEW_INTERVIEW		= 2;
+	public static final int		VIEW_SUMMARY		= 3;
+	
 	private final JMenuBar jMenuBar1 = new JMenuBar();
 
 	private final JMenu jMenuFile = new JMenu("File");
@@ -84,24 +100,22 @@ public class ClientFrame extends JFrame {
 	public final JMenuItem saveInterviewStatistics = new JMenuItem(
 			"Save Interview Statistics");
 
+	private final EgoClient egoClient;
 	// Construct the frame
-	public ClientFrame() {
+	public ClientFrame(EgoClient egoClient) {
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
-		try {
+		this.egoClient = egoClient;
+		
 			jbInit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	// Component initialization
-	private void jbInit() throws Exception {
+	private void jbInit() {
 		this.setSize(new Dimension(700, 600));
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Networks Study Tool");
 
-		createMenuBar(EgoClient.SELECT);
+		createMenuBar(ClientFrame.SELECT);
 
 		this.setContentPane(new JPanel());
 
@@ -113,7 +127,9 @@ public class ClientFrame extends JFrame {
 
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			    try {
 				jMenuFileExit_actionPerformed(e);
+			    } catch (Exception ex) { throw new RuntimeException(ex); }
 			}
 		});
 
@@ -139,9 +155,9 @@ public class ClientFrame extends JFrame {
 		saveInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					EgoClient.interview.completeInterview();
+					egoClient.getInterview().completeInterview();
 				} catch (FileCreateException ex) {
-					ex.printStackTrace();
+					throw new RuntimeException(ex);
 				}
 			}
 		});
@@ -151,9 +167,8 @@ public class ClientFrame extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						try {
 							applyGraphSettings_actionPerformed(e);
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+						} catch (Exception ex) {
+							throw new RuntimeException(ex);
 						}
 					}
 				});
@@ -161,15 +176,15 @@ public class ClientFrame extends JFrame {
 		recalculateStatistics
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						EgoClient.interview = EgoClient.storage.readInterview();
-						if (EgoClient.interview != null)
-							ViewInterviewPanel.gotoPanel();
+						egoClient.setInterview(egoClient.getStorage().readInterview());
+						if (egoClient.getInterview() != null)
+						    gotoViewInterviewPanel();
 					}
 				});
 
 		close.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SourceSelectPanel.gotoPanel(false);
+				gotoSourceSelectPanel(false);
 			}
 		});
 	}
@@ -182,9 +197,9 @@ public class ClientFrame extends JFrame {
 	}
 
 	// File | Exit action performed
-	public void jMenuFileExit_actionPerformed(ActionEvent e) {
-		if (EgoClient.interview != null) {
-			EgoClient.interview.exit();
+	public void jMenuFileExit_actionPerformed(ActionEvent e) throws Exception{
+		if (egoClient.getInterview() != null) {
+			egoClient.getInterview().exit();
 		}
 
 		System.exit(0);
@@ -204,7 +219,7 @@ public class ClientFrame extends JFrame {
 	protected void processWindowEvent(WindowEvent e) {
 		super.processWindowEvent(e);
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-			jMenuFileExit_actionPerformed(null);
+			try { jMenuFileExit_actionPerformed(null); } catch (Exception ex) { throw new RuntimeException(ex); }
 		}
 	}
 
@@ -215,12 +230,12 @@ public class ClientFrame extends JFrame {
 		jMenuGraph.removeAll();
 
 		// File Menu
-		if (mode == EgoClient.VIEW_SUMMARY) {
+		if (mode == ClientFrame.VIEW_SUMMARY) {
 			jMenuFile.add(saveStudySummary);
 			jMenuFile.add(close);
 			jMenuFile.addSeparator();
 			jMenuFile.add(exit);
-		} else if (mode == EgoClient.VIEW_INTERVIEW) {
+		} else if (mode == ClientFrame.VIEW_INTERVIEW) {
 			/*******************************************************************
 			 * Create Menu Bar
 			 ******************************************************************/
@@ -256,14 +271,14 @@ public class ClientFrame extends JFrame {
 	}
 
 	void saveStudySummary_actionPerformed(ActionEvent e) {
-		String name = FileHelpers.formatForCSV(EgoClient.study.getStudyName());
+		String name = FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
 		String filename = name + "_Summary";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
+		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
 				"Study Summary", "csv", filename);
 
 		if (w != null) {
 			try {
-				((SummaryPanel) EgoClient.frame.getContentPane())
+				((SummaryPanel) egoClient.getFrame().getContentPane())
 						.writeStudySummary(w);
 			} finally {
 				w.close();
@@ -273,8 +288,8 @@ public class ClientFrame extends JFrame {
 
 	void saveGraph_actionPerformed(ActionEvent e) {
 		String fileName;
-		fileName = EgoClient.interview.getName() + "_graph";
-		File currentDirectory = new File(EgoClient.storage.getPackageFile()
+		fileName = egoClient.getInterview().getName() + "_graph";
+		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
 				.getParent()
 				+ "/Graphs");
 		currentDirectory.mkdir();
@@ -308,10 +323,10 @@ public class ClientFrame extends JFrame {
 	}
 
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
-		final File currentDirectory = new File(EgoClient.storage
+		final File currentDirectory = new File(egoClient.getStorage()
 				.getPackageFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
 		File file = new File(currentDirectory.getAbsolutePath() + fileName);
@@ -335,10 +350,10 @@ public class ClientFrame extends JFrame {
 	}
 	
 	protected void applyGraphSettings_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
-		final File currentDirectory = new File(EgoClient.storage.getPackageFile().getParent(), "Graphs");
+		final File currentDirectory = new File(egoClient.getStorage().getPackageFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
 		File file = new File(currentDirectory.getAbsolutePath() + fileName);
 
@@ -363,4 +378,171 @@ public class ClientFrame extends JFrame {
 			}
 		}
 	}
+	
+	public void gotoSourceSelectPanel(boolean center)
+	   {
+	      /* Return to first screen */
+//	      egoClient.getFrame().setVisible(false);
+	    JTabbedPane tabbedPane = new JTabbedPane();
+	    tabbedPane.addTab("Local Files", new ClientPanel(egoClient));
+	    // this.addTab("Remote Server", new ServerInterviewChooser());
+	    
+	      egoClient.getFrame().setContentPane(tabbedPane);
+	      egoClient.getFrame().createMenuBar(ClientFrame.SELECT);
+	      egoClient.getFrame().pack();
+	      //egoClient.getFrame().setSize(600, 500);
+	      egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
+	      
+	      if (center)
+	      {
+	        //Center the window
+	        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	        Dimension frameSize = egoClient.getFrame().getSize();
+	        if (frameSize.height > screenSize.height)
+	        {
+	            frameSize.height = screenSize.height;
+	        }
+	        if (frameSize.width > screenSize.width)
+	        {
+	            frameSize.width = screenSize.width;
+	        }
+	        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+	        
+	      }
+	     
+	     egoClient.getFrame().setVisible(true);
+	   }
+	
+	public void gotoViewInterviewPanel()
+	   {
+	      final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
+	        final SwingWorker worker = new SwingWorker() 
+	        {
+	            public Object construct() 
+	            {
+	                // Build Screen
+	                egoClient.getFrame().setVisible(false);
+	                Shared.setWaitCursor(egoClient.getFrame(), true);
+	                progressMonitor.setProgress(5);
+	                egoClient.getFrame().setContentPane(new ViewInterviewPanel(egoClient, progressMonitor));
+	                progressMonitor.setProgress(95);
+	                egoClient.getFrame().createMenuBar(ClientFrame.VIEW_INTERVIEW);
+	                egoClient.getFrame().pack();
+	                // egoClient.getFrame().setSize(640, 530);
+	                egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
+
+	                return egoClient.getFrame();
+	          }
+	          
+	          public void finished()
+	            {
+	            Shared.setWaitCursor(egoClient.getFrame(), false);
+	             progressMonitor.close();
+	                egoClient.getFrame().setVisible(true);
+	          }
+	      };
+	      
+	     progressMonitor.setProgress(0);
+	     progressMonitor.setMillisToDecideToPopup(0);
+	     progressMonitor.setMillisToPopup(0);
+	    
+	     worker.start();
+	   }
+	
+	   /**
+     * Hides the static frame egoClient.getFrame() and initializes it with an
+     * entirely new QuestionPanel
+     */
+    public void gotoClientQuestionPanel() {
+        /* Return to first screen */
+        egoClient.getFrame().setVisible(false);
+        egoClient.getFrame().setContentPane(new ClientQuestionPanel(egoClient));
+        egoClient.getFrame().pack();
+
+        if (egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) {
+            // egoClient.getFrame().setSize(600, 530);
+            egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()
+                    | JFrame.MAXIMIZED_BOTH);
+        } else {
+            // egoClient.getFrame().setSize(640, 530);
+            egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()
+                    | JFrame.MAXIMIZED_BOTH);
+        }
+
+        egoClient.getFrame().setVisible(true);
+    }
+    
+    public void gotoSummaryPanel(StatRecord[] stats)
+    {
+       // Build Screen
+       egoClient.getFrame().setVisible(false);
+       Shared.setWaitCursor(egoClient.getFrame(), true);
+       egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, stats));
+       egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
+       egoClient.getFrame().pack();
+      // egoClient.getFrame().setSize(640, 530);
+       egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
+       Shared.setWaitCursor(egoClient.getFrame(), false);
+       egoClient.getFrame().setVisible(true);
+    }
+    
+    public void gotoStartPanel()
+    {
+        /* Return to first screen */
+        egoClient.getFrame().setVisible(false);
+        egoClient.getFrame().setContentPane(new StartPanel(egoClient));
+        egoClient.getFrame().pack();
+        egoClient.getFrame().setSize(350, 350);
+        //egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = egoClient.getFrame().getSize();
+        if (frameSize.height > screenSize.height)
+        {
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width)
+        {
+            frameSize.width = screenSize.width;
+        }
+        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        egoClient.getFrame().setVisible(true);
+    }
+
+    public void gotoSummaryPanel()
+    {
+       final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
+       final SwingWorker worker = new SwingWorker() 
+       {
+          public Object construct()
+          {
+             // Build Screen
+             egoClient.getFrame().setVisible(false);
+             Shared.setWaitCursor(egoClient.getFrame(), true);
+             egoClient.getFrame().setContentPane(new SummaryPanel(progressMonitor));
+             egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
+             egoClient.getFrame().pack();
+             //egoClient.getFrame().setSize(640, 530);
+             egoClient.getFrame().setExtendedState(egoClient.getFrame().getExtendedState()|JFrame.MAXIMIZED_BOTH);
+             return egoClient.getFrame();
+          }
+
+          public void finished()
+          {
+             Shared.setWaitCursor(egoClient.getFrame(), false);
+             egoClient.getFrame().setVisible(true);
+
+             if (progressMonitor.isCanceled())
+             {
+                gotoSourceSelectPanel(false);
+             }
+             progressMonitor.close();
+          }
+       };
+
+       progressMonitor.setProgress(0);
+       progressMonitor.setMillisToDecideToPopup(0);
+       progressMonitor.setMillisToPopup(0);
+
+       worker.start();
+    }
 }

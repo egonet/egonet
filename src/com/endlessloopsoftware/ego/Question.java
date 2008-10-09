@@ -87,7 +87,7 @@ public class Question implements Cloneable {
 
 	public static final int MAX_ANSWER_TYPE = 2;
 
-	public static final int MAX_CATEGORICAL_CHOICES = 5;
+	public static final int MAX_CATEGORICAL_CHOICES = 9;
 
 	public static final String[] questionName = { "Study", "Ego",
 			"Alter Prompt", "Alter", "Alter Pair" };
@@ -405,15 +405,11 @@ public class Question implements Cloneable {
 
 		if (this.link.active
 				&& (list.getQuestion(this.link.answer.questionId) != null)) {
-			try {
 				Element link = e.addElement("Link");
 				link.addElement("Id").setLong(
 						this.link.answer.questionId.longValue());
 				link.addElement("value").setInt(this.link.answer.getValue());
 				link.addElement("string").setText(this.link.answer.string);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
 		}
 	}
 
@@ -444,15 +440,11 @@ public class Question implements Cloneable {
 
 		if (this.link.active
 				&& (list.getQuestion(this.link.answer.questionId) != null)) {
-			try {
 				QuestionLinkDataValue qlData = new QuestionLinkDataValue();
 				qlData.setActive(true);
 				qlData.setAnswerValue(this.link.answer.getValue());
 				qlData.setAnswerString(this.link.answer.string);
 				qlData.setQuestionId(this.link.answer.questionId);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
 		}
 
 		return data;

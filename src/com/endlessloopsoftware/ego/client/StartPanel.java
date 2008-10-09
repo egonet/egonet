@@ -18,11 +18,9 @@
  */
 package com.endlessloopsoftware.ego.client;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
@@ -50,20 +48,16 @@ public class StartPanel extends JPanel
 	private final JButton startInterviewButton = new JButton("Start Interview");
 	private final AlphaDocument firstNameDocument = new AlphaDocument();
 	private final AlphaDocument lastNameDocument = new AlphaDocument();
+	
+	private final EgoClient egoClient;
 
-	public StartPanel()
+	public StartPanel(EgoClient egoClient)
 	{
-		try
-		{
+		this.egoClient = egoClient;
 			jbInit();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
-	private void jbInit() throws Exception
+	private void jbInit()
 	{
 		this.setLayout(gridBagLayout1);
 
@@ -219,28 +213,6 @@ public class StartPanel extends JPanel
 		});
 	}
 
-	static void gotoPanel()
-	{
-		/* Return to first screen */
-		EgoClient.frame.setVisible(false);
-		EgoClient.frame.setContentPane(new StartPanel());
-		EgoClient.frame.pack();
-		EgoClient.frame.setSize(350, 350);
-		//EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-   		Dimension frameSize = EgoClient.frame.getSize();
-   		if (frameSize.height > screenSize.height)
-   		{
-   			frameSize.height = screenSize.height;
-   		}
-   		if (frameSize.width > screenSize.width)
-   		{
-   			frameSize.width = screenSize.width;
-   		}
-   		EgoClient.frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-		EgoClient.frame.setVisible(true);
-	}
-
 	void startInterviewButton_actionPerformed(ActionEvent e)
 	{
 		boolean success = false;
@@ -248,9 +220,9 @@ public class StartPanel extends JPanel
 		/* Logic */
 		try
 		{
-			EgoClient.interview.setName(firstNameField.getText(), lastNameField.getText());
+			egoClient.getInterview().setName(firstNameField.getText(), lastNameField.getText());
 
-			success = EgoClient.storage.saveInterview();
+			success = egoClient.getStorage().saveInterview();
 		}
 		catch (FileCreateException ex)
 		{
@@ -264,11 +236,11 @@ public class StartPanel extends JPanel
 		/* UI */
 		if (success)
 		{
-			ClientQuestionPanel.gotoPanel();
+		    egoClient.getFrame().gotoClientQuestionPanel();
 		}
 		else
 		{
-	      SourceSelectPanel.gotoPanel(false);
+		    egoClient.getFrame().gotoSourceSelectPanel(false);
 		}
 	}
 

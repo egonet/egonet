@@ -60,7 +60,10 @@ public class EdgeSizePanel extends JPanel {
 
 	List<Question> qList = new ArrayList<Question>();
 
-	public EdgeSizePanel(GraphRenderer renderer) {
+	private EgoClient egoClient;
+
+	public EdgeSizePanel(EgoClient egoClient, GraphRenderer renderer) {
+		this.egoClient=egoClient;
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
@@ -76,7 +79,7 @@ public class EdgeSizePanel extends JPanel {
 
 		// create questionCombo
 		//List<Question> qList = new ArrayList<Question>();
-		Study study = EgoClient.interview.getStudy();
+		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
 		for (Long key : questionMap.keySet()) {

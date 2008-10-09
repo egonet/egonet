@@ -78,10 +78,12 @@ public class ServerInterviewChooser
    // Study Server Communication
    StudySBRemote                  studySession;
    InterviewSBRemote              interviewSession;
+private EgoClient egoClient;
 
 	// Constructor.
-	public ServerInterviewChooser()
+	public ServerInterviewChooser(EgoClient egoClient)
 	{
+		this.egoClient=egoClient;
 		// Load up the dialog contents.
 		//JPanel panel = DialogResource.load("com/endlessloopsoftware/ego/client/ServerInterviewChooser.gui_xml");
 		java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream("com/endlessloopsoftware/ego/client/ServerInterviewChooser.gui_xml");
@@ -154,11 +156,11 @@ public class ServerInterviewChooser
             try
             {
                final StatRecord[] statRecords = new StatRecord[node.getChildCount()];
-               Shared.setWaitCursor(EgoClient.frame, true);
+               Shared.setWaitCursor(egoClient.getFrame(), true);
                StudyDataValue data = studySession.fetchDataByStudyName(selection.toString(), epassword);
                final Study study = new Study(data);
                
-               final ProgressMonitor progressMonitor = new ProgressMonitor(EgoClient.frame,
+               final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(),
                                                                               "Calculating Statistics", "", 0,
                                                                               node.getChildCount());
                final SwingWorker worker = new SwingWorker() 
@@ -209,9 +211,9 @@ public class ServerInterviewChooser
                   
                   public void finished()
                   {
-                     Shared.setWaitCursor(EgoClient.frame, false);
+                     Shared.setWaitCursor(egoClient.getFrame(), false);
                      progressMonitor.close();
-                     SummaryPanel.gotoPanel(statRecords);
+                     egoClient.getFrame().gotoSummaryPanel(statRecords);
                   }
                };
                
@@ -239,7 +241,7 @@ public class ServerInterviewChooser
 				}
             finally
             {
-               Shared.setWaitCursor(EgoClient.frame, false);
+               Shared.setWaitCursor(egoClient.getFrame(), false);
             }
 			}
 			break;
@@ -251,7 +253,7 @@ public class ServerInterviewChooser
 
 				try
 				{
-               Shared.setWaitCursor(EgoClient.frame, true);
+               Shared.setWaitCursor(egoClient.getFrame(), true);
  
 					StudyDataValue studyData = studySession.fetchDataByStudyName(studySelect.toString(), epassword);
                
@@ -261,22 +263,22 @@ public class ServerInterviewChooser
                                                                                           id.getLastName(),
                                                                                           epassword);
 
-               EgoClient.uiPath = EgoClient.VIEW_INTERVIEW;
+               egoClient.setUiPath(ClientFrame.VIEW_INTERVIEW);
 
-               EgoClient.storage.setInterviewFile(null);
-               EgoClient.interview  = null;
+               egoClient.getStorage().setInterviewFile(null);
+               egoClient.setInterview(null);
 
                Study study          = new Study(studyData);
-               EgoClient.study      = study;
+               egoClient.setStudy(study);
 
-//               System.out.println(EgoClient.study.getQuestions().size());
-//               System.out.println(EgoClient.study.getQuestions().dump());
+//               System.out.println(egoClient.getStudy().getQuestions().size());
+//               System.out.println(egoClient.getStudy().getQuestions().dump());
 //               
-               EgoClient.interview  = new Interview(study, interviewData);
+               egoClient.setInterview(new Interview(study, interviewData));
 
-               if (EgoClient.interview != null)
+               if (egoClient.getInterview() != null)
                {
-                  ViewInterviewPanel.gotoPanel();
+                   egoClient.getFrame().gotoViewInterviewPanel();
                }
             }
 				catch (FinderException e)
@@ -292,7 +294,7 @@ public class ServerInterviewChooser
 				}
             finally
             {
-               Shared.setWaitCursor(EgoClient.frame, false);
+               Shared.setWaitCursor(egoClient.getFrame(), false);
             }
 
 			}
@@ -312,7 +314,7 @@ public class ServerInterviewChooser
 	{
 		try
 		{
-			Shared.setWaitCursor(EgoClient.frame, true);
+			Shared.setWaitCursor(egoClient.getFrame(), true);
 			
 			Properties prop = new Properties();
 			prop.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
@@ -355,7 +357,7 @@ public class ServerInterviewChooser
 		}
 		finally
 		{
-         Shared.setWaitCursor(EgoClient.frame, false);
+         Shared.setWaitCursor(egoClient.getFrame(), false);
 		}
 	}
 

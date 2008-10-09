@@ -48,12 +48,16 @@ public class StoreStudyDialog
 	private 	Preferences 		prefs = Preferences.userNodeForPackage(this.getClass());
 	
 	private static final String		SERVER_URL	= "ServerURL";
+	
+	private EgoNet egoNet;
 
 	// Constructor.
-	public StoreStudyDialog(Frame owner)
+	public StoreStudyDialog(Frame owner, EgoNet egoNet)
 	{
 		// This dialog is modal.
 		super(owner, "Upload Survey to Server", true);
+		
+		this.egoNet = egoNet;
 
 		// Load User Interface
 		JPanel panel = DialogResource.load("com/endlessloopsoftware/ego/author/StoreSurvey.gui_xml");
@@ -68,7 +72,7 @@ public class StoreStudyDialog
 		serverURL 	= (JTextField) DialogResource.getComponentByName(panel, 		"serverURL");
 		
 		// Set default value
-		surveyName.setText(EgoNet.study.getStudyName());
+		surveyName.setText(egoNet.getStudy().getStudyName());
 		serverURL.setText(prefs.get(SERVER_URL, ""));
 
 		// Add dialog as ActionListener.
@@ -101,7 +105,7 @@ public class StoreStudyDialog
 	public void onstore()
 	{
 		setWaitCursor(true);
-		boolean success = EgoNet.study.writeDBStudy(EgoNet.frame, serverURL.getText(), password.getPassword());
+		boolean success = egoNet.getStudy().writeDBStudy(egoNet.getFrame(), serverURL.getText(), password.getPassword());
 		
 		if (success)		
 		{

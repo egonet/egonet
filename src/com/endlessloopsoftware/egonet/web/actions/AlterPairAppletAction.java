@@ -68,7 +68,7 @@ public final class AlterPairAppletAction extends ELSAction
          StudyEJBLocal        study             = WebShared.retrieveStudy(servlet);
          InterviewDataValue   interviewData     = WebShared.retrieveInterviewDataValue(request);
          InterviewPosition    position          = WebShared.retrieveInterviewPosition(request);
-         List                 previousAnswers   = Arrays.asList(interviewData.getAnswerDataValues());
+         List<AnswerDataValue>                 previousAnswers   = Arrays.asList(interviewData.getAnswerDataValues());
          
          AnswerDataValue answer = new AnswerDataValue(null, new AlterPair(position.getPrimaryAlter()),
                                                       Shared.LINK_TO_NONE, new String[0], false, -1, -1, "", false,

@@ -22,6 +22,7 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
+import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.graph.GraphTabPanel;
 
 public class GraphPanel extends javax.swing.JPanel {
@@ -37,7 +38,10 @@ public class GraphPanel extends javax.swing.JPanel {
 
 	GraphRenderer graphRenderer;
 
-	public GraphPanel() {
+	
+	private EgoClient egoClient;
+	public GraphPanel(EgoClient egoClient) {
+		this.egoClient=egoClient;
 		init();
 	}
 
@@ -48,7 +52,7 @@ public class GraphPanel extends javax.swing.JPanel {
 	 * @param frame
 	 */
 	public void init() {
-		graphRenderer = new GraphRenderer();
+		graphRenderer = new GraphRenderer(egoClient);
 		// split the window into 3 and populate with appropriate panels
 		createSplitPanel();
 		this.setLayout(new BorderLayout());
@@ -81,13 +85,13 @@ public class GraphPanel extends javax.swing.JPanel {
 		JTabbedPane tabs = new JTabbedPane();
 
 		tabs.add("Graph", new GraphTabPanel(graphRenderer));
-		tabs.add("Edge Color", new EdgeColorPanel(graphRenderer));
-		tabs.add("Edge Shape", new EdgeShapePanel(graphRenderer));
-		tabs.add("Edge Size", new EdgeSizePanel(graphRenderer));
-		tabs.add("Node Label", new NodeLabelPanel(graphRenderer));
-		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
-		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
-		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
+		tabs.add("Edge Color", new EdgeColorPanel(egoClient, graphRenderer));
+		tabs.add("Edge Shape", new EdgeShapePanel(egoClient, graphRenderer));
+		tabs.add("Edge Size", new EdgeSizePanel(egoClient, graphRenderer));
+		tabs.add("Node Label", new NodeLabelPanel(egoClient, graphRenderer));
+		tabs.add("Node Color", new NodeColorPanel(egoClient, graphRenderer));
+		tabs.add("Node Shape", new NodeShapePanel(egoClient, graphRenderer));
+		tabs.add("Node Size", new NodeSizePanel(egoClient, graphRenderer));
 		tabs.add("Structural Measures", new StructuralMeasuresPanel(graphRenderer));
 
 		topRightPanel.add(tabs);

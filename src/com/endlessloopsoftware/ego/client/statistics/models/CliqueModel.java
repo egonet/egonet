@@ -85,8 +85,7 @@ public class CliqueModel extends StatTableModel
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
-				return null;
+				throw new RuntimeException(ex);
 			}
 		}
 		else

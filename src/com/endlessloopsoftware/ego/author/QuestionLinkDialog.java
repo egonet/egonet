@@ -89,25 +89,20 @@ public class QuestionLinkDialog extends JDialog
    /* Question Iteration Variables */
    private Question                  question;
 
-
+   private EgoNet egoNet;
+   
+   
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * @param	parent	parent frame for referencing composed objects
 	 */
-	public QuestionLinkDialog()
+	public QuestionLinkDialog(EgoNet egoNet) throws Exception
 	{
+		this.egoNet = egoNet;
 		listBorder 		= BorderFactory.createCompoundBorder(
 			new TitledBorder(new EtchedBorder(EtchedBorder.RAISED,Color.white,new Color(178, 178, 178)), "Questions"),
 			BorderFactory.createEmptyBorder(10,10,10,10));
-
-		try
-		{
 			jbInit();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -273,12 +268,12 @@ public class QuestionLinkDialog extends JDialog
 
 		// Question vars
 		questionList.setModel(new DefaultListModel());
-		EgoNet.study.fillList(Question.ALL_QUESTION_TYPES, (DefaultListModel) questionList.getModel(), q.UniqueId);
+		egoNet.getStudy().fillList(Question.ALL_QUESTION_TYPES, (DefaultListModel) questionList.getModel(), q.UniqueId);
 
 		// Set Selection
 		if (baseQuestion.link.active)
 		{
-			Question selected = EgoNet.study.getQuestions().getQuestion(baseQuestion.link.answer.questionId);
+			Question selected = egoNet.getStudy().getQuestions().getQuestion(baseQuestion.link.answer.questionId);
 			questionList.setSelectedValue(selected, true);
 		}
 
@@ -581,15 +576,15 @@ public class QuestionLinkDialog extends JDialog
 
 	void questionButtonNone_actionPerformed(ActionEvent e)
 	{
-		if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+		if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
 			baseQuestion.link.active = false;
 			baseQuestion.link.answer = null;
-			EgoNet.study.setModified(true);
-			EgoNet.study.setCompatible(false);
+			egoNet.getStudy().setModified(true);
+			egoNet.getStudy().setCompatible(false);
 		}
 		
-		EgoNet.frame.fillCurrentPanel();
+		egoNet.getFrame().fillCurrentPanel();
 		this.hide();
 	 }
 
@@ -600,16 +595,16 @@ public class QuestionLinkDialog extends JDialog
 
 	void questionButtonOK_actionPerformed(ActionEvent e)
 	{
-		if ((linkAnswer != null) && (linkAnswer.answered) && EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+		if ((linkAnswer != null) && (linkAnswer.answered) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
 			baseQuestion.link.active = true;
 			baseQuestion.link.answer = linkAnswer;
-			EgoNet.study.setModified(true);
-			EgoNet.study.setCompatible(false);
+			egoNet.getStudy().setModified(true);
+			egoNet.getStudy().setCompatible(false);
 		}
 
 		this.hide();
-		EgoNet.frame.fillCurrentPanel();
+		egoNet.getFrame().fillCurrentPanel();
 	}
 
 	int selectedButtonIndex(JRadioButton[] group)

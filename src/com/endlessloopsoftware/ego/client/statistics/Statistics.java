@@ -284,7 +284,7 @@ public class Statistics
 		}
 		catch (MissingPairException ex)
 		{
-			ex.printStackTrace();
+			throw new RuntimeException(ex);
 		}
 		
 		return stats;
@@ -387,15 +387,15 @@ public class Statistics
 
 		for (s = 0; s < size; ++s)
 		{
-			Stack S = new Stack();
-			java.util.List[] P = new java.util.List[size];
-			LinkedList Q = new LinkedList();
+			Stack<Integer> S = new Stack<Integer>();
+			java.util.List<Integer>[] P = new java.util.List[size];
+			LinkedList<Integer> Q = new LinkedList<Integer>();
 			int[] spaths = new int[size];
 			int[] distance = new int[size];
 
 			for (int w = 0; w < size; ++w)
 			{
-				P[w] = new LinkedList();
+				P[w] = new LinkedList<Integer>();
 				distance[w] = -1;
 			}
 
@@ -790,7 +790,7 @@ public class Statistics
 					}
 					
 					} catch (Exception ex) {
-						ex.printStackTrace(System.err);
+						throw new RuntimeException(ex);
 					}
 
 				}
@@ -916,14 +916,7 @@ public class Statistics
 
 			for (int j = 0; j < alterSummary[0].length; ++j)
 			{
-				try
-				{
 					w.print(", " + alterSummary[i][j]);
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
 			}
 			w.println(", " + degreeArray[i] + ", " + closenessArray[i] + ", " + betweennessArray[i]);
 		}

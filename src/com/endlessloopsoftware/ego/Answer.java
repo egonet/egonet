@@ -91,7 +91,6 @@ public class Answer implements Cloneable {
 		Element answerElement = new Element("Answer");
 		Element altersElement;
 
-		try {
 			answerElement.addElement("QuestionId").setLong(
 					questionId.longValue());
 			answerElement.addElement("Answered").setBoolean(answered);
@@ -113,11 +112,6 @@ public class Answer implements Cloneable {
 			}
 
 			e.addElement(answerElement);
-		} catch (Exception ex) {
-			System.err.println("Failure in Answer::writeAnswer; " + ex);
-			ex.printStackTrace();
-			throw ex;
-		}
 	}
 
 	/***************************************************************************
@@ -128,12 +122,12 @@ public class Answer implements Cloneable {
 	 * @param e
 	 *            XML Element, parent of alter list
 	 */
-	public static Answer readAnswer(Element e) {
+	public static Answer readAnswer(EgoClient egoClient, Element e) {
 		Answer r = null;
 		Elements alterElems = null;
 		int qAlters[] = null;
 		Long qId = new Long(e.getLong("QuestionId"));
-		Question q = (Question) EgoClient.study.getQuestions().getQuestion(qId);
+		Question q = (Question) egoClient.getStudy().getQuestions().getQuestion(qId);
 		Element alterElem = e.getElement("Alters");
 
 		if (alterElem != null) {

@@ -98,6 +98,7 @@ import com.endlessloopsoftware.elsutils.ELSMath;
  *		query 						= "SELECT OBJECT(a) FROM StudyEJB AS a WHERE a.studyName=?1"
  * 
  */
+@SuppressWarnings({"unchecked"})
 public abstract class StudyEJB implements EntityBean
 {
 	final Logger logger = Logger.getLogger(getClass().getName());
@@ -268,7 +269,7 @@ public abstract class StudyEJB implements EntityBean
        }
        catch (Exception ex)
        {
-           ex.printStackTrace();
+           throw new EJBException(ex);
        }
 
        return (names == null) ? new HashSet(0) : names;
@@ -306,7 +307,7 @@ public abstract class StudyEJB implements EntityBean
 			catch (Exception ex)
 			{
 				logger.debug("Exception on i = " + i + "; questionOrder[i] = " + questionOrder[i]);
-				ex.printStackTrace();
+				throw new EJBException(ex);
 			}
 		}
 		

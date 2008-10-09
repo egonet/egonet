@@ -62,27 +62,29 @@ public class PromptPanel extends EgoQPanel
 	private final	JButton				question_delete_button		= new JButton("Delete");
 	private	final	Border 				listBorder;
 
+	private final EgoNet egoNet;
+	
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * @param 	type	Type of questions on Page (e.g. Alter Questions)
 	 * @param	parent	parent frame for referencing composed objects
 	 */
-	public PromptPanel(int type)
+	public PromptPanel(EgoNet egoNet, int type) throws Exception
 	{
+		this.egoNet = egoNet;
 		questionType	= type;
+		
+		question_question_field.setName("question_question_field");
+		question_citation_field.setName("question_citation_field");
+		question_title_field.setName("question_title_field");
+
+		
 		listBorder 		= BorderFactory.createCompoundBorder(
 			new TitledBorder(new EtchedBorder(EtchedBorder.RAISED,Color.white,new Color(178, 178, 178)),
 			Question.questionTypeString(questionType)),
 			BorderFactory.createEmptyBorder(10,10,10,10));
 
-		try
-		{
-			jbInit();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		jbInit();
 	}
 
 	/**
@@ -155,7 +157,7 @@ public class PromptPanel extends EgoQPanel
 			,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
 
 		question_list.setModel(new DefaultListModel());
-		EgoNet.study.fillList(questionType, (DefaultListModel) question_list.getModel());
+		egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
 
 		question_list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -212,7 +214,7 @@ public class PromptPanel extends EgoQPanel
 	 */
 	public void fillPanel()
 	{
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			storageUpdate();
 			questionUpdate();
@@ -226,10 +228,10 @@ public class PromptPanel extends EgoQPanel
 	{
 		inUpdate = true;
 
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			((DefaultListModel) question_list.getModel()).removeAllElements();
-			EgoNet.study.fillList(questionType, (DefaultListModel) question_list.getModel());
+			egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
 		}
 
 		inUpdate = false;
@@ -243,7 +245,7 @@ public class PromptPanel extends EgoQPanel
 		inUpdate = true;
 
 		/** @todo Use List Data Listener? */
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			index = question_list.getSelectedIndex();
 			if ((question_list.getModel().getSize() > 0) && (index == -1))
@@ -252,7 +254,7 @@ public class PromptPanel extends EgoQPanel
 			}
 
 			question_follows_menu.removeAllItems();
-			question_follows_menu.addItem(EgoNet.study.getFirstQuestion());
+			question_follows_menu.addItem(egoNet.getStudy().getFirstQuestion());
 			for (int i = 0; i < question_list.getModel().getSize(); i++)
 			{
 				if (i != index)
@@ -320,7 +322,7 @@ public class PromptPanel extends EgoQPanel
 			if ((q.title == null) || (!q.title.equals(s)))
 			{
 				q.title = question_title_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 				question_list.repaint();
 			}
 		}
@@ -342,7 +344,7 @@ public class PromptPanel extends EgoQPanel
 			if ((q.text == null) || (!q.text.equals(s)))
 			{
 				q.text = question_question_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 			}
 		}
 	}
@@ -363,7 +365,7 @@ public class PromptPanel extends EgoQPanel
 			if ((q.citation == null) || (!q.citation.equals(s)))
 			{
 				q.citation = question_citation_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 			}
 		}
 	}
@@ -378,7 +380,7 @@ public class PromptPanel extends EgoQPanel
 
 		try
 		{
-			EgoNet.study.addQuestion(q);
+			egoNet.getStudy().addQuestion(q);
 		}
 		catch (DuplicateQuestionException e1)
 		{
@@ -398,12 +400,12 @@ public class PromptPanel extends EgoQPanel
 
 		if (q != null)
 		{
-			int confirm = JOptionPane.showConfirmDialog(EgoNet.frame, "Permanently remove this questions?",
+			int confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(), "Permanently remove this questions?",
 														"Delete Question", JOptionPane.OK_CANCEL_OPTION);
 
 			if (confirm == JOptionPane.OK_OPTION)
 			{
-				EgoNet.study.removeQuestion(q);
+				egoNet.getStudy().removeQuestion(q);
 				fillPanel();
 			}
 		}
@@ -420,7 +422,7 @@ public class PromptPanel extends EgoQPanel
 			Question follows 	= (Question) question_follows_menu.getSelectedItem();
 			Question q			= (Question) question_list.getSelectedValue();
 
-			EgoNet.study.moveQuestionAfter(q, follows);
+			egoNet.getStudy().moveQuestionAfter(q, follows);
 			fillPanel();
 		}
 	}

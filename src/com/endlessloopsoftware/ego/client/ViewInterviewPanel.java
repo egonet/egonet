@@ -18,69 +18,30 @@
  */
 package com.endlessloopsoftware.ego.client;
 
-import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 
 import java.util.*;
 
-import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsFrame;
-import com.endlessloopsoftware.elsutils.SwingWorker;
 import com.endlessloopsoftware.ego.client.graph.*;
 
 public class ViewInterviewPanel
 	extends JTabbedPane
 {
 	GraphPanel graphPanel;
-	public ViewInterviewPanel(ProgressMonitor progress)
+	public ViewInterviewPanel(EgoClient egoClient, ProgressMonitor progress)
 	{
 		super();
 		progress.setProgress(10);
-		this.addTab("Interview", new ClientQuestionPanel());
+		this.addTab("Interview", new ClientQuestionPanel(egoClient));
 		progress.setProgress(15);
-		this.addTab("Statistics", new StatisticsFrame());
-		graphPanel = new GraphPanel();
+		this.addTab("Statistics", new StatisticsFrame(egoClient));
+		graphPanel = new GraphPanel(egoClient);
 		this.addTab("Graph", graphPanel);
 		progress.setProgress(70);
 	}
 	
-   static void gotoPanel()
-   {
-      final ProgressMonitor progressMonitor = new ProgressMonitor(EgoClient.frame, "Calculating Statistics", "", 0, 100);
-   		final SwingWorker worker = new SwingWorker() 
-		{
-   			public Object construct() 
-   			{
-   				// Build Screen
-   				EgoClient.frame.setVisible(false);
-   				Shared.setWaitCursor(EgoClient.frame, true);
-   				progressMonitor.setProgress(5);
-   				EgoClient.frame.setContentPane(new ViewInterviewPanel(progressMonitor));
-   				progressMonitor.setProgress(95);
-   				EgoClient.frame.createMenuBar(EgoClient.VIEW_INTERVIEW);
-   				EgoClient.frame.pack();
-   				// EgoClient.frame.setSize(640, 530);
-   				EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-
-   				return EgoClient.frame;
-	      }
-	      
-	      public void finished()
-			{
-            Shared.setWaitCursor(EgoClient.frame, false);
-	         progressMonitor.close();
-	      		EgoClient.frame.setVisible(true);
-	      }
-	  };
-	  
-     progressMonitor.setProgress(0);
-     progressMonitor.setMillisToDecideToPopup(0);
-     progressMonitor.setMillisToPopup(0);
-  	
-     worker.start();
-   }
-   
    public Iterator settingsIterator() {
 	   return graphPanel.getSettingsIterator();
    }

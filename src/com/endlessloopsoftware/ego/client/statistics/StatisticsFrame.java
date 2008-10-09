@@ -23,17 +23,18 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.client.SourceSelectPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.BetweennessModel;
 import com.endlessloopsoftware.ego.client.statistics.models.CliqueModel;
 import com.endlessloopsoftware.ego.client.statistics.models.ClosenessModel;
@@ -64,29 +65,28 @@ public class StatisticsFrame extends JPanel {
 
 	private JPanel qSummaryPanel = null;
 
-	public StatisticsFrame() {
-		try {
+	private EgoClient egoClient;
+
+	public StatisticsFrame(EgoClient egoClient) {
+		this.egoClient = egoClient;
 			jbInit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
-	private void jbInit() throws Exception {
+	private void jbInit() {
 		boolean studyStatable = false;
 
 		/***********************************************************************
 		 * Fill in alter pair question selection menu
 		 **********************************************************************/
-		Iterator questions = EgoClient.study.getQuestionOrder(
+		Iterator questions = egoClient.getStudy().getQuestionOrder(
 				Question.ALTER_PAIR_QUESTION).iterator();
 		while (questions.hasNext()) {
-			Question q = EgoClient.study.getQuestion((Long) questions.next());
+			Question q = egoClient.getStudy().getQuestion((Long) questions.next());
 
 			if (q.statable) {
 				//alterQuestionMenu.addItem(q);
 				studyStatable = true;
-				stats = EgoClient.interview.generateStatistics(q);
+				stats = egoClient.getInterview().generateStatistics(q);
 				
 				// Use stats to initialize panels
 				summaryPanel = new StatisticsArrayPanel(new InterviewSummaryModel(
@@ -134,41 +134,47 @@ public class StatisticsFrame extends JPanel {
 							}
 						});*/
 
-				EgoClient.frame.saveAlterSummary
+				removeAllActionListeners(egoClient.getFrame().saveAlterSummary);
+				egoClient.getFrame().saveAlterSummary
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								saveAlterSummary_actionPerformed(e);
 							}
 						});
 
-				EgoClient.frame.saveTextSummary
+				removeAllActionListeners(egoClient.getFrame().saveTextSummary);
+				egoClient.getFrame().saveTextSummary
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								saveTextSummary_actionPerformed(e);
 							}
 						});
 
-				EgoClient.frame.saveWeightedAdjacencyMatrix
+				removeAllActionListeners(egoClient.getFrame().saveWeightedAdjacencyMatrix);
+				egoClient.getFrame().saveWeightedAdjacencyMatrix
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								saveWeightedAdjacencyMatrix_actionPerformed(e);
 							}
 						});
 
-				EgoClient.frame.saveAdjacencyMatrix
+				removeAllActionListeners(egoClient.getFrame().saveAdjacencyMatrix);
+				egoClient.getFrame().saveAdjacencyMatrix
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								saveAdjacencyMatrix_actionPerformed(e);
 							}
 						});
 
-				EgoClient.frame.saveInterviewStatistics
+				removeAllActionListeners(egoClient.getFrame().saveInterviewStatistics);
+				egoClient.getFrame().saveInterviewStatistics
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								saveInterviewStatistics_actionPerformed(e);
 							}
 						});
 
+				
 				updateAll();
 			}
 		}
@@ -186,12 +192,18 @@ public class StatisticsFrame extends JPanel {
 							"No questions with adjacent and non-adjacent selections found."));
 		}
 
-		EgoClient.frame.close
+		egoClient.getFrame().close
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						close_actionPerformed(e);
 					}
 				});
+	}
+
+	private static void removeAllActionListeners(JMenuItem saveAlterSummary) {
+		ActionListener[] listeners = saveAlterSummary.getActionListeners();
+		for(ActionListener l : listeners)
+			saveAlterSummary.removeActionListener(l);
 	}
 
 	void updateAll() {
@@ -209,7 +221,7 @@ public class StatisticsFrame extends JPanel {
 	//TODO: We need to do alter pair stats when a question is selected, since we got rid of the drop down list.
 	/*void alterQuestionMenu_actionPerformed(ActionEvent e) {
 		if (!e.getActionCommand().equals("Initialization")) {
-			stats = EgoClient.interview
+			stats = egoClient.getInterview()
 					.generateStatistics((Question) alterQuestionMenu
 							.getSelectedItem());
 
@@ -218,24 +230,21 @@ public class StatisticsFrame extends JPanel {
 	}*/
 
 	void saveAlterSummary_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String filename = name[0] + "_" + name[1] + "_Alter_Summary";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
-				"Alter Summary", "csv", filename);
+		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter("Alter Summary", "csv", filename);
 
-		if (w != null) {
-			try {
-				stats.writeAlterArray(w);
-			} finally {
-				w.close();
-			}
+		try {
+			stats.writeAlterArray(w);
+		} finally {
+			w.close();
 		}
 	}
 
 	void saveTextSummary_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String filename = name[0] + "_" + name[1] + "_Text_Summary";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
+		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
 				"Text Summary", "txt", filename);
 
 		if (w != null) {
@@ -248,9 +257,9 @@ public class StatisticsFrame extends JPanel {
 	}
 
 	void saveAdjacencyMatrix_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String filename = name[0] + "_" + name[1] + "_Adjacency_Matrix";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
+		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
 				"Adjaceny Matrix", "csv", filename);
 
 		if (w != null) {
@@ -263,10 +272,10 @@ public class StatisticsFrame extends JPanel {
 	}
 
 	void saveWeightedAdjacencyMatrix_actionPerformed(ActionEvent e) {
-		String[] name = EgoClient.interview.getName();
+		String[] name = egoClient.getInterview().getName();
 		String filename = name[0] + "_" + name[1]
 				+ "_Weighted_Adjacency_Matrix";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
+		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
 				"Adjaceny Matrix", "csv", filename);
 
 		if (w != null) {
@@ -280,19 +289,19 @@ public class StatisticsFrame extends JPanel {
 
 	void close_actionPerformed(ActionEvent e) {
 		//System.out.println("Return");
-		SourceSelectPanel.gotoPanel(false);
+		egoClient.getFrame().gotoSourceSelectPanel(false);
 	}
 
 	void saveInterviewStatistics_actionPerformed(ActionEvent e) {
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
-		Question q = EgoClient.study.getFirstStatableQuestion();
+		Question q = egoClient.getStudy().getFirstStatableQuestion();
 
 		try {
 			if (q != null) {
-				EgoClient.storage.writeStatisticsFiles(stats,
-						EgoClient.interview.getName());
+				egoClient.getStorage().writeStatisticsFiles(stats,
+						egoClient.getInterview().getName());
 			}
 		} catch (FileCreateException ex) {
 		}

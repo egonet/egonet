@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
@@ -49,6 +48,8 @@ public class CategoryInputPane extends JDialog {
 	private final JButton jCancelButton = new JButton("Cancel");
 
 	private JScrollPane scrollPane;
+	
+	private final EgoNet egoNet;
 
 	/**
 	 * Constructor for CategoryInputPane
@@ -57,13 +58,11 @@ public class CategoryInputPane extends JDialog {
 	 *            question list from parent frame used to determine which
 	 *            question we are operating on
 	 */
-	public CategoryInputPane(JList list) {
+	public CategoryInputPane(EgoNet egoNet, JList list) throws Exception 
+	{
 		parentList = list;
-		try {
-			jbInit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.egoNet = egoNet;
+		jbInit();
 	}
 
 	/**
@@ -78,6 +77,7 @@ public class CategoryInputPane extends JDialog {
 		panel.setLayout(gridBagLayout1);
 		this.setModal(true);
 		this.setTitle("Category Options");
+		this.setName(this.getTitle());
 
 		panel.add(
 				listBuilder,
@@ -123,7 +123,7 @@ public class CategoryInputPane extends JDialog {
 			Selection[] newSelections = listBuilder.getListSelections();
 
 			if (newSelections.length != q.selections.length) {
-				if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame)) {
+				if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
 					compatible = false;
 					changed = true;
 
@@ -133,7 +133,7 @@ public class CategoryInputPane extends JDialog {
 					q.selections = newSelections;
 				} else {
 					// Don't make this change
-					EgoNet.frame.fillCurrentPanel();
+					egoNet.getFrame().fillCurrentPanel();
 					this.hide();
 					return;
 				}
@@ -150,10 +150,10 @@ public class CategoryInputPane extends JDialog {
 				// q.selections[i].value= newSelections[i].value;
 			}
 
-			EgoNet.study.setModified(changed);
-			EgoNet.study.setCompatible(compatible);
+			egoNet.getStudy().setModified(changed);
+			egoNet.getStudy().setCompatible(compatible);
 
-			EgoNet.frame.fillCurrentPanel();
+			egoNet.getFrame().fillCurrentPanel();
 			this.setVisible(false);
 		}
 

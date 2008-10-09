@@ -55,7 +55,10 @@ public class NodeSizePanel extends JPanel {
 
 	List<Selection> selectionList = new ArrayList<Selection>();
 
-	public NodeSizePanel(GraphRenderer renderer) {
+	private EgoClient egoClient;
+
+	public NodeSizePanel(EgoClient egoClient, GraphRenderer renderer) {
+		this.egoClient=egoClient;
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
@@ -71,7 +74,7 @@ public class NodeSizePanel extends JPanel {
 
 		// create questionCombo
 		List<Question> qList = new ArrayList<Question>();
-		Study study = EgoClient.interview.getStudy();
+		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
 		for (Long key : questionMap.keySet()) {
@@ -160,7 +163,7 @@ public class NodeSizePanel extends JPanel {
 			if (!selectionList.isEmpty()) {
 				selectionList.removeAll(selectionList);
 			}
-			Answer[] answers = EgoClient.interview.get_answers();
+			Answer[] answers = egoClient.getInterview().get_answers();
 			for (int i = 0; i < answers.length; i++) {
 				// System.out.println("Question examining:"
 				// + answers[i].questionId + "," + question.UniqueId);

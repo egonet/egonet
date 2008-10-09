@@ -45,10 +45,10 @@ public class ClientPanel
 
 	private JLabel studyNameLabel = new JLabel();
 
-	public ClientPanel()
+	private final EgoClient egoClient;
+	public ClientPanel(EgoClient egoClient)
 	{
-		try
-		{
+		this.egoClient = egoClient;
 //			 Load up the dialog contents.
 			java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream("com/endlessloopsoftware/ego/client/localSelect.gui_xml");
 			JPanel panel = DialogResource.load(is);
@@ -66,15 +66,10 @@ public class ClientPanel
 			
 			this.setLayout(new GridLayout(1, 1));
 			this.add(panel);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	//Component initialization
-	private void jbInit() throws Exception
+	private void jbInit() 
 	{
 		titleLabel.setBackground(Color.lightGray);
 		titleLabel.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -105,17 +100,17 @@ public class ClientPanel
 
 	void fillPanel()
 	{
-		startInterviewButton.setEnabled(EgoClient.storage.getStudyLoaded());
-		viewInterviewButton.setEnabled(EgoClient.storage.getStudyLoaded());
-		statisticsButton.setEnabled(EgoClient.storage.getStudyLoaded());
+		startInterviewButton.setEnabled(egoClient.getStorage().getStudyLoaded());
+		viewInterviewButton.setEnabled(egoClient.getStorage().getStudyLoaded());
+		statisticsButton.setEnabled(egoClient.getStorage().getStudyLoaded());
 
-		studyNameLabel.setText(EgoClient.study.getStudyName());
+		studyNameLabel.setText(egoClient.getStudy().getStudyName());
 		if (studyNameLabel.getText() == null)
 		{
 			studyNameLabel.setText(" ");
 		}
 
-		if (EgoClient.storage.getStudyLoaded())
+		if (egoClient.getStorage().getStudyLoaded())
 		{
 
 		}
@@ -124,70 +119,70 @@ public class ClientPanel
 	private void doSelectStudy(ActionEvent e)
 	{
 		/* Clear out old data */
-      EgoClient.study 		= new Study();
-      EgoClient.storage		= new EgoStore();
-      EgoClient.interview 	= null;
+      egoClient.setStudy(new Study());
+      egoClient.setStorage(new EgoStore(egoClient));
+      egoClient.setInterview(null);
 
 		/* Read new study */
-      EgoClient.storage.selectStudy();
-      EgoClient.storage.readPackage();
-		studyNameLabel.setText(EgoClient.study.getStudyName());
+      egoClient.getStorage().selectStudy();
+      egoClient.getStorage().readPackage();
+		studyNameLabel.setText(egoClient.getStudy().getStudyName());
 
 		fillPanel();
 	}
 
 	private void doStartInterview(ActionEvent e)
 	{
-      EgoClient.uiPath = EgoClient.DO_INTERVIEW;
-      EgoClient.storage.setPackageInUse();
+      egoClient.setUiPath(ClientFrame.DO_INTERVIEW);
+      egoClient.getStorage().setPackageInUse();
 		try
 		{
-         EgoClient.interview = new Interview(EgoClient.study);
-			if (!EgoClient.interview._statisticsAvailable)
+         egoClient.setInterview(new Interview(egoClient.getStudy(), egoClient));
+			if (!egoClient.getInterview()._statisticsAvailable)
 			{
 				/* No Structural question for this study, warn user */
-				int option = JOptionPane.showConfirmDialog(EgoClient.frame, "<html><p>This study has no questions with specified adjacency selections.</p>" +
+				int option = JOptionPane.showConfirmDialog(egoClient.getFrame(), "<html><p>This study has no questions with specified adjacency selections.</p>" +
 															 "<p>You will be unable to generate any structural statistics for it.</p>" +
 															 "<p>Continue anyway?</p>",
 															 "No Statistics Available", JOptionPane.YES_NO_OPTION);
 
 				if (option == JOptionPane.NO_OPTION)
 				{
-					EgoClient.interview = null;
+					egoClient.setInterview(null);
 				}
 			}
 		}
 		catch (CorruptedInterviewException ex) {
 			/* No Structural question for this study, warn user */
-			JOptionPane.showMessageDialog(EgoClient.frame, "Unable to create an interview from this file",
+			JOptionPane.showMessageDialog(egoClient.getFrame(), "Unable to create an interview from this file",
 					"No Statistics Available", JOptionPane.ERROR_MESSAGE);
-			EgoClient.interview = null;
+			egoClient.setInterview(null);
 		}
 
-		if (EgoClient.interview != null)
+		if (egoClient.getInterview() != null)
 		{
-			StartPanel.gotoPanel();
+		    egoClient.getFrame().gotoStartPanel();
 		}
 	}
 
 	private void doViewInterview(ActionEvent e)
 	{
-		EgoClient.uiPath = EgoClient.VIEW_INTERVIEW;
+		egoClient.setUiPath(ClientFrame.VIEW_INTERVIEW);
 
-		EgoClient.storage.setInterviewFile(null);
-		EgoClient.interview = null;
-		EgoClient.storage.selectInterview();
+		egoClient.getStorage().setInterviewFile(null);
+		egoClient.setInterview(null);
+		egoClient.getStorage().selectInterview();
 	}
 
 	private void doSummaryStatistics(ActionEvent e)
 	{
 		/* Warn User this could take awhile */
-		int ok = JOptionPane.showConfirmDialog(EgoClient.frame, "This operation could take over a minute. Should I continue?",
+		int ok = JOptionPane.showConfirmDialog(egoClient.getFrame(), "This operation could take over a minute. Should I continue?",
 				"Load Interview Statistics", JOptionPane.OK_CANCEL_OPTION);
 
 		if (ok == JOptionPane.OK_OPTION)
 		{
-			SummaryPanel.gotoPanel();
+		    egoClient.getFrame().gotoSummaryPanel();
 		}
 	}
 }

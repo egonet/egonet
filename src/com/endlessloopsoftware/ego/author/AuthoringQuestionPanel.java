@@ -74,30 +74,31 @@ public class AuthoringQuestionPanel extends EgoQPanel
 													Question.questionTypeString(3), Question.questionTypeString(4)};
 	private final static String[] answerTypes = {"Categorical", "Numerical", "Text"};
 
+	private final EgoNet egoNet;
+	
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * @param 	type	Type of questions on Page (e.g. Alter Questions)
 	 * @param	parent	parent frame for referencing composed objects
 	 */
-	public AuthoringQuestionPanel(int type)
+	public AuthoringQuestionPanel(EgoNet egoNet, int type) throws Exception
 	{
+		this.egoNet = egoNet;
 		questionType					= type;
-		questionLinkDialog			= new QuestionLinkDialog();
-		selectionsDialog			= new CategoryInputPane(question_list);
+		questionLinkDialog			= new QuestionLinkDialog(egoNet);
+		selectionsDialog			= new CategoryInputPane(egoNet, question_list);
+		question_title_field.setName("question_title_field");
+		question_question_field.setName("question_question_field");
+		question_citation_field.setName("question_citation_field");
+		
+		question_answer_type_menu.setName("question_answer_type_menu");
 
 		listBorder 					= BorderFactory.createCompoundBorder(
 			new TitledBorder(new EtchedBorder(EtchedBorder.RAISED,Color.white,new Color(178, 178, 178)),
 			Question.questionTypeString(questionType)),
 			BorderFactory.createEmptyBorder(10,10,10,10));
 
-		try
-		{
-			jbInit();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		jbInit();
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 				,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 
 		question_list.setModel(new DefaultListModel());
-		EgoNet.study.fillList(questionType, (DefaultListModel) question_list.getModel());
+		egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
 
 		question_list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -269,7 +270,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	 */
 	public void fillPanel()
 	{
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			storageUpdate();
 			questionUpdate();
@@ -283,11 +284,11 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	{
 		inUpdate = true;
 
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			Object o = question_list.getSelectedValue();
 			((DefaultListModel) question_list.getModel()).removeAllElements();
-			EgoNet.study.fillList(questionType, (DefaultListModel) question_list.getModel());
+			egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
 			question_list.setSelectedValue(o, true);
 		}
 
@@ -301,7 +302,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
 		inUpdate = true;
 
-		if (questionType == EgoNet.frame.curTab)
+		if (questionType == egoNet.getFrame().curTab)
 		{
 			/* If no element selected, assume first */
 			index = question_list.getSelectedIndex();
@@ -312,7 +313,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
 			/* Load questions from list into follows menu */
 			question_follows_menu.removeAllItems();
-			question_follows_menu.addItem(EgoNet.study.getFirstQuestion());
+			question_follows_menu.addItem(egoNet.getStudy().getFirstQuestion());
 			for (int i = 0; i < question_list.getModel().getSize(); i++)
 			{
 				if (i != index)
@@ -374,7 +375,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 				/* Fill in link field */
 				if (q.link.active)
 				{
-					Question linkQuestion = EgoNet.study.getQuestions().getQuestion(q.link.answer.questionId);
+					Question linkQuestion = egoNet.getStudy().getQuestions().getQuestion(q.link.answer.questionId);
 
 					if (linkQuestion == null)
 					{
@@ -448,7 +449,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			if ((q.title == null) || (!q.title.equals(s)))
 			{
 				q.title = question_title_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 				question_list.repaint();
 			}
 		}
@@ -469,7 +470,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			if ((q.text == null) || (!q.text.equals(s)))
 			{
 				q.text = question_question_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 			}
 		}
 	}
@@ -489,7 +490,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			if ((q.citation == null) || (!q.citation.equals(s)))
 			{
 				q.citation = question_citation_field.getText().trim();
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().setModified(true);
 			}
 		}
 	}
@@ -502,7 +503,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	 */
 	private void question_new_button_actionPerformed(ActionEvent e)
 	{
-		if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+		if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
 			Question q = new Question();
 	
@@ -516,7 +517,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	
 			try
 			{
-				EgoNet.study.addQuestion(q);
+				egoNet.getStudy().addQuestion(q);
 			}
 			catch (DuplicateQuestionException e1)
 			{
@@ -530,8 +531,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			question_title_field.setSelectionStart(0);
 			question_title_field.setSelectionEnd(question_title_field.getText().length());
 	
-			EgoNet.study.setModified(true);
-			EgoNet.study.setCompatible(false);
+			egoNet.getStudy().setModified(true);
+			egoNet.getStudy().setCompatible(false);
 		}
 	}
 
@@ -546,14 +547,14 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
 		if (q != null)
 		{
-			int confirm = JOptionPane.showConfirmDialog(EgoNet.frame, "Permanently remove this questions?",
+			int confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(), "Permanently remove this questions?",
 														"Delete Question", JOptionPane.OK_CANCEL_OPTION);
 
-			if ((confirm == JOptionPane.OK_OPTION)  && EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+			if ((confirm == JOptionPane.OK_OPTION)  && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 			{
-				EgoNet.study.removeQuestion(q);
-				EgoNet.study.setModified(true);
-				EgoNet.study.setCompatible(false);
+				egoNet.getStudy().removeQuestion(q);
+				egoNet.getStudy().setModified(true);
+				egoNet.getStudy().setCompatible(false);
 				fillPanel();
 			}
 		}
@@ -568,12 +569,12 @@ public class AuthoringQuestionPanel extends EgoQPanel
 		Question	q_old = (Question) question_list.getSelectedValue();
 		if(q_old==null)
 		{
-			JOptionPane.showMessageDialog(EgoNet.frame, "Select a question first!",
+			JOptionPane.showMessageDialog(egoNet.getFrame(), "Select a question first!",
 						"Dupe Question", JOptionPane.OK_OPTION);
 			return;
 		}
 
-		if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+		if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
 			Question q = new Question();
 	
@@ -588,7 +589,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	
 			try
 			{
-				EgoNet.study.addQuestion(q);
+				egoNet.getStudy().addQuestion(q);
 				q.selections = Arrays.copyOf(q_old.selections, q_old.selections.length);
 			}
 			catch (DuplicateQuestionException e1)
@@ -603,8 +604,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			question_title_field.setSelectionStart(0);
 			question_title_field.setSelectionEnd(question_title_field.getText().length());
 	
-			EgoNet.study.setModified(true);
-			EgoNet.study.setCompatible(false);
+			egoNet.getStudy().setModified(true);
+			egoNet.getStudy().setCompatible(false);
 		}
 	}
 
@@ -627,13 +628,13 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	{
 		if (!inUpdate)
 		{
-			if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+			if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 			{
 				Question	q 		= (Question) question_list.getSelectedValue();
 				int 		type 	= question_type_menu.getSelectedIndex() + 1;
 	
-				EgoNet.study.changeQuestionType(q, type);
-				EgoNet.study.setCompatible(false);
+				egoNet.getStudy().changeQuestionType(q, type);
+				egoNet.getStudy().setCompatible(false);
 				fillPanel();
 			}
 			else
@@ -651,7 +652,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	{
 		if (!inUpdate)
 		{
-			if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+			if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 			{
 				int 		i = question_answer_type_menu.getSelectedIndex();
 				Question	q = (Question) question_list.getSelectedValue();
@@ -661,8 +662,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
 					if (q.answerType != i)
 					{
 						q.answerType = i;
-						EgoNet.study.setModified(true);
-						EgoNet.study.setCompatible(false);
+						egoNet.getStudy().setModified(true);
+						egoNet.getStudy().setCompatible(false);
 						questionUpdate();
 					}
 				}
@@ -692,14 +693,14 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	{
 		if (!inUpdate)
 		{
-			if (EgoNet.study.confirmIncompatibleChange(EgoNet.frame))
+			if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 			{
 				Question follows 	= (Question) question_follows_menu.getSelectedItem();
 				Question q			= (Question) question_list.getSelectedValue();
 	
-				EgoNet.study.moveQuestionAfter(q, follows);
-				EgoNet.study.setCompatible(false);
-				EgoNet.study.setModified(true);
+				egoNet.getStudy().moveQuestionAfter(q, follows);
+				egoNet.getStudy().setCompatible(false);
+				egoNet.getStudy().setModified(true);
 				fillPanel();
 			}
 			else
@@ -712,7 +713,11 @@ public class AuthoringQuestionPanel extends EgoQPanel
 	void question_central_checkBox_actionPerformed(ActionEvent e)
 	{
 		Question q = (Question) question_list.getSelectedValue();
-		EgoNet.study.setCentralQuestion(q);
+		egoNet.getStudy().setCentralQuestion(q);
+	}
+
+	public int getQuestionType() {
+		return questionType;
 	}
 }
 

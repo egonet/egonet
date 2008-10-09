@@ -49,6 +49,7 @@ public class EgoStore
 {
    private File      studyFile      = null;
    private boolean   studyFileInUse = false;
+   private final EgoNet egoNet;
 
 	private static final String[]	questionExtensions	= { "qst", "qtp"};
 	private static FileFilter		readQuestionFilter	= (FileFilter) new ExtensionFileFilter("Question Files", questionExtensions[0]);
@@ -63,8 +64,9 @@ public class EgoStore
     * @param frame
     *            parent
     */
-   public EgoStore()
+   public EgoStore(EgoNet egoNet)
    {
+	   this.egoNet = egoNet;
    }
 
    /************************************************************************************************************************************************************
@@ -124,7 +126,7 @@ public class EgoStore
 
       try
       {
-         if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showSaveDialog(EgoNet.frame))
+         if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showSaveDialog(egoNet.getFrame()))
          {
             projectPath = jNewStudyChooser.getSelectedFile().getParent();
             projectName = jNewStudyChooser.getSelectedFile().getName();
@@ -147,7 +149,7 @@ public class EgoStore
             catch (SecurityException e)
             {
             	JOptionPane.showMessageDialog(
-            			EgoNet.frame,
+            			egoNet.getFrame(),
             			"Unable to create study directories.",
 						"New Study Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -162,7 +164,7 @@ public class EgoStore
                {
                   int confirm =
                      JOptionPane.showConfirmDialog(
-                     	EgoNet.frame,
+                     	egoNet.getFrame(),
                         "<HTML><h2>Study already exists at this location.</h2>" + "<p>Shall I overwrite it?</p></html>",
                         "Overwrite Study File",
                         JOptionPane.OK_CANCEL_OPTION);
@@ -179,9 +181,9 @@ public class EgoStore
                }
 
                /* Clean out study variables */
-               EgoNet.study = new Study();
+               egoNet.setStudy(new Study());
                setStudyFile(newStudyFile);
-               EgoNet.study.setStudyName(projectName);
+               egoNet.getStudy().setStudyName(projectName);
 
                /* Write out default info */
                writeStudy(newStudyFile, new Long(System.currentTimeMillis()));
@@ -194,7 +196,7 @@ public class EgoStore
             {
             	e.printStackTrace();
                JOptionPane.showMessageDialog(
-               		EgoNet.frame,
+               		egoNet.getFrame(),
                		"Unable to create study file.",
 					"File Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -212,7 +214,7 @@ public class EgoStore
             catch (SecurityException e)
             {
             	JOptionPane.showMessageDialog(
-            		EgoNet.frame,
+            		egoNet.getFrame(),
             		"Unable to create study directories.",
 					"New Study Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -224,7 +226,7 @@ public class EgoStore
       {
          if (e.report)
          {
-            JOptionPane.showMessageDialog(EgoNet.frame, "Study not created.");
+            JOptionPane.showMessageDialog(egoNet.getFrame(), "Study not created.");
          }
 
          setStudyFile(null);
@@ -252,7 +254,7 @@ public class EgoStore
          jNewStudyChooser.setCurrentDirectory(new File(prefs.get(FILE_PREF, ".")));
       }
 
-      if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(EgoNet.frame))
+      if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(egoNet.getFrame()))
       {
          f = jNewStudyChooser.getSelectedFile();
 
@@ -293,7 +295,7 @@ public class EgoStore
       jNewStudyChooser.addChoosableFileFilter(readQuestionFilter);
       jNewStudyChooser.setDialogTitle("Select Custom Questions File");
 
-      if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(EgoNet.frame))
+      if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(egoNet.getFrame()))
       {
          newFile = jNewStudyChooser.getSelectedFile();
 
@@ -328,16 +330,21 @@ public class EgoStore
 
       try
       {
+    	  if (!studyFile.exists())
+    	  {
+    		  throw new FileWriteException("File "+studyFile.getName()+" does not exist");
+    	  }
          if (!studyFile.canWrite())
          {
-            throw (new FileWriteException());
+            throw new FileWriteException("File "+studyFile.getName()+" is not writeable");
          }
 
-         writeStudy(studyFile, new Long(EgoNet.study.getStudyId()));
+         writeStudy(studyFile, new Long(egoNet.getStudy().getStudyId()));
       }
-      catch (Exception e)
+      catch (Throwable ex)
       {
-         JOptionPane.showMessageDialog(EgoNet.frame, "Unable to write to study file. Study not saved.");
+         //JOptionPane.showMessageDialog(egoNet.getFrame(), "Unable to write to study file. Study not saved.");
+         throw new RuntimeException(ex);
       }
    }
 
@@ -353,7 +360,7 @@ public class EgoStore
       jNewQuestionsChooser.addChoosableFileFilter(writeQuestionFilter);
       jNewQuestionsChooser.setDialogTitle("Save Custom Questions As...");
 
-      if (JFileChooser.APPROVE_OPTION == jNewQuestionsChooser.showSaveDialog(EgoNet.frame))
+      if (JFileChooser.APPROVE_OPTION == jNewQuestionsChooser.showSaveDialog(egoNet.getFrame()))
       {
          try
          {
@@ -363,7 +370,7 @@ public class EgoStore
             {
                int confirm =
                   JOptionPane.showConfirmDialog(
-                  		EgoNet.frame,
+                  		egoNet.getFrame(),
                      "<HTML><h2>Question File already exists at this location.</h2>"
                         + "<p>Shall I overwrite it?</p></html>",
                      "Overwrite Questions File",
@@ -380,7 +387,7 @@ public class EgoStore
          catch (Exception e)
          {
             JOptionPane.showMessageDialog(
-            	EgoNet.frame,
+            	egoNet.getFrame(),
                "Unable to create question file.",
                "File Error",
                JOptionPane.ERROR_MESSAGE);
@@ -397,12 +404,13 @@ public class EgoStore
 		File 				newStudyFile;
 		boolean 			complete					= false;
 
-		jNewQuestionsChooser.setCurrentDirectory(getStudyFile().getParentFile());
+		if(getStudyFile() != null)
+			jNewQuestionsChooser.setCurrentDirectory(getStudyFile().getParentFile());
 		jNewQuestionsChooser.addChoosableFileFilter(studyFilter);
 		
 		while (!complete)
 		{
-			if (JFileChooser.APPROVE_OPTION == jNewQuestionsChooser.showSaveDialog(EgoNet.frame))
+			if (JFileChooser.APPROVE_OPTION == jNewQuestionsChooser.showSaveDialog(egoNet.getFrame()))
 			{
 				try
 				{
@@ -413,14 +421,14 @@ public class EgoStore
 					{
 						if (newStudyFile.canWrite())
 						{
-							confirm = JOptionPane.showConfirmDialog(EgoNet.frame,
+							confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(),
 									"<HTML><h3>A Study File already exists at this location.</h3>"
 											+ "<p>Shall I overwrite it?</p></html>", "Overwrite Study Package File",
 									JOptionPane.OK_CANCEL_OPTION);
 						}
 						else
 						{
-							confirm = JOptionPane.showConfirmDialog(EgoNet.frame,
+							confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(),
 									"<HTML><h2>An <b>Active</b> Study File already exists at this location.</h2>"
 											+ "<p>If you overwrite it, any interviews created with it will be unreadable!</p>"
 											+ "<p>Shall I overwrite it?</p></html>", "Overwrite Study Package File",
@@ -444,11 +452,13 @@ public class EgoStore
 				}
 				catch (FileWriteException e)
 				{
-					JOptionPane.showMessageDialog(EgoNet.frame, "Unable to write to study file. Study not saved.");
+					JOptionPane.showMessageDialog(egoNet.getFrame(), "Unable to write to study file. Study not saved.");
+					throw new RuntimeException(e);
 				}
 				catch (java.io.IOException e)
 				{
-					JOptionPane.showMessageDialog(EgoNet.frame, "Unable to write to study file. Study not saved.");
+					JOptionPane.showMessageDialog(egoNet.getFrame(), "Unable to write to study file. Study not saved.");
+					throw new RuntimeException(e);
 				}
 			}
 			else
@@ -476,8 +486,8 @@ public class EgoStore
       studyElement.setAttribute("Creator", Shared.version);
       studyElement.setAttribute("Updated", DateUtils.getDateString(Calendar.getInstance().getTime(), "dd/MM/yyyy hh:mm a"));
       
-      EgoNet.study.writeStudyData(studyElement);
-      EgoNet.study.writeAllQuestionData(studyElement);
+      egoNet.getStudy().writeStudyData(studyElement);
+      egoNet.getStudy().writeAllQuestionData(studyElement);
 
       document.write(f);
    }
@@ -507,27 +517,19 @@ public class EgoStore
 
          while (questions.hasMoreElements())
          {
-            try
-            {
                Question q = new Question(questions.next());
 
                if (q != null)
                {
                   /* Question complete, add it */
-                  EgoNet.study.addQuestion(q);
+                  egoNet.getStudy().addQuestion(q);
                }
-            }
-            catch (Exception ex)
-            {
-               //					ex.printStackTrace();
-               throw ex;
-            }
          }
       }
       catch (Exception e)
       {
          JOptionPane.showMessageDialog(
-         	EgoNet.frame,
+         	egoNet.getFrame(),
             "Unable to read question file",
             "Question Reading Error",
             JOptionPane.ERROR_MESSAGE);
@@ -551,7 +553,7 @@ public class EgoStore
       Element study = document.setRoot("QuestionFile");
       study.setAttribute("Id", Long.toString(new Date().getTime()));
 
-      EgoNet.study.writeAllQuestionData(study);
+      egoNet.getStudy().writeAllQuestionData(study);
 
       document.write(f);
    }
@@ -577,7 +579,7 @@ public class EgoStore
                studyFileInUse = true;
 
                JOptionPane.showMessageDialog(
-                     EgoNet.frame,
+                     egoNet.getFrame(),
                      "This study has already been used for at least one interview.\n" +
                      "You may change the text of questions while still using previously generated interview files. However, \n" +
                      "if you add, delete, reorder, or modify the answer types of any questions you will no longer be able to use \n" +
@@ -586,18 +588,18 @@ public class EgoStore
                      JOptionPane.WARNING_MESSAGE);
             }
 
-            EgoNet.study = new Study(document);
-            EgoNet.study.setInUse(studyFileInUse);
+            egoNet.setStudy(new Study(document));
+            egoNet.getStudy().setInUse(studyFileInUse);
          }
          catch (Exception e)
          {
             JOptionPane.showMessageDialog(
-               EgoNet.frame,
+               egoNet.getFrame(),
                "Unable to read this study file",
                "Study Reading Error",
                JOptionPane.ERROR_MESSAGE);
 
-            EgoNet.study = new Study();
+            egoNet.setStudy(new Study());
          }
       }
    }

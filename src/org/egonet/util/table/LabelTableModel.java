@@ -51,7 +51,7 @@ public class LabelTableModel extends AbstractTableModel {
 		rowData[rowIndex] = selection;
 	}
 
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return getValueAt(0, c).getClass();
 	}
 

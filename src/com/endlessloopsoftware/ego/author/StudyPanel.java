@@ -57,21 +57,16 @@ public class StudyPanel extends JPanel
 			"You may add predefined questions to the study by selecting Import Questions from the file menu"};
 
 
+	private final EgoNet egoNet;
+	
 	/**
 	 * Generates Panel for study configuration info
 	 * @param 	parent	parent frame for this panel
 	 */
-	public StudyPanel(EgoFrame parent)
+	public StudyPanel(EgoNet egoNet) throws Exception
 	{
-
-		try
-		{
-			jbInit();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		this.egoNet = egoNet;
+		jbInit();
 	}
 
 	/**
@@ -142,30 +137,33 @@ public class StudyPanel extends JPanel
 	 */
 	public void fillPanel()
 	{
-		boolean hasStudy = (EgoNet.storage.getStudyFile() != null);
+		boolean hasEgoNet = egoNet != null;
+		boolean hasStorage = hasEgoNet && egoNet.getStorage() != null;
+		boolean hasStudy = hasStorage && (egoNet.getStorage().getStudyFile() != null);
 
-		try
-		{
 			study_name_field.			setEnabled(hasStudy);
 			study_name_label.			setEnabled(hasStudy);
 			study_num_alters_label.	setEnabled(hasStudy);
-			study_num_alters_field.	setEnabled(hasStudy && !EgoNet.storage.getStudyInUse());
+			study_num_alters_field.	setEnabled(hasStudy && !egoNet.getStorage().getStudyInUse());
 			study_path_label.			setEnabled(hasStudy);
 			study_path_field.			setEnabled(hasStudy);
 
-			study_name_field.			setText(EgoNet.study.getStudyName());
-			study_path_field.			setText(filename(EgoNet.storage.getStudyFile()));
+			study_name_field.			setText(
+					egoNet
+					.getStudy()
+					.getStudyName());
+			
+			try {
+			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
+			} catch (IOException ex)
+			{
+				throw new RuntimeException(ex);
+			}
 
-			study_num_alters_field.setText(Integer.toString(EgoNet.study.getNumAlters()));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNumAlters()));
 	}
 
-	private String filename(File f)
-			throws IOException
+	private String filename(File f) throws IOException
 	{
 		if (f == null)
 		{
@@ -181,9 +179,9 @@ public class StudyPanel extends JPanel
 	{
 		String s = study_name_field.getText();
 
-		if (!EgoNet.study.getStudyName().equals(s))
+		if (!egoNet.getStudy().getStudyName().equals(s))
 		{
-			EgoNet.study.setStudyName(s);
+			egoNet.getStudy().setStudyName(s);
 		}
 	}
 
@@ -197,9 +195,9 @@ public class StudyPanel extends JPanel
 			i = Integer.parseInt(s);
 		}
 		
-		if (i != EgoNet.study.getNumAlters())
+		if (i != egoNet.getStudy().getNumAlters())
 		{
-			EgoNet.study.setNumAlters(i);
+			egoNet.getStudy().setNumAlters(i);
 		}
 	}
 	

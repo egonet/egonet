@@ -21,7 +21,6 @@ package org.egonet.util.listbuilder;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.awt.FlowLayout;
 import java.awt.event.*;
 
 import com.endlessloopsoftware.ego.author.CategoryInputPane;
@@ -29,7 +28,6 @@ import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -486,7 +484,7 @@ public class ListBuilder extends JPanel implements Observer {
 							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0, KeyEvent.VK_ENTER, '\n');
 							saveDataForSelectionOfList(keyEvent);
 						} catch (Exception ex) {
-							ex.printStackTrace(System.err);
+							// eat failure, keypress simulation failed
 						}
 					}
 				else { //if (itemName.getText() != null && value.getText() != null) {
@@ -495,7 +493,7 @@ public class ListBuilder extends JPanel implements Observer {
 									KeyEvent.VK_ENTER, '\n');
 							saveDataForSelectionOfList(keyEvent);
 						} catch (Exception ex) {
-							ex.printStackTrace(System.err);
+							// eat failure, keypress simulation failed
 						}
 					}
 			}
@@ -536,7 +534,7 @@ public class ListBuilder extends JPanel implements Observer {
 		return panelButtons;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 	
 		ListBuilder listBuilder = new ListBuilder();
 
@@ -555,7 +553,7 @@ public class ListBuilder extends JPanel implements Observer {
 		listBuilder.setAdjacencyActive(true);
 
 		
-		CategoryInputPane frame = new CategoryInputPane(new JList());
+		CategoryInputPane frame = new CategoryInputPane(null, new JList());
 		frame.pack();
 		frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);

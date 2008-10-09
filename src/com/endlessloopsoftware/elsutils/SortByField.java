@@ -31,16 +31,9 @@ public class SortByField implements Comparator
 	private final Object[] arglist = new Object[0];
 	Method                 method;
 
-	public SortByField(Class sortClass, String methodName)
+	public SortByField(Class sortClass, String methodName) throws NoSuchMethodException
 	{
-		try
-		{
 			this.method = sortClass.getMethod(methodName, argtypelist);
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
 	}
 
 	public int compare(Object a, Object b)

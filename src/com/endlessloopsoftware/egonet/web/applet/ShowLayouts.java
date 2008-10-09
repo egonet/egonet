@@ -125,7 +125,7 @@ public class ShowLayouts extends JApplet {
 	 * @return
 	 */
 	private static Class[] getCombos() {
-		List layouts = new ArrayList();
+		List<Class> layouts = new ArrayList<Class>();
 		layouts.add(KKLayout.class);
 		layouts.add(FRLayout.class);
 		layouts.add(CircleLayout.class);

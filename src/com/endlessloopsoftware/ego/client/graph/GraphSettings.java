@@ -60,20 +60,18 @@ public class GraphSettings {
 
 	GraphRenderer renderer;
 
-	public GraphSettings(GraphRenderer renderer) {
+	private EgoClient egoClient;
+	public GraphSettings(EgoClient egoClient, GraphRenderer renderer) {
+		this.egoClient = egoClient;
 		this.renderer = renderer;
-		try {
 			init();
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-		}
 	}
 
-	private void init() throws Exception {
-		int noOfAlters = EgoClient.interview.getNumAlters();
+	private void init() {
+		int noOfAlters = egoClient.getInterview().getNumAlters();
 		// initialize nodes with default settings
 		for (int i = 0; i < noOfAlters; i++) {
-			String alterName = EgoClient.interview.getAlterList()[i];
+			String alterName = egoClient.getInterview().getAlterList()[i];
 			Color color = Color.RED;
 			int size = 1;
 			NodeShape shape = NodeShape.Circle;
@@ -84,8 +82,8 @@ public class GraphSettings {
 			nodeSettingsMap.put(renderer.getvertexArray()[i], nodeProperty);
 		}
 		// initialize edges with default settings
-		renderer.getGraph().removeAllEdges();
-		GraphData graphData = new GraphData();
+		GraphRenderer.getGraph().removeAllEdges();
+		GraphData graphData = new GraphData(egoClient);
 		int[][] adjacencyMatrix = graphData.getAdjacencyMatrix();
 		for (int i = 0; i < adjacencyMatrix.length; ++i) {
 			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
@@ -93,8 +91,8 @@ public class GraphSettings {
 					UndirectedSparseEdge edge = new UndirectedSparseEdge(
 							renderer.getvertexArray()[i], renderer
 									.getvertexArray()[j]);
-					renderer.getGraph().addEdge(edge);
-					String label = ((Integer) EgoClient.interview.getStats().proximityMatrix[i][j])
+					GraphRenderer.getGraph().addEdge(edge);
+					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j])
 							.toString();
 					EdgeProperty edgeProperty = new EdgeProperty(label,
 							Color.BLACK, EdgeShape.Line, 1);
@@ -112,7 +110,7 @@ public class GraphSettings {
 			Document doc = docBuilder.newDocument();
 
 			Element studyElement = doc.createElement("GraphSettings");
-			String studyID = ((Long) EgoClient.study.getStudyId()).toString();
+			String studyID = ((Long) egoClient.getStudy().getStudyId()).toString();
 			studyElement.setAttribute("StudyId", studyID);
 			doc.appendChild(studyElement);
 
@@ -130,12 +128,12 @@ public class GraphSettings {
 
 			// zoomElement
 			Element zoomElement = doc.createElement("Zoom");
-			zoomElement.setAttribute("zoom", renderer.getVv().getLayout()
+			zoomElement.setAttribute("zoom", GraphRenderer.getVv().getLayout()
 					.getClass().toString());
 
 			// backGroundElement
 			Element backGroundElement = doc.createElement("Background");
-			String background = ((Integer) renderer.getVisualizationViewer()
+			String background = ((Integer) GraphRenderer.getVisualizationViewer()
 					.getBackground().getRGB()).toString();
 			backGroundElement.setAttribute("background", background);
 
@@ -170,15 +168,14 @@ public class GraphSettings {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void loadSettingsFile(File file)
-			throws ParserConfigurationException, SAXException, IOException {
+	public void loadSettingsFile(File file) throws ParserConfigurationException, SAXException, IOException, Exception {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(file);
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
 
-		Study study = EgoClient.interview.getStudy();
+		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
 		Map<Long, Question> questionMap = questionList.getQuestionMap();
 
@@ -207,7 +204,7 @@ public class GraphSettings {
 					e.printStackTrace();
 				}
 
-				renderer.getVv().setBackground(
+				GraphRenderer.getVv().setBackground(
 						Color.decode(backgroundElement
 								.getAttribute("background")));
 				if (showNodeLabelElement.getAttribute("shownodelabel").equals(
@@ -455,19 +452,19 @@ public class GraphSettings {
 	}
 
 	private String getAlterInfo(int alterIndex) {
-		String[] alterToolTip = new String[EgoClient.interview.getNumAlters()];
+		String[] alterToolTip = new String[egoClient.getInterview().getNumAlters()];
 		for (int i = 0; i < alterToolTip.length; i++) {
-			alterToolTip[i] = "<html>" + EgoClient.interview.getAlterList()[i]
+			alterToolTip[i] = "<html>" + egoClient.getInterview().getAlterList()[i]
 					+ "<br>";
 		}
-		Answer[] answers = EgoClient.interview.get_answers();
+		Answer[] answers = egoClient.getInterview().get_answers();
 		for (Answer answer : answers) {
 			String questionTitle = "";
 			String answerString = "";
-			Question question = EgoClient.study.getQuestion(answer.questionId);
+			Question question = egoClient.getStudy().getQuestion(answer.questionId);
 			if (question.questionType == Question.ALTER_QUESTION) {
 				questionTitle = question.title;
-				answerString = answer.string;
+				answerString = answer.string + " (index="+answer.getIndex()+",value="+answer.getValue()+")";
 				int[] alters = answer.getAlters();
 				for (int alter : alters) {
 					alterToolTip[alter] += questionTitle + " : " + answerString

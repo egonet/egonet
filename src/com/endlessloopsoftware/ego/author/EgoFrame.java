@@ -43,6 +43,7 @@ public class EgoFrame extends JFrame implements Observer {
 	int lastTab = 0;
 	int curTab = 0;
 
+	private final EgoNet egoNet;
 	private JPanel contentPane;
 
 	private final JMenuBar jEgonetMenuBar = new JMenuBar();
@@ -73,36 +74,39 @@ public class EgoFrame extends JFrame implements Observer {
 	private final JTabbedPane jTabbedPane = new JTabbedPane();
 	private final BorderLayout borderLayout1 = new BorderLayout();
 
-	private final StudyPanel study_panel = new StudyPanel(this);
+	private final StudyPanel study_panel;
 
-	private final EgoQPanel[] questionPanel = {
-			null,
-			(EgoQPanel) new AuthoringQuestionPanel(Question.EGO_QUESTION),
-			(EgoQPanel) new PromptPanel(Question.ALTER_PROMPT),
-			(EgoQPanel) new AuthoringQuestionPanel(Question.ALTER_QUESTION),
-			(EgoQPanel) new AuthoringQuestionPanel(Question.ALTER_PAIR_QUESTION), };
-
+	private final EgoQPanel[] questionPanel;
+	
 	// Construct the frame
-	public EgoFrame() {
+	public EgoFrame(EgoNet egoNet) throws Exception
+	{
+		this.egoNet = egoNet;
+		study_panel = new StudyPanel(egoNet);
+		
+		questionPanel = new EgoQPanel[] {
+					null,
+					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.EGO_QUESTION),
+					(EgoQPanel) new PromptPanel(egoNet, Question.ALTER_PROMPT),
+					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.ALTER_QUESTION),
+					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.ALTER_PAIR_QUESTION), };
+
+		
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-		try {
-			jbInit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		jbInit();
 	}
 
 	// Component initialization
 	private void jbInit() throws Exception {
 		// Listen for window closing
 		this.addWindowListener(new CloseListener());
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(borderLayout1);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(screenSize);
-		this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
+		//this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 		this.setTitle("Egocentric Network Study");
 
 		jMenuFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -242,9 +246,9 @@ public class EgoFrame extends JFrame implements Observer {
 		});
 
 		/* Fill panel, initialize frame */
-		EgoNet.study = new Study();
+		egoNet.setStudy(new Study());
 		fillCurrentPanel();
-		EgoNet.study.setModified(false);
+		egoNet.getStudy().setModified(false);
 		updateMenus();
 	}
 
@@ -252,7 +256,7 @@ public class EgoFrame extends JFrame implements Observer {
 	 * Updates menus to take dirty question and study into account
 	 */
 	public void updateMenus() {
-		if (EgoNet.storage.getStudyFile() == null) {
+		if (egoNet.getStorage().getStudyFile() == null) {
 			jMenuFileImport.setEnabled(false);
 			jMenuFileClose.setEnabled(false);
 			jMenuFileSave.setEnabled(false);
@@ -268,8 +272,8 @@ public class EgoFrame extends JFrame implements Observer {
 		} else {
 			jMenuFileImport.setEnabled(true);
 			jMenuFileClose.setEnabled(true);
-			jMenuFileSave.setEnabled(EgoNet.study.isCompatible()
-					&& EgoNet.study.isModified());
+			jMenuFileSave.setEnabled(egoNet.getStudy().isCompatible()
+					&& egoNet.getStudy().isModified());
 			jMenuFileSaveAs.setEnabled(true);
 			jMenuFileUpload.setEnabled(true);
 			jMenuFileSelectStudy.setEnabled(true);
@@ -291,11 +295,11 @@ public class EgoFrame extends JFrame implements Observer {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
-			EgoNet.storage.newStudyFiles();
+			egoNet.getStorage().newStudyFiles();
 			fillCurrentPanel();
-			EgoNet.study.setModified(false);
-			EgoNet.study.setCompatible(true);
-			EgoNet.study.addObserver(this);
+			egoNet.getStudy().setModified(false);
+			egoNet.getStudy().setCompatible(true);
+			egoNet.getStudy().addObserver(this);
 			updateMenus();
 		}
 	}
@@ -310,11 +314,11 @@ public class EgoFrame extends JFrame implements Observer {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
-			EgoNet.storage.selectStudy();
+			egoNet.getStorage().selectStudy();
 			fillCurrentPanel();
-			EgoNet.study.setModified(false);
-			EgoNet.study.setCompatible(true);
-			EgoNet.study.addObserver(this);
+			egoNet.getStudy().setModified(false);
+			egoNet.getStudy().setCompatible(true);
+			egoNet.getStudy().addObserver(this);
 			updateMenus();
 		}
 	}
@@ -323,25 +327,25 @@ public class EgoFrame extends JFrame implements Observer {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
-			EgoNet.storage.setStudyFile(null);
-			EgoNet.study = new Study();
+			egoNet.getStorage().setStudyFile(null);
+			egoNet.setStudy(new Study());
 			fillCurrentPanel();
-			EgoNet.study.addObserver(this);
-			EgoNet.study.setModified(false);
+			egoNet.getStudy().addObserver(this);
+			egoNet.getStudy().setModified(false);
 		}
 	}
 
 	private void jMenuFileImport_actionPerformed(ActionEvent e) {
-		EgoNet.storage.importQuestions();
+		egoNet.getStorage().importQuestions();
 		fillCurrentPanel();
 	}
 
 	private void jMenuFileExport_actionPerformed(ActionEvent e) {
-		EgoNet.storage.exportQuestions();
+		egoNet.getStorage().exportQuestions();
 	}
 
 	private void jMenuFileUpload_actionPerformed(ActionEvent e) {
-		JDialog storeDialog = new StoreStudyDialog(this);
+		JDialog storeDialog = new StoreStudyDialog(this, egoNet);
 		storeDialog.pack();
 		/*
 		 * this.show(); Code above deprecated. Code change done Changed by sonam
@@ -361,20 +365,20 @@ public class EgoFrame extends JFrame implements Observer {
 	}
 
 	private void jMenuFileSave_actionPerformed(ActionEvent e) {
-		if (EgoNet.storage.getStudyFile() == null) {
+		if (egoNet.getStorage().getStudyFile() == null) {
 			jMenuFileSaveAs_actionPerformed(e);
 		} else {
-			EgoNet.storage.saveStudyFile();
-			EgoNet.study.setModified(false);
+			egoNet.getStorage().saveStudyFile();
+			egoNet.getStudy().setModified(false);
 		}
 	}
 
 	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) {
-		EgoNet.storage.saveAsStudyFile();
+		egoNet.getStorage().saveAsStudyFile();
 		fillStudyPanel();
-		EgoNet.study.addObserver(this);
-		EgoNet.study.setModified(false);
-		EgoNet.study.setCompatible(true);
+		egoNet.getStudy().addObserver(this);
+		egoNet.getStudy().setModified(false);
+		egoNet.getStudy().setCompatible(true);
 	}
 
 	// File | Exit action performed
@@ -382,7 +386,7 @@ public class EgoFrame extends JFrame implements Observer {
 		boolean exit = closeStudyFile();
 
 		if (exit) {
-			System.exit(0);
+			dispose();
 		}
 	}
 
@@ -404,7 +408,7 @@ public class EgoFrame extends JFrame implements Observer {
 	public boolean closeStudyFile() {
 		boolean exit = true;
 
-		if (EgoNet.study.isModified()) {
+		if (egoNet.getStudy().isModified()) {
 			int confirm = JOptionPane
 					.showConfirmDialog(
 							this,
@@ -423,8 +427,8 @@ public class EgoFrame extends JFrame implements Observer {
 	}
 
 	public void fillCurrentPanel() {
-		boolean sd = EgoNet.study.isModified();
-		boolean sc = EgoNet.study.isCompatible();
+		boolean sd = egoNet.getStudy().isModified();
+		boolean sc = egoNet.getStudy().isCompatible();
 
 		if (curTab == Question.STUDY_CONFIG) {
 			study_panel.fillPanel();
@@ -433,26 +437,27 @@ public class EgoFrame extends JFrame implements Observer {
 			questionPanel[curTab].fillPanel();
 		}
 
-		EgoNet.study.setModified(sd);
-		EgoNet.study.setCompatible(sc);
+		egoNet.getStudy().setModified(sd);
+		egoNet.getStudy().setCompatible(sc);
 	}
 
 	public void fillStudyPanel() {
-		boolean sd = EgoNet.study.isModified();
+		boolean sd = egoNet.getStudy().isModified();
 
 		if (curTab == Question.STUDY_CONFIG) {
 			study_panel.fillPanel();
 		}
 
-		EgoNet.study.setModified(sd);
+		egoNet.getStudy().setModified(sd);
 	}
 
-	private void jTabbedPane_stateChanged(ChangeEvent e) {
+	private void jTabbedPane_stateChanged(ChangeEvent e)
+	{
 		lastTab = curTab;
 		curTab = jTabbedPane.getSelectedIndex();
 
 		if ((lastTab == Question.STUDY_CONFIG) && (curTab != lastTab)) {
-			EgoNet.study.validateQuestions();
+			egoNet.getStudy().validateQuestions();
 		}
 
 		if ((curTab >= Question.MIN_QUESTION_TYPE)

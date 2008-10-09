@@ -44,7 +44,7 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 
 public class GraphTabPanel extends JPanel {
-	private List layoutOptions;
+	private List<Class> layoutOptions;
 
 	private DefaultModalGraphMouse graphMouse;
 
@@ -99,9 +99,9 @@ public class GraphTabPanel extends JPanel {
 
 	public GraphTabPanel(GraphRenderer gr) {
 		this.graphRenderer = gr;
-		this.g = gr.getGraph();
+		this.g = GraphRenderer.getGraph();
 		this.graphMouse = gr.getGraphMouse();
-		this.vv = gr.getVv();
+		this.vv = GraphRenderer.getVv();
 		createComponents();
 	}
 
@@ -119,7 +119,7 @@ public class GraphTabPanel extends JPanel {
 		layoutLabel.setOpaque(true);
 
 		// add all possible layouts to the layout combo
-		layoutOptions = new ArrayList();
+		layoutOptions = new ArrayList<Class>();
 		layoutOptions.add(KKLayout.class); // Kamada-Kawai
 		layoutOptions.add(FRLayout.class); // // Fruchterman-Reingold
 		layoutOptions.add(CircleLayout.class); // Vertices randomly on a circle
@@ -150,7 +150,11 @@ public class GraphTabPanel extends JPanel {
 				// call renderer to render the graph with selected layout
 				JComboBox cb = (JComboBox) e.getSource();
 				Class lay = (Class) cb.getSelectedItem();
-				graphRenderer.changeLayout(lay);
+				try { graphRenderer.changeLayout(lay); }
+				catch (Exception ex)
+				{
+					throw new RuntimeException(ex);
+				}
 			}
 		});
 

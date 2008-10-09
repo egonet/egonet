@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
@@ -37,7 +36,6 @@ import javax.swing.ProgressMonitor;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
-import com.endlessloopsoftware.elsutils.SwingWorker;
 import com.endlessloopsoftware.elsutils.files.DirList;
 import com.endlessloopsoftware.elsutils.files.FileHelpers;
 
@@ -51,10 +49,12 @@ public class SummaryPanel extends JPanel
 
 	private          StatRecord[] 	_stats          = new StatRecord[0];
 	private          int 				_recordCount    = 0;
+	private EgoClient egoClient;
 
 	
-   public SummaryPanel(StatRecord[] stats)
+   public SummaryPanel(EgoClient egoClient, StatRecord[] stats)
    {
+	   this.egoClient = egoClient;
       setLayout(new GridBagLayout());
 
       /* Get data to display */
@@ -110,67 +110,15 @@ public class SummaryPanel extends JPanel
 		});
 	}
 
-   static void gotoPanel(StatRecord[] stats)
-   {
-      // Build Screen
-      EgoClient.frame.setVisible(false);
-      Shared.setWaitCursor(EgoClient.frame, true);
-      EgoClient.frame.setContentPane(new SummaryPanel(stats));
-      EgoClient.frame.createMenuBar(EgoClient.VIEW_SUMMARY);
-      EgoClient.frame.pack();
-     // EgoClient.frame.setSize(640, 530);
-      EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-      Shared.setWaitCursor(EgoClient.frame, false);
-      EgoClient.frame.setVisible(true);
-   }
-
-	static void gotoPanel()
-   {
-      final ProgressMonitor progressMonitor = new ProgressMonitor(EgoClient.frame, "Calculating Statistics", "", 0, 100);
-      final SwingWorker worker = new SwingWorker() 
-      {
-         public Object construct()
-         {
-            // Build Screen
-            EgoClient.frame.setVisible(false);
-            Shared.setWaitCursor(EgoClient.frame, true);
-            EgoClient.frame.setContentPane(new SummaryPanel(progressMonitor));
-            EgoClient.frame.createMenuBar(EgoClient.VIEW_SUMMARY);
-            EgoClient.frame.pack();
-            //EgoClient.frame.setSize(640, 530);
-            EgoClient.frame.setExtendedState(EgoClient.frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-            return EgoClient.frame;
-         }
-
-         public void finished()
-         {
-            Shared.setWaitCursor(EgoClient.frame, false);
-            EgoClient.frame.setVisible(true);
-
-            if (progressMonitor.isCanceled())
-            {
-               SourceSelectPanel.gotoPanel(false);
-            }
-            progressMonitor.close();
-         }
-      };
-
-      progressMonitor.setProgress(0);
-      progressMonitor.setMillisToDecideToPopup(0);
-      progressMonitor.setMillisToPopup(0);
-
-      worker.start();
-   }
-
 	private void finishedButton_actionPerformed(ActionEvent e)
 	{
-      SourceSelectPanel.gotoPanel(false);
+	    egoClient.getFrame().gotoSourceSelectPanel(false);
 	}
 
 	private void loadInterviewArray(ProgressMonitor progress)
 	{
-		File intPath = new File(EgoClient.storage.getPackageFile().getParent(), "/Interviews/");
-		File istPath = new File(EgoClient.storage.getPackageFile().getParent(), "/Statistics/");
+		File intPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Interviews/");
+		File istPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Statistics/");
 		String[] intFiles = DirList.getDirList(intPath, "int");
 		Set istFileSet = new HashSet();
 		int i = 0, p = 0;
@@ -206,9 +154,9 @@ public class SummaryPanel extends JPanel
 					Element root = document.getRoot();
 					long id = Long.parseLong(root.getAttribute("StudyId"));
 
-					if (id == EgoClient.study.getStudyId())
+					if (id == egoClient.getStudy().getStudyId())
 					{
-						EgoClient.storage.generateStatisticsFile(intFile);
+						egoClient.getStorage().generateStatisticsFile(intFile);
 						istFileSet.add(thisIstFile);
 					}
 				}
@@ -220,7 +168,7 @@ public class SummaryPanel extends JPanel
 					long id = Long.parseLong(root.getAttribute("StudyId"));
 					String creator = root.getAttribute("Creator");
 
-					if (id == EgoClient.study.getStudyId())
+					if (id == egoClient.getStudy().getStudyId())
 					{
 						//Commented this out because it would not create a new IST file when new measures are added
 						if (creator.equals(Shared.version))
@@ -229,7 +177,7 @@ public class SummaryPanel extends JPanel
 						}
 						else
 						{
-							EgoClient.storage.generateStatisticsFile(intFile);
+							egoClient.getStorage().generateStatisticsFile(intFile);
 							istFileSet.add(thisIstFile);
 						}
 					}
@@ -482,8 +430,7 @@ public class SummaryPanel extends JPanel
    			}
    			catch (Exception ex)
    			{
-   				ex.printStackTrace();
-   				return (null);
+   				throw new RuntimeException(ex);
    			}
    		}
    		else

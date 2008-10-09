@@ -48,7 +48,7 @@ public class InterviewDataValue
    private int[][]        adjacencyMatrix           = new int[0][0];
    private boolean        adjacencyMatrixHasBeenSet = false;
 
-   private Set            AnswerDataValues          = new java.util.TreeSet();
+   private Set<AnswerDataValue>            AnswerDataValues          = new java.util.TreeSet<AnswerDataValue>();
    private InterviewEJBPK pk;
    private StudyEJBLocal  study;
    private Long           studyId;
@@ -238,53 +238,53 @@ public class InterviewDataValue
 		return adjacencyMatrixHasBeenSet;
 	}
 
-	protected Set	addedAnswerDataValues		= new java.util.HashSet();
+	protected Set<AnswerDataValue>	addedAnswerDataValues		= new java.util.HashSet<AnswerDataValue>();
 
-	protected Set	onceAddedAnswerDataValues	= new java.util.HashSet();
+	protected Set<AnswerDataValue>	onceAddedAnswerDataValues	= new java.util.HashSet<AnswerDataValue>();
 
-	protected Set	removedAnswerDataValues		= new java.util.HashSet();
+	protected Set<AnswerDataValue>	removedAnswerDataValues		= new java.util.HashSet<AnswerDataValue>();
 
-	protected Set	updatedAnswerDataValues		= new java.util.HashSet();
+	protected Set<AnswerDataValue>	updatedAnswerDataValues		= new java.util.HashSet<AnswerDataValue>();
 
-	public Set getAddedAnswerDataValues()
+	public Set<AnswerDataValue> getAddedAnswerDataValues()
 	{
 		return addedAnswerDataValues;
 	}
 
-	public Set getOnceAddedAnswerDataValues()
+	public Set<AnswerDataValue> getOnceAddedAnswerDataValues()
 	{
 		return onceAddedAnswerDataValues;
 	}
 
-	public Set getRemovedAnswerDataValues()
+	public Set<AnswerDataValue> getRemovedAnswerDataValues()
 	{
 		return removedAnswerDataValues;
 	}
 
-	public Set getUpdatedAnswerDataValues()
+	public Set<AnswerDataValue> getUpdatedAnswerDataValues()
 	{
 		return updatedAnswerDataValues;
 	}
 
-	public void setAddedAnswerDataValues(Set addedAnswerDataValues)
+	public void setAddedAnswerDataValues(Set<AnswerDataValue> addedAnswerDataValues)
 	{
 		this.addedAnswerDataValues.clear();
 		this.addedAnswerDataValues.addAll(addedAnswerDataValues);
 	}
 
-	public void setOnceAddedAnswerDataValues(Set onceAddedAnswerDataValues)
+	public void setOnceAddedAnswerDataValues(Set<AnswerDataValue> onceAddedAnswerDataValues)
 	{
 		this.onceAddedAnswerDataValues.clear();
 		this.onceAddedAnswerDataValues.addAll(onceAddedAnswerDataValues);
 	}
 
-	public void setRemovedAnswerDataValues(Set removedAnswerDataValues)
+	public void setRemovedAnswerDataValues(Set<AnswerDataValue> removedAnswerDataValues)
 	{
 		this.removedAnswerDataValues.clear();
 		this.removedAnswerDataValues.addAll(removedAnswerDataValues);
 	}
 
-	public void setUpdatedAnswerDataValues(Set updatedAnswerDataValues)
+	public void setUpdatedAnswerDataValues(Set<AnswerDataValue> updatedAnswerDataValues)
 	{
 		this.updatedAnswerDataValues.clear();
 		this.updatedAnswerDataValues.addAll(updatedAnswerDataValues);
@@ -292,7 +292,7 @@ public class InterviewDataValue
 
 	public com.endlessloopsoftware.egonet.util.AnswerDataValue[] getAnswerDataValues()
 	{
-		return (com.endlessloopsoftware.egonet.util.AnswerDataValue[]) this.AnswerDataValues
+		return this.AnswerDataValues
 				.toArray(new com.endlessloopsoftware.egonet.util.AnswerDataValue[AnswerDataValues.size()]);
 	}
 
@@ -354,10 +354,10 @@ public class InterviewDataValue
 
 	public void cleanAnswerDataValue()
 	{
-		this.addedAnswerDataValues = new java.util.HashSet();
-		this.onceAddedAnswerDataValues = new java.util.HashSet();
-		this.removedAnswerDataValues = new java.util.HashSet();
-		this.updatedAnswerDataValues = new java.util.HashSet();
+		this.addedAnswerDataValues = new java.util.HashSet<AnswerDataValue>();
+		this.onceAddedAnswerDataValues = new java.util.HashSet<AnswerDataValue>();
+		this.removedAnswerDataValues = new java.util.HashSet<AnswerDataValue>();
+		this.updatedAnswerDataValues = new java.util.HashSet<AnswerDataValue>();
 	}
 
 	public void copyAnswerDataValuesFrom(InterviewDataValue from)

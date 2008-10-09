@@ -89,8 +89,8 @@ public class PrintPreview extends JFrame
 						}
 						catch (PrinterException ex)
 						{
-							ex.printStackTrace();
 							System.err.println("Printing error: " + ex.toString());
+							throw new RuntimeException(ex);
 						}
 					}
 				};

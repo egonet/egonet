@@ -38,6 +38,7 @@ public abstract class SwingWorker
 		ThreadVar(Thread t) { thread = t; }
 		synchronized Thread get() { return thread; }
 		synchronized void clear() { thread = null; }
+		public String toString() { return thread == null ? "null" : thread.toString(); }
 	}
 
 	private ThreadVar threadVar;
@@ -167,4 +168,6 @@ public abstract class SwingWorker
 			t.start();
 		}
 	}
+	
+	public String toString() { return thread == null ? "null" : thread.toString(); }	
 }

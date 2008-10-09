@@ -50,6 +50,7 @@ import com.endlessloopsoftware.egonet.util.QuestionDataValue;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
+@SuppressWarnings({"unchecked"})
 public class InterviewDataServlet extends HttpServlet
 {
 	public final Logger	logger	= Logger.getLogger(this.getClass());

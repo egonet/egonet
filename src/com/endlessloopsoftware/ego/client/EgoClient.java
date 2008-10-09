@@ -23,38 +23,80 @@ import javax.swing.JFrame;
 
 public class EgoClient
 {
-	public static Study			study				= new Study();
-	public static EgoStore		storage				= new EgoStore();
-	public static ClientFrame	frame = new ClientFrame();
-	public static Interview		interview			= null;
-	public static int			uiPath;
-
-	/**
-	 * Used to create drop down menus of different "modes"
-	 */
-	public static final int		SELECT				= 0;
-	public static final int		DO_INTERVIEW		= 1;
-	public static final int		VIEW_INTERVIEW		= 2;
-	public static final int		VIEW_SUMMARY		= 3;
+	private Study			study;
+	private EgoStore		storage;
+	private ClientFrame	frame;
+	private Interview		interview;
+	private int			uiPath;
 
 	//Construct the application
 	public EgoClient()
 	{
-      SourceSelectPanel.gotoPanel(true);
+		study = new Study();
+		storage = new EgoStore(this);
+		frame = new ClientFrame(this);
+		interview = null;
+
+		
+		frame.gotoSourceSelectPanel(true);
 		frame.setVisible(true);
 		frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 
 	}
 
-	public static ClientFrame getFrame()
+	private static EgoClient en = null;
+	public static synchronized EgoClient getInstance() throws Exception
 	{
-		return (frame);
+		if(en == null)
+		{
+			en = new EgoClient();
+		}
+		return en;
 	}
 
 	//Main method
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
-		//Shared.configureUI();
-		new EgoClient();
+		getInstance().frame.setVisible(true);
+	}
+
+	public Study getStudy() {
+		return study;
+	}
+
+	public void setStudy(Study study) {
+		this.study = study;
+	}
+
+	public EgoStore getStorage() {
+		return storage;
+	}
+
+	public void setStorage(EgoStore storage) {
+		this.storage = storage;
+	}
+
+	public ClientFrame getFrame() {
+		return frame;
+	}
+
+	public void setFrame(ClientFrame frame) {
+		this.frame = frame;
+	}
+
+	public Interview getInterview() {
+		return interview;
+	}
+
+	public void setInterview(Interview interview) {
+		this.interview = interview;
+	}
+
+	public int getUiPath() {
+		return uiPath;
+	}
+
+	public void setUiPath(int uiPath) {
+		this.uiPath = uiPath;
 	}
 }

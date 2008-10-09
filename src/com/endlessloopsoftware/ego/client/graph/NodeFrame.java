@@ -20,12 +20,14 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import javax.swing.*;
 
+import com.endlessloopsoftware.ego.client.EgoClient;
+
 public class NodeFrame extends JFrame{
-	public NodeFrame(GraphRenderer graphRenderer) {
+	public NodeFrame(EgoClient egoClient, GraphRenderer graphRenderer) {
 		JTabbedPane tabs = new JTabbedPane();
-		tabs.add("Node Label", new NodeLabelPanel(graphRenderer));
-		tabs.add("Node Color", new NodeColorPanel(graphRenderer));
-		tabs.add("Node Shape", new NodeShapePanel(graphRenderer));
-		tabs.add("Node Size", new NodeSizePanel(graphRenderer));
+		tabs.add("Node Label", new NodeLabelPanel(egoClient, graphRenderer));
+		tabs.add("Node Color", new NodeColorPanel(egoClient, graphRenderer));
+		tabs.add("Node Shape", new NodeShapePanel(egoClient, graphRenderer));
+		tabs.add("Node Size", new NodeSizePanel(egoClient, graphRenderer));
 	}
 }

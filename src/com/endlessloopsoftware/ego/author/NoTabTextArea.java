@@ -27,7 +27,8 @@ import javax.swing.JTextArea;
  */
 public class NoTabTextArea extends JTextArea
 {
-   public NoTabTextArea()
+   @SuppressWarnings("unchecked")
+public NoTabTextArea()
    {
       super();
       setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);

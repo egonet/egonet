@@ -18,7 +18,6 @@
  */
 package org.egonet.util.table;
 
-import org.egonet.util.listbuilder.Selection;
 import javax.swing.table.AbstractTableModel;
 
 public class PropertyTableModel extends AbstractTableModel{
@@ -52,7 +51,7 @@ public class PropertyTableModel extends AbstractTableModel{
 		fireTableCellUpdated(rowIndex, colIndex);
 	}
 
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return getValueAt(0, c).getClass();
 	}
 

@@ -33,15 +33,8 @@ public class WorkingDialog extends JDialog
 	public WorkingDialog(JFrame frame, String title, boolean modal)
 	{
 		super(frame, title, modal);
-		try
-		{
 			jbInit();
 			pack();
-		}
-		catch(Exception ex)
-		{
-			ex.printStackTrace();
-		}
 	}
 
 	public WorkingDialog()
@@ -49,7 +42,7 @@ public class WorkingDialog extends JDialog
 		this(null, "", false);
 	}
 
-	private void jbInit() throws Exception
+	private void jbInit()
 	{
 		panel1.setLayout(borderLayout1);
 		jLabel1.setFont(new java.awt.Font("Dialog", 1, 16));

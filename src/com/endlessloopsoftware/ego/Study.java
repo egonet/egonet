@@ -843,21 +843,10 @@ public class Study extends Observable
 	 */
 	public void readInterviewStudy(Element e)
 	{
-	//	String data;
-
-		try
-		{
 			if (e.getElement("numalters") != null)
 			{
 				setNumAlters(e.getInt("numalters"));
 			}
-
-		}
-		catch (Exception ex)
-		{
-			/** @todo handle exception */
-			ex.printStackTrace();
-		}
 	}
 
 	/***************************************************************************

@@ -62,17 +62,10 @@ public abstract class ELSProgressBar extends JDialog
 			}
 		});
 
-		try
-		{
 			jbInit();
 
 			this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			this.pack();
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
 	}
 
 	//~ Methods --------------------------------------------------------------------------------------------------------
@@ -80,7 +73,7 @@ public abstract class ELSProgressBar extends JDialog
 	protected abstract Object   construct();
 	protected abstract void     finished();
 
-	private void jbInit() throws Exception
+	private void jbInit()
 	{
 		statusPanel.setLayout(statusLayout);
 

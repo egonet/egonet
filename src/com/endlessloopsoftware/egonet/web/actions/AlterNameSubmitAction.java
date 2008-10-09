@@ -125,7 +125,7 @@ public final class AlterNameSubmitAction
          StudyEJBLocal        study             = WebShared.retrieveStudy(servlet);
 			InterviewDataValue 	interviewData 		= WebShared.retrieveInterviewDataValue(request);
 			InterviewPosition		position				= WebShared.retrieveInterviewPosition(request);
-			List						previousAnswers	   = Arrays.asList(interviewData.getAnswerDataValues());
+			List<AnswerDataValue>	previousAnswers	   = Arrays.asList(interviewData.getAnswerDataValues());
          String[]             alters            = interviewData.getAlters();
          InterviewPosition[]  template          = WebShared.retrieveTemplate(servlet);
          Map                  questionMap       = WebShared.retrieveQuestionMap(servlet);
@@ -251,7 +251,7 @@ public final class AlterNameSubmitAction
     * @param previousAnswers
     * @param answer
     */
-   private void storeCompletedAnswer(StudyEJBLocal study, InterviewDataValue interviewData, List previousAnswers, AnswerDataValue answer)
+   private void storeCompletedAnswer(StudyEJBLocal study, InterviewDataValue interviewData, List<AnswerDataValue> previousAnswers, AnswerDataValue answer)
    {
       int index = Collections.binarySearch(previousAnswers, answer);
 

@@ -66,6 +66,7 @@ import com.endlessloopsoftware.egonet.util.SelectionDataValue;
  *             "SELECT OBJECT(a) FROM QuestionEJB AS a WHERE a.id=?"
  * 
  */
+@SuppressWarnings({"unchecked"})
 public abstract class QuestionEJB implements EntityBean {
 	private QuestionDataValue QuestionDataValue = null;
 

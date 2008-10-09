@@ -26,8 +26,8 @@ public class StudyDataValue
    private boolean questionOrderHasBeenSet = false;
    private java.lang.String UIType;
    private boolean UITypeHasBeenSet = false;
-   private Set InterviewDataValues = new java.util.HashSet();
-   private Set QuestionDataValues = new java.util.HashSet();
+   private Set<InterviewDataValue> InterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+   private Set<QuestionDataValue> QuestionDataValues = new java.util.HashSet<QuestionDataValue>();
 
    private com.endlessloopsoftware.egonet.interfaces.StudyEJBPK pk;
 
@@ -164,35 +164,35 @@ public class StudyDataValue
      return UITypeHasBeenSet;
    }
    
-   protected Set addedInterviewDataValues = new java.util.HashSet();
-   protected Set onceAddedInterviewDataValues = new java.util.HashSet();
-   protected Set removedInterviewDataValues = new java.util.HashSet();
-   protected Set updatedInterviewDataValues = new java.util.HashSet();
+   protected Set<InterviewDataValue> addedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+   protected Set<InterviewDataValue> onceAddedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+   protected Set<InterviewDataValue> removedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+   protected Set<InterviewDataValue> updatedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
 
-   public Set getAddedInterviewDataValues() { return addedInterviewDataValues; }
-   public Set getOnceAddedInterviewDataValues() { return onceAddedInterviewDataValues; }
-   public Set getRemovedInterviewDataValues() { return removedInterviewDataValues; }
-   public Set getUpdatedInterviewDataValues() { return updatedInterviewDataValues; }
+   public Set<InterviewDataValue> getAddedInterviewDataValues() { return addedInterviewDataValues; }
+   public Set<InterviewDataValue> getOnceAddedInterviewDataValues() { return onceAddedInterviewDataValues; }
+   public Set<InterviewDataValue> getRemovedInterviewDataValues() { return removedInterviewDataValues; }
+   public Set<InterviewDataValue> getUpdatedInterviewDataValues() { return updatedInterviewDataValues; }
 
-   public void setAddedInterviewDataValues(Set addedInterviewDataValues)
+   public void setAddedInterviewDataValues(Set<InterviewDataValue> addedInterviewDataValues)
    {
       this.addedInterviewDataValues.clear();
       this.addedInterviewDataValues.addAll(addedInterviewDataValues);
    }
 
-   public void setOnceAddedInterviewDataValues(Set onceAddedInterviewDataValues)
+   public void setOnceAddedInterviewDataValues(Set<InterviewDataValue> onceAddedInterviewDataValues)
    {
       this.onceAddedInterviewDataValues.clear();
       this.onceAddedInterviewDataValues.addAll(onceAddedInterviewDataValues);
    }
 
-   public void setRemovedInterviewDataValues(Set removedInterviewDataValues)
+   public void setRemovedInterviewDataValues(Set<InterviewDataValue> removedInterviewDataValues)
    {
       this.removedInterviewDataValues.clear();
       this.removedInterviewDataValues.addAll(removedInterviewDataValues);
    }
 
-   public void setUpdatedInterviewDataValues(Set updatedInterviewDataValues)
+   public void setUpdatedInterviewDataValues(Set<InterviewDataValue> updatedInterviewDataValues)
    {
       this.updatedInterviewDataValues.clear();
       this.updatedInterviewDataValues.addAll(updatedInterviewDataValues);
@@ -200,7 +200,7 @@ public class StudyDataValue
 
    public com.endlessloopsoftware.egonet.util.InterviewDataValue[] getInterviewDataValues()
    {
-	  return (com.endlessloopsoftware.egonet.util.InterviewDataValue[])this.InterviewDataValues.toArray(new com.endlessloopsoftware.egonet.util.InterviewDataValue[InterviewDataValues.size()]);
+	  return this.InterviewDataValues.toArray(new com.endlessloopsoftware.egonet.util.InterviewDataValue[InterviewDataValues.size()]);
    }
 
    public void setInterviewDataValues(com.endlessloopsoftware.egonet.util.InterviewDataValue[] InterviewDataValues)
@@ -263,10 +263,10 @@ public class StudyDataValue
    }
 
    public void cleanInterviewDataValue(){
-	  this.addedInterviewDataValues = new java.util.HashSet();
-      this.onceAddedInterviewDataValues = new java.util.HashSet();
-	  this.removedInterviewDataValues = new java.util.HashSet();
-	  this.updatedInterviewDataValues = new java.util.HashSet();
+	  this.addedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+      this.onceAddedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+	  this.removedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
+	  this.updatedInterviewDataValues = new java.util.HashSet<InterviewDataValue>();
    }
 
    public void copyInterviewDataValuesFrom(com.endlessloopsoftware.egonet.util.StudyDataValue from)
@@ -274,35 +274,35 @@ public class StudyDataValue
 	  // TODO Clone the List ????
 	  this.InterviewDataValues = from.InterviewDataValues;
    }
-   protected Set addedQuestionDataValues = new java.util.HashSet();
-   protected Set onceAddedQuestionDataValues = new java.util.HashSet();
-   protected Set removedQuestionDataValues = new java.util.HashSet();
-   protected Set updatedQuestionDataValues = new java.util.HashSet();
+   protected Set<QuestionDataValue> addedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+   protected Set<QuestionDataValue> onceAddedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+   protected Set<QuestionDataValue> removedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+   protected Set<QuestionDataValue> updatedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
 
-   public Set getAddedQuestionDataValues() { return addedQuestionDataValues; }
-   public Set getOnceAddedQuestionDataValues() { return onceAddedQuestionDataValues; }
-   public Set getRemovedQuestionDataValues() { return removedQuestionDataValues; }
-   public Set getUpdatedQuestionDataValues() { return updatedQuestionDataValues; }
+   public Set<QuestionDataValue> getAddedQuestionDataValues() { return addedQuestionDataValues; }
+   public Set<QuestionDataValue> getOnceAddedQuestionDataValues() { return onceAddedQuestionDataValues; }
+   public Set<QuestionDataValue> getRemovedQuestionDataValues() { return removedQuestionDataValues; }
+   public Set<QuestionDataValue> getUpdatedQuestionDataValues() { return updatedQuestionDataValues; }
 
-   public void setAddedQuestionDataValues(Set addedQuestionDataValues)
+   public void setAddedQuestionDataValues(Set<QuestionDataValue> addedQuestionDataValues)
    {
       this.addedQuestionDataValues.clear();
       this.addedQuestionDataValues.addAll(addedQuestionDataValues);
    }
 
-   public void setOnceAddedQuestionDataValues(Set onceAddedQuestionDataValues)
+   public void setOnceAddedQuestionDataValues(Set<QuestionDataValue> onceAddedQuestionDataValues)
    {
       this.onceAddedQuestionDataValues.clear();
       this.onceAddedQuestionDataValues.addAll(onceAddedQuestionDataValues);
    }
 
-   public void setRemovedQuestionDataValues(Set removedQuestionDataValues)
+   public void setRemovedQuestionDataValues(Set<QuestionDataValue> removedQuestionDataValues)
    {
       this.removedQuestionDataValues.clear();
       this.removedQuestionDataValues.addAll(removedQuestionDataValues);
    }
 
-   public void setUpdatedQuestionDataValues(Set updatedQuestionDataValues)
+   public void setUpdatedQuestionDataValues(Set<QuestionDataValue> updatedQuestionDataValues)
    {
       this.updatedQuestionDataValues.clear();
       this.updatedQuestionDataValues.addAll(updatedQuestionDataValues);
@@ -310,7 +310,7 @@ public class StudyDataValue
 
    public com.endlessloopsoftware.egonet.util.QuestionDataValue[] getQuestionDataValues()
    {
-	  return (com.endlessloopsoftware.egonet.util.QuestionDataValue[])this.QuestionDataValues.toArray(new com.endlessloopsoftware.egonet.util.QuestionDataValue[QuestionDataValues.size()]);
+	  return this.QuestionDataValues.toArray(new com.endlessloopsoftware.egonet.util.QuestionDataValue[QuestionDataValues.size()]);
    }
 
    public void setQuestionDataValues(com.endlessloopsoftware.egonet.util.QuestionDataValue[] QuestionDataValues)
@@ -373,10 +373,10 @@ public class StudyDataValue
    }
 
    public void cleanQuestionDataValue(){
-	  this.addedQuestionDataValues = new java.util.HashSet();
-      this.onceAddedQuestionDataValues = new java.util.HashSet();
-	  this.removedQuestionDataValues = new java.util.HashSet();
-	  this.updatedQuestionDataValues = new java.util.HashSet();
+	  this.addedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+      this.onceAddedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+	  this.removedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
+	  this.updatedQuestionDataValues = new java.util.HashSet<QuestionDataValue>();
    }
 
    public void copyQuestionDataValuesFrom(com.endlessloopsoftware.egonet.util.StudyDataValue from)

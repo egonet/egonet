@@ -34,7 +34,8 @@ import java.awt.Image;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /// Write out an image as a GIF.
 // <P>
@@ -95,13 +96,13 @@ public class GifEncoder extends ImageEncoder {
 
 	}
 
-	IntHashtable colorHash;
+	Map<Integer,GifEncoderHashitem> colorHash;
 
 	void encodeDone() throws IOException {
 		int transparentIndex = -1;
 		int transparentRgb = -1;
 		// Put all the pixels into a hash table.
-		colorHash = new IntHashtable();
+		colorHash = new HashMap<Integer,GifEncoderHashitem>();
 		int index = 0;
 		for (int row = 0; row < height; ++row) {
 			int rowOffset = row * width;
@@ -147,8 +148,7 @@ public class GifEncoder extends ImageEncoder {
 		byte[] reds = new byte[mapSize];
 		byte[] grns = new byte[mapSize];
 		byte[] blus = new byte[mapSize];
-		for (Enumeration e = colorHash.elements(); e.hasMoreElements();) {
-			GifEncoderHashitem item = (GifEncoderHashitem) e.nextElement();
+		for (GifEncoderHashitem item : colorHash.values()) {
 			reds[item.index] = (byte) ((item.rgb >> 16) & 0xff);
 			grns[item.index] = (byte) ((item.rgb >> 8) & 0xff);
 			blus[item.index] = (byte) (item.rgb & 0xff);

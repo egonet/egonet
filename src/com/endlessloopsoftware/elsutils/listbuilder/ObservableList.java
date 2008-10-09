@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 
-public class ObservableList
+public class ObservableList<T>
     extends Observable
 {
-    private java.util.List list = new ArrayList();
+    private java.util.List<T> list = new ArrayList<T>();
 
     /****
      * Notifies observers that a field in the study has changed
@@ -41,7 +41,7 @@ public class ObservableList
      *
      * @param o param
      */
-    public void add(Object o)
+    public void add(T o)
     {
         list.add(o);
         notifyObservers();
@@ -52,7 +52,7 @@ public class ObservableList
      *
      * @return returns
      */
-    public Iterator iterator()
+    public Iterator<T> iterator()
     {
         return list.iterator();
     }
@@ -73,7 +73,7 @@ public class ObservableList
      */
     public void removeAll()
     {
-        list = new ArrayList();
+        list = new ArrayList<T>();
         notifyObservers();
     }
 

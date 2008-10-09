@@ -62,7 +62,7 @@ import javax.sql.DataSource;
 public class WebServiceLocator
 {
    private        InitialContext ic;
-   private        Map            cache; //used to hold references to EJBHomes/JMS Resources for re-use
+   private        Map<String,Object>            cache; //used to hold references to EJBHomes/JMS Resources for re-use
 
    private static WebServiceLocator me;
 
@@ -85,7 +85,7 @@ public class WebServiceLocator
       try
       {
          ic    = new InitialContext();
-         cache = Collections.synchronizedMap(new HashMap());
+         cache = Collections.synchronizedMap(new HashMap<String,Object>());
       }
       catch (NamingException ne)
       {

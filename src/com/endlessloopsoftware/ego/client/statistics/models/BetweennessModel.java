@@ -60,8 +60,7 @@ public class BetweennessModel extends StatTableModel
       }
       catch (Exception ex)
       {
-         ex.printStackTrace();
-         return null;
+    	  throw new RuntimeException(ex);
       }
    }
 

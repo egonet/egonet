@@ -37,7 +37,7 @@ import com.endlessloopsoftware.egonet.interfaces.StudyEJBPK;
  */
 public class AnswerDataValue
 	extends java.lang.Object
-	implements java.io.Serializable, Comparable
+	implements java.io.Serializable, Comparable<AnswerDataValue>
 {
 	Logger                   logger                   = Logger.getLogger(this.getClass());
 	
@@ -68,7 +68,7 @@ public class AnswerDataValue
    private String           _questionTitle;
    private String[]         _alterStrings              = {};
 	
-	private AnswerDataValue()
+	public AnswerDataValue()
 	{
 		pk = new com.endlessloopsoftware.egonet.interfaces.AnswerEJBPK();
 	}
@@ -373,8 +373,8 @@ public class AnswerDataValue
       catch (Exception ex)
       {
          logger.debug("Error getting Question Text");
-         ex.printStackTrace();
          s = oldS;
+         throw new RuntimeException(ex);
       }
 
       return s;
@@ -598,7 +598,7 @@ public class AnswerDataValue
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object arg0) 
+	public int compareTo(AnswerDataValue arg0) 
 	{	
 		AnswerDataValue that = (AnswerDataValue) arg0;
 		

@@ -6,6 +6,7 @@ package com.endlessloopsoftware.egonet.data;
 /**
  * CMP layer for QuestionEJB.
  */
+@SuppressWarnings({"unchecked"})
 public abstract class QuestionEJBCMP
    extends com.endlessloopsoftware.egonet.ejb.QuestionEJB
    implements javax.ejb.EntityBean

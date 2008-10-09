@@ -51,8 +51,8 @@ public class StatRecord
    Integer numIsolates    = new Integer(0);
    Integer numDyads       = new Integer(0);
    
-  List    egoAnswers     = new ArrayList();
-  List    alterAnswers   = new ArrayList();
+  List<EgoAnswer>    egoAnswers     = new ArrayList<EgoAnswer>();
+  List<AlterAnswer>    alterAnswers   = new ArrayList<AlterAnswer>();
 
  
   public List getEgoAnswers()

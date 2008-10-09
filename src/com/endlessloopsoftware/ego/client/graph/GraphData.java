@@ -54,9 +54,9 @@ public class GraphData {
 
 	private Interview interview;
 
-	public static int[][] adjacencyMatrix = new int[EgoClient.interview
-			.getStudy().getNumAlters()][EgoClient.interview.getStudy()
-			.getNumAlters()];
+	private EgoClient egoClient;
+	
+	public int[][] adjacencyMatrix;
 
 	/**
 	 * List to contain list of all alter Questions in interview
@@ -68,15 +68,18 @@ public class GraphData {
 	 */
 	private List<Question> interviewAlterPairQuestionList;
 
-	public GraphData() {
-		interview = EgoClient.interview;
-		try {
-		completeAlterNameList = EgoClient.interview.getStats().alterList;
+	
+
+	public GraphData(EgoClient egoClient) {
+		this.egoClient=egoClient;
+		
+		adjacencyMatrix = new int[egoClient.getInterview()
+		                           .getStudy().getNumAlters()][egoClient.getInterview().getStudy()
+		                           .getNumAlters()];
+		
+		interview = egoClient.getInterview();
+		completeAlterNameList = egoClient.getInterview().getStats().alterList;
 		adjacencyMatrix = interview.getStats().adjacencyMatrix;
-		} catch(Exception ex)
-		{
-			ex.printStackTrace(System.err);
-		}
 		interviewAlterQuestionList = new ArrayList<Question>();
 		interviewAlterPairQuestionList = new ArrayList<Question>();
 	}
@@ -155,8 +158,7 @@ public class GraphData {
 			}
 
 			if (interviewQuestion.UniqueId == QID) {
-				if ((interviewQuestion.answer.string.trim())
-						.equals(graphQuestion.getSelection().getString().trim())) {
+				if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
 					int[] alterNumArray = interviewQuestion.answer.getAlters();
 					for (int alterNum : alterNumArray) {
 						alterNumbers.add(alterNum);
@@ -168,8 +170,7 @@ public class GraphData {
 		return alterNumbers;
 	}
 
-	public List<Integer> getAlterNumbers(Question selectedQuestion,
-			Selection selection) {
+	public List<Integer> getAlterNumbers(Question selectedQuestion, Selection selection) {
 		List<Integer> alterNumbers = new ArrayList<Integer>();
 		Long QID = selectedQuestion.UniqueId;
 		Iterator questionIterator;
@@ -184,8 +185,7 @@ public class GraphData {
 				continue;
 			}
 			if (interviewQuestion.UniqueId == QID) {
-				if ((interviewQuestion.answer.string.trim()).equals(selection
-						.getString().trim())) {
+				if (interviewQuestion.answer.getValue() == selection.getValue()) {
 					int[] alterNumArray = interviewQuestion.answer.getAlters();
 					for (int alterNum : alterNumArray) {
 						alterNumbers.add(alterNum);
@@ -229,8 +229,7 @@ public class GraphData {
 				continue;
 			}
 			if (interviewQuestion.UniqueId == QID) {
-				if (interviewQuestion.answer.string.trim().equals(
-						graphQuestion.getSelection().getString().trim())) {
+			    if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
 					int[] alterNumArray = interviewQuestion.answer.getAlters();
 					for (int alterNum : alterNumArray) {
 						alterNames.add(completeAlterNameList[alterNum]);
@@ -242,11 +241,11 @@ public class GraphData {
 		return alterNames;
 	}
 
-	public static void generateAdjacencyMatrix(Question question,
+	public void generateAdjacencyMatrix(Question question,
 			Selection selection, boolean weighted) {
-		Study study = EgoClient.interview.getStudy();
+		Study study = egoClient.getInterview().getStudy();
 		if (study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
-			for (Iterator it = EgoClient.interview.getAnswerSubset(
+			for (Iterator it = egoClient.getInterview().getAnswerSubset(
 					question.UniqueId).iterator(); it.hasNext();) {
 				Answer a = (Answer) it.next();
 				if (weighted) {

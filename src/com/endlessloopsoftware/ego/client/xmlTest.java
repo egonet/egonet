@@ -62,7 +62,6 @@ public class xmlTest {
 			aTransformer.transform(src, dest);
 
 //		} catch (Exception ex) {
-//			ex.printStackTrace();
 //			System.exit(0);
 //		}
 	}

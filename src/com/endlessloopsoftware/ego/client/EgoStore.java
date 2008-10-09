@@ -64,13 +64,16 @@ public class EgoStore extends Observable {
 
 	private static final String FILE_PREF = "FILE_PREF";
 
+	private final EgoClient egoClient;
+	
 	/**
 	 * Sets parent frame
 	 * 
 	 * @param g
 	 *            EgoClient
 	 */
-	public EgoStore() {
+	public EgoStore(EgoClient egoClient) {
+		this.egoClient = egoClient;
 	}
 
 	/***************************************************************************
@@ -162,7 +165,7 @@ public class EgoStore extends Observable {
 		}
 
 		if (JFileChooser.APPROVE_OPTION == jNewStudyChooser
-				.showOpenDialog(EgoClient.getFrame())) {
+				.showOpenDialog(egoClient.getFrame())) {
 			f = jNewStudyChooser.getSelectedFile();
 
 			if (f != null) {
@@ -245,7 +248,7 @@ public class EgoStore extends Observable {
 				Document document = new Document(f);
 				long studyId = Long.parseLong(document.getRoot().getAttribute(
 						"StudyId"));
-				if (studyId != EgoClient.study.getStudyId()) {
+				if (studyId != egoClient.getStudy().getStudyId()) {
 					throw (new FileMismatchException());
 				}
 				// readInterview(f);
@@ -254,7 +257,6 @@ public class EgoStore extends Observable {
 				// exception.printStackTrace();
 			} catch (ParseException ex) {
 				accept = false;
-				// ex.printStackTrace();
 			} catch (Throwable t) {
 				accept = false;
 			}
@@ -297,7 +299,7 @@ public class EgoStore extends Observable {
 				"Interview Files", "int");
 		final JFileChooser jNewInterviewChooser = new JFileChooser();
 		final ProgressMonitor progressMonitor = new ProgressMonitor(
-				EgoClient.frame,
+				egoClient.getFrame(),
 				"Searching for interviews and caching the list of files that match the current study",
 				"", 0, numFiles);
 		jNewInterviewChooser.setCurrentDirectory(currentDirectory);
@@ -316,7 +318,7 @@ public class EgoStore extends Observable {
 
 				jNewInterviewChooser.addChoosableFileFilter(filter);
 				int result = jNewInterviewChooser
-						.showOpenDialog(EgoClient.frame);
+						.showOpenDialog(egoClient.getFrame());
 
 				if (JFileChooser.APPROVE_OPTION == result) {
 					final File f = jNewInterviewChooser.getSelectedFile();
@@ -337,19 +339,18 @@ public class EgoStore extends Observable {
 								complete = false;
 							}
 
-							EgoClient.interview = EgoClient.storage
-									.readInterview();
+							egoClient.setInterview(egoClient.getStorage().readInterview());
 							if (complete == false) {
 								JOptionPane
 										.showMessageDialog(
-												EgoClient.frame,
+												egoClient.getFrame(),
 												"This interview is not completed and no "
 														+ "graph or statictical data will be displayed!",
 												"Warning",
 												JOptionPane.WARNING_MESSAGE);
 							}
-							if (EgoClient.interview != null)
-								ViewInterviewPanel.gotoPanel();
+							if (egoClient.getInterview() != null)
+							    egoClient.getFrame().gotoViewInterviewPanel();
 						}
 					} catch (Throwable e) {
 						/** @todo Handle file failure */
@@ -381,7 +382,7 @@ public class EgoStore extends Observable {
 		if (file != null) {
 			try {
 				packageDocument = new Document(file);
-				EgoClient.study = new Study(packageDocument);
+				egoClient.setStudy(new Study(packageDocument));
 				loaded = true;
 			} catch (ParseException ex) {
 				/** @todo handle package parsing error */
@@ -424,11 +425,11 @@ public class EgoStore extends Observable {
 		} catch (FileReadException e) {
 			String msg = (e != null && !e.getMessage().equals("") ? " " + e.getMessage() : "");
 			
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to Read Interview."+msg, "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
 		} catch (FileMismatchException e) {
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Interview file not created from this study file.",
 					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
 		}
@@ -458,11 +459,11 @@ public class EgoStore extends Observable {
 			/* make sure id matches study */
 			studyId = Long
 					.parseLong(document.getRoot().getAttribute("StudyId"));
-			if (studyId != EgoClient.study.getStudyId()) {
+			if (studyId != egoClient.getStudy().getStudyId()) {
 				interview = null;
 				throw (new FileMismatchException());
 			}
-			interview = Interview.readInterview(document.getRoot());
+			interview = Interview.readInterview(egoClient, document.getRoot());
 		} catch (CorruptedInterviewException ex) {
 			interview = null;
 
@@ -492,7 +493,7 @@ public class EgoStore extends Observable {
 		boolean success = false;
 
 		try {
-			String[] name = EgoClient.interview.getName();
+			String[] name = egoClient.getInterview().getName();
 			File path = new File(getPackageFile().getParent(), "/Interviews/");
 			File f = new File(path, name[0].toLowerCase() + "_"
 					+ name[1].toLowerCase() + ".int");
@@ -516,7 +517,7 @@ public class EgoStore extends Observable {
 				if (exists && complete) {
 					int selected = JOptionPane
 							.showConfirmDialog(
-									EgoClient.frame,
+									egoClient.getFrame(),
 									"There is already a complete interview for "
 											+ name[0]
 											+ " "
@@ -532,7 +533,7 @@ public class EgoStore extends Observable {
 				} else if (exists && !complete) {
 					int selected = JOptionPane
 							.showConfirmDialog(
-									EgoClient.frame,
+									egoClient.getFrame(),
 									"There is already an incomplete interview for "
 											+ name[0]
 											+ " "
@@ -550,7 +551,7 @@ public class EgoStore extends Observable {
 				if (exists && !confirmed) {
 					int selected = JOptionPane
 							.showConfirmDialog(
-									EgoClient.frame,
+									egoClient.getFrame(),
 									"Should I erase the old interview and start a new one?",
 									"Delete Interview",
 									JOptionPane.YES_NO_OPTION);
@@ -567,25 +568,25 @@ public class EgoStore extends Observable {
 				success = true;
 				setInterviewFile(f);
 			} else if (resume) {
-				EgoClient.interview = readInterview(f);
+				egoClient.setInterview(readInterview(f));
 
-				if (EgoClient.interview != null) {
+				if (egoClient.getInterview() != null) {
 					success = true;
 					setInterviewFile(f);
 				}
 			}
 		} catch (SecurityException e) {
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to create interview directory.",
 					"New Interview Error", JOptionPane.ERROR_MESSAGE);
 			throw new FileCreateException();
 		} catch (FileReadException e) {
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to Read Interview.", "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
 			throw new FileCreateException();
 		} catch (FileMismatchException e) {
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Interview file not created from this study file.",
 					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
 			throw new FileCreateException();
@@ -621,21 +622,21 @@ public class EgoStore extends Observable {
 			Element interviewDocument = document.setRoot("Interview");
 
 			interviewDocument.setAttribute("StudyId", Long
-					.toString(EgoClient.study.getStudyId()));
-			interviewDocument.setAttribute("StudyName", EgoClient.study
+					.toString(egoClient.getStudy().getStudyId()));
+			interviewDocument.setAttribute("StudyName", egoClient.getStudy()
 					.getStudyName());
 			interviewDocument.setAttribute("NumAlters", Integer
-					.toString(EgoClient.study.getNumAlters()));
+					.toString(egoClient.getStudy().getNumAlters()));
 			interviewDocument.setAttribute("Creator", Shared.version);
 
-			EgoClient.interview.writeInterview(interviewDocument);
+			egoClient.getInterview().writeInterview(interviewDocument);
 
 			try {
 				document.write(f);
 			} catch (Exception e) {
 				JOptionPane
 						.showMessageDialog(
-								EgoClient.frame,
+								egoClient.getFrame(),
 								"Unable to write interview. \nYour answers are not being saved so the interview will now abort.\n Please report this error.",
 								"Interview Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(1);
@@ -725,18 +726,18 @@ public class EgoStore extends Observable {
 		document.setVersion("1.0");
 		Element study = document.setRoot("Statistics");
 
-		study.setAttribute("StudyId", Long.toString(EgoClient.study
+		study.setAttribute("StudyId", Long.toString(egoClient.getStudy()
 				.getStudyId()));
 		study.setAttribute("Creator", Shared.version);
 
 		stats.writeStructuralStatistics(study);
-		EgoClient.interview.writeEgoAnswers(study);
+		egoClient.getInterview().writeEgoAnswers(study);
 		stats.writeCompositionalStatistics(study);
 
 		try {
 			document.write(f);
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(EgoClient.frame,
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to write statistics.", "Interview Error",
 					JOptionPane.ERROR_MESSAGE);
 			throw new FileCreateException();
@@ -770,7 +771,7 @@ public class EgoStore extends Observable {
 
 		try {
 			file = FileHelpers.newFile(filetype, defaultname, "Statistics", "."
-					+ suffix, startdir, EgoClient.frame, false);
+					+ suffix, startdir, egoClient.getFrame(), false);
 
 			if (file == null) {
 				throw new FileCreateException();
@@ -780,7 +781,7 @@ public class EgoStore extends Observable {
 					(32 * 1024)));
 			prefs.put("STAT_DIR", file.getParent());
 		} catch (Exception fce) {
-			JOptionPane.showMessageDialog(EgoClient.frame, "Unable to create "
+			JOptionPane.showMessageDialog(egoClient.getFrame(), "Unable to create "
 					+ filetype + "file.", "New Statics File Error",
 					JOptionPane.ERROR_MESSAGE);
 			out = null;
@@ -798,17 +799,17 @@ public class EgoStore extends Observable {
 	 */
 	public void generateStatisticsFile(File interviewFile)
 			throws FileCreateException {
-		EgoClient.interview = null;
+		egoClient.setInterview(null);
 
 		setInterviewFile(interviewFile);
 
-		if (EgoClient.storage.getInterviewFile() != null) {
-			EgoClient.interview = EgoClient.storage.readInterview();
+		if (egoClient.getStorage().getInterviewFile() != null) {
+			egoClient.setInterview(egoClient.getStorage().readInterview());
 		}
 
-		if ((EgoClient.interview != null) && EgoClient.interview.isComplete()) {
-			EgoClient.interview.completeInterview();
-		} else if(EgoClient.interview == null) {
+		if ((egoClient.getInterview() != null) && egoClient.getInterview().isComplete()) {
+			egoClient.getInterview().completeInterview();
+		} else if(egoClient.getInterview() == null) {
 			throw new FileCreateException("Interview for " + interviewFile.getName() + " could not be read.");
 		} else {
 			throw new FileCreateException("Interview for " + interviewFile.getName() + " was not completed.");

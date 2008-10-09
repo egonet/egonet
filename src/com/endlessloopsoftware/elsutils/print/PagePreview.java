@@ -183,8 +183,8 @@ public class PagePreview extends JDialog implements ActionListener
 					}
 					catch (PrinterException ex)
 					{
-						ex.printStackTrace();
 						System.err.println("Printing error: " + ex.toString());
+						throw new RuntimeException(ex);
 					}
 				}
 			};

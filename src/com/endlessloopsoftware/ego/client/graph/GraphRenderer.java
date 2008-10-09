@@ -99,22 +99,21 @@ public class GraphRenderer extends PluggableRenderer implements
 	public static boolean showEdgeWeights = false;
 
 	private boolean showNodeLabels = true;
+
+	private EgoClient egoClient;
 	
-	public GraphRenderer() {
+	public GraphRenderer(EgoClient egoClient) {
+		this.egoClient=egoClient;
 		graph = new UndirectedSparseGraph();
-		stats = EgoClient.interview.getStats();
-		try {
+		stats = egoClient.getInterview().getStats();
 			alterList = stats.alterList;
 			vertexArray = new Vertex[alterList.length];
 			for (int i = 0; i < alterList.length; ++i) {
 				vertexArray[i] = new SparseVertex();
 				graph.addVertex(vertexArray[i]);
 			}
-		} catch (NullPointerException ex) {
-			ex.printStackTrace(System.err);
-		}
 		
-		graphSettings = new GraphSettings(this);
+		graphSettings = new GraphSettings(egoClient, this);
 		this.setVertexShapeFunction(this);
 		this.setVertexPaintFunction(this);
 		this.setEdgeShapeFunction(this);
@@ -134,8 +133,7 @@ public class GraphRenderer extends PluggableRenderer implements
 	 * 
 	 * @param Class Layout
 	 */
-	public void changeLayout(Class layout) {
-		try {
+	public void changeLayout(Class layout) throws Exception {
 			Constructor constructor = layout.getConstructor(new Class[] { Graph.class });
 			Object o = constructor.newInstance(graph);
 			Layout l = (Layout) o;
@@ -153,9 +151,6 @@ public class GraphRenderer extends PluggableRenderer implements
 			visualizationViewer.setGraphLayout(l, false);
 			visualizationViewer.restart();
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	/**
@@ -523,7 +518,7 @@ public class GraphRenderer extends PluggableRenderer implements
 				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
 				Question question = graphQuestion.getQuestion();
 				Selection selection = graphQuestion.getSelection();
-				GraphData graphData = new GraphData();
+				GraphData graphData = new GraphData(egoClient);
 				List<Integer> alterList = graphData.getAlterNumbers(question,
 						selection);
 
@@ -585,7 +580,7 @@ public class GraphRenderer extends PluggableRenderer implements
 				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();
 				//System.out.println("prop value is " +prop.toString());
 				
-				GraphData graphData = new GraphData();
+				GraphData graphData = new GraphData(egoClient);
 				List<Pair> vPair = graphData.getAlterPairs(graphQuestion);
 				//System.out.println("Property to be updated:" + prop
 				//		+ " GraphQuestion:" + graphQuestion.toString());
@@ -701,13 +696,13 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private void applyDegreeCentrality(NodeProperty.NodePropertyType property) {
 
-		float[] degreeCentrality = new float[EgoClient.interview.getNumAlters()];
-		float[] scaledDegreeCentrality = new float[EgoClient.interview
+		float[] degreeCentrality = new float[egoClient.getInterview().getNumAlters()];
+		float[] scaledDegreeCentrality = new float[egoClient.getInterview()
 				.getNumAlters()];
-		for (int i = 0; i < EgoClient.interview.getNumAlters(); i++) {
+		for (int i = 0; i < egoClient.getInterview().getNumAlters(); i++) {
 			degreeCentrality[i] = new Float(
-					EgoClient.interview.getStats().degreeArray[i]
-							/ ((float) (EgoClient.interview.getStats().proximityMatrix.length - 1)));
+					egoClient.getInterview().getStats().degreeArray[i]
+							/ ((float) (egoClient.getInterview().getStats().proximityMatrix.length - 1)));
 		}
 		// scale the values
 		float maximum = max(degreeCentrality);
@@ -730,15 +725,15 @@ public class GraphRenderer extends PluggableRenderer implements
 
 	private void applyBetweennessCentrality(NodeProperty.NodePropertyType property) {
 
-		float[] betweennessCentrality = new float[EgoClient.interview
+		float[] betweennessCentrality = new float[egoClient.getInterview()
 				.getNumAlters()];
-		float[] scaledBetweennessCentrality = new float[EgoClient.interview
+		float[] scaledBetweennessCentrality = new float[egoClient.getInterview()
 				.getNumAlters()];
-		for (int i = 0; i < EgoClient.interview.getNumAlters(); i++) {
-			double big = EgoClient.interview.getStats().proximityMatrix.length - 1;
+		for (int i = 0; i < egoClient.getInterview().getNumAlters(); i++) {
+			double big = egoClient.getInterview().getStats().proximityMatrix.length - 1;
 			big *= big;
 			betweennessCentrality[i] = new Float(
-					EgoClient.interview.getStats().betweennessArray[i] / big);
+					egoClient.getInterview().getStats().betweennessArray[i] / big);
 		}
 		// scale the values
 		float maximum = max(betweennessCentrality);
