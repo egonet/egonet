@@ -455,7 +455,7 @@ public class ClientFrame extends JFrame {
      */
     public void gotoClientQuestionPanel() {
         /* Return to first screen */
-        egoClient.getFrame().setVisible(false);
+       	egoClient.getFrame().setVisible(false);
         egoClient.getFrame().setContentPane(new ClientQuestionPanel(egoClient));
         egoClient.getFrame().pack();
 

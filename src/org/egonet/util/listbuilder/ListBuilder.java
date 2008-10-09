@@ -21,6 +21,7 @@ package org.egonet.util.listbuilder;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import java.awt.BorderLayout;
 import java.awt.event.*;
 
 import com.endlessloopsoftware.ego.author.CategoryInputPane;
@@ -105,6 +106,8 @@ public class ListBuilder extends JPanel implements Observer {
 	private JButton buttonAdd = null;
 
 	private JTextArea labelDescription = null;
+	
+	private JLabel listCounter;
 
 	private JTextField firstName, lastName, itemName, value;
 
@@ -147,6 +150,8 @@ public class ListBuilder extends JPanel implements Observer {
 		jList.setListData(elementList.toArray());
 		jList.revalidate();
 		jList.repaint();
+		if(listCounter != null)
+			listCounter.setText(jList.getModel().getSize() + " items listed.");
 	}
 
 	private void build() {
@@ -224,7 +229,13 @@ public class ListBuilder extends JPanel implements Observer {
 				"2dlu, fill:145dlu:grow, 2dlu, fill:145dlu:grow, 2dlu",
 				"2dlu, fill:min(pref;150dlu):grow, 2dlu");
 		panelTopHalf.setLayout(topHalfLayout);
-		panelTopHalf.add(jScrollPane, constraints.xy(2, 2));
+		
+		listCounter = new JLabel();
+		JPanel scrollPanel = new JPanel(new BorderLayout());
+		scrollPanel.add(listCounter, BorderLayout.SOUTH);
+		scrollPanel.add(jScrollPane, BorderLayout.CENTER);
+		
+		panelTopHalf.add(scrollPanel, constraints.xy(2, 2));
 		panelTopHalf.add(buildTopRight(), constraints.xy(4, 2));
 		return panelTopHalf;
 	}

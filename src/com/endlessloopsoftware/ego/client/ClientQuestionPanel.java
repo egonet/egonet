@@ -571,7 +571,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 								|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 				answerPanel.setVisible(true);
 				answerMenu.requestFocusInWindow();
-				answerMenu.showPopup();
+				//answerMenu.showPopup();
 			}
 		} else {
 			/** @todo no question, clear */
