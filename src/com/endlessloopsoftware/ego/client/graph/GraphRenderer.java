@@ -159,6 +159,51 @@ public class GraphRenderer extends PluggableRenderer implements
 	}
 
 	/**
+	 * Changes the size of the layout (canvas size) then redraws the graph 
+	 * to fit the nodes to the new layout size
+	 * 
+	 * @param int x -- width
+	 * @param int y -- height
+	 */
+	public void changeLayoutSize(int x, int y) {
+		try {
+			Dimension dim = visualizationViewer.getGraphLayout().getCurrentSize();
+			Layout layout = visualizationViewer.getGraphLayout();
+			
+			if(dim.width + x < 5 || dim.height + y < 5){
+				new JOptionPane().showMessageDialog(null, 
+						new String("Layout Size Out of Bounds"), "Error", 
+						JOptionPane.ERROR_MESSAGE);
+				System.out.println("Less than 5");
+			}
+			else{
+				layout.resize(new Dimension(dim.width + x, dim.height + y));	
+				visualizationViewer.stop();
+				visualizationViewer.setGraphLayout(layout, false);
+				visualizationViewer.restart();
+			}					
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Redraws the graph without changing the layout or layout size
+	 *
+	 */
+	public void reiterate(){
+		Dimension dim = visualizationViewer.getGraphLayout().getCurrentSize();
+		Layout layout = visualizationViewer.getGraphLayout();
+		
+		layout.initialize(dim);
+		
+		visualizationViewer.stop();
+		visualizationViewer.setGraphLayout(layout, true);
+		visualizationViewer.restart();
+	}
+	
+	/**
 	 * create the main viewable Graph by for display on a panel use the JUNG
 	 * classes
 	 * 

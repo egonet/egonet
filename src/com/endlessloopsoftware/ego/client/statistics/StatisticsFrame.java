@@ -23,13 +23,11 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -67,10 +65,14 @@ public class StatisticsFrame extends JPanel {
 	private JPanel qSummaryPanel = null;
 
 	public StatisticsFrame() {
+		try {
 			jbInit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void jbInit() {
+	private void jbInit() throws Exception {
 		boolean studyStatable = false;
 
 		/***********************************************************************
@@ -132,7 +134,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});*/
 
-				removeAllActionListeners(EgoClient.frame.saveAlterSummary);
 				EgoClient.frame.saveAlterSummary
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -140,7 +141,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				removeAllActionListeners(EgoClient.frame.saveTextSummary);
 				EgoClient.frame.saveTextSummary
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -148,7 +148,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				removeAllActionListeners(EgoClient.frame.saveWeightedAdjacencyMatrix);
 				EgoClient.frame.saveWeightedAdjacencyMatrix
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -156,7 +155,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				removeAllActionListeners(EgoClient.frame.saveAdjacencyMatrix);
 				EgoClient.frame.saveAdjacencyMatrix
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -164,7 +162,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				removeAllActionListeners(EgoClient.frame.saveInterviewStatistics);
 				EgoClient.frame.saveInterviewStatistics
 						.addActionListener(new java.awt.event.ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -172,7 +169,6 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				
 				updateAll();
 			}
 		}
@@ -196,12 +192,6 @@ public class StatisticsFrame extends JPanel {
 						close_actionPerformed(e);
 					}
 				});
-	}
-
-	private static void removeAllActionListeners(JMenuItem saveAlterSummary) {
-		ActionListener[] listeners = saveAlterSummary.getActionListeners();
-		for(ActionListener l : listeners)
-			saveAlterSummary.removeActionListener(l);
 	}
 
 	void updateAll() {
@@ -230,12 +220,15 @@ public class StatisticsFrame extends JPanel {
 	void saveAlterSummary_actionPerformed(ActionEvent e) {
 		String[] name = EgoClient.interview.getName();
 		String filename = name[0] + "_" + name[1] + "_Alter_Summary";
-		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter("Alter Summary", "csv", filename);
+		PrintWriter w = EgoClient.storage.newStatisticsPrintWriter(
+				"Alter Summary", "csv", filename);
 
-		try {
-			stats.writeAlterArray(w);
-		} finally {
-			w.close();
+		if (w != null) {
+			try {
+				stats.writeAlterArray(w);
+			} finally {
+				w.close();
+			}
 		}
 	}
 

@@ -22,6 +22,7 @@ import org.jdesktop.layout.GroupLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,6 +30,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -73,6 +75,14 @@ public class GraphTabPanel extends JPanel {
 	private JButton zoomInButton;
 
 	private JButton zoomOutButton;
+	
+	private JLabel layoutSize;
+	
+	private JButton increaseLayoutSize;
+	
+	private JButton decreaseLayoutSize;
+	
+	private JButton reiterate;
 	
 	private ScalingControl scaler;
 
@@ -219,8 +229,58 @@ public class GraphTabPanel extends JPanel {
                 scaler.scale(vv, 1/1.1f, vv.getCenter());
             }
         });
+		
+		layoutSize = new JLabel("Layout Size:");
+		increaseLayoutSize = new JButton("+");
+		increaseLayoutSize.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if (!SwingUtilities.isEventDispatchThread()){
+					try {
+						SwingUtilities.invokeAndWait(new Runnable(){
+							public void run(){
+								increaseLayoutSize.paintImmediately(new Rectangle());
+							}
+						});
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				new Thread(new Runnable(){
+					public void run() {
+						graphRenderer.changeLayoutSize(50, 50);						
+					}					
+				}).run();						
+			}			
+		});
+		decreaseLayoutSize = new JButton("-");
+		decreaseLayoutSize.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				SwingWorker worker = new SwingWorker(){
+					@Override
+					protected Object doInBackground() throws Exception {
+						graphRenderer.changeLayoutSize(-50, -50);
+						return null;
+					}					
+				};
+				worker.run();
+				decreaseLayoutSize.paintImmediately(new Rectangle());
+				
+			}
+		});
 
-		// disply in the panel using GroupLayout
+		reiterate = new JButton("Reiterate");
+		reiterate.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				graphRenderer.reiterate();
+			}
+		});
+		
+		// display in the panel using GroupLayout
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 
 		// The sequential group in turn contains two parallel groups.
@@ -235,6 +295,13 @@ public class GraphTabPanel extends JPanel {
 		
 		hGroup.add(layout.createParallelGroup().add(layoutCombo).add(modeCombo)
 				.add(bgcolorButton).add(zoomInButton).add(zoomOutButton));
+		
+		hGroup.add(layout.createParallelGroup().add(layoutSize));
+		
+		hGroup.add(layout.createParallelGroup().add(increaseLayoutSize).add(decreaseLayoutSize));
+		
+		hGroup.add(layout.createParallelGroup().add(reiterate));
+		
 		layout.setHorizontalGroup(hGroup);
 
 		// Create a sequential group for the vertical axis.
@@ -254,8 +321,9 @@ public class GraphTabPanel extends JPanel {
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				bgcolorLabel).add(bgcolorButton));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
-				zoomLabel).add(zoomInButton));
-		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(zoomOutButton));
+				zoomLabel).add(zoomInButton).add(layoutSize).add(increaseLayoutSize).add(reiterate));
+		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
+				zoomOutButton).add(decreaseLayoutSize));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
 				showLabelChkBox));
 		vGroup.add(layout.createParallelGroup(GroupLayout.BASELINE).add(
