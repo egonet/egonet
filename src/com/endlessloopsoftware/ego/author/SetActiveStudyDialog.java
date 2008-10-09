@@ -106,7 +106,7 @@ public class SetActiveStudyDialog
 		DlgUtils.invokeHandler(this, e);
 	}
 
-	public void onloadStudies()
+	public void onloadStudies() throws Exception
 	{
       surveyNameList.setModel(getList());
 	}
@@ -177,7 +177,7 @@ public class SetActiveStudyDialog
     * To change the template for this generated type comment go to
     * Window - Preferences - Java - Code Generation - Code and Comments
     */
-   public ListModel getList()
+   public ListModel getList() throws Exception
    {
       DefaultListModel listModel = new DefaultListModel();
       
@@ -198,11 +198,6 @@ public class SetActiveStudyDialog
          {
             listModel.addElement(it.next());
          }
-      }
-      catch (Exception e)
-      {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
       }
       finally
       {

@@ -610,7 +610,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
-					System.out.println("Timestamp: " + answer.timestamp);
+					//System.out.println("Timestamp: " + answer.timestamp);
 					if (noAnswerBox.isSelected()) {
 						answer.answered = true;
 						answer.setValue((Answer.NO_ANSWER));
@@ -628,7 +628,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			case Question.TEXT:
 				answer.timestamp = generateTimeStamp();
-				System.out.println("Timestamp: " + answer.timestamp);
+				//System.out.println("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.answered = (answer.getValue() != 0);
@@ -649,7 +649,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						// answer.index = question.selections.length - question.selections[button].getIndex();
 						answer.adjacent = question.selections[button].isAdjacent();
 						answer.string = question.selections[button].getString();
-						System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
+						//System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
@@ -659,7 +659,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
-						System.out.println("Timestamp: " + answer.timestamp);
+						//System.out.println("Timestamp: " + answer.timestamp);
 
 						answer.setValue((question.selections[selection]
 								.getValue()));

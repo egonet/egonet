@@ -150,7 +150,6 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	private void build() {
-		System.out.println("Build start");
 		// purge anything old
 		removeAll();
 
@@ -215,7 +214,6 @@ public class ListBuilder extends JPanel implements Observer {
 			}
 		});
 		this.validate();
-		System.out.println("Build complete");
 	}
 
 	private JComponent buildTop() {

@@ -521,7 +521,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			}
 			catch (DuplicateQuestionException e1)
 			{
-            e1.printStackTrace();
+				throw new RuntimeException(e1);
 			}
 			
 			fillPanel();
@@ -594,7 +594,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 			}
 			catch (DuplicateQuestionException e1)
 			{
-            e1.printStackTrace();
+				throw new RuntimeException(e1);
 			}
 			
 			fillPanel();

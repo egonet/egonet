@@ -79,8 +79,6 @@ public class ELSRenderer extends AbstractRenderer
       	//         for (Iterator it = v.getUserDatumKeyIterator(); it.hasNext();)
       	//            System.out.println(it.next());
       	
-      	try
-      	{
       		Number decoratedNodeSize  = (Number) v.getUserDatum(mSizeKey);
       		int   red                 = 0;
       		
@@ -100,12 +98,6 @@ public class ELSRenderer extends AbstractRenderer
       		
       		Color c = new Color(255, 255 - red, 64 - (red / 4));
       		g.setColor(c);
-      	}
-      	catch (Exception e)
-      	{
-      		e.printStackTrace();
-      		System.exit(-1);
-      	}
       }
 
       int labelSize = g.getFontMetrics().stringWidth(label);

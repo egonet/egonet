@@ -194,7 +194,6 @@ public class EgoStore
             }
             catch (java.io.IOException e)
             {
-            	e.printStackTrace();
                JOptionPane.showMessageDialog(
                		egoNet.getFrame(),
                		"Unable to create study file.",
@@ -275,8 +274,6 @@ public class EgoStore
          }
          catch (Exception e)
          {
-            e.printStackTrace();
-
             setStudyFile(null);
             JOptionPane.showMessageDialog(null, "Unable to read study file.", "File Error", JOptionPane.ERROR_MESSAGE);
          }

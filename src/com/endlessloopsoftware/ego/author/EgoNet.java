@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.author;
 
 import com.endlessloopsoftware.ego.Study;
+//import com.endlessloopsoftware.elsutils.Console;
 
 public class EgoNet
 {
@@ -47,6 +48,7 @@ public class EgoNet
 
 	public static void main(String[] args) throws Exception
 	{
+		//new Console();
 		getInstance().frame.setVisible(true);
 	}
 

@@ -19,6 +19,8 @@
 package com.endlessloopsoftware.ego.client;
 
 import com.endlessloopsoftware.ego.Study;
+//import com.endlessloopsoftware.elsutils.Console;
+
 import javax.swing.JFrame;
 
 public class EgoClient
@@ -57,6 +59,7 @@ public class EgoClient
 	//Main method
 	public static void main(String[] args) throws Exception
 	{
+		//new Console();
 		getInstance().frame.setVisible(true);
 	}
 
