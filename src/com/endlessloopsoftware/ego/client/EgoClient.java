@@ -30,7 +30,7 @@ public class EgoClient
 	private int			uiPath;
 
 	//Construct the application
-	public EgoClient()
+	private EgoClient()
 	{
 		study = new Study();
 		storage = new EgoStore(this);

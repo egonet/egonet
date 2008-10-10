@@ -222,14 +222,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		answerButtonListener = new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("answerButtonListener");
+				System.out.println("answerButtonListener: " + e);
 				questionAnsweredEventHandler(e);
 			}
 		};
 
 		answerMenu.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("answerMenu.addActionListener");
+				System.out.println("answerMenu.addActionListener: " + e);
 				questionAnsweredEventHandler(e);
 			}
 		});
@@ -530,18 +530,21 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				} else {
 					System.out.println("-- NO -- unsetting the buttons!");
 					for(int i = 0; i < answerButtons.length; i++)
+					{
+						answerButtons[i].setActionCommand("Initialization");
 						answerButtons[i].setSelected(false);
+						answerButtons[i].setActionCommand("User Input");
+					}
 				}
 
 				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
+					answerButtons[i].setActionCommand("Initialization");
 					answerButtons[i].setText("(" + question.getSelections()[i].getValue() + ") " + question.getSelections()[i].getString());
 					answerButtons[i].setVisible(true);
 					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+					answerButtons[i].setActionCommand("User Input");
 				}
 
-				for (int i = question.getSelections().length; i < answerButtons.length; i++) {
-					answerButtons[i].setVisible(false);
-				}
 				answerPanel.setVisible(true);
 			} else { // drop downs!
 				System.out.println(" -- doing drop downs!");
@@ -635,34 +638,37 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
+						
+						int selectionIndex = buttonIndex;
 						System.out.println("Selected button (index: " + buttonIndex + ") with selections ("+Arrays.asList(question.getSelections())+") of size " + question.getSelections().length);
-						answer.setValue((question.getSelections()[buttonIndex].getValue()));
+						answer.setValue((question.getSelections()[selectionIndex].getValue()));
 						// added 11/27/2007
-						answer.setIndex(question.getSelections()[buttonIndex].getIndex());
+						answer.setIndex(question.getSelections()[selectionIndex].getIndex());
 						// answer.index = question.selections.length - question.selections[button].getIndex();
-						answer.adjacent = question.getSelections()[buttonIndex].isAdjacent();
-						answer.string = question.getSelections()[buttonIndex].getString();
+						answer.adjacent = question.getSelections()[selectionIndex].isAdjacent();
+						answer.string = question.getSelections()[selectionIndex].getString();
 						//System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
-					int selection = answerMenu.getSelectedIndex() - 1;
-					answer.answered = (selection > 0) && (selection < question.getSelections().length+1);
+					// minus 1 because there's a "Please select an answer" option for 
+					int selectionIndex = answerMenu.getSelectedIndex() - 1;
+					answer.answered = (selectionIndex > 0) && (selectionIndex < question.getSelections().length+1);
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
 						//System.out.println("Timestamp: " + answer.timestamp);
 
-						answer.setValue((question.getSelections()[selection]
+						answer.setValue((question.getSelections()[selectionIndex]
 						                                          .getValue()));
 
 						// added 11/27/2007
-						answer.setIndex(question.getSelections()[selection]
+						answer.setIndex(question.getSelections()[selectionIndex]
 						                                         .getIndex());
 
-						answer.adjacent = question.getSelections()[selection]
+						answer.adjacent = question.getSelections()[selectionIndex]
 						                                           .isAdjacent();
-						answer.string = question.getSelections()[selection]
+						answer.string = question.getSelections()[selectionIndex]
 						                                         .getString();
 						// answer.timestamp =
 						// DateFormat.getDateInstance().format(new Date());
