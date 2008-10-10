@@ -3,17 +3,21 @@ package org.egonet.tests.functional;
 
 import static org.fest.swing.core.matcher.JButtonByTextMatcher.*;
 
+import org.fest.swing.core.KeyPressInfo;
+import org.fest.swing.core.NameMatcher;
 import org.fest.swing.core.TypeMatcher;
 import org.fest.swing.finder.JFileChooserFinder;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JComboBoxFixture;
 import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JPanelFixture;
+import org.fest.swing.fixture.JTextComponentFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +25,7 @@ import java.util.Collections;
 
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
+import javax.swing.text.JTextComponent;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.elsutils.layout.CardPanel;
@@ -63,8 +68,9 @@ public class DoInterview {
 		window.textBox("lastNameField").enterText(randomString(8));
 		window.button(withText("Start Interview")).click();
 		
-		for(int i = 0; i < 1000; i++)
+		while(window.button("questionButtonNext").component().getText().equals("Next Question"))
 			handleQuestion();
+		window.button("questionButtonNext").click();
 		Thread.sleep(10*1000);
 
 	}
@@ -85,18 +91,43 @@ public class DoInterview {
 		JPanelFixture cardFixture = new JPanelFixture(window.robot,cp);
 		
 		String card = cp.getVisibleCard();
-		System.out.println("New visible card " + card + ", attempting to handle it!");
+		System.out.println("*** New visible card " + card + ", attempting to handle it!");
 		
 		if("".equals(card)) {
 			throw new IllegalStateException("No question card is displayed");
 		} else if(card.equals(ALTER_CARD)) {
-			
+			while(!window.button(withText("Next Question")).component().isEnabled())
+			{
+				JTextComponentFixture firstName = new JTextComponentFixture(
+						window.robot,
+						(JTextComponent)
+						cardFixture.robot.finder().find(cp, 
+								new NameMatcher("firstName")
+						)
+						);
+				
+				firstName.enterText(randomString(5));
+				
+				JTextComponentFixture lastName = new JTextComponentFixture(
+						window.robot,
+						(JTextComponent)
+						cardFixture.robot.finder().find(cp, 
+								new NameMatcher("lastName")
+						)
+						);
+				
+				lastName.enterText(randomString(5));
+				
+				// hit enter
+				KeyPressInfo keyPressInfo = KeyPressInfo.keyCode(KeyEvent.VK_ENTER);
+				lastName.pressAndReleaseKey(keyPressInfo);
+			}
 		} else if(card.equals(TEXT_CARD)) {
 			cardFixture.textBox().enterText(randomString(5));
 		} else if(card.equals(NUMERICAL_CARD)) {
 			cardFixture.textBox().enterText("1234");
 		} else if(card.equals(RADIO_CARD)) {
-			Collection<Component> comps = cardFixture.robot.finder().findAll(cp, new TypeMatcher(JRadioButton.class, false));
+			Collection<Component> comps = cardFixture.robot.finder().findAll(cp, new TypeMatcher(JRadioButton.class, true));
 			ArrayList<Component> buttons = new ArrayList<Component>(comps);
 			Collections.shuffle(buttons);
 			JRadioButton btn = (JRadioButton)buttons.remove(0);
@@ -111,6 +142,7 @@ public class DoInterview {
 			boxFix.selectItem(sel);
 		}
 		
+		System.out.println("*** Clicking next question!");
 		window.button(withText("Next Question")).click();
 	}
 

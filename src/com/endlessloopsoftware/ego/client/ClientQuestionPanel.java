@@ -533,6 +533,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					{
 						answerButtons[i].setActionCommand("Initialization");
 						answerButtons[i].setSelected(false);
+						answerButtons[i].setVisible(false);
 						answerButtons[i].setActionCommand("User Input");
 					}
 				}
@@ -593,7 +594,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 		// return;
 		
-		System.out.println("fillAnswer called for " + answer);
+		System.out.println("fillAnswer called for " + answer.getString());
 
 		if (question.questionType == Question.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
@@ -774,7 +775,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private static int selectedButtonIndex(JRadioButton[] button) {
 		for (int i = 0; i < button.length; i++) {
 			if (button[i].isSelected()) {
-				System.out.println("Button #"+i+" is selected -- " + button[i].getText() );
 				return i;
 			}
 		}

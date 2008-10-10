@@ -297,10 +297,10 @@ public class ListBuilder extends JPanel implements Observer {
 		formBuilder.nextRow();
 		formBuilder.setLeadingColumnOffset(1);
 
-		firstName = new JTextField();
-		lastName = new JTextField();
-		itemName = new JTextField();
-		value = new JTextField();
+		firstName = new JTextField(); firstName.setName("firstName");
+		lastName = new JTextField(); lastName.setName("lastName");
+		itemName = new JTextField(); itemName.setName("itemName");
+		value = new JTextField(); value.setName("itemName");
 		
 		firstName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
