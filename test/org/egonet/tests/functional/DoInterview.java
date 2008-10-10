@@ -6,8 +6,12 @@ import static org.fest.swing.core.matcher.JButtonByTextMatcher.*;
 import org.fest.swing.core.KeyPressInfo;
 import org.fest.swing.core.NameMatcher;
 import org.fest.swing.core.TypeMatcher;
+import org.fest.swing.core.matcher.DialogByTitleMatcher;
 import org.fest.swing.finder.JFileChooserFinder;
+import org.fest.swing.finder.WindowFinder;
+import org.fest.swing.fixture.DialogFixture;
 import org.fest.swing.fixture.FrameFixture;
+import org.fest.swing.fixture.JButtonFixture;
 import org.fest.swing.fixture.JComboBoxFixture;
 import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JPanelFixture;
@@ -39,7 +43,7 @@ public class DoInterview {
 	@Before
 	public void setUp() throws Exception
 	{
-		studyFile = new File("/home/martins/Desktop/egonet tmp/example chris's class/SNA Class 2008 Personal Network Study2.ego");
+		studyFile = new File("//home/martins/Desktop/egonet tmp/Martin study/Martin study.ego");
 		
 		window = new FrameFixture(EgoClient.getInstance().getFrame());
 		window.show(); // shows the frame to test
@@ -68,10 +72,31 @@ public class DoInterview {
 		window.textBox("lastNameField").enterText(randomString(8));
 		window.button(withText("Start Interview")).click();
 		
-		while(window.button("questionButtonNext").component().getText().equals("Next Question"))
+		while(true)
+		{
 			handleQuestion();
-		window.button("questionButtonNext").click();
-		Thread.sleep(10*1000);
+			System.out.println("*** Clicking next question!");
+			
+			if(window.button("questionButtonNext").component().getText().equals("Next Question"))
+			{
+				window.button("questionButtonNext").click();
+				continue;
+			}
+			
+			if(window.button("questionButtonNext").component().getText().equals("Study Complete"))
+			{
+				window.button("questionButtonNext").click();
+				break;
+			}
+				
+
+		}
+		
+		DialogFixture dialog = WindowFinder.findDialog(DialogByTitleMatcher.withTitle("Interview Complete")).withTimeout(5000).using(window.robot);
+		dialog.button(withText("OK")).click();
+
+		
+		Thread.sleep(60*1000);
 
 	}
 	
@@ -141,9 +166,6 @@ public class DoInterview {
 			int sel = (int)(Math.random()*poss.length);
 			boxFix.selectItem(sel);
 		}
-		
-		System.out.println("*** Clicking next question!");
-		window.button(withText("Next Question")).click();
 	}
 
 	protected static String randomString()

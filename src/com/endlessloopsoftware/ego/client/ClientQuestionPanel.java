@@ -516,9 +516,25 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			if (question.getSelections().length <= answerButtons.length) { // radio buttons!
 				System.out.println(" -- doing radio buttons!");
 				
+				System.out.println("-- NO -- unsetting the buttons!");
+				for(int i = 0; i < answerButtons.length; i++)
+				{
+					answerButtons[i].setActionCommand("Initialization");
+					answerButtons[i].setSelected(false);
+					answerButtons[i].setVisible(false);
+					answerButtons[i].setActionCommand("User Input");
+				}
 				
 				answerPanel.showCard(RADIO_CARD);
 
+				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
+					answerButtons[i].setActionCommand("Initialization");
+					answerButtons[i].setText("(" + question.getSelections()[i].getValue() + ") " + question.getSelections()[i].getString());
+					answerButtons[i].setVisible(true);
+					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
+					answerButtons[i].setActionCommand("User Input");
+				}
+				
 				System.out.println("-- answer: " + question.answer.answered + ", answer index: " + question.answer.getIndex());
 				if (question.answer.answered && (question.answer.getIndex() >= -1)) {
 					System.out.println(" -- was it actually answered with index >= -1 (not unselected)");
@@ -527,23 +543,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answerButtons[question.answer.getIndex()].setSelected(true);
 						System.out.println("-- YES -- setting a selection for the new loaded question's answer!");
 					}
-				} else {
-					System.out.println("-- NO -- unsetting the buttons!");
-					for(int i = 0; i < answerButtons.length; i++)
-					{
-						answerButtons[i].setActionCommand("Initialization");
-						answerButtons[i].setSelected(false);
-						answerButtons[i].setVisible(false);
-						answerButtons[i].setActionCommand("User Input");
-					}
-				}
-
-				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
-					answerButtons[i].setActionCommand("Initialization");
-					answerButtons[i].setText("(" + question.getSelections()[i].getValue() + ") " + question.getSelections()[i].getString());
-					answerButtons[i].setVisible(true);
-					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
-					answerButtons[i].setActionCommand("User Input");
 				}
 
 				answerPanel.setVisible(true);
