@@ -187,7 +187,7 @@ public class EgoStore extends Observable {
 			}
 		}
 	}
-
+	
 	/**
 	 * File filter to filter the interview files based on selected study The
 	 * file chooser displays only the interview files compatible with the
@@ -289,9 +289,6 @@ public class EgoStore extends Observable {
 		
 		final File currentDirectory = guessLocation;
 		
-		
-		
-		
 
 		final int numFiles = currentDirectory.list().length;
 
@@ -370,6 +367,54 @@ public class EgoStore extends Observable {
 		progressMonitor.setMillisToPopup(0);
 
 		filterWorker.execute();
+	}
+	
+	public void combineInterviews(){
+		//Find the interview files associated with this study
+		File packageFile = getPackageFile();
+		File parentFile = packageFile.getParentFile();
+		File interviewFile = new File(parentFile, "/Interviews/");
+		
+		File guessLocation = new File(".");
+		if(parentFile.exists() && parentFile.isDirectory() && parentFile.canRead())
+			guessLocation = parentFile;
+		
+		if(interviewFile.exists() && interviewFile.isDirectory() && interviewFile.canRead())
+			guessLocation = interviewFile;
+		
+		final File currentDirectory = guessLocation;
+		
+		String[] fileList = currentDirectory.list();	
+		VersionFileFilter filter = new VersionFileFilter("Interview Files", "int");
+		ArrayList<String> alterList = new ArrayList<String>();
+		
+		for (String s: fileList){
+			try{	
+				File f = new File(currentDirectory.toString() + "/" + s);			
+				if(!filter.cacheAccept(f) || !f.canRead()){
+					throw new IOException("Couldn't read file or file not associated" +
+							" with selected study.");
+				}
+				else{
+					setInterviewFile(f);
+					Interview interview = readInterview();
+					
+					//add alters to alterList
+					for (String a: interview.getAlterList()){
+						alterList.add(a);
+					}
+				}
+			}
+			catch(Throwable e){
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null,
+						"Unable to read interview file.", "File Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		
+		//
 	}
 
 	/***************************************************************************
