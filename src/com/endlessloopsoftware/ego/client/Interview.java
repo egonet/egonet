@@ -995,22 +995,18 @@ public class Interview {
 				m[i][i] = 1;
 			}
 
-			for (Iterator it = getAnswerSubset(q.UniqueId).iterator(); it
-					.hasNext();) {
+			for (Iterator it = getAnswerSubset(q.UniqueId).iterator(); it.hasNext();) 
+			{
 				Answer a = (Answer) it.next();
 
 				if (weighted) {
 					// m[a.getAlters()[0]][a.getAlters()[1]] = a.value;
 					// m[a.getAlters()[1]][a.getAlters()[0]] = a.value;
-					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? a
-							.getValue() : 0;
-					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? a
-							.getValue() : 0;
+					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? a.getValue() : 0;
+					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? a.getValue() : 0;
 				} else {
-					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? 1
-							: 0;
-					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? 1
-							: 0;
+					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? 1 : 0;
+					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? 1 : 0;
 				}
 			}
 

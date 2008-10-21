@@ -34,6 +34,8 @@ import org.jdesktop.swingworker.*;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.FileMismatchException;
 
+import com.endlessloopsoftware.ego.Answer;
+import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
@@ -369,7 +371,8 @@ public class EgoStore extends Observable {
 		filterWorker.execute();
 	}
 	
-	public void combineInterviews(){
+	public void combineInterviews()
+	{
 		//Find the interview files associated with this study
 		File packageFile = getPackageFile();
 		File parentFile = packageFile.getParentFile();
@@ -399,10 +402,34 @@ public class EgoStore extends Observable {
 					setInterviewFile(f);
 					Interview interview = readInterview();
 					
-					//add alters to alterList
-					for (String a: interview.getAlterList()){
-						alterList.add(a);
+					//String [] thisInterviewAlters = interview.getAlterList();
+					
+					Iterator questions = egoClient.getStudy().getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
+					while (questions.hasNext()) {
+						Question q = egoClient.getStudy().getQuestion((Long) questions.next());
+						Answer a = q.answer;
+						int[][] adj = interview.generateAdjacencyMatrix(q, false);
+						
+						// loop through adj
+						// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
+						
+						for(int i = 0; i < adj.length; i++)
+						{
+							for(int j = 0; j < adj[i].length; j++)
+							{
+								if(a.adjacent)
+								{
+									// alter1 = a.getAlters()[0]
+									// alter2 = a.getAlters()[1]
+									// mark those as adjacent in the new big matrix
+									System.out.println(a.getAlters()[0] + " and " + a.getAlters()[1] + " are adjacent");
+								}
+							}
+						}
 					}
+					
+					//add alters to alterList
+					alterList.addAll(Arrays.asList(interview.getAlterList()));
 				}
 			}
 			catch(Throwable e){
@@ -413,7 +440,7 @@ public class EgoStore extends Observable {
 			}
 		}
 		
-		
+		System.out.println(alterList);
 		//
 	}
 
