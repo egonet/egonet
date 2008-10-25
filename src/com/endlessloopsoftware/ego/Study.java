@@ -20,7 +20,6 @@ package com.endlessloopsoftware.ego;
 import java.io.IOException;
 import java.util.*;
 
-import javax.ejb.CreateException;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,11 +28,6 @@ import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.MalformedQuestionException;
 
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.interfaces.StudySBRemote;
-import com.endlessloopsoftware.egonet.interfaces.StudySBRemoteHome;
-import com.endlessloopsoftware.egonet.interfaces.StudySBUtil;
-import com.endlessloopsoftware.egonet.util.QuestionDataValue;
-import com.endlessloopsoftware.egonet.util.StudyDataValue;
 import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.Elements;
@@ -56,9 +50,8 @@ public class Study extends Observable
    
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
-   private static Properties _prop           = new Properties();
 
-  /**
+   /**
    * Instantiates Default Study
    */
 	public Study()
@@ -80,47 +73,7 @@ public class Study extends Observable
 		}
 	}
 	
-  /**
-   * Instantiates Study based on a StudyDataValue downloaded from a survey server
-   */
-	public Study(StudyDataValue data)
-	{
-		_uniqueId	      = data.getId().longValue();
-      _uiType        = data.getUIType();
-		_numAlters     = data.getNumAlters();
-		_studyName     = data.getStudyName();
-		
-		Long[][] orders	= data.getQuestionOrder();
-		
-		for (int i = 0; i < Question.NUM_QUESTION_TYPES; ++i)
-		{
-			if (orders[i] != null)
-			{
-				_questionOrder[i] = Arrays.asList(orders[i]);
-			}
-			else
-			{
-				_questionOrder[i] = new ArrayList<Long>();
-			}
-		}
-
-		QuestionDataValue[] questionData = data.getQuestionDataValues();
-		for (int i = 0; i < questionData.length; ++i)
-		{
-			Question question = new Question(questionData[i]);
-         
-         if ((question.questionType == Question.ALTER_PAIR_QUESTION) && isAppletUI())
-         {
-            question.statable = true;
-         }
-         
-			_questions.addQuestion(question);
-		}
-      
-      verifyStudy();
-	}
-	
-   /**********
+  /**********
     * Instantiates study from an XML Document
     * @param document
     */
@@ -1014,75 +967,6 @@ public class Study extends Observable
 			Question q = (Question) it.next();
 			q.writeQuestion(element.addElement("Question"), getQuestions());
 		}
-	}
-
-	/**
-	 * @author Peter Schoaff
-	 *
-	 * Store study in selected server.
-	 */
-	public boolean writeDBStudy(JFrame frame, String server, char[] password)
-	{
-		boolean rval = true;
-		
-		try
-		{
-			_prop.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-			_prop.setProperty("java.naming.provider.url", server + ":1099");
-			//System.out.println(_prop.getProperty("java.naming.provider.url"));
-			
-			StudySBRemoteHome studyHome 	= StudySBUtil.getHome(_prop);
-			StudySBRemote		studySB		= studyHome.create();
-			StudyDataValue    data        = new StudyDataValue();
-			
-         data.setUIType(com.endlessloopsoftware.egonet.Shared.THREE_STEP_ELICITATION);
-			data.setNumAlters(getNumAlters());
-			data.setStudyName(getStudyName());
-			
-			Long[][] questionOrder = new Long[Question.NUM_QUESTION_TYPES][];
-			
-			for (int i = 1; i < Question.NUM_QUESTION_TYPES; ++i)
-			{
-				List<Long> qorder = getQuestionOrder(i);
-				questionOrder[i] = new Long[qorder.size()];
-				qorder.toArray(questionOrder[i]);
-			}
-			
-			data.setQuestionOrder(questionOrder);
-			
-			Iterator it = getQuestions().getQuestionMap().values().iterator();
-
-			while (it.hasNext())
-			{
-				Question q = (Question) it.next();
-				data.addQuestionDataValue(q.getDataValue(this.getQuestions(), data.getId()));
-			}
-			
-         String epassword = "215-121-242-47-99-238-5-61-133-183-0-216-187-250-253-30-115-177-254-142-161-83-108-56";//SymmetricKeyEncryption.encrypt(new String(password));
-			studySB.createStudy(data, epassword);
-		}
-		catch (CreateException e)
-		{
-			JOptionPane.showMessageDialog(frame,
-				    "Unable to store study.\n" + e.getMessage(),
-				    "Server error",
-				    JOptionPane.ERROR_MESSAGE);
-			
-			rval = false;
-		}
-		catch (Exception e)
-		{
-			JOptionPane.showMessageDialog(frame,
-				    "Unable to store study.\n",
-				    "Server error",
-				    JOptionPane.ERROR_MESSAGE);
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			rval = false;
-		}
-		
-		return rval;
 	}
 	
 }

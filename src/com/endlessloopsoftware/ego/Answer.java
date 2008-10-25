@@ -18,8 +18,6 @@
  */
 package com.endlessloopsoftware.ego;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.util.AnswerDataValue;
-
 import electric.xml.Element;
 import electric.xml.Elements;
 import java.util.Date;
@@ -66,15 +64,6 @@ public class Answer implements Cloneable {
 		} else {
 			this.alters = alters;
 		}
-	}
-
-	public Answer(AnswerDataValue data) {
-		questionId = data.getQuestionId();
-		answered = data.getAnswered();
-		adjacent = data.getAnswerAdjacent();
-		setValue(data.getAnswerValue());
-		string = data.getAnswerString();
-		alters = data.getAlters().toArray();
 	}
 
 	public Object clone() throws CloneNotSupportedException {

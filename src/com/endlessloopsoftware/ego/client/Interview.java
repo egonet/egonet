@@ -36,8 +36,6 @@ import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.StatRecord.EgoAnswer;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.util.AnswerDataValue;
-import com.endlessloopsoftware.egonet.util.InterviewDataValue;
 import com.endlessloopsoftware.elsutils.ELSMath;
 import com.endlessloopsoftware.elsutils.files.FileCreateException;
 
@@ -172,39 +170,6 @@ public class Interview {
 					}
 				}
 			}
-		}
-	}
-
-	/***************************************************************************
-	 * Generate an interview from a datavalue downloaded from a server
-	 * 
-	 * @param data
-	 */
-	public Interview(Study study, InterviewDataValue data) {
-		System.out.println("Creating Interview from data object");
-		_study = study;
-		_numAlters = study.getNumAlters();
-		_statisticsAvailable = true;
-
-		_matrix = data.getAdjacencyMatrix();
-		_egoName = new String[] { data.getFirstName(), data.getLastName() };
-		_complete = data.getComplete().booleanValue();
-		_alterList = data.getAlters();
-		_numAnswers = data.getAnswerDataValues().length;
-
-		_numAlterPairs = ELSMath.summation(_alterList.length - 1);
-		_numAnswers = data.getAnswerDataValues().length;
-		_answers = new Answer[_numAnswers];
-
-		// System.out.println(_study.getQuestions().size());
-		// System.out.println(_study.getQuestions().dump());
-
-		for (int i = 0; i < data.getAnswerDataValues().length; ++i) {
-			AnswerDataValue answerData = data.getAnswerDataValues()[i];
-			_answers[i] = new Answer(answerData);
-
-			// System.out.println("Answer for: " +
-			// _study.getQuestion(_answers[i].questionId));
 		}
 	}
 

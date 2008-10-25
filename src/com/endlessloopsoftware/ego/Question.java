@@ -19,11 +19,6 @@
 package com.endlessloopsoftware.ego;
 import java.util.Date;
 
-import com.endlessloopsoftware.egonet.data.QuestionLinkDataValue;
-import com.endlessloopsoftware.egonet.interfaces.QuestionEJBPK;
-import com.endlessloopsoftware.egonet.util.QuestionDataValue;
-import com.endlessloopsoftware.egonet.util.SelectionDataValue;
-
 import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.util.listbuilder.Selection;
 
@@ -109,73 +104,6 @@ public class Question implements Cloneable {
 	 */
 	public Question(String s) {
 		this.title = s;
-	}
-
-	/***************************************************************************
-	 * Converts a QuestionDataValue to a question object
-	 * 
-	 * @param question
-	 *            XML element of question
-	 * @param base
-	 *            whether this is from the base file
-	 * @throws MalformedQuestionException
-	 *             if theres is a problem with the XML representation
-	 */
-	public Question(QuestionDataValue data) {
-		this.UniqueId = data.getId();
-		this.questionType = data.getQuestionType();
-		this.answerType = data.getAnswerType();
-		this.title = data.getTitle();
-		this.text = data.getText();
-		this.citation = data.getCitation();
-
-		SelectionDataValue[] selectionData = data.getSelectionDataValues();
-
-		/* Fix to properly display Apple UI interviews */
-		if (this.questionType == Question.ALTER_PROMPT) {
-			this.answerType = Question.TEXT;
-		}
-
-		/*
-		 * temp vars for determining statable, a question must have at least one
-		 * of each selection type to be statable
-		 */
-		boolean adjacent = false;
-		boolean nonadjacent = false;
-
-		this.setSelections(new Selection[selectionData.length]);
-		for (int i = 0; i < selectionData.length; ++i) {
-
-			Selection selection = new Selection();
-			selection.setString(selectionData[i].getText());
-			selection.setIndex(selectionData[i].getIndex());
-			selection.setValue(selectionData[i].getValue());
-			selection.setAdjacent(selectionData[i].getAdjacent());
-
-			if (selection.isAdjacent())
-				adjacent = true;
-			else
-				nonadjacent = true;
-
-			getSelections()[i] = selection;
-		}
-
-		/*
-		 * a question must have at least one of each selection type to be
-		 * statable
-		 */
-		this.statable = adjacent && nonadjacent;
-
-		if (data.getQuestionLinkDataValue() != null) {
-			QuestionLinkDataValue qlData = data.getQuestionLinkDataValue();
-
-			this.link.active = true;
-			this.link.answer = new Answer(qlData.getQuestionId());
-			this.link.answer.setValue(qlData.getAnswerValue());
-			this.link.answer.string = qlData.getAnswerString();
-		} else {
-			this.link.active = false;
-		}
 	}
 
 	/***************************************************************************
@@ -411,43 +339,6 @@ public class Question implements Cloneable {
 				link.addElement("value").setInt(this.link.answer.getValue());
 				link.addElement("string").setText(this.link.answer.string);
 		}
-	}
-
-	public QuestionDataValue getDataValue(QuestionList list, Long studyId) {
-		QuestionEJBPK pk = new QuestionEJBPK(this.UniqueId, studyId);
-		QuestionDataValue data = new QuestionDataValue(pk);
-
-		data.setId(this.UniqueId);
-		data.setQuestionType(this.questionType);
-		data.setAnswerType(this.answerType);
-		data.setTitle(this.title);
-		data.setText(this.text);
-		data.setCitation(this.citation);
-
-		if (this.getSelections().length > 0) {
-			int size = this.getSelections().length;
-
-			for (int i = 0; i < size; i++) {
-				SelectionDataValue selectionData = new SelectionDataValue();
-				selectionData.setText(this.getSelections()[i].getString());
-				selectionData.setIndex(i);
-				selectionData.setValue(this.getSelections()[i].getValue());
-				selectionData.setAdjacent(this.getSelections()[i].isAdjacent());
-
-				data.addSelectionDataValue(selectionData);
-			}
-		}
-
-		if (this.link.active
-				&& (list.getQuestion(this.link.answer.questionId) != null)) {
-				QuestionLinkDataValue qlData = new QuestionLinkDataValue();
-				qlData.setActive(true);
-				qlData.setAnswerValue(this.link.answer.getValue());
-				qlData.setAnswerString(this.link.answer.string);
-				qlData.setQuestionId(this.link.answer.questionId);
-		}
-
-		return data;
 	}
 
 	/***************************************************************************

@@ -11,15 +11,12 @@
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swing-worker-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/appletlib/colt.jar"/>
-	<classpathentry kind="lib" path="lib/strutslib/jbossall-client.jar"/>
-	<classpathentry kind="lib" path="lib/strutslib/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="lib/strutslib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/fest-swing-1.0b1.jar" sourcepath="lib/fest-swing-1.0b1/fest-swing-1.0b1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/lib/fest-assert-1.0a1.jar"/>
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/lib/fest-reflect-0.4.jar"/>
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/lib/fest-util-0.4.jar"/>
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/lib/MRJToolkitStubs-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/colt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

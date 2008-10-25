@@ -167,7 +167,6 @@ public class GraphSettings {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadSettingsFile(File file) throws ParserConfigurationException, SAXException, IOException, Exception {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

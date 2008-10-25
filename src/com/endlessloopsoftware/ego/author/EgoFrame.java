@@ -57,9 +57,6 @@ public class EgoFrame extends JFrame implements Observer {
 			"Export Questions...");
 	private final JMenuItem jMenuFileSaveAs = new JMenuItem("Save Study As...");
 	private final JMenuItem jMenuFileSave = new JMenuItem("Save Study");
-	private final JMenuItem jMenuFileUpload = new JMenuItem("Upload Study");
-	private final JMenuItem jMenuFileSelectStudy = new JMenuItem(
-			"Select Active Study");
 	private final JMenuItem jMenuFileExit = new JMenuItem("Quit");
 	private final JMenu jMenuEdit = new JMenu("Edit");
 	private final JMenuItem jMenuEditCut = new JMenuItem(
@@ -144,9 +141,6 @@ public class EgoFrame extends JFrame implements Observer {
 		jMenuFile.add(jMenuFileSave);
 		jMenuFile.add(jMenuFileSaveAs);
 		jMenuFile.addSeparator();
-		jMenuFile.add(jMenuFileUpload);
-		jMenuFile.add(jMenuFileSelectStudy);
-		jMenuFile.addSeparator();
 		jMenuFile.add(jMenuFileExit);
 
 		jMenuEdit.add(jMenuEditCut);
@@ -199,18 +193,6 @@ public class EgoFrame extends JFrame implements Observer {
 			}
 		});
 
-		jMenuFileUpload.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jMenuFileUpload_actionPerformed(e);
-			}
-		});
-
-		jMenuFileSelectStudy.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jMenuFileSelectStudy_actionPerformed(e);
-			}
-		});
-
 		jMenuFileImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				jMenuFileImport_actionPerformed(e);
@@ -260,8 +242,6 @@ public class EgoFrame extends JFrame implements Observer {
 			jMenuFileClose.setEnabled(false);
 			jMenuFileSave.setEnabled(false);
 			jMenuFileSaveAs.setEnabled(false);
-			jMenuFileUpload.setEnabled(false);
-			jMenuFileSelectStudy.setEnabled(true);
 			jMenuFileExport.setEnabled(false);
 			jTabbedPane.setEnabledAt(1, false);
 			jTabbedPane.setEnabledAt(2, false);
@@ -274,8 +254,6 @@ public class EgoFrame extends JFrame implements Observer {
 			jMenuFileSave.setEnabled(egoNet.getStudy().isCompatible()
 					&& egoNet.getStudy().isModified());
 			jMenuFileSaveAs.setEnabled(true);
-			jMenuFileUpload.setEnabled(true);
-			jMenuFileSelectStudy.setEnabled(true);
 			jMenuFileExport.setEnabled(true);
 			jTabbedPane.setEnabledAt(1, true);
 			jTabbedPane.setEnabledAt(2, true);
@@ -341,26 +319,6 @@ public class EgoFrame extends JFrame implements Observer {
 
 	private void jMenuFileExport_actionPerformed(ActionEvent e) {
 		egoNet.getStorage().exportQuestions();
-	}
-
-	private void jMenuFileUpload_actionPerformed(ActionEvent e) {
-		JDialog storeDialog = new StoreStudyDialog(this, egoNet);
-		storeDialog.pack();
-		/*
-		 * this.show(); Code above deprecated. Code change done Changed by sonam
-		 * on 08/20/2007
-		 */
-		storeDialog.setVisible(true);
-	}
-
-	private void jMenuFileSelectStudy_actionPerformed(ActionEvent e) {
-		JDialog storeDialog = new SetActiveStudyDialog(this);
-		storeDialog.pack();
-		/*
-		 * this.show(); Code above deprecated. Code change done Changed by sonam
-		 * on 08/20/2007
-		 */
-		storeDialog.setVisible(true);
 	}
 
 	private void jMenuFileSave_actionPerformed(ActionEvent e) {
