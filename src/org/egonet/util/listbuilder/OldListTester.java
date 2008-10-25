@@ -18,11 +18,13 @@
  */
 package org.egonet.util.listbuilder;
 
-import com.endlessloopsoftware.elsutils.ListBuilder;
-import com.endlessloopsoftware.elsutils.ObservableList;
-import com.endlessloopsoftware.elsutils.Selection;
 
 import javax.swing.JFrame;
+
+import org.egonet.util.ListBuilder;
+import org.egonet.util.ObservableList;
+import org.egonet.util.Selection;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Iterator;
