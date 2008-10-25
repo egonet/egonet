@@ -36,8 +36,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
 
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Study;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Study;
 
 public class EgoFrame extends JFrame implements Observer {
 	int lastTab = 0;

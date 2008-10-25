@@ -18,11 +18,14 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
-import com.endlessloopsoftware.ego.*;
 import org.egonet.util.listbuilder.Selection;
 import com.endlessloopsoftware.ego.client.Interview;
 import com.endlessloopsoftware.ego.client.EgoClient;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
+import com.endlessloopsoftware.egonet.Study;
+
 import java.util.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

@@ -35,7 +35,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
-import com.endlessloopsoftware.elsutils.WholeNumberDocument;
+import org.egonet.util.WholeNumberDocument;
+
 
 /**
  * Generic Panel creation and handling routines for question editing

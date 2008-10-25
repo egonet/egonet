@@ -32,9 +32,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.endlessloopsoftware.elsutils.AlphaDocument;
-import com.endlessloopsoftware.elsutils.FileCreateException;
-import com.endlessloopsoftware.elsutils.FileReadException;
+import org.egonet.util.AlphaDocument;
+import org.egonet.util.FileCreateException;
+import org.egonet.util.FileReadException;
+
 
 
 public class StartPanel extends JPanel

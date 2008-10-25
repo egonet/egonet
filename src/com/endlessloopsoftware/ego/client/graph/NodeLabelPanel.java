@@ -30,8 +30,11 @@ import java.awt.event.*;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.LabelTableModel;
 import org.egonet.util.table.LabelRenderer;
-import com.endlessloopsoftware.ego.*;
 import com.endlessloopsoftware.ego.client.EgoClient;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.QuestionList;
+import com.endlessloopsoftware.egonet.Study;
 
 public class NodeLabelPanel extends JPanel {
 

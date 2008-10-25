@@ -29,15 +29,15 @@ import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.util.ELSMath;
+import org.egonet.util.FileCreateException;
 
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.StatRecord.EgoAnswer;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.elsutils.ELSMath;
-import com.endlessloopsoftware.elsutils.FileCreateException;
+import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Element;
 import electric.xml.Elements;

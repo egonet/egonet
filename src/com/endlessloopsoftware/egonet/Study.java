@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.ego;
+package com.endlessloopsoftware.egonet;
 import java.io.IOException;
 import java.util.*;
 
@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.MalformedQuestionException;
 
-import com.endlessloopsoftware.egonet.Shared;
 import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.Elements;

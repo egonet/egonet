@@ -9,9 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.EgoStore;
+import com.endlessloopsoftware.egonet.Study;
 
 public class CombineInterviews extends JPanel{
 	private JLabel titleLabel = new JLabel("Combine Interviews from Study: ");

@@ -20,7 +20,8 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import java.util.*;
 
-import com.endlessloopsoftware.ego.*;
+import com.endlessloopsoftware.egonet.Question;
+
 import org.egonet.util.listbuilder.Selection;
 
 public class GraphQuestionSelectionPair {

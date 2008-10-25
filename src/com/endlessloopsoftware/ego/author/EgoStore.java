@@ -27,15 +27,15 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Shared;
-import com.endlessloopsoftware.ego.Study;
-import com.endlessloopsoftware.elsutils.DateUtils;
-import com.endlessloopsoftware.elsutils.DirList;
-import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.FileCreateException;
-import com.endlessloopsoftware.elsutils.FileReadException;
-import com.endlessloopsoftware.elsutils.FileWriteException;
+import org.egonet.util.DateUtils;
+import org.egonet.util.DirList;
+import org.egonet.util.ExtensionFileFilter;
+import org.egonet.util.FileCreateException;
+import org.egonet.util.FileReadException;
+import org.egonet.util.FileWriteException;
+
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -480,7 +480,7 @@ public class EgoStore
       Element studyElement = document.setRoot("Package");
       studyElement.setAttribute("Id", id.toString());
       studyElement.setAttribute("InUse", studyFileInUse ? "Y" : "N");
-      studyElement.setAttribute("Creator", Shared.version);
+      studyElement.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
       studyElement.setAttribute("Updated", DateUtils.getDateString(Calendar.getInstance().getTime(), "dd/MM/yyyy hh:mm a"));
       
       egoNet.getStudy().writeStudyData(studyElement);

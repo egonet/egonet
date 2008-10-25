@@ -18,8 +18,7 @@
  */
 package com.endlessloopsoftware.ego.author;
 
-import com.endlessloopsoftware.ego.Study;
-//import com.endlessloopsoftware.elsutils.Console;
+import com.endlessloopsoftware.egonet.Study;
 
 public class EgoNet
 {

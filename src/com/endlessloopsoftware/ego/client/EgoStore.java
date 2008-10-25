@@ -33,16 +33,15 @@ import org.jdesktop.swingworker.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.FileMismatchException;
+import org.egonet.util.ExtensionFileFilter;
+import org.egonet.util.FileCreateException;
+import org.egonet.util.FileHelpers;
+import org.egonet.util.FileReadException;
 
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Shared;
-import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.FileCreateException;
-import com.endlessloopsoftware.elsutils.FileHelpers;
-import com.endlessloopsoftware.elsutils.FileReadException;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -699,7 +698,7 @@ public class EgoStore extends Observable {
 					.getStudyName());
 			interviewDocument.setAttribute("NumAlters", Integer
 					.toString(egoClient.getStudy().getNumAlters()));
-			interviewDocument.setAttribute("Creator", Shared.version);
+			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 			egoClient.getInterview().writeInterview(interviewDocument);
 
@@ -800,7 +799,7 @@ public class EgoStore extends Observable {
 
 		study.setAttribute("StudyId", Long.toString(egoClient.getStudy()
 				.getStudyId()));
-		study.setAttribute("Creator", Shared.version);
+		study.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 		stats.writeStructuralStatistics(study);
 		egoClient.getInterview().writeEgoAnswers(study);

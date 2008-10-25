@@ -26,12 +26,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.util.FileHelpers;
 
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.Interview;
-import com.endlessloopsoftware.elsutils.FileHelpers;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Element;
 

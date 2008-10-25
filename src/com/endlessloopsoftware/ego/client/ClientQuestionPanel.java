@@ -36,12 +36,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
 import com.cim.dlgedit.loader.DialogResource;
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.Question;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.elsutils.CardPanel;
-import com.endlessloopsoftware.elsutils.FileCreateException;
-import com.endlessloopsoftware.elsutils.WholeNumberDocument;
+
+import org.egonet.util.CardPanel;
+import org.egonet.util.FileCreateException;
+import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 import com.jgoodies.forms.builder.PanelBuilder;

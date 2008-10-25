@@ -33,9 +33,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.elsutils.WholeNumberDocument;
+import org.egonet.util.WholeNumberDocument;
+
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
 
 /**
  * Generic Panel creation and handling routines for question editing

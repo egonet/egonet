@@ -38,13 +38,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
-import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.FileCreateException;
-import com.endlessloopsoftware.elsutils.FileHelpers;
-import com.endlessloopsoftware.elsutils.SwingWorker;
-import com.endlessloopsoftware.ego.Shared;
+import org.egonet.util.ExtensionFileFilter;
+import org.egonet.util.FileCreateException;
+import org.egonet.util.FileHelpers;
+import org.egonet.util.SwingWorker;
+
 import com.endlessloopsoftware.ego.client.graph.*;
-import com.endlessloopsoftware.ego.client.graph.GraphData;
 
 
 public class ClientFrame extends JFrame {
@@ -419,7 +418,7 @@ public class ClientFrame extends JFrame {
 	            {
 	                // Build Screen
 	                egoClient.getFrame().setVisible(false);
-	                Shared.setWaitCursor(egoClient.getFrame(), true);
+	                com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
 	                progressMonitor.setProgress(5);
 	                egoClient.getFrame().setContentPane(new ViewInterviewPanel(egoClient, progressMonitor));
 	                progressMonitor.setProgress(95);
@@ -432,7 +431,7 @@ public class ClientFrame extends JFrame {
 	          
 	          public void finished()
 	            {
-	            Shared.setWaitCursor(egoClient.getFrame(), false);
+	            com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
 	             progressMonitor.close();
 	                egoClient.getFrame().setVisible(true);
 	          }
@@ -461,12 +460,12 @@ public class ClientFrame extends JFrame {
     {
        // Build Screen
        egoClient.getFrame().setVisible(false);
-       Shared.setWaitCursor(egoClient.getFrame(), true);
+       com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
        egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, stats));
        egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
        egoClient.getFrame().pack();
       // egoClient.getFrame().setSize(640, 530);
-       Shared.setWaitCursor(egoClient.getFrame(), false);
+       com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
        egoClient.getFrame().setVisible(true);
     }
     
@@ -500,7 +499,7 @@ public class ClientFrame extends JFrame {
           {
              // Build Screen
              egoClient.getFrame().setVisible(false);
-             Shared.setWaitCursor(egoClient.getFrame(), true);
+             com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
              egoClient.getFrame().setContentPane(new SummaryPanel(progressMonitor));
              egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
              egoClient.getFrame().pack();
@@ -510,7 +509,7 @@ public class ClientFrame extends JFrame {
 
           public void finished()
           {
-             Shared.setWaitCursor(egoClient.getFrame(), false);
+             com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
              egoClient.getFrame().setVisible(true);
 
              if (progressMonitor.isCanceled())

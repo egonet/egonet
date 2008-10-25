@@ -31,7 +31,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.endlessloopsoftware.ego.Question;
+import com.endlessloopsoftware.egonet.Question;
+
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 

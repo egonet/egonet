@@ -32,8 +32,8 @@ import javax.swing.*;
 import edu.uci.ics.jung.visualization.PluggableRenderer;
 import org.egonet.util.listbuilder.Selection;
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
+import com.endlessloopsoftware.egonet.Question;
 
 import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Edge;

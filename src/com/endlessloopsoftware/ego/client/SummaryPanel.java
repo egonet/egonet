@@ -33,11 +33,11 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 
-import com.endlessloopsoftware.ego.Shared;
+import org.egonet.util.DirList;
+import org.egonet.util.FileHelpers;
+
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
-import com.endlessloopsoftware.elsutils.DirList;
-import com.endlessloopsoftware.elsutils.FileHelpers;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -171,7 +171,7 @@ public class SummaryPanel extends JPanel
 					if (id == egoClient.getStudy().getStudyId())
 					{
 						//Commented this out because it would not create a new IST file when new measures are added
-						if (creator.equals(Shared.version))
+						if (creator.equals(com.endlessloopsoftware.egonet.Shared.version))
 						{
 							istFileSet.add(thisIstFile);
 						}

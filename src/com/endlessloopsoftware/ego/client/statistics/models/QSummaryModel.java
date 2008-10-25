@@ -20,8 +20,8 @@ package com.endlessloopsoftware.ego.client.statistics.models;
 
 import javax.swing.JTable;
 
-import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
+import com.endlessloopsoftware.egonet.Question;
 
 public class QSummaryModel extends StatTableModel
 {

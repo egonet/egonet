@@ -3,6 +3,7 @@ package org.egonet.tests.functional;
 
 import static org.fest.swing.core.matcher.JButtonByTextMatcher.*;
 
+import org.egonet.util.CardPanel;
 import org.fest.swing.core.KeyPressInfo;
 import org.fest.swing.core.NameMatcher;
 import org.fest.swing.core.TypeMatcher;
@@ -31,7 +32,6 @@ import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.elsutils.CardPanel;
 
 public class DoInterview {
 

@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 import org.egonet.exceptions.CorruptedInterviewException;
 
 import com.cim.dlgedit.loader.DialogResource;
-import com.endlessloopsoftware.ego.Study;
+import com.endlessloopsoftware.egonet.Study;
 
 public class ClientPanel 
 	extends JPanel

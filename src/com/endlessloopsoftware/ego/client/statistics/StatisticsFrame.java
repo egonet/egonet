@@ -33,7 +33,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import com.endlessloopsoftware.ego.Question;
+import org.egonet.util.FileCreateException;
+
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.models.BetweennessModel;
 import com.endlessloopsoftware.ego.client.statistics.models.CliqueModel;
@@ -42,7 +43,7 @@ import com.endlessloopsoftware.ego.client.statistics.models.CompositionalStatsMo
 import com.endlessloopsoftware.ego.client.statistics.models.DegreeModel;
 import com.endlessloopsoftware.ego.client.statistics.models.InterviewSummaryModel;
 import com.endlessloopsoftware.ego.client.statistics.models.QSummaryModel;
-import com.endlessloopsoftware.elsutils.FileCreateException;
+import com.endlessloopsoftware.egonet.Question;
 
 
 

@@ -27,16 +27,16 @@ import java.util.*;
 import java.awt.*;
 import java.io.*;
 
-import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.ego.Answer;
-import com.endlessloopsoftware.ego.QuestionList;
-import com.endlessloopsoftware.ego.Study;
 
 import com.endlessloopsoftware.ego.client.*;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodePropertyType;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgePropertyType;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.QuestionList;
+import com.endlessloopsoftware.egonet.Study;
 
 import org.egonet.util.listbuilder.Selection;
 import org.w3c.dom.*;

@@ -32,8 +32,10 @@ import org.jdesktop.layout.GroupLayout;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
-import com.endlessloopsoftware.ego.*;
 import com.endlessloopsoftware.ego.client.EgoClient;
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.QuestionList;
+import com.endlessloopsoftware.egonet.Study;
 
 public class EdgeColorPanel extends JPanel {
 
