@@ -20,4 +20,24 @@ package org.egonet.exceptions;
 
 public class FileMismatchException extends org.egonet.exceptions.EgonetException
 {
+    public FileMismatchException()
+    {
+        super();
+    }
+    
+    public FileMismatchException(String s)
+    {
+        super(s);
+    }
+    
+    public FileMismatchException(Throwable t)
+    {
+        super(t);
+    }
+    
+    public FileMismatchException(String s, Throwable t)
+    {
+        super(s,t);
+    }
+
 }

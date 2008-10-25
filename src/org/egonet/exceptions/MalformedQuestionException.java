@@ -20,4 +20,24 @@ package org.egonet.exceptions;
 
 public class MalformedQuestionException extends org.egonet.exceptions.EgonetException
 {
+    public MalformedQuestionException()
+    {
+        super();
+    }
+    
+    public MalformedQuestionException(String s)
+    {
+        super(s);
+    }
+    
+    public MalformedQuestionException(Throwable t)
+    {
+        super(t);
+    }
+    
+    public MalformedQuestionException(String s, Throwable t)
+    {
+        super(s,t);
+    }
+
 }

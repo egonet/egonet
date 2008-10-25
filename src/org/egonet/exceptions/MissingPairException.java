@@ -20,4 +20,24 @@ package org.egonet.exceptions;
 
 public class MissingPairException extends org.egonet.exceptions.EgonetException
 {
+    public MissingPairException()
+    {
+        super();
+    }
+    
+    public MissingPairException(String s)
+    {
+        super(s);
+    }
+    
+    public MissingPairException(Throwable t)
+    {
+        super(t);
+    }
+    
+    public MissingPairException(String s, Throwable t)
+    {
+        super(s,t);
+    }
+
 }

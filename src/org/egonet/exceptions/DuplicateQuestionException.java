@@ -18,6 +18,26 @@
  */
 package org.egonet.exceptions;
 
-public class DuplicateQuestionException extends org.egonet.exceptions.EgonetException
+public class DuplicateQuestionException extends EgonetException
 {
+
+    public DuplicateQuestionException()
+    {
+        super();
+    }
+
+    public DuplicateQuestionException(String s, Throwable t)
+    {
+        super(s, t);
+    }
+
+    public DuplicateQuestionException(String s)
+    {
+        super(s);
+    }
+
+    public DuplicateQuestionException(Throwable t)
+    {
+        super(t);
+    }
 }
