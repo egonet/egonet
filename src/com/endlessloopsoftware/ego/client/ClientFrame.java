@@ -38,12 +38,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
+import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
+import com.endlessloopsoftware.elsutils.FileCreateException;
+import com.endlessloopsoftware.elsutils.FileHelpers;
 import com.endlessloopsoftware.elsutils.SwingWorker;
-import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.files.FileCreateException;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.graph.*;
-import com.endlessloopsoftware.elsutils.files.FileHelpers;
 import com.endlessloopsoftware.ego.client.graph.GraphData;
 
 

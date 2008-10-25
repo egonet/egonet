@@ -28,7 +28,7 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.endlessloopsoftware.elsutils.encoders;
+package com.endlessloopsoftware.elsutils;
 
 import java.awt.Image;
 import java.awt.image.ImageProducer;

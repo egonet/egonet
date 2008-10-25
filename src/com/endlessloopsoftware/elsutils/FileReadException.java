@@ -16,45 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.listbuilder;
-public class Selection
+package com.endlessloopsoftware.elsutils;
+
+/**
+ * @author admin
+ *
+ * To change the template for this generated type comment go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ */
+public class FileReadException extends Exception
 {
-	public String 	 string;
-	public int		 index;
-	public int		 value;
-	public boolean  adjacent;
 
-	public Selection()
-	{
-		string 	    	= "";
-		value	       	= 0;
-		index				= 0;
-		adjacent     	= false;
+	public FileReadException() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public Selection(String string, int value, int index, boolean adjacent)
-	{
-		this.string     = string;
-		this.value	    = value;
-		this.index		 = index;
-		this.adjacent   = false;
+	public FileReadException(String message, Throwable cause) {
+		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
 
-	public String toString()
-	{
-		return (string);
-		//return (string + ", " + value + ", " + adjacent);
+	public FileReadException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
-	public boolean equals(Object o)
-	{
-		try
-		{
-			return string.equals(((Selection) o).string);
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
+	public FileReadException(Throwable cause) {
+		super(cause);
+		// TODO Auto-generated constructor stub
 	}
+
 }

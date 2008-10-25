@@ -34,7 +34,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import com.endlessloopsoftware.elsutils.documents.WholeNumberDocument;
+
+import com.endlessloopsoftware.elsutils.WholeNumberDocument;
 
 /**
  * Generic Panel creation and handling routines for question editing

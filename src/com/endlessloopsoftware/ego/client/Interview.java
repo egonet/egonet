@@ -37,7 +37,7 @@ import com.endlessloopsoftware.ego.client.StatRecord.EgoAnswer;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.elsutils.ELSMath;
-import com.endlessloopsoftware.elsutils.files.FileCreateException;
+import com.endlessloopsoftware.elsutils.FileCreateException;
 
 import electric.xml.Element;
 import electric.xml.Elements;

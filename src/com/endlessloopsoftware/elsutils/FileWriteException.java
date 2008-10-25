@@ -16,26 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.files;
+package com.endlessloopsoftware.elsutils;
 
-public class FileCreateException extends Exception
+public class FileWriteException extends Exception
 {
-	public FileCreateException(String message, Throwable cause) {
+
+	public FileWriteException() {
+		super();
+	}
+
+	public FileWriteException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
-	public FileCreateException(String message) {
+
+	public FileWriteException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
-	public FileCreateException(Throwable cause) {
+
+	public FileWriteException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-	public boolean report;
-	public FileCreateException() {}
-	public FileCreateException(boolean report)
-	{
-		this.report = report;
 	}
 }

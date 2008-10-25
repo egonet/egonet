@@ -31,7 +31,7 @@ import com.endlessloopsoftware.ego.Answer;
 import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.Interview;
-import com.endlessloopsoftware.elsutils.files.FileHelpers;
+import com.endlessloopsoftware.elsutils.FileHelpers;
 
 import electric.xml.Element;
 

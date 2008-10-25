@@ -16,24 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.files;
+package com.endlessloopsoftware.elsutils;
 
-public class FileWriteException extends Exception
+public class FileNotSetException extends Exception
 {
-
-	public FileWriteException() {
-		super();
-	}
-
-	public FileWriteException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public FileWriteException(String message) {
-		super(message);
-	}
-
-	public FileWriteException(Throwable cause) {
-		super(cause);
-	}
 }

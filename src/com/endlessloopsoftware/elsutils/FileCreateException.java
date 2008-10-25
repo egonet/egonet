@@ -16,35 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.files;
+package com.endlessloopsoftware.elsutils;
 
-/**
- * @author admin
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
-public class FileReadException extends Exception
+public class FileCreateException extends Exception
 {
-
-	public FileReadException() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public FileReadException(String message, Throwable cause) {
+	public FileCreateException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
-
-	public FileReadException(String message) {
+	public FileCreateException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
-
-	public FileReadException(Throwable cause) {
+	public FileCreateException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
-
+	public boolean report;
+	public FileCreateException() {}
+	public FileCreateException(boolean report)
+	{
+		this.report = report;
+	}
 }

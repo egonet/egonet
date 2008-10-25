@@ -36,8 +36,8 @@ import javax.swing.ProgressMonitor;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
-import com.endlessloopsoftware.elsutils.files.DirList;
-import com.endlessloopsoftware.elsutils.files.FileHelpers;
+import com.endlessloopsoftware.elsutils.DirList;
+import com.endlessloopsoftware.elsutils.FileHelpers;
 
 import electric.xml.Document;
 import electric.xml.Element;

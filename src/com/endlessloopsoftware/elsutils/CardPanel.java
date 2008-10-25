@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.layout;
+package com.endlessloopsoftware.elsutils;
 
 import java.awt.Component;
 import java.awt.Container;

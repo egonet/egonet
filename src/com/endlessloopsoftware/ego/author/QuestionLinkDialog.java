@@ -35,7 +35,7 @@ import javax.swing.text.PlainDocument;
 
 import com.endlessloopsoftware.ego.Answer;
 import com.endlessloopsoftware.ego.Question;
-import com.endlessloopsoftware.elsutils.documents.WholeNumberDocument;
+import com.endlessloopsoftware.elsutils.WholeNumberDocument;
 
 /**
  * Generic Panel creation and handling routines for question editing

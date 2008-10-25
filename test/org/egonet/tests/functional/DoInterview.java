@@ -31,7 +31,7 @@ import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.elsutils.layout.CardPanel;
+import com.endlessloopsoftware.elsutils.CardPanel;
 
 public class DoInterview {
 

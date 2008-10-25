@@ -39,10 +39,10 @@ import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.files.FileCreateException;
-import com.endlessloopsoftware.elsutils.files.FileHelpers;
-import com.endlessloopsoftware.elsutils.files.FileReadException;
+import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
+import com.endlessloopsoftware.elsutils.FileCreateException;
+import com.endlessloopsoftware.elsutils.FileHelpers;
+import com.endlessloopsoftware.elsutils.FileReadException;
 
 import electric.xml.Document;
 import electric.xml.Element;

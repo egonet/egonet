@@ -16,38 +16,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.egonet.client;
+package com.endlessloopsoftware.elsutils;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 
-/**
- * @author admin
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+/****
+ * Manages list of question files in the base library directory
  */
-public class TestBean
+public class DirList
 {
-
-	public static void main(String[] args)
+	public static String[] getDirList(final File path, final String suffix)
 	{
-		try
+		String[] list;
+
+		if (suffix == null)
 		{
-/*			Properties props = ClientContextFactory.get();
-			
-			AnswerEJBRemoteHome answerHome = AnswerEJBUtil.getHome(props);
-			AnswerDataValue data = new AnswerDataValue();
-			data.setAlters(new int[] {1, 2});
-			data.setAnswered(true);
-			data.setAnswerString("Fred");
-			data.setAnswerValue(4);
-			data.setAnswerAdjacent(false);
-			
-			answerHome.create(data);
-*/
+			list = path.list();
 		}
-		catch (Exception e)
+		else
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			list = path.list(new FilenameFilter() {
+				public boolean accept(File dir, String n)
+				{
+					String f = new File(n).getName();
+					return (f.toLowerCase().endsWith(suffix.toLowerCase()));
+				}
+			});
+
+			if (list == null)
+			{
+				list = new String[0];
+			}
 		}
+
+		Arrays.sort(list);
+
+		return (list);
+	}
+
+	public static File getLibraryDirectory()
+	{
+		return new File("./lib/");
 	}
 }

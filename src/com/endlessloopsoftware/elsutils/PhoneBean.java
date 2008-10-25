@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.layout;
+package com.endlessloopsoftware.elsutils;
 
 import java.io.Serializable;
 
@@ -27,8 +27,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
-import com.endlessloopsoftware.elsutils.documents.SizeConstrainedDocument;
-import com.endlessloopsoftware.elsutils.documents.WholeNumberDocument;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 

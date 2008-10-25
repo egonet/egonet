@@ -31,11 +31,11 @@ import com.endlessloopsoftware.ego.Question;
 import com.endlessloopsoftware.ego.Shared;
 import com.endlessloopsoftware.ego.Study;
 import com.endlessloopsoftware.elsutils.DateUtils;
-import com.endlessloopsoftware.elsutils.files.DirList;
-import com.endlessloopsoftware.elsutils.files.ExtensionFileFilter;
-import com.endlessloopsoftware.elsutils.files.FileCreateException;
-import com.endlessloopsoftware.elsutils.files.FileReadException;
-import com.endlessloopsoftware.elsutils.files.FileWriteException;
+import com.endlessloopsoftware.elsutils.DirList;
+import com.endlessloopsoftware.elsutils.ExtensionFileFilter;
+import com.endlessloopsoftware.elsutils.FileCreateException;
+import com.endlessloopsoftware.elsutils.FileReadException;
+import com.endlessloopsoftware.elsutils.FileWriteException;
 
 import electric.xml.Document;
 import electric.xml.Element;

@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.documents;
-import java.awt.Toolkit;
-
+package com.endlessloopsoftware.elsutils;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -28,27 +26,8 @@ import javax.swing.text.PlainDocument;
  * Extends PlainDocument
  * Only overrides the insertString method
  */
-public class WholeNumberDocument extends PlainDocument
+public class AlphaDocument extends PlainDocument
 {
-	protected int 	maxLength = Integer.MAX_VALUE;
-	
-	/**
-	 * 
-	 */
-	public WholeNumberDocument()
-	{
-		super();
-	}
-
-	/**
-	 * 
-	 */
-	public WholeNumberDocument(int maxLength)
-	{
-		super();
-		this.maxLength = maxLength;
-	}
-
 	/**
 	 * Only allows integers to be inserted in the string
 	 * If addition is string calls parent method, otherwise intercepts and disallows
@@ -60,23 +39,18 @@ public class WholeNumberDocument extends PlainDocument
 	public void insertString(int offs, String str, AttributeSet a)
 			throws BadLocationException
 	{
-		char[]	source 		= str.toCharArray();
-		char[]	result 		= new char[source.length];
-		int		maxLength	= this.maxLength - offs;	
-		int 	j 			= 0;
+		char[]	source 	= str.toCharArray();
+		char[]	result 	= new char[source.length];
+		int 	j 		= 0;
 
-		for (int i = 0; i < Math.min(result.length, maxLength); i++)
+		for (int i = 0; i < result.length; i++)
 		{
-			if (Character.isDigit(source[i]))
+			if (Character.isJavaIdentifierPart(source[i]))
 			{
 				result[j++] = source[i];
 			}
-			else
-			{
-				Toolkit.getDefaultToolkit().beep();
-			}
 		}
-		
+
 		super.insertString(offs, new String(result, 0, j), a);
 	}
 }

@@ -16,8 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.elsutils.files;
-
-public class FileNotSetException extends Exception
+package com.endlessloopsoftware.elsutils;
+public class Selection
 {
+	public String 	 string;
+	public int		 index;
+	public int		 value;
+	public boolean  adjacent;
+
+	public Selection()
+	{
+		string 	    	= "";
+		value	       	= 0;
+		index				= 0;
+		adjacent     	= false;
+	}
+
+	public Selection(String string, int value, int index, boolean adjacent)
+	{
+		this.string     = string;
+		this.value	    = value;
+		this.index		 = index;
+		this.adjacent   = false;
+	}
+
+	public String toString()
+	{
+		return (string);
+		//return (string + ", " + value + ", " + adjacent);
+	}
+
+	public boolean equals(Object o)
+	{
+		try
+		{
+			return string.equals(((Selection) o).string);
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+	}
 }
