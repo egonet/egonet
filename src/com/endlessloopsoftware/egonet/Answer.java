@@ -151,15 +151,6 @@ public class Answer implements Cloneable {
 		this.alters = alters;
 	}
 
-	/*
-	 * public AnswerDataValue getDataValue() { AnswerDataValue adv = new
-	 * AnswerDataValue();
-	 * 
-	 * adv.setAnswered(this.answered); adv.setAnswerString(this.string);
-	 * adv.setAnswerValue(this.value); adv.setAnswerAdjacent(this.adjacent);
-	 * 
-	 * return adv; }
-	 */
 	public String toString() {
 		String str = null;
 		if (string == null) {
