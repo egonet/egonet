@@ -33,6 +33,7 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.CatchingAction;
 
 import com.cim.dlgedit.loader.DialogResource;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 public class ClientPanel 

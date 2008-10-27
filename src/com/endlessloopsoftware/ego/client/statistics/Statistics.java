@@ -28,8 +28,8 @@ import java.util.Stack;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.FileHelpers;
 
-import com.endlessloopsoftware.ego.client.Interview;
 import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 

@@ -16,43 +16,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.ego.client;
+package com.endlessloopsoftware.ego.client.statistics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.endlessloopsoftware.ego.client.statistics.AlterStats;
-import com.endlessloopsoftware.ego.client.statistics.Statistics;
 
 import electric.xml.Element;
 import electric.xml.Elements;
 
 public class StatRecord
 {
-   String  name           = "";
-   String  degreeName     = "";
-   Integer degreeValue    = new Integer(0);
-   Float   degreeMean     = new Float(0);
-   Float   degreeNC       = new Float(0);
+	public String  name           = "";
+	public String  degreeName     = "";
+	public Integer degreeValue    = new Integer(0);
+	public Float   degreeMean     = new Float(0);
+	public Float   degreeNC       = new Float(0);
 
-   String  betweenName    = "";
-   Float   betweenValue   = new Float(0);
-   Float   betweenMean    = new Float(0);
-   Float   betweenNC      = new Float(0);
+	public String  betweenName    = "";
+	public Float   betweenValue   = new Float(0);
+	public Float   betweenMean    = new Float(0);
+	public Float   betweenNC      = new Float(0);
 
-   String  closenessName  = "";
-   Float   closenessValue = new Float(0);
-   Float   closenessMean  = new Float(0);
-   Float   closenessNC    = new Float(0);
+	public String  closenessName  = "";
+	public Float   closenessValue = new Float(0);
+	public Float   closenessMean  = new Float(0);
+	public Float   closenessNC    = new Float(0);
 
-   Integer numCliques     = new Integer(0);
-   Integer numComponents  = new Integer(0);
-   Integer numIsolates    = new Integer(0);
-   Integer numDyads       = new Integer(0);
+	public Integer numCliques     = new Integer(0);
+	public Integer numComponents  = new Integer(0);
+	public Integer numIsolates    = new Integer(0);
+	public Integer numDyads       = new Integer(0);
    
-  List<EgoAnswer>    egoAnswers     = new ArrayList<EgoAnswer>();
-  List<AlterAnswer>    alterAnswers   = new ArrayList<AlterAnswer>();
+   public List<EgoAnswer>    egoAnswers     = new ArrayList<EgoAnswer>();
+   public List<AlterAnswer>    alterAnswers   = new ArrayList<AlterAnswer>();
 
  
   public List getEgoAnswers()
@@ -139,9 +137,9 @@ public class StatRecord
 
    public class EgoAnswer
    {
-      String title;
-      String answer;
-      int    index;
+      public final String title;
+      public final String answer;
+      public final int    index;
 
       protected EgoAnswer(Element e)
       {
@@ -160,12 +158,12 @@ public class StatRecord
 
    public class AlterAnswer
    {
-      String   title;
-      int      count;
-      String[] selections;
-      int[]    totals;
+	  public String   title;
+      public int      count;
+      public String[] selections;
+      public int[]    totals;
       //code added
-      int[] 	   AnswerIndex;
+      public int[] 	   AnswerIndex;
       //end of add
       
       protected AlterAnswer(Element e)

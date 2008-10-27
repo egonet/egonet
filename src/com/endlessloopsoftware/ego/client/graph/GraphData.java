@@ -19,9 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.egonet.util.listbuilder.Selection;
-import com.endlessloopsoftware.ego.client.Interview;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;

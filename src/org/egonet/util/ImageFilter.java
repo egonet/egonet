@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.ego.client;
+package org.egonet.util;
 
 import java.io.File;
 import java.util.HashSet;

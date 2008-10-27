@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.client;
 
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 /**

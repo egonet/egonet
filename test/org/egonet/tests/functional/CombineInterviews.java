@@ -8,9 +8,9 @@ import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 import com.endlessloopsoftware.ego.client.EgoStore;
-import com.endlessloopsoftware.ego.client.Interview;
 import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
 import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 

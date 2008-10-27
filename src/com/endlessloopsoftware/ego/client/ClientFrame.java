@@ -41,9 +41,11 @@ import javax.swing.filechooser.FileFilter;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileCreateException;
 import org.egonet.util.FileHelpers;
+import org.egonet.util.ImageFilter;
 import org.egonet.util.SwingWorker;
 
 import com.endlessloopsoftware.ego.client.graph.*;
+import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 
 
 public class ClientFrame extends JFrame {

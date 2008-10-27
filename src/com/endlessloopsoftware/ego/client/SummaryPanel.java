@@ -36,6 +36,7 @@ import javax.swing.ProgressMonitor;
 import org.egonet.util.DirList;
 import org.egonet.util.FileHelpers;
 
+import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
 

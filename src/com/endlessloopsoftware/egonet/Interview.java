@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.ego.client;
+package com.endlessloopsoftware.egonet;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,12 +30,10 @@ import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.ELSMath;
 import org.egonet.util.FileCreateException;
 
-import com.endlessloopsoftware.ego.client.StatRecord.EgoAnswer;
+import com.endlessloopsoftware.ego.client.EgoClient;
+import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
 
 import electric.xml.Element;
 import electric.xml.Elements;
@@ -64,7 +62,7 @@ public class Interview {
 
 	private int _numAlters;
 
-	boolean _statisticsAvailable = false;
+	public boolean _statisticsAvailable = false;
 
 	/***************************************************************************
 	 * Create interview from question list

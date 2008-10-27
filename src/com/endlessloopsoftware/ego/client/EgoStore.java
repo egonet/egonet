@@ -40,6 +40,7 @@ import org.egonet.util.FileHelpers;
 import org.egonet.util.FileReadException;
 
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
