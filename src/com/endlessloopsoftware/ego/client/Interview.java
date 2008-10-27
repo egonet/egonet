@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.ELSMath;
@@ -68,8 +66,6 @@ public class Interview {
 
 	boolean _statisticsAvailable = false;
 
-	private EgoClient egoClient;
-
 	/***************************************************************************
 	 * Create interview from question list
 	 * 
@@ -80,9 +76,8 @@ public class Interview {
 	 * @throws CorruptedInterviewException
 	 *             if unable to read interview
 	 */
-	public Interview(Study study, EgoClient egoClient) throws CorruptedInterviewException {
+	public Interview(Study study) throws CorruptedInterviewException {
 		/* Locals */
-		this.egoClient = egoClient;
 		int j, k;
 		Iterator questions;
 
@@ -90,13 +85,13 @@ public class Interview {
 		_study = study;
 		_numAlters = study.getNumAlters();
 		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		_numAnswers = egoClient.getStudy().getQuestionOrder(Question.EGO_QUESTION)
+		_numAnswers = study.getQuestionOrder(Question.EGO_QUESTION)
 				.size()
-				+ egoClient.getStudy().getQuestionOrder(Question.ALTER_PROMPT)
+				+ study.getQuestionOrder(Question.ALTER_PROMPT)
 						.size()
-				+ (_numAlters * egoClient.getStudy().getQuestionOrder(
+				+ (_numAlters * study.getQuestionOrder(
 						Question.ALTER_QUESTION).size())
-				+ (_numAlterPairs * egoClient.getStudy().getQuestionOrder(
+				+ (_numAlterPairs * study.getQuestionOrder(
 						Question.ALTER_PAIR_QUESTION).size());
 		_answers = new Answer[_numAnswers];
 
@@ -104,7 +99,7 @@ public class Interview {
 		_qIndex = 0;
 
 		/* Ego Questions */
-		questions = egoClient.getStudy().getQuestionOrder(Question.EGO_QUESTION)
+		questions = study.getQuestionOrder(Question.EGO_QUESTION)
 				.iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
@@ -118,7 +113,7 @@ public class Interview {
 		}
 
 		/* Alter Prompt Questions */
-		questions = egoClient.getStudy().getQuestionOrder(Question.ALTER_PROMPT)
+		questions = study.getQuestionOrder(Question.ALTER_PROMPT)
 				.iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
@@ -133,7 +128,7 @@ public class Interview {
 
 		/* Alter Questions */
 		for (j = 0; j < _numAlters; j++) {
-			questions = egoClient.getStudy().getQuestionOrder(
+			questions = study.getQuestionOrder(
 					Question.ALTER_QUESTION).iterator();
 			int[] alter = { j };
 			while (questions.hasNext()) {
@@ -151,7 +146,7 @@ public class Interview {
 		/* Alter Pair Questions */
 		for (k = 0; k < _numAlters; k++) {
 			for (j = (k + 1); j < _numAlters; j++) {
-				questions = egoClient.getStudy().getQuestionOrder(
+				questions = study.getQuestionOrder(
 						Question.ALTER_PAIR_QUESTION).iterator();
 				int[] alters = { k, j };
 				while (questions.hasNext()) {
@@ -178,7 +173,7 @@ public class Interview {
 	 */
 	public void exit() throws Exception {
 		if (!_complete) {
-				egoClient.getStorage().writeInterviewFile();
+				
 		}
 	}
 
@@ -302,8 +297,7 @@ public class Interview {
 	public List<Question> getAlterAnswers() {
 		List<Question> l = new ArrayList<Question>();
 
-		Collection<Question> questionList = _study.getQuestions()
-				.getQuestionMap().values();
+		Collection<Question> questionList = _study.getQuestions().values();
 		for (Question q : questionList) {
 			if (q.questionType != Question.ALTER_QUESTION)
 				continue;
@@ -507,7 +501,7 @@ public class Interview {
 
 		return (checkIndex != -1);
 	}
-
+	
 	/***************************************************************************
 	 * Returns current question from an interview
 	 * 
@@ -521,16 +515,6 @@ public class Interview {
 		q = (Question) getQuestion(_qIndex).clone();
 		q.answer = _answers[_qIndex];
 		q.text = completeText(q.text, q.answer.getAlters());
-
-		if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex %
-															// 20) == 0))
-		{
-			try {
-				egoClient.getStorage().writeInterviewFile();
-			} catch (FileCreateException ex) {
-				/* reported at lower level */
-			}
-		}
 
 		return (q);
 	}
@@ -650,7 +634,7 @@ public class Interview {
 	 * @throws CorruptedInterviewException
 	 *             if unable to read interview
 	 */
-	public static Interview readInterview(EgoClient egoClient, Element e)
+	public static Interview readInterview(Study study, Element e)
 			throws CorruptedInterviewException {
 		Interview interview;
 		String[] lAlterList;
@@ -660,11 +644,11 @@ public class Interview {
 		try {
 			/* Read alter list so we can size interview record */
 			lAlterList = readAlters(alterListElem);
-			interview = new Interview(egoClient.getStudy(), egoClient);
+			interview = new Interview(study);
 			interview._alterList = lAlterList;
 
 			/* Read answers */
-			egoClient.getStudy().readInterviewStudy(e);
+			study.readInterviewStudy(e);
 			interview._complete = e.getBoolean("Complete");
 
 			/* Read interviewee name */
@@ -674,7 +658,7 @@ public class Interview {
 				interview._egoName[0] = egoNameElem.getString("First");
 				interview._egoName[1] = egoNameElem.getString("Last");
 			}
-			readAnswers(egoClient, interview, answerListElem);
+			readAnswers(study, interview, answerListElem);
 		} catch (CorruptedInterviewException ex) {
 			interview = null;
 			throw (ex);
@@ -719,7 +703,7 @@ public class Interview {
 	 * @throws CorruptedInterviewException
 	 *             if unable to read interview
 	 */
-	private static void readAnswers(EgoClient egoClient, Interview interview, Element e)
+	private static void readAnswers(Study study, Interview interview, Element e)
 			throws CorruptedInterviewException {
 		Elements answerIter = e.getElements("Answer");
 		int index = 0;
@@ -733,7 +717,7 @@ public class Interview {
 		while (answerIter.hasMoreElements()) {
 			try {
 				Answer oldAnswer = interview._answers[index];
-				Answer newAnswer = Answer.readAnswer(egoClient, answerIter.next());
+				Answer newAnswer = Answer.readAnswer(study, answerIter.next());
 
 				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
 					interview._answers[index++] = newAnswer;
@@ -755,12 +739,11 @@ public class Interview {
 	 *            XML Element, parent of interview tree
 	 */
 	public void writeInterview(Element e) {
-		boolean success = true;
 		Element alterListElem = e.addElement("AlterList");
 		Element answerListElem = e.addElement("AnswerList");
 		Element egoNameElem = e.addElement("EgoName");
 
-		egoClient.getStudy().writeInterviewStudy(e);
+		_study.writeInterviewStudy(e);
 		e.addElement("Complete").setBoolean(_complete);
 		egoNameElem.addElement("First").setString(_egoName[0]);
 		egoNameElem.addElement("Last").setString(_egoName[1]);
@@ -770,24 +753,7 @@ public class Interview {
 		}
 
 		for (int i = 0; i < _answers.length; i++) {
-			try {
 				_answers[i].writeAnswer(answerListElem);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(egoClient.getFrame(),
-						"An error occurred while attempting to write an answer to the interview file. "
-								+ ex, "Unable to Write Interview",
-						JOptionPane.ERROR_MESSAGE);
-				success = false;
-			}
-		}
-
-		if (!success) {
-			JOptionPane
-					.showMessageDialog(
-							egoClient.getFrame(),
-							"An error occurred while attempting to write this interview.",
-							"Unable to Write Interview",
-							JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -805,11 +771,11 @@ public class Interview {
 	 * 
 	 * @throws FileCreateException
 	 */
-	public void completeInterview() throws FileCreateException {
+	public void completeInterview(EgoClient egoClient) throws FileCreateException {
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
-		Question q = egoClient.getStudy().getFirstStatableQuestion();
+		Question q = _study.getFirstStatableQuestion();
 
 		_complete = true;
 		egoClient.getStorage().writeInterviewFile();
@@ -988,6 +954,10 @@ public class Interview {
 
 	public Answer[] get_answers() {
 		return _answers;
+	}
+
+	public boolean is_complete() {
+		return _complete;
 	}
 
 }

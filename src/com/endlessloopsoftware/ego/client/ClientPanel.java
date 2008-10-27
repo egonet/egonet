@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.util.CatchingAction;
 
 import com.cim.dlgedit.loader.DialogResource;
 import com.endlessloopsoftware.egonet.Study;
@@ -79,21 +80,29 @@ public class ClientPanel
 		studyNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		studyNameLabel.setText(" ");
 
-		selectStudyButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doSelectStudy(e);}});
+		selectStudyButton.addActionListener(new CatchingAction("doSelectStudy") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				doSelectStudy(e);
+			}
+		});
 
-		viewInterviewButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doViewInterview(e);}});
+		viewInterviewButton.addActionListener(new CatchingAction("doViewInterview") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				doViewInterview(e);
+				}
+			});
 
-		statisticsButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doSummaryStatistics(e);}});
+		statisticsButton.addActionListener(new CatchingAction("doSummaryStatistics") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				doSummaryStatistics(e);
+				}
+			});
 
-		startInterviewButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doStartInterview(e);}});
+		startInterviewButton.addActionListener(new CatchingAction("doStartInterview") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				doStartInterview(e);
+				}
+			});
 
 		fillPanel();
 	}
@@ -116,7 +125,7 @@ public class ClientPanel
 		}
 	}
 
-	private void doSelectStudy(ActionEvent e)
+	private void doSelectStudy(ActionEvent e) throws Exception
 	{
 		/* Clear out old data */
       egoClient.setStudy(new Study());
@@ -137,7 +146,7 @@ public class ClientPanel
       egoClient.getStorage().setPackageInUse();
 		try
 		{
-         egoClient.setInterview(new Interview(egoClient.getStudy(), egoClient));
+         egoClient.setInterview(new Interview(egoClient.getStudy()));
 			if (!egoClient.getInterview()._statisticsAvailable)
 			{
 				/* No Structural question for this study, warn user */

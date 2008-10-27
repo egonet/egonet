@@ -1,84 +1,102 @@
 package org.egonet.tests.functional;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import com.endlessloopsoftware.ego.client.EgoClient;
+import javax.swing.JOptionPane;
 import com.endlessloopsoftware.ego.client.EgoStore;
+import com.endlessloopsoftware.ego.client.Interview;
+import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 
-public class CombineInterviews extends JPanel{
-	private JLabel titleLabel = new JLabel("Combine Interviews from Study: ");
-	private JLabel studyNameLabel = new JLabel(" ");
-	private JButton selectStudyButton = new JButton("Select Study");
-	private JButton combineInterviewsButton = new JButton("Combine Interviews");
-	
-	private static EgoClient egoClient;
-	
-	public CombineInterviews(){
-		super(new GridLayout(3, 2));
-       
-        titleLabel.setHorizontalTextPosition(JLabel.CENTER);
-        add(titleLabel);
+import electric.xml.Document;
 
-        studyNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        studyNameLabel.setHorizontalTextPosition(JLabel.CENTER);
-		studyNameLabel.setText(" ");
-		add(studyNameLabel);
-	
-		selectStudyButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doSelectStudy(e);}});
-		add(selectStudyButton);
-        
-		combineInterviewsButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				doCombineInterviews(e);}});
-		add(combineInterviewsButton);
+public class CombineInterviews
+{
 
-	}
-	
-	private static void createComponents(){
-		
-		JFrame frame = new JFrame("Combine Interview Test Interface");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       
-        frame.add(new CombineInterviews());
-        
-		//Display the window.
-        frame.pack();
-        frame.setVisible(true);
-	}
-	
-	private void doSelectStudy(ActionEvent e){
-		/* Clear out old data */
-		egoClient.setStudy(new Study());
-		egoClient.setStorage(new EgoStore(egoClient));
-		egoClient.setInterview(null);
-		
+	public void doCombineInterviews() throws Exception
+	{
 		/* Read new study */
-		egoClient.getStorage().selectStudy();
-		egoClient.getStorage().readPackage();
-		studyNameLabel.setText(egoClient.getStudy().getStudyName());
+		File studyFile = EgoStore.selectStudy(null, new File("."));
+		Document packageDocument = new Document(studyFile);
+		Study study = new Study(packageDocument);
+
+		//Find the interview files associated with this study
+		File parentFile = studyFile.getParentFile();
+		File interviewFile = new File(parentFile, "/Interviews/");
 		
+		File guessLocation = new File(".");
+		if(parentFile.exists() && parentFile.isDirectory() && parentFile.canRead())
+			guessLocation = parentFile;
+		
+		if(interviewFile.exists() && interviewFile.isDirectory() && interviewFile.canRead())
+			guessLocation = interviewFile;
+		
+		final File currentDirectory = guessLocation;
+		
+		String[] fileList = currentDirectory.list();	
+		VersionFileFilter filter = new VersionFileFilter(study.getStudyId(), "Interview Files", "int");
+		ArrayList<String> alterList = new ArrayList<String>();
+		
+		for (String s: fileList){
+			try{	
+				File f = new File(currentDirectory.toString() + "/" + s);			
+				if(!filter.accept(f) || !f.canRead())
+					throw new IOException("Couldn't read file or file not associated with selected study.");
+				
+					
+					Document document = new Document(f);
+					Interview interview = Interview.readInterview(study, document.getRoot());
+					
+					//String [] thisInterviewAlters = interview.getAlterList();
+					
+					Iterator questions = study.getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
+					while (questions.hasNext()) {
+						Question q = study.getQuestion((Long) questions.next());
+						Answer a = q.answer;
+						int[][] adj = interview.generateAdjacencyMatrix(q, false);
+						
+						// loop through adj
+						// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
+						
+						for(int i = 0; i < adj.length; i++)
+						{
+							for(int j = 0; j < adj[i].length; j++)
+							{
+								if(a.adjacent)
+								{
+									// alter1 = a.getAlters()[0]
+									// alter2 = a.getAlters()[1]
+									// mark those as adjacent in the new big matrix
+									System.out.println(a.getAlters()[0] + " and " + a.getAlters()[1] + " are adjacent");
+								}
+							}
+						}
+					}
+					
+					//add alters to alterList
+					alterList.addAll(Arrays.asList(interview.getAlterList()));
+				
+			}
+			catch(Throwable e){
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null,
+						"Unable to read interview file.", "File Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		
+		}
+		
+		System.out.println(alterList);
 	}
-	
-	private void doCombineInterviews(ActionEvent e){
-		egoClient.getStorage().setInterviewFile(null);
-		egoClient.setInterview(null);
-		egoClient.getStorage().combineInterviews();
-	}
-	
+
 	public static void main(String[] args) throws Exception
 	{
-		egoClient = EgoClient.getInstance();
-		new CombineInterviews();
-		createComponents();
+		new CombineInterviews().doCombineInterviews();
 	}
 }

@@ -726,6 +726,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private void questionButtonNext_actionPerformed(ActionEvent e) {
 		if (egoClient.getInterview().hasNext()) {
 			question = egoClient.getInterview().next();
+			
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
+			{
+				try {
+					egoClient.getStorage().writeInterviewFile();
+				} catch (FileCreateException ex) {
+					/* reported at lower level */
+				}
+			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
 					&& (question.questionType == Question.ALTER_PAIR_QUESTION)) {
@@ -740,7 +749,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 		} else {
 			try {
-				egoClient.getInterview().completeInterview();
+				egoClient.getInterview().completeInterview(egoClient);
 			} catch (FileCreateException ex) {
 				JOptionPane.showMessageDialog(egoClient.getFrame(),
 						"Unable to create interview statistics summary file.",

@@ -64,7 +64,7 @@ public class Study extends Observable
 		
 		// @TODO Move storage to parent package
 		//		EgoNet.storage.setStudyFile(null);
-		this.getQuestions().removeAll();
+		this.getQuestions().clear();
 
 		for (int i = 0; i < _questionOrder.length; i++)
 		{
@@ -954,17 +954,11 @@ public class Study extends Observable
 	public void writeAllQuestionData(Element document) 
 		throws IOException
 	{
-		Iterator it;
-		Element element;
-
-		element = document.addElement("QuestionList");
-
-		it = getQuestions().getQuestionMap().values().iterator();
-
-		while (it.hasNext())
+		
+		Element element = document.addElement("QuestionList");
+		for(Question q : getQuestions().values())
 		{
-			Question q = (Question) it.next();
-			q.writeQuestion(element.addElement("Question"), getQuestions());
+			q.writeQuestion(element.addElement("Question"));
 		}
 	}
 	

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
-import com.endlessloopsoftware.ego.client.EgoClient;
 import electric.xml.Element;
 import electric.xml.Elements;
 import java.util.Date;
@@ -76,7 +75,7 @@ public class Answer implements Cloneable {
 	 * @param e
 	 *            XML Element, parent of answer tree
 	 */
-	public void writeAnswer(Element e) throws Exception {
+	public void writeAnswer(Element e) {
 		Element answerElement = new Element("Answer");
 		Element altersElement;
 
@@ -111,12 +110,12 @@ public class Answer implements Cloneable {
 	 * @param e
 	 *            XML Element, parent of alter list
 	 */
-	public static Answer readAnswer(EgoClient egoClient, Element e) {
+	public static Answer readAnswer(Study study, Element e) {
 		Answer r = null;
 		Elements alterElems = null;
 		int qAlters[] = null;
 		Long qId = new Long(e.getLong("QuestionId"));
-		Question q = (Question) egoClient.getStudy().getQuestions().getQuestion(qId);
+		Question q = (Question) study.getQuestions().getQuestion(qId);
 		Element alterElem = e.getElement("Alters");
 
 		if (alterElem != null) {

@@ -79,9 +79,9 @@ public class EdgeShapePanel extends JPanel {
 		// create questionCombo
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		Map<Long, Question> questionMap = questionList.getQuestionMap();
-		for (Long key : questionMap.keySet()) {
-			Question currentQuestion = questionMap.get(key);
+		
+		for (Long key : questionList.keySet()) {
+			Question currentQuestion = questionList.get(key);
 			int questionType = currentQuestion.questionType;
 			if (questionType == Question.ALTER_PAIR_QUESTION) {
 				// populate the list box with only questions that have choices

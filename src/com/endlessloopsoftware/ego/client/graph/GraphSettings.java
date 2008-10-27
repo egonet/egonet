@@ -176,7 +176,7 @@ public class GraphSettings {
 
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		Map<Long, Question> questionMap = questionList.getQuestionMap();
+		
 
 		for (int i = 1; i < nodeList.getLength(); i++) {
 			Node entryNode = nodeList.item(i);
@@ -231,7 +231,7 @@ public class GraphSettings {
 				Element visibleElement = (Element) propertyElement
 						.getElementsByTagName("Visible").item(0);
 
-				Question question = questionMap.get(Long
+				Question question = questionList.get(Long
 						.parseLong(questionElement.getAttribute("id")));
 				int category = Integer.parseInt(categoryElement
 						.getAttribute("category"));

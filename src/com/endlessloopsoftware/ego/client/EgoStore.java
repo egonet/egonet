@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego.client;
+import java.awt.Window;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -39,17 +40,14 @@ import org.egonet.util.FileHelpers;
 import org.egonet.util.FileReadException;
 
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.ParseException;
 
-/*******************************************************************************
- * Handles IO for the EgoNet program Tracks data files and changes to those
- * files
+/**
+ * Client Session object that contains storage functionality
  */
 public class EgoStore extends Observable {
 	private File packageFile = null;
@@ -134,14 +132,17 @@ public class EgoStore extends Observable {
 		notifyObservers();
 	}
 
-	/***************************************************************************
-	 * Select a directory in which to store project related files Create
-	 * subdirectories if needed.
+	/**
+	 * Show the user a dialog box to select a study file, then return that file.
+	 * @param parent a parent Window for the dialog box
+	 * @param packageFile a parent directory for the study
+	 * @return null the selected file
+	 * @throws FileReadException if the dialog was cancelled 
 	 */
-	public void selectStudy() {
+	public static File selectStudy(Window parent, File packageFile) throws FileReadException
+	{
 
 		JFileChooser jNewStudyChooser = new JFileChooser();
-		File f, directory;
 
 		Preferences prefs = null;
 		try {
@@ -153,33 +154,30 @@ public class EgoStore extends Observable {
 		jNewStudyChooser.addChoosableFileFilter(packageFilter);
 		jNewStudyChooser.setDialogTitle("Select Study Definition File");
 
-		if (getPackageFile() != null) {
-			jNewStudyChooser.setCurrentDirectory(getPackageFile().getParentFile());
+		if (packageFile != null) {
+			jNewStudyChooser.setCurrentDirectory(packageFile.getParentFile());
 		} else {
 			String userHome = ".";
 			try { 
 				userHome = System.getProperty("user.home",".");
 			} catch (Throwable t) {	}
 			//if (prefs != null) directory = new File(prefs.get(FILE_PREF, "."));
-			directory = new File(userHome);
+			File directory = new File(userHome);
 			jNewStudyChooser.setCurrentDirectory(directory);
 		}
 
-		if (JFileChooser.APPROVE_OPTION == jNewStudyChooser
-				.showOpenDialog(egoClient.getFrame())) {
-			f = jNewStudyChooser.getSelectedFile();
+		if (JFileChooser.APPROVE_OPTION == jNewStudyChooser.showOpenDialog(parent)) {
+			File f = jNewStudyChooser.getSelectedFile();
 
 			if (f != null) {
 				try {
-					if (!f.canRead()) {
-						throw new FileReadException();
-					} else {
-						setPackageFile(f);
-
-						// Store location in prefs file
-						if (prefs != null)
-							prefs.put(FILE_PREF, f.getParent());
-					}
+					if (!f.canRead()) 
+						throw new FileReadException("File exists but was unreadable");
+					
+					// Store location in prefs file
+					if (prefs != null)
+						prefs.put(FILE_PREF, f.getParent());
+					return f;
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null,
 							"Unable to read study file.", "File Error",
@@ -187,6 +185,14 @@ public class EgoStore extends Observable {
 				}
 			}
 		}
+		
+		throw new FileReadException("Dialog cancelled");
+	}
+	
+	public void selectStudy() throws FileReadException
+	{
+		Window parent = egoClient.getFrame();
+		setPackageFile(selectStudy(parent, getPackageFile()));
 	}
 	
 	/**
@@ -197,11 +203,13 @@ public class EgoStore extends Observable {
 	 * @author sonam
 	 * 
 	 */
-	public class VersionFileFilter extends ExtensionFileFilter {
-		Map<File, Boolean> cacheResults = new HashMap<File, Boolean>();
-
-		public VersionFileFilter(String description, String extension) {
+	public static class VersionFileFilter extends ExtensionFileFilter {
+		private final Map<File, Boolean> cacheResults = new HashMap<File, Boolean>();
+		private final long studyId;
+		
+		public VersionFileFilter(long studyId, String description, String extension) {
 			super(description, extension);
+			this.studyId = studyId;
 		}
 
 		public void cacheList(File currentDirectory,
@@ -249,7 +257,7 @@ public class EgoStore extends Observable {
 				Document document = new Document(f);
 				long studyId = Long.parseLong(document.getRoot().getAttribute(
 						"StudyId"));
-				if (studyId != egoClient.getStudy().getStudyId()) {
+				if (studyId != this.studyId) {
 					throw (new FileMismatchException());
 				}
 				// readInterview(f);
@@ -293,8 +301,7 @@ public class EgoStore extends Observable {
 
 		final int numFiles = currentDirectory.list().length;
 
-		final VersionFileFilter filter = new VersionFileFilter(
-				"Interview Files", "int");
+		final VersionFileFilter filter = new VersionFileFilter(egoClient.getStudy().getStudyId(), "Interview Files", "int");
 		final JFileChooser jNewInterviewChooser = new JFileChooser();
 		final ProgressMonitor progressMonitor = new ProgressMonitor(
 				egoClient.getFrame(),
@@ -370,79 +377,6 @@ public class EgoStore extends Observable {
 		filterWorker.execute();
 	}
 	
-	public void combineInterviews()
-	{
-		//Find the interview files associated with this study
-		File packageFile = getPackageFile();
-		File parentFile = packageFile.getParentFile();
-		File interviewFile = new File(parentFile, "/Interviews/");
-		
-		File guessLocation = new File(".");
-		if(parentFile.exists() && parentFile.isDirectory() && parentFile.canRead())
-			guessLocation = parentFile;
-		
-		if(interviewFile.exists() && interviewFile.isDirectory() && interviewFile.canRead())
-			guessLocation = interviewFile;
-		
-		final File currentDirectory = guessLocation;
-		
-		String[] fileList = currentDirectory.list();	
-		VersionFileFilter filter = new VersionFileFilter("Interview Files", "int");
-		ArrayList<String> alterList = new ArrayList<String>();
-		
-		for (String s: fileList){
-			try{	
-				File f = new File(currentDirectory.toString() + "/" + s);			
-				if(!filter.cacheAccept(f) || !f.canRead()){
-					throw new IOException("Couldn't read file or file not associated" +
-							" with selected study.");
-				}
-				else{
-					setInterviewFile(f);
-					Interview interview = readInterview();
-					
-					//String [] thisInterviewAlters = interview.getAlterList();
-					
-					Iterator questions = egoClient.getStudy().getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
-					while (questions.hasNext()) {
-						Question q = egoClient.getStudy().getQuestion((Long) questions.next());
-						Answer a = q.answer;
-						int[][] adj = interview.generateAdjacencyMatrix(q, false);
-						
-						// loop through adj
-						// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
-						
-						for(int i = 0; i < adj.length; i++)
-						{
-							for(int j = 0; j < adj[i].length; j++)
-							{
-								if(a.adjacent)
-								{
-									// alter1 = a.getAlters()[0]
-									// alter2 = a.getAlters()[1]
-									// mark those as adjacent in the new big matrix
-									System.out.println(a.getAlters()[0] + " and " + a.getAlters()[1] + " are adjacent");
-								}
-							}
-						}
-					}
-					
-					//add alters to alterList
-					alterList.addAll(Arrays.asList(interview.getAlterList()));
-				}
-			}
-			catch(Throwable e){
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(null,
-						"Unable to read interview file.", "File Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		
-		System.out.println(alterList);
-		//
-	}
-
 	/***************************************************************************
 	 * Reads in study information from an XML like input file Includes files
 	 * paths and arrays of question orders
@@ -518,23 +452,22 @@ public class EgoStore extends Observable {
 	 * @throws FileReadException
 	 * @throws FileMismatchException
 	 */
-	private Interview readInterview(File f) throws FileReadException,
-			FileMismatchException {
+	public static Interview readInterview(Study study, File interviewFile) throws FileReadException, FileMismatchException {
 		Interview interview = null;
 		long studyId;
 
 		try {
 
-			Document document = new Document(f);
+			Document document = new Document(interviewFile);
 
 			/* make sure id matches study */
 			studyId = Long
 					.parseLong(document.getRoot().getAttribute("StudyId"));
-			if (studyId != egoClient.getStudy().getStudyId()) {
+			if (studyId != study.getStudyId()) {
 				interview = null;
 				throw (new FileMismatchException());
 			}
-			interview = Interview.readInterview(egoClient, document.getRoot());
+			interview = Interview.readInterview(study, document.getRoot());
 		} catch (CorruptedInterviewException ex) {
 			interview = null;
 
@@ -546,6 +479,11 @@ public class EgoStore extends Observable {
 		}
 
 		return (interview);
+	}
+	
+	public Interview readInterview(File interviewFile) throws FileReadException, FileMismatchException
+	{
+		return readInterview(egoClient.getStudy(), interviewFile);
 	}
 
 	/***************************************************************************
@@ -692,12 +630,9 @@ public class EgoStore extends Observable {
 			document.setVersion("1.0");
 			Element interviewDocument = document.setRoot("Interview");
 
-			interviewDocument.setAttribute("StudyId", Long
-					.toString(egoClient.getStudy().getStudyId()));
-			interviewDocument.setAttribute("StudyName", egoClient.getStudy()
-					.getStudyName());
-			interviewDocument.setAttribute("NumAlters", Integer
-					.toString(egoClient.getStudy().getNumAlters()));
+			interviewDocument.setAttribute("StudyId", Long.toString(egoClient.getStudy().getStudyId()));
+			interviewDocument.setAttribute("StudyName", egoClient.getStudy().getStudyName());
+			interviewDocument.setAttribute("NumAlters", Integer.toString(egoClient.getStudy().getNumAlters()));
 			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 			egoClient.getInterview().writeInterview(interviewDocument);
@@ -879,7 +814,7 @@ public class EgoStore extends Observable {
 		}
 
 		if ((egoClient.getInterview() != null) && egoClient.getInterview().isComplete()) {
-			egoClient.getInterview().completeInterview();
+			egoClient.getInterview().completeInterview(egoClient);
 		} else if(egoClient.getInterview() == null) {
 			throw new FileCreateException("Interview for " + interviewFile.getName() + " could not be read.");
 		} else {

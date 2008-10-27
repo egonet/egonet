@@ -18,65 +18,20 @@
  */
 package com.endlessloopsoftware.egonet;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
-public class QuestionList extends Observable
-		implements Observer
+/**
+ * A map of question id (long) to question object
+ * @author martins
+ *
+ */
+public class QuestionList extends HashMap<Long,Question>
 {
-	private final Map<Long,Question> questionMap = new HashMap<Long,Question>();
-
-	public QuestionList()
-	{
-	}
-
-	/****
-	 * Notifies observers that a field in the study has changed
-	 */
-	public void notifyObservers()
-	{
-		setChanged();
-		super.notifyObservers(this);
-	}
-
-	/****
-	 * Returns Map containing all questions
-	 * @return questionList Map of questions
-	 */
-	public Map<Long, Question> getQuestionMap()
-	{
-		return(questionMap);
-	}
-
-	/****
-	 * Deletes all questions from map
-	 */
-	public void removeAll()
-	{
-		questionMap.clear();
-	}
-
-	/****
-	 * Removes a single question from the map
-	 * @param q question to add
-	 */
-	public void remove(Question q)
-	{
-		questionMap.remove(q.UniqueId);
-	}
-
-	/****
-	 * Adds question to the map
-	 * @param q question to add
-	 */
 	public void addQuestion(Question q)
 	{
-		questionMap.put(q.UniqueId, q);
+		put(q.UniqueId, q);
 	}
 
 	/****
@@ -86,66 +41,30 @@ public class QuestionList extends Observable
 	 */
 	public Question getQuestion(Long l)
 	{
-		return((Question) questionMap.get((Object) l));
+		return get(l);
 	}
 
-	/****
-	 * Returns a Collection of all the values in the map
-	 * usually used to iterate over questions
-	 * @return collection collection of questions
-	 */
-	public Collection<Question> values()
+	public String dump()
 	{
-		return (questionMap.values());
-	}
+		StringBuffer buffer = new StringBuffer();
 
-	/****
-	 * Determines if question is already in map
-	 * @param q question to seek
-	 * @return bool true iff question in map
-	 */
-	public boolean contains(Question q)
+		Set keys = keySet();
+		for (Iterator it = keys.iterator(); it.hasNext();)
+		{
+			Object key = it.next();
+			buffer.append("[" + key + "," + get(key) + "]\n");
+		}
+
+		return buffer.toString();
+	}
+	
+	public boolean contains(long questionId)
 	{
-		return(questionMap.containsValue(q));
+		return containsKey(questionId);
 	}
-
-	/****
-	 * Determines if question with a given UniqueId is already in map
-	 * @param l UniqueId of question to seek
-	 * @return bool true iff question in map
-	 */
-	public boolean contains(Long l)
+	
+	public boolean contains(Question question)
 	{
-		return(questionMap.containsKey(l));
+		return containsValue(question);
 	}
-
-	/****
-	 * Function called when observables updated
-	 * @param o Observable
-	 * @param arg param from Observable
-	 */
-	public void update(Observable o, Object arg)
-	{
-		/**@todo Implement this java.util.Observer method*/
-		throw new java.lang.UnsupportedOperationException("Method update() not yet implemented.");
-	}
-
-   public int size()
-   {
-      return questionMap.size();
-   }
-   
-   public String dump()
-   {
-      StringBuffer buffer = new StringBuffer();
-      
-      Set keys = questionMap.keySet();
-      for (Iterator it = keys.iterator(); it.hasNext();)
-      {
-         Object key = it.next();
-         buffer.append(key + " : " + questionMap.get(key) + "\n");
-      }
-      
-      return buffer.toString();
-   }
 }

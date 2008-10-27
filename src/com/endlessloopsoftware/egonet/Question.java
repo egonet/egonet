@@ -295,7 +295,7 @@ public class Question implements Cloneable {
 	 * @param q
 	 *            question
 	 */
-	public void writeQuestion(Element e, QuestionList list) {
+	public void writeQuestion(Element e) {
 		if (this.centralMarker) {
 			e.setAttribute("CentralityMarker", "true");
 		}
@@ -331,13 +331,11 @@ public class Question implements Cloneable {
 			}
 		}
 
-		if (this.link.active
-				&& (list.getQuestion(this.link.answer.questionId) != null)) {
-				Element link = e.addElement("Link");
-				link.addElement("Id").setLong(
-						this.link.answer.questionId.longValue());
-				link.addElement("value").setInt(this.link.answer.getValue());
-				link.addElement("string").setText(this.link.answer.string);
+		if (this.link.active) {
+			Element link = e.addElement("Link");
+			link.addElement("Id").setLong(this.link.answer.questionId);
+			link.addElement("value").setInt(this.link.answer.getValue());
+			link.addElement("string").setText(this.link.answer.string);
 		}
 	}
 

@@ -20,6 +20,12 @@ package com.endlessloopsoftware.ego.client;
 
 import com.endlessloopsoftware.egonet.Study;
 
+/**
+ * Session object representing the session of the user and the EgoNet software
+ * @author peters
+ * @author martins
+ *
+ */
 public class EgoClient
 {
 	private Study			study;

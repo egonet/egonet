@@ -152,7 +152,7 @@ public class ClientFrame extends JFrame {
 		saveInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					egoClient.getInterview().completeInterview();
+					egoClient.getInterview().completeInterview(egoClient);
 				} catch (FileCreateException ex) {
 					throw new RuntimeException(ex);
 				}
@@ -195,8 +195,8 @@ public class ClientFrame extends JFrame {
 
 	// File | Exit action performed
 	public void jMenuFileExit_actionPerformed(ActionEvent e) throws Exception{
-		if (egoClient.getInterview() != null) {
-			egoClient.getInterview().exit();
+		if (egoClient.getInterview() != null && !egoClient.getInterview().is_complete()) {
+			egoClient.getStorage().writeInterviewFile();
 		}
 
 		System.exit(0);
