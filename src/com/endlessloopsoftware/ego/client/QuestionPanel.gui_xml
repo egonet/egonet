@@ -55,7 +55,7 @@
    </object> 
   </void> 
   <void method="add"> 
-   <object id="CardPanel0" class="com.endlessloopsoftware.elsutils.layout.CardPanel"> 
+   <object id="CardPanel0" class="org.egonet.util.CardPanel"> 
     <void property="name"> 
      <string>answerPanel</string> 
     </void> 
