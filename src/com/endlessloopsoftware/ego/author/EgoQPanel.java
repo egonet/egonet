@@ -19,8 +19,15 @@
 package com.endlessloopsoftware.ego.author;
 import javax.swing.JPanel;
 
+import com.endlessloopsoftware.egonet.Question.QuestionType;
+
 public abstract class EgoQPanel extends JPanel
 {
+    protected final QuestionType questionType;
 	abstract public void fillPanel();
 	abstract public void clearPanel();
+	public EgoQPanel(QuestionType questionType)
+	{
+	    this.questionType = questionType;
+	}
 }

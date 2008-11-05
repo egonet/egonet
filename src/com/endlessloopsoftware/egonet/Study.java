@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.egonet;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -26,6 +27,8 @@ import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.MalformedQuestionException;
+
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -44,8 +47,7 @@ public class Study extends Observable
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
    
-   @SuppressWarnings("unchecked")
-   private List<Long>[]            _questionOrder  = new List[Question.NUM_QUESTION_TYPES];
+   private Map<QuestionType,List<Long>> _questionOrder  = new HashMap<QuestionType,List<Long>>();
    
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
@@ -66,10 +68,8 @@ public class Study extends Observable
 		//		EgoNet.storage.setStudyFile(null);
 		this.getQuestions().clear();
 
-		for (int i = 0; i < _questionOrder.length; i++)
-		{
-			_questionOrder[i] = new ArrayList<Long>();
-		}
+		for(QuestionType type : QuestionType.values())
+		    _questionOrder.put(type, new ArrayList<Long>());
 	}
 	
   /**********
@@ -126,16 +126,6 @@ public class Study extends Observable
 		return (_numAlters);
 	}
 
-	/***************************************************************************
-	 * Returns array of question order lists
-	 * 
-	 * @return questionOrder array of lists
-	 */
-	public List<Long>[] getQuestionOrderArray()
-	{
-		return (_questionOrder);
-	}
-
 	/**
 	 * @return Returns the questions.
 	 */
@@ -170,14 +160,9 @@ public class Study extends Observable
 	 * @throws NoSuchElementException
 	 *             for category out of range
 	 */
-	public List<Long> getQuestionOrder(int category) throws NoSuchElementException
+	public List<Long> getQuestionOrder(QuestionType category) throws NoSuchElementException
 	{
-		if (category >= _questionOrder.length)
-		{
-			throw (new NoSuchElementException());
-		}
-
-		return (_questionOrder[category]);
+		return _questionOrder.get(category);
 	}
 
 	/***************************************************************************
@@ -193,7 +178,7 @@ public class Study extends Observable
 		/**
 		 * Try to find one all alters answer
 		 */
-		questions = getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
+		questions = getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
 		while (questions.hasNext())
 		{
 			Question q = (Question) getQuestions().getQuestion((Long) questions.next());
@@ -210,7 +195,7 @@ public class Study extends Observable
 		 */
 		if (statable == null)
 		{
-			questions = getQuestionOrder(Question.ALTER_QUESTION).iterator();
+			questions = getQuestionOrder(Question.QuestionType.ALTER).iterator();
 			while (questions.hasNext())
 			{
 				Question q = (Question) getQuestions().getQuestion((Long) questions.next());
@@ -376,13 +361,13 @@ public class Study extends Observable
 		}
 		else
 		{
-			throw new DuplicateQuestionException();
+			throw new DuplicateQuestionException("Question already added to study");
 		}
 
 		/* If not in appropriate array list, add to that list too */
-		if (!_questionOrder[q.questionType].contains(q.UniqueId))
+		if (!_questionOrder.get(q.questionType).contains(q.UniqueId))
 		{
-			_questionOrder[q.questionType].add(q.UniqueId);
+		    _questionOrder.get(q.questionType).add(q.UniqueId);
 		}
 	}
 
@@ -398,18 +383,18 @@ public class Study extends Observable
 	{
 		int followloc;
 
-		if (_questionOrder[q.questionType].contains(follow.UniqueId) || (follow == _firstQuestion))
+		if (_questionOrder.get(q.questionType).contains(follow.UniqueId) || (follow == _firstQuestion))
 		{
-			_questionOrder[q.questionType].remove(q.UniqueId);
+			_questionOrder.get(q.questionType).remove(q.UniqueId);
 
 			if (follow == _firstQuestion)
 			{
-				_questionOrder[q.questionType].add(0, q.UniqueId);
+				_questionOrder.get(q.questionType).add(0, q.UniqueId);
 			}
 			else
 			{
-				followloc = _questionOrder[q.questionType].indexOf(follow.UniqueId);
-				_questionOrder[q.questionType].add(followloc + 1, q.UniqueId);
+				followloc = _questionOrder.get(q.questionType).indexOf(follow.UniqueId);
+				_questionOrder.get(q.questionType).add(followloc + 1, q.UniqueId);
 			}
 
 			if (q.link.active)
@@ -425,30 +410,11 @@ public class Study extends Observable
 		}
 	}
 
-	/***************************************************************************
-	 * moves question from one order list to another
-	 * 
-	 * @param q
-	 *            question to move
-	 * @param type
-	 *            new question type
-	 */
-	public void changeQuestionType(Question q, int type)
+	public void changeQuestionType(Question q, QuestionType type) throws DuplicateQuestionException
 	{
 		removeQuestion(q);
-
 		q.questionType = type;
-
-		try
-		{
-			addQuestion(q);
-		}
-		catch (DuplicateQuestionException e)
-		{
-			// This shouldn't happen
-			e.printStackTrace();
-		}
-
+		addQuestion(q);
 		setModified(true);
 	}
 
@@ -465,7 +431,7 @@ public class Study extends Observable
 	{
 		Long key;
 		Question listQ;
-		Iterator i = _questionOrder[Question.ALTER_PAIR_QUESTION].iterator();
+		Iterator i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
 
 		while (i.hasNext())
 		{
@@ -510,7 +476,7 @@ public class Study extends Observable
 		Question q;
 		boolean foundCentral = false;
 		;
-		Iterator i = _questionOrder[Question.ALTER_PAIR_QUESTION].iterator();
+		Iterator i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
 
 		while (i.hasNext())
 		{
@@ -534,14 +500,14 @@ public class Study extends Observable
 		if (!foundCentral)
 		{
 			/* Tag first Alter pair categorical question */
-			i = _questionOrder[Question.ALTER_PAIR_QUESTION].iterator();
+			i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
 
 			while (i.hasNext() && !foundCentral)
 			{
 				key = (Long) i.next();
 				q = this.getQuestions().getQuestion(key);
 
-				if ((q != null) && (q.answerType == Question.CATEGORICAL))
+				if ((q != null) && (q.answerType == Question.AnswerType.CATEGORICAL))
 				{
 					q.centralMarker = true;
 					foundCentral = true;
@@ -559,40 +525,76 @@ public class Study extends Observable
 	 * @param dlm
 	 *            list model to use in inserting questions
 	 */
-	public void fillList(int questionType, DefaultListModel dlm)
+	public void fillList(QuestionType questionType, DefaultListModel dlm)
 	{
-		int startType, endType;
-		Iterator i;
-		Long key;
-
-		if (questionType == Question.ALL_QUESTION_TYPES)
-		{
-			startType = Question.MIN_QUESTION_TYPE;
-			endType = Question.MAX_QUESTION_TYPE;
-		}
-		else
-		{
-			startType = questionType;
-			endType = questionType;
-		}
-
-		for (int type = startType; type <= endType; type++)
-		{
-			if ((questionType != Question.ALL_QUESTION_TYPES) || (type != Question.ALTER_PROMPT))
-			{
-				i = _questionOrder[type].iterator();
-				while (i.hasNext())
-				{
-					key = (Long) i.next();
-					if (this.getQuestions().contains(key))
-					{
-						dlm.addElement(this.getQuestions().getQuestion(key));
-					}
-				}
-			}
-		}
+        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(!entry.getKey().equals(questionType))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(getQuestions().contains(id))
+                    dlm.addElement(getQuestions().getQuestion(id));
+            }
+        }
 	}
+	
+	   /***************************************************************************
+     * Searches question list for all questions, places them in
+     * list
+     * 
+     * @param questionType
+     *            type filter for question list
+     * @param dlm
+     *            list model to use in inserting questions
+     */
+    public void fillList(DefaultListModel dlm)
+    {
+        Set<Entry<QuestionType, List<Long>>> entries = _questionOrder.entrySet();
+        
+        for(Map.Entry<QuestionType,List<Long>> entry : entries)
+        {
+            if(entry.getKey().equals(QuestionType.ALTER_PROMPT))
+                continue;
+            
+            List<Long> questions = entry.getValue();
+            for(Long id : questions)
+            {
+                if(getQuestions().contains(id))
+                    dlm.addElement(getQuestions().getQuestion(id));
+            }
+        }
+    }
 
+    /***************************************************************************
+     * Searches question list for all questions of a given tpe, places them in
+     * list until a given question is reached
+     * 
+     * @param questionType
+     *            type filter for question list
+     * @param dlm
+     *            list model to use in inserting questions
+     * @param endId
+     *            question list end, stop when you see this question
+     */
+    public void fillList(DefaultListModel dlm, Long endId)
+    {
+        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(entry.getKey().equals(QuestionType.ALTER_PROMPT))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(id.equals(endId))
+                    return;
+                else if(getQuestions().contains(id))
+                    dlm.addElement(getQuestions().getQuestion(id));
+            }
+        }
+    }
+    
 	/***************************************************************************
 	 * Searches question list for all questions of a given tpe, places them in
 	 * list until a given question is reached
@@ -604,43 +606,21 @@ public class Study extends Observable
 	 * @param endId
 	 *            question list end, stop when you see this question
 	 */
-	public void fillList(int questionType, DefaultListModel dlm, Long endId)
+	public void fillList(QuestionType questionType, DefaultListModel dlm, Long endId)
 	{
-		int startType, endType;
-		Iterator i;
-		Long key;
-		boolean found = false;
-
-		if (questionType == Question.ALL_QUESTION_TYPES)
-		{
-			startType = Question.MIN_QUESTION_TYPE;
-			endType = Question.MAX_QUESTION_TYPE;
-		}
-		else
-		{
-			startType = questionType;
-			endType = questionType;
-		}
-
-		for (int type = startType;(type <= endType) && !found; type++)
-		{
-			if ((questionType != Question.ALL_QUESTION_TYPES) || (type != Question.ALTER_PROMPT))
-			{
-				i = _questionOrder[type].iterator();
-				while (i.hasNext() && !found)
-				{
-					key = (Long) i.next();
-					if (key.equals(endId))
-					{
-						found = true;
-					}
-					else if (this.getQuestions().contains(key))
-					{
-						dlm.addElement(this.getQuestions().getQuestion(key));
-					}
-				}
-			}
-		}
+        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(!entry.getKey().equals(questionType))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(id.equals(endId))
+                    return;
+                else if(getQuestions().contains(id))
+                    dlm.addElement(getQuestions().getQuestion(id));
+            }
+        }
 	}
 
 	/***************************************************************************
@@ -653,31 +633,25 @@ public class Study extends Observable
 	 */
 	public boolean doesQuestionPreceed(Long q1, Long q2)
 	{
-		int startType, endType;
-		Iterator i;
-		Long key;
-		boolean found = false;
-
-		startType = Question.MIN_QUESTION_TYPE;
-		endType = Question.MAX_QUESTION_TYPE;
-
-		for (int type = startType;(type <= endType) && !found; type++)
+		for(QuestionType qT : QuestionType.values())
 		{
-			i = _questionOrder[type].iterator();
-			while (i.hasNext() && !found)
-			{
-				key = (Long) i.next();
-				if (key.equals(q1))
-				{
-					return true;
-				}
-				else if (key.equals(q2))
-				{
-					return false;
-				}
-			}
+		    if(qT.equals(QuestionType.STUDY_CONFIG))
+		        continue;
+		    
+		    List<Long> questionList = _questionOrder.get(qT);
+		    for(Long key : questionList)
+		    {
+	              if (key.equals(q1))
+	                {
+	                    return true;
+	                }
+	                else if (key.equals(q2))
+	                {
+	                    return false;
+	                }
+		    }
 		}
-
+		
 		return false;
 	}
 
@@ -686,9 +660,9 @@ public class Study extends Observable
 	 */
 	public void verifyStudy()
 	{
-		for (int i = 0; i < Question.NUM_QUESTION_TYPES; i++)
-		{
-			Iterator it = getQuestionIterator(i);
+	    for (QuestionType type : QuestionType.values())
+        {
+            Iterator<Long> it = getQuestionIterator(type);
 
 			while (it.hasNext())
 			{
@@ -709,9 +683,9 @@ public class Study extends Observable
 	 *            category of question
 	 * @return iterator list iterator or questions
 	 */
-	public ListIterator getQuestionIterator(int category)
+	public ListIterator<Long> getQuestionIterator(QuestionType category)
 	{
-		return (_questionOrder[category].listIterator());
+		return (_questionOrder.get(category).listIterator());
 	}
 
 	/***************************************************************************
@@ -745,9 +719,10 @@ public class Study extends Observable
 	{
 		removeLinksToQuestion(q);
 
-		for (int i = 0; i < _questionOrder.length; i++)
+		for (int i = 0; i < _questionOrder.size(); i++)
 		{
-			_questionOrder[i].remove(q.UniqueId);
+		    if(_questionOrder.get(i) != null)
+		        _questionOrder.get(i).remove(q.UniqueId);
 		}
 
 		this.getQuestions().remove(q);
@@ -835,15 +810,12 @@ public class Study extends Observable
 			Elements elements = root.getElements("questionorder");
 			while (elements.hasMoreElements())
 			{
-				int qOrderId;
-				List<Long> questionOrder;
-				Elements ids;
-
 				Element element = elements.next();
-				qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
-				questionOrder = (getQuestionOrderArray())[qOrderId];
+				int qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
+				QuestionType qType = QuestionType.values()[qOrderId];
+				List<Long> questionOrder = _questionOrder.get(qType);
 
-				ids = element.getElements("id");
+				Elements ids = element.getElements("id");
 				while (ids.hasMoreElements())
 				{
 					questionOrder.add(new Long(ids.next().getLong()));
@@ -908,9 +880,6 @@ public class Study extends Observable
 	 */
 	public void writeStudyData(Element document)
 	{
-		Iterator it;
-		int i;
-
 		try
 		{
 			Element study = document.addElement("Study");
@@ -918,14 +887,18 @@ public class Study extends Observable
 			study.addElement("name").setText(getStudyName());
 			study.addElement("numalters").setInt(getNumAlters());
 
-			for (i = 1; i < Question.NUM_QUESTION_TYPES; i++)
+			for (QuestionType type : QuestionType.values())
 			{
+			    
+			    if(type.equals(QuestionType.STUDY_CONFIG))
+			        continue;
+			    
 				Element qorder = new Element("questionorder");
-				it = (getQuestionOrderArray())[i].iterator();
+				Iterator<Long> it = _questionOrder.get(type).iterator();
 
 				if (it.hasNext())
 				{
-					study.addElement(qorder).setAttribute("questiontype", Integer.toString(i));
+					study.addElement(qorder).setAttribute("questiontype", Integer.toString(type.ordinal()));
 					while (it.hasNext())
 					{
 						qorder.addElement("id").setLong(((Long) it.next()).longValue());

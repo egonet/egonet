@@ -410,29 +410,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		setButtonNextState();
 		questionButtonPrevious.setEnabled(egoClient.getInterview().hasPrevious());
 
-		switch (question.questionType) {
-		case Question.EGO_QUESTION:
-			titleText.setText("Questions About You");
-			break;
-
-		case Question.ALTER_PROMPT:
-			titleText.setText("Whom do you know?");
-			break;
-
-		case Question.ALTER_QUESTION:
-			titleText.setText("<html><p>Questions About <nobr><b>"
-					+ alterNames[0] + "</b></nobr></p></html>");
-			break;
-
-		case Question.ALTER_PAIR_QUESTION:
-			titleText.setText("<html><p>Questions About <nobr><b>"
-					+ alterNames[0] + "</b></nobr> and <nobr><b>"
-					+ alterNames[1] + "</b></nobr></p></html>");
-			break;
-		}
+		
+		String strTitle = question.questionType.title;
+		if(strTitle.contains("$$1"))
+		    strTitle = strTitle.replace("$$1", alterNames[0]);
+		if(strTitle.contains("$$2"))
+            strTitle = strTitle.replace("$$2", alterNames[1]);
+		titleText.setText(strTitle);
 
 		answerPanel.setVisible(false);
-		if ((question.questionType == Question.ALTER_PROMPT)
+		if ((question.questionType == Question.QuestionType.ALTER_PROMPT)
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
 			String qs = "Enter the names of "
@@ -462,7 +449,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
 			alterList.requestFocusOnFirstVisibleComponent();
-		} else if (question.answerType == Question.TEXT) {
+		} else if (question.answerType == Question.AnswerType.TEXT) {
 			questionText.setText(question.text);
 
 			answerPanel.showCard(TEXT_CARD);
@@ -481,7 +468,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			answerTextField.requestFocusInWindow();
-		} else if (question.answerType == Question.NUMERICAL) {
+		} else if (question.answerType == Question.AnswerType.NUMERICAL) {
 			questionText.setText(question.text);
 
 			answerPanel.showCard(NUMERICAL_CARD);
@@ -508,9 +495,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			numericalTextField.requestFocusInWindow();
-		} else if(question.answerType == Question.CATEGORICAL) {
+		} else if(question.answerType == Question.AnswerType.CATEGORICAL) {
 
-			System.out.println("Displaying CATEGORICAL question: " + question.text);
+			System.out.println("Displaying CATEGORICAL question: " + Question.AnswerType.TEXT);
 			questionText.setText(question.text);
 			
 			// can we do radio buttons or do we need the dropdown?
@@ -596,15 +583,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		System.out.println("fillAnswer called for " + answer.getString());
 
-		if (question.questionType == Question.ALTER_PROMPT) {
+		if (question.questionType == Question.QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
 			answer.setValue((alterList.getListStrings().length));
 			answer.answered = (!egoClient.getInterview().isLastAlterPrompt() || (answer.getValue() >= egoClient.getStudy()
 					.getNumAlters()));
 			egoClient.getInterview().setAlterList(alterList.getListStrings());
 		} else {
-			switch (question.answerType) {
-			case Question.NUMERICAL:
+		    
+			if(question.answerType.equals(Question.AnswerType.NUMERICAL)) {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
@@ -622,17 +609,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.setValue((Answer.NO_ANSWER));
 					answer.answered = false;
 				}
-				break;
-
-			case Question.TEXT:
+			} else if(question.answerType.equals(Question.AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
 				//System.out.println("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.answered = (answer.getValue() != 0);
-				break;
-
-			case Question.CATEGORICAL:
+			} else if(question.answerType.equals(Question.AnswerType.CATEGORICAL)) {
 				if (question.getSelections().length <= answerButtons.length) {
 					int buttonIndex = selectedButtonIndex(answerButtons);
 					answer.answered = (buttonIndex != -1);
@@ -675,8 +658,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						// DateFormat.getDateInstance().format(new Date());
 					}
 				}
-				break;
 			}
+			
 		}
 	}
 
@@ -706,7 +689,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (key == -1 && questionButtonNext.isEnabled())
 			questionButtonNext_actionPerformed(e);
 
-		if (question.answerType == Question.CATEGORICAL) {
+		if (question.answerType == Question.AnswerType.CATEGORICAL) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
 				// System.out.println("Selection value :" +sel.getValue());
@@ -737,7 +720,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-					&& (question.questionType == Question.ALTER_PAIR_QUESTION)) {
+					&& (question.questionType == Question.QuestionType.ALTER_PAIR)) {
 				setDefaultAnswer();
 			}
 
@@ -792,7 +775,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void setButtonNextState() {
-		if (question.questionType == Question.ALTER_PROMPT) {
+		if (question.questionType == Question.QuestionType.ALTER_PROMPT) {
 			questionButtonNext.setEnabled(question.answer.answered);
 			questionButtonNext.setText("Next Question");
 		} else {
@@ -841,7 +824,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void setDefaultAnswer() {
 		if (!question.answer.answered
-				&& (question.answerType == Question.CATEGORICAL)
+				&& (question.answerType == Question.AnswerType.CATEGORICAL)
 				&& (question.answer.getAlters()[1] > (question.answer
 						.getAlters()[0] + 1))) {
 			int defaultAnswer = -1;

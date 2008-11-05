@@ -269,7 +269,7 @@ public class QuestionLinkDialog extends JDialog
 
 		// Question vars
 		questionList.setModel(new DefaultListModel());
-		egoNet.getStudy().fillList(Question.ALL_QUESTION_TYPES, (DefaultListModel) questionList.getModel(), q.UniqueId);
+		egoNet.getStudy().fillList((DefaultListModel) questionList.getModel(), q.UniqueId);
 
 		// Set Selection
 		if (baseQuestion.link.active)
@@ -365,12 +365,12 @@ public class QuestionLinkDialog extends JDialog
 			answerPanel.setVisible(false);
 			answerPanel.removeAll();
 			questionText.setText("Please select a question and an answer which will trigger the inclusion of the current question");
-			if (question.questionType == Question.ALTER_PROMPT)
+			if (question.questionType == Question.QuestionType.ALTER_PROMPT)
 			{
 				// Should never be here
 				//assert(false);
 			}
-			else if (question.answerType == Question.TEXT)
+			else if (question.answerType == Question.AnswerType.TEXT)
 			{
 				answerPanel.add(textPanel);
 				answerPanel.validate();
@@ -386,7 +386,7 @@ public class QuestionLinkDialog extends JDialog
 					answerTextField.setText("");
 				}
 			}
-			else if (question.answerType == Question.NUMERICAL)
+			else if (question.answerType == Question.AnswerType.NUMERICAL)
 			{
 				answerPanel.add(textPanel);
 				answerTextField.setDocument(wholeNumberDocument);
@@ -403,7 +403,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else if (question.getSelections().length <= 5)
 			{
-				allAdjacentCheck.setVisible(question.questionType == Question.ALTER_PAIR_QUESTION);
+				allAdjacentCheck.setVisible(question.questionType == Question.QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 
 				answerPanel.add(radioPanel);
@@ -440,7 +440,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else
 			{
-				allAdjacentCheck.setVisible(question.questionType == Question.ALTER_PAIR_QUESTION);
+				allAdjacentCheck.setVisible(question.questionType == Question.QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 				answerPanel.add(menuPanel);
 
@@ -493,80 +493,74 @@ public class QuestionLinkDialog extends JDialog
 	{
 		linkAnswer.string = null;
 
-		switch (question.answerType)
-		{
-			case Question.NUMERICAL:
-				if (answerTextField.getText().length() > 0)
+		if(question.answerType.equals(Question.AnswerType.NUMERICAL)) {
+			if (answerTextField.getText().length() > 0)
+			{
+				linkAnswer.string   	= answerTextField.getText();
+				linkAnswer.setValue(Integer.valueOf(linkAnswer.string).intValue());
+				linkAnswer.answered     = true;
+			}
+			else
+			{
+				linkAnswer.setValue(Answer.NO_ANSWER);
+				linkAnswer.answered 	= false;
+			}
+		} else if(question.answerType.equals(Question.AnswerType.TEXT)) {
+			linkAnswer.string   		= answerTextField.getText();
+			linkAnswer.setValue(linkAnswer.string.length());
+			linkAnswer.answered     	= (linkAnswer.getValue() != 0);
+		} else if(question.answerType.equals(Question.AnswerType.CATEGORICAL)) {
+			if (question.getSelections().length <= 5)
+			{
+				if (allAdjacentCheck.isSelected())
 				{
-					linkAnswer.string   	= answerTextField.getText();
-					linkAnswer.setValue(Integer.valueOf(linkAnswer.string).intValue());
+					linkAnswer.setValue(Answer.ALL_ADJACENT);
+					linkAnswer.string   		= "All Adjacent";
 					linkAnswer.answered     = true;
 				}
 				else
 				{
-					linkAnswer.setValue(Answer.NO_ANSWER);
-					linkAnswer.answered 	= false;
-				}
-				break;
-
-			case Question.TEXT:
-				linkAnswer.string   		= answerTextField.getText();
-				linkAnswer.setValue(linkAnswer.string.length());
-				linkAnswer.answered     	= (linkAnswer.getValue() != 0);
-				break;
-
-			case Question.CATEGORICAL:
-				if (question.getSelections().length <= 5)
-				{
-					if (allAdjacentCheck.isSelected())
+					int button          		= selectedButtonIndex(answerButtons);
+					linkAnswer.answered 		= (button != MAX_BUTTONS);
+					
+					if (linkAnswer.answered)
 					{
-						linkAnswer.setValue(Answer.ALL_ADJACENT);
-						linkAnswer.string   		= "All Adjacent";
-						linkAnswer.answered     = true;
-					}
-					else
-					{
-						int button          		= selectedButtonIndex(answerButtons);
-						linkAnswer.answered 		= (button != MAX_BUTTONS);
-						
-						if (linkAnswer.answered)
-						{
-							linkAnswer.setValue(question.getSelections()[button].getValue());
-							linkAnswer.setIndex(question.getSelections()[button].getIndex());
-							linkAnswer.string   	= answerButtons[button].getActionCommand();
-						}
-						else
-						{
-							linkAnswer.setValue(Answer.NO_ANSWER);
-							linkAnswer.setIndex(Answer.NO_ANSWER);
-							linkAnswer.string   	= "";
-						}
-					}
-				}
-				else
-				{
-					if (allAdjacentCheck.isSelected())
-					{
-						linkAnswer.setValue(Answer.ALL_ADJACENT);
-						linkAnswer.string   		= "All Adjacent";
-						linkAnswer.answered     = true;
-					}
-					else if (answerMenu.getSelectedIndex() > 0)
-					{
-						linkAnswer.setValue(question.getSelections()[answerMenu.getSelectedIndex() - 1].getValue());
-						linkAnswer.string   		= answerMenu.getSelectedItem().toString();
-						linkAnswer.answered     = (linkAnswer.getValue() < question.getSelections().length);
+						linkAnswer.setValue(question.getSelections()[button].getValue());
+						linkAnswer.setIndex(question.getSelections()[button].getIndex());
+						linkAnswer.string   	= answerButtons[button].getActionCommand();
 					}
 					else
 					{
 						linkAnswer.setValue(Answer.NO_ANSWER);
-						linkAnswer.string   		= "";
-						linkAnswer.answered     = false;
+						linkAnswer.setIndex(Answer.NO_ANSWER);
+						linkAnswer.string   	= "";
 					}
 				}
-				break;
+			}
+			else
+			{
+				if (allAdjacentCheck.isSelected())
+				{
+					linkAnswer.setValue(Answer.ALL_ADJACENT);
+					linkAnswer.string   		= "All Adjacent";
+					linkAnswer.answered     = true;
+				}
+				else if (answerMenu.getSelectedIndex() > 0)
+				{
+					linkAnswer.setValue(question.getSelections()[answerMenu.getSelectedIndex() - 1].getValue());
+					linkAnswer.string   		= answerMenu.getSelectedItem().toString();
+					linkAnswer.answered     = (linkAnswer.getValue() < question.getSelections().length);
+				}
+				else
+				{
+					linkAnswer.setValue(Answer.NO_ANSWER);
+					linkAnswer.string   		= "";
+					linkAnswer.answered     = false;
+				}
+			}
 		}
 	}
+	
 
 	void jShowListButton_actionPerformed(ActionEvent e)
 	{

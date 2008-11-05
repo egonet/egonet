@@ -79,7 +79,7 @@ public class StatisticsFrame extends JPanel {
 		/***********************************************************************
 		 * Fill in alter pair question selection menu
 		 **********************************************************************/
-		Iterator questions = egoClient.getStudy().getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
+		Iterator questions = egoClient.getStudy().getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
 		while (questions.hasNext()) {
 			Question q = egoClient.getStudy().getQuestion((Long) questions.next());
 

@@ -46,6 +46,7 @@ import org.egonet.util.SwingWorker;
 
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
+import com.endlessloopsoftware.egonet.Shared;
 
 
 public class ClientFrame extends JFrame {
@@ -206,12 +207,7 @@ public class ClientFrame extends JFrame {
 
 	// Help | About action performed
 	public void jMenuHelpAbout_actionPerformed(ActionEvent e) {
-		JOptionPane
-				.showMessageDialog(
-						this,
-						"Egonet is an egocentric network study tool."
-								+ "\n\nThanks to: Dr. Chris McCarty, University of Florida",
-						"About Egonet", JOptionPane.PLAIN_MESSAGE);
+	    Shared.displayAboutBox(this);
 	}
 
 	// Overridden so we can exit when window is closed

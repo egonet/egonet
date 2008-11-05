@@ -34,15 +34,11 @@ public class GraphQuestionSelectionPair {
 	//used only for ALTER QUESTIONS
 	private List<Integer> alterList = new ArrayList<Integer>();
 	
-	/**
-	 * EGO_QUESTION = 1; ALTER_PROMPT = 2; ALTER_QUESTION = 3;
-	 * ALTER_PAIR_QUESTION = 4;
-	 */
-	private int category;
+	private Question.QuestionType category;
 	
 	private boolean showLabel = false; 
 
-	public GraphQuestionSelectionPair(Question question, Selection selection, int category) {
+	public GraphQuestionSelectionPair(Question question, Selection selection, Question.QuestionType category) {
 		this.question = question;
 		this.category = category;
 		this.selection = selection;
@@ -66,12 +62,8 @@ public class GraphQuestionSelectionPair {
 		this.selection = selection;
 	}
 
-	public int getCategory() {
+	public Question.QuestionType getCategory() {
 		return category;
-	}
-
-	public void setCategory(int category) {
-		this.category = category;
 	}
 
 	public Question getQuestion() {
@@ -98,7 +90,7 @@ public class GraphQuestionSelectionPair {
 	
 	public int hashCode()
 	{
-		return this.question.hashCode() + this.selection.hashCode() + category;
+		return this.question.hashCode() + this.selection.hashCode() + category.hashCode();
 	}
 
 	public List<Integer> getAlterList() {

@@ -30,6 +30,7 @@ import org.junit.Test;
 import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
 import com.endlessloopsoftware.ego.author.EgoNet;
 import com.endlessloopsoftware.ego.author.PromptPanel;
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 public class DesignStudy {
 	
@@ -63,7 +64,7 @@ public class DesignStudy {
 		// ego questions
 		tabs.selectTab("Ego");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), 1);
+		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), QuestionType.EGO);
 		JPanelFixture egoPanel = new JPanelFixture(window.robot, egoPanel0);
 		
 		createPlainQuestion(egoPanel, AnswerType.CATEGORICAL);
@@ -79,7 +80,7 @@ public class DesignStudy {
 		
 		// alter
 		tabs.selectTab("Alter");
-		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), 3);
+		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER);
 		JPanelFixture alterPanel = new JPanelFixture(window.robot, alterPanel0);
 		
 		createPlainQuestion(alterPanel, AnswerType.CATEGORICAL);
@@ -90,7 +91,7 @@ public class DesignStudy {
 		// alter pair
 		tabs.selectTab("Alter Pair");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), 4);
+		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER_PAIR);
 		JPanelFixture alterPairPanel = new JPanelFixture(window.robot, alterPairPanel0);
 		
 		createPlainQuestion(alterPairPanel, AnswerType.CATEGORICAL, true);
@@ -171,9 +172,7 @@ public class DesignStudy {
 		dialog.button(withText("OK")).click();
 	}
 	
-	//													0		1		2				3		4
-	//public static final String[] questionName = { "Study", "Ego", "Alter Prompt", "Alter", "Alter Pair" };
-	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, int type)
+	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, QuestionType type)
 	{
 		Collection<Component> questionpanels = finder.findAll(new TypeMatcher(AuthoringQuestionPanel.class, false));
 		for(Component c : questionpanels)

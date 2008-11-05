@@ -83,21 +83,21 @@ public class Interview {
 		_study = study;
 		_numAlters = study.getNumAlters();
 		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		_numAnswers = study.getQuestionOrder(Question.EGO_QUESTION)
+		_numAnswers = study.getQuestionOrder(Question.QuestionType.EGO)
 				.size()
-				+ study.getQuestionOrder(Question.ALTER_PROMPT)
+				+ study.getQuestionOrder(Question.QuestionType.ALTER_PROMPT)
 						.size()
 				+ (_numAlters * study.getQuestionOrder(
-						Question.ALTER_QUESTION).size())
+						Question.QuestionType.ALTER).size())
 				+ (_numAlterPairs * study.getQuestionOrder(
-						Question.ALTER_PAIR_QUESTION).size());
+						Question.QuestionType.ALTER_PAIR).size());
 		_answers = new Answer[_numAnswers];
 
 		/* Generate answer instances */
 		_qIndex = 0;
 
 		/* Ego Questions */
-		questions = study.getQuestionOrder(Question.EGO_QUESTION)
+		questions = study.getQuestionOrder(Question.QuestionType.EGO)
 				.iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
@@ -111,7 +111,7 @@ public class Interview {
 		}
 
 		/* Alter Prompt Questions */
-		questions = study.getQuestionOrder(Question.ALTER_PROMPT)
+		questions = study.getQuestionOrder(Question.QuestionType.ALTER_PROMPT)
 				.iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
@@ -127,7 +127,7 @@ public class Interview {
 		/* Alter Questions */
 		for (j = 0; j < _numAlters; j++) {
 			questions = study.getQuestionOrder(
-					Question.ALTER_QUESTION).iterator();
+					Question.QuestionType.ALTER).iterator();
 			int[] alter = { j };
 			while (questions.hasNext()) {
 				Long questionId = (Long) questions.next();
@@ -145,7 +145,7 @@ public class Interview {
 		for (k = 0; k < _numAlters; k++) {
 			for (j = (k + 1); j < _numAlters; j++) {
 				questions = study.getQuestionOrder(
-						Question.ALTER_PAIR_QUESTION).iterator();
+						Question.QuestionType.ALTER_PAIR).iterator();
 				int[] alters = { k, j };
 				while (questions.hasNext()) {
 					Question question = _study.getQuestions().getQuestion(
@@ -190,22 +190,22 @@ public class Interview {
 			Question q = _study.getQuestions().getQuestion(
 					_answers[i].questionId);
 
-			if (q.questionType == Question.ALTER_PAIR_QUESTION
+			if (q.questionType == Question.QuestionType.ALTER_PAIR
 					&& (_study.getUIType().equals(Shared.PAIR_ELICITATION) || _study
 							.getUIType().equals(Shared.THREE_STEP_ELICITATION))) {
 				/* Skip Alter Pair Questions for Interactive Linking Studies */
 			} else {
 				String s = q.toString();
 
-				if (q.questionType == Question.ALTER_QUESTION) {
+				if (q.questionType == Question.QuestionType.ALTER) {
 					s = s + "; " + _answers[i].getAlters()[0];
-				} else if (q.questionType == Question.ALTER_PAIR_QUESTION) {
+				} else if (q.questionType == Question.QuestionType.ALTER_PAIR) {
 					s = s + "; "
 							+ _answers[i].getAlters()[0] + " & "
 							+ _answers[i].getAlters()[1];
 				}
 
-				s = Question.questionTypeString(q.questionType) + ": " + s;
+				s = q.questionType.niceName + ": " + s;
 
 				dlm.addElement(s);
 			}
@@ -279,7 +279,7 @@ public class Interview {
 		Question q = _study.getQuestions().getQuestion(
 				_answers[index].questionId);
 
-		while (q.questionType == Question.EGO_QUESTION) {
+		while (q.questionType == Question.QuestionType.EGO) {
 			l.add(_answers[index]);
 			q = _study.getQuestions().getQuestion(_answers[++index].questionId);
 		}
@@ -297,7 +297,7 @@ public class Interview {
 
 		Collection<Question> questionList = _study.getQuestions().values();
 		for (Question q : questionList) {
-			if (q.questionType != Question.ALTER_QUESTION)
+			if (q.questionType != Question.QuestionType.ALTER)
 				continue;
 
 			l.add(q);
@@ -543,9 +543,9 @@ public class Interview {
 	public boolean isLastAlterPrompt() {
 		boolean b = false;
 		
-		b = (getQuestion(_qIndex).questionType == Question.ALTER_PROMPT)
+		b = (getQuestion(_qIndex).questionType == Question.QuestionType.ALTER_PROMPT)
 				&& hasNext()
-				&& (getQuestion(_qIndex + 1).questionType != Question.ALTER_PROMPT);
+				&& (getQuestion(_qIndex + 1).questionType != Question.QuestionType.ALTER_PROMPT);
 
 		return (b);
 	}

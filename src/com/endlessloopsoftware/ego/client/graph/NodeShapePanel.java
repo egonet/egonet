@@ -37,6 +37,7 @@ import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 public class NodeShapePanel extends JPanel {
 
@@ -80,12 +81,12 @@ public class NodeShapePanel extends JPanel {
 		
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			int questionType = currentQuestion.questionType;
-			if (questionType == Question.ALTER_QUESTION) {
+			QuestionType questionType = currentQuestion.questionType;
+			if (questionType == Question.QuestionType.ALTER) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.answerType == Question.CATEGORICAL
-						|| currentQuestion.answerType == Question.TEXT)
+				if (currentQuestion.answerType == Question.AnswerType.CATEGORICAL
+						|| currentQuestion.answerType == Question.AnswerType.TEXT)
 					qList.add(currentQuestion);
 			}
 		}
@@ -133,7 +134,7 @@ public class NodeShapePanel extends JPanel {
 
 		// System.out.println("Question examining:" + question.UniqueId);
 
-		if (question.answerType == Question.CATEGORICAL) {
+		if (question.answerType == Question.AnswerType.CATEGORICAL) {
 			int noOfRows = question.getSelections().length;
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
@@ -240,12 +241,12 @@ public class NodeShapePanel extends JPanel {
 
 	private void updateNodeShape() {
 		Question question = (Question) questionCombo.getSelectedItem();
-		if (question.answerType == Question.CATEGORICAL) {
+		if (question.answerType == Question.AnswerType.CATEGORICAL) {
 			for (int i = 0; i < question.getSelections().length; i++) {
 				Selection selection = question.getSelections()[i];
 
 				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-						selection, Question.ALTER_QUESTION);
+						selection, Question.QuestionType.ALTER);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setShape((NodeProperty.NodeShape) table
 						.getValueAt(i, 1));
@@ -254,7 +255,7 @@ public class NodeShapePanel extends JPanel {
 				graphRenderer.updateGraphSettings();
 			}
 		}
-		else if (question.answerType == Question.TEXT) {
+		else if (question.answerType == Question.AnswerType.TEXT) {
 			System.out.println("Applying labels for text questions");
 			for (int i =0;i < selectionList.size() ; i++) {
 				Selection selection = selectionList.get(i);
@@ -263,7 +264,7 @@ public class NodeShapePanel extends JPanel {
 						.getValueAt(i, 1));
 				nodeProperty.setProperty(NodeProperty.NodePropertyType.Shape);
 				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-						selection, Question.ALTER_QUESTION);
+						selection, Question.QuestionType.ALTER);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}

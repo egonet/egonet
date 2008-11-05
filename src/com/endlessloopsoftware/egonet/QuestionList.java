@@ -31,6 +31,7 @@ public class QuestionList extends HashMap<Long,Question>
 {
 	public void addQuestion(Question q)
 	{
+	    System.out.println("Question added: " + q);
 		put(q.UniqueId, q);
 	}
 

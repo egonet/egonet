@@ -36,6 +36,7 @@ import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 public class EdgeShapePanel extends JPanel {
 
@@ -82,8 +83,8 @@ public class EdgeShapePanel extends JPanel {
 		
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			int questionType = currentQuestion.questionType;
-			if (questionType == Question.ALTER_PAIR_QUESTION) {
+			QuestionType questionType = currentQuestion.questionType;
+			if (questionType == Question.QuestionType.ALTER_PAIR) {
 				// populate the list box with only questions that have choices
 				// as answers
 				if (currentQuestion.getSelections().length >= 1)
@@ -193,7 +194,7 @@ Question question = (Question) questionCombo.getSelectedItem();
 		System.out.println("ShapePanel:SelectedQuestionIndex:" + selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.getSelections().length; i++) {
 			Selection selection = question.getSelections()[i];
-			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, Question.ALTER_PAIR_QUESTION);
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, Question.QuestionType.ALTER_PAIR);
 			if(((Boolean)table.getValueAt(i,0)) == true) {
 				
 				EdgeProperty edgeProperty = new EdgeProperty();

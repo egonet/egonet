@@ -37,6 +37,7 @@ import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 import org.egonet.util.listbuilder.Selection;
 import org.w3c.dom.*;
@@ -233,8 +234,7 @@ public class GraphSettings {
 
 				Question question = questionList.get(Long
 						.parseLong(questionElement.getAttribute("id")));
-				int category = Integer.parseInt(categoryElement
-						.getAttribute("category"));
+				QuestionType category = QuestionType.values()[Integer.parseInt(categoryElement.getAttribute("category"))];
 
 				for (int j = 0; j < question.getSelections().length; j++) {
 					Selection selection = question.getSelections()[j];
@@ -463,7 +463,7 @@ public class GraphSettings {
 			String questionTitle = "";
 			String answerString = "";
 			Question question = egoClient.getStudy().getQuestion(answer.questionId);
-			if (question.questionType == Question.ALTER_QUESTION) {
+			if (question.questionType == Question.QuestionType.ALTER) {
 				questionTitle = question.title;
 				answerString = answer.string + " (index="+answer.getIndex()+",value="+answer.getValue()+")";
 				int[] alters = answer.getAlters();

@@ -35,7 +35,7 @@ public class Question implements Cloneable {
 
 	public Long UniqueId = new Long(new Date().getTime());
 
-	public int questionType = Question.EGO_QUESTION;
+	public QuestionType questionType = QuestionType.EGO;
 
 	public String title = "";
 
@@ -43,7 +43,7 @@ public class Question implements Cloneable {
 
 	public String citation = "";
 
-	public int answerType = Question.TEXT;
+	public AnswerType answerType = AnswerType.TEXT;
 
 	public int numQAlters = -1;
 
@@ -54,25 +54,29 @@ public class Question implements Cloneable {
 	public Answer answer = new Answer(new Long(-1));
 
 	/* Constants */
-	public static final int MIN_QUESTION_TYPE = 1;
+	public enum QuestionType {
+	    STUDY_CONFIG("Study", "Study questions"),
+	    EGO("Ego", "Questions About You"),
+	    ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
+	    ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
+	    ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
+	    ;
+	    public final String niceName, title;
+	    QuestionType(String niceName, String title)
+	    {
+	        this.niceName = niceName;
+	        this.title = title;
+	    }
+	}
 
-	public static final int STUDY_CONFIG = 0;
-
-	public static final int EGO_QUESTION = 1;
-
-	public static final int ALTER_PROMPT = 2;
-
-	public static final int ALTER_QUESTION = 3;
-
-	public static final int ALTER_PAIR_QUESTION = 4;
-
-	public static final int NUM_QUESTION_TYPES = 5;
-
-	public static final int ALL_QUESTION_TYPES = 5;
-
-	public static final int MAX_QUESTION_TYPE = 4;
-
-	public static final int MIN_ANSWER_TYPE = 0;
+	public enum AnswerType
+	{
+	    CATEGORICAL,
+	    NUMERICAL,
+	    TEXT
+	}
+	
+	/*public static final int MIN_ANSWER_TYPE = 0;
 
 	public static final int CATEGORICAL = 0;
 
@@ -80,12 +84,9 @@ public class Question implements Cloneable {
 
 	public static final int TEXT = 2;
 
-	public static final int MAX_ANSWER_TYPE = 2;
+	public static final int MAX_ANSWER_TYPE = 2;*/
 
 	public static final int MAX_CATEGORICAL_CHOICES = 9;
-
-	public static final String[] questionName = { "Study", "Ego",
-			"Alter Prompt", "Alter", "Alter Pair" };
 
 	/***************************************************************************
 	 * Creates question
@@ -143,11 +144,11 @@ public class Question implements Cloneable {
 		this.citation = (this.citation == null) ? "" : this.citation;
 
 		this.UniqueId = new Long(question.getLong("Id"));
-		this.questionType = question.getInt("QuestionType");
-		this.answerType = question.getInt("AnswerType");
+		this.questionType = QuestionType.values()[question.getInt("QuestionType")];
+		this.answerType = AnswerType.values()[question.getInt("AnswerType")];
 
-		if (this.questionType == Question.ALTER_PROMPT) {
-			this.answerType = Question.TEXT;
+		if (this.questionType == QuestionType.ALTER_PROMPT) {
+			this.answerType = Question.AnswerType.TEXT;
 		}
 
 		if (question.getAttribute("CentralityMarker") != null) {
@@ -155,7 +156,7 @@ public class Question implements Cloneable {
 					.equals("true");
 
 			if (centrality
-					&& (this.questionType != Question.ALTER_PAIR_QUESTION)) {
+					&& (this.questionType != Question.QuestionType.ALTER_PAIR)) {
 				System.out.println("ID:" + this.UniqueId + " title:"
 						+ this.title);
 				throw (new MalformedQuestionException());
@@ -172,7 +173,7 @@ public class Question implements Cloneable {
 			this.link.answer.string = link.getTextString("string");
 		}
 
-		if (this.answerType == Question.CATEGORICAL) {
+		if (this.answerType == Question.AnswerType.CATEGORICAL) {
 			Element answerList = question.getElement("Answers");
 
 			if (answerList != null) {
@@ -264,17 +265,6 @@ public class Question implements Cloneable {
 	}
 
 	/***************************************************************************
-	 * Returns String representation of questionType
-	 * 
-	 * @param type
-	 *            Question type to return as string
-	 * @return string Question Type string
-	 */
-	public static String questionTypeString(int type) {
-		return (new String(questionName[type]));
-	}
-
-	/***************************************************************************
 	 * Overrides toString method for question, returns title
 	 * 
 	 * @return String title of question
@@ -301,8 +291,8 @@ public class Question implements Cloneable {
 		}
 
 		e.addElement("Id").setLong(this.UniqueId.longValue());
-		e.addElement("QuestionType").setInt(this.questionType);
-		e.addElement("AnswerType").setInt(this.answerType);
+		e.addElement("QuestionType").setInt(this.questionType.ordinal());
+		e.addElement("AnswerType").setInt(this.answerType.ordinal());
 
 		if ((this.title != null) && (!this.title.equals(""))) {
 			e.addElement("QuestionTitle").setText(this.title);

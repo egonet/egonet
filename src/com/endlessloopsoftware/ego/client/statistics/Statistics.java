@@ -706,7 +706,7 @@ public class Statistics
 	 */
 	private void generateAlterStatArray()
 	{
-		List<Long> qList = _study.getQuestionOrder(Question.ALTER_QUESTION);
+		List<Long> qList = _study.getQuestionOrder(Question.QuestionType.ALTER);
 		Iterator<Long> qIt = qList.iterator();
 		int index = 0;
 
@@ -717,7 +717,7 @@ public class Statistics
 		{
 			Question q = _study.getQuestions().getQuestion((Long) qIt.next());
 
-			if ((q.answerType == Question.CATEGORICAL) || (q.answerType == Question.NUMERICAL))
+			if ((q.answerType == Question.AnswerType.CATEGORICAL) || (q.answerType == Question.AnswerType.NUMERICAL))
 				index++;
 		}
 
@@ -739,7 +739,7 @@ public class Statistics
 			Long qId = (Long) qIt.next();
 			Question q = _study.getQuestions().getQuestion(qId);
 
-			if ((q.answerType == Question.CATEGORICAL) || (q.answerType == Question.NUMERICAL))
+			if ((q.answerType == Question.AnswerType.CATEGORICAL) || (q.answerType == Question.AnswerType.NUMERICAL))
 			{
 				Set<Answer> answerSet = _interview.getAnswerSubset(qId);
 				Iterator<Answer> aIt = answerSet.iterator();
@@ -748,12 +748,12 @@ public class Statistics
 				alterStatArray[index].qTitle = q.title;
 				alterStatArray[index].answerType = q.answerType;
 
-				if (q.answerType == Question.NUMERICAL)
+				if (q.answerType == Question.AnswerType.NUMERICAL)
 				{
 					alterStatArray[index].answerText = new String[] { "Mean" };
 					alterStatArray[index].answerTotals = new int[1];
 				}
-				else if (q.answerType == Question.CATEGORICAL)
+				else if (q.answerType == Question.AnswerType.CATEGORICAL)
 				{
 					alterStatArray[index].answerTotals = new int[q.getSelections().length];
 					alterStatArray[index].answerText = new String[q.getSelections().length];
@@ -774,7 +774,7 @@ public class Statistics
 					{
 						alterSummary[a.getAlters()[0]][index] = new Integer(a.getValue());
 
-						if (q.answerType == Question.NUMERICAL)
+						if (q.answerType == Question.AnswerType.NUMERICAL)
 						{
 							if (a.getValue() != -1)
 							{
@@ -782,7 +782,7 @@ public class Statistics
 								alterStatArray[index].answerCount++;
 							}
 						}
-						else if (q.answerType == Question.CATEGORICAL)
+						else if (q.answerType == Question.AnswerType.CATEGORICAL)
 						{
 							alterStatArray[index].answerTotals[a.getIndex()] += 1;
 							alterStatArray[index].answerCount++;
@@ -942,7 +942,7 @@ public class Statistics
 			Answer answer = (Answer) qIt.next();
 			Question q = _study.getQuestions().getQuestion(answer.questionId);
 
-			if (q.answerType == Question.TEXT)
+			if (q.answerType == Question.AnswerType.TEXT)
 			{
 				if (answer.answered)
 				{
@@ -953,14 +953,14 @@ public class Statistics
 			}
 		}
 
-		qList = _study.getQuestionOrder(Question.ALTER_QUESTION);
+		qList = _study.getQuestionOrder(Question.QuestionType.ALTER);
 		qIt = qList.iterator();
 		while (qIt.hasNext())
 		{
 			Long qId = (Long) qIt.next();
 			Question q = _study.getQuestions().getQuestion(qId);
 
-			if (q.answerType == Question.TEXT)
+			if (q.answerType == Question.AnswerType.TEXT)
 			{
 				w.println("Alter Question: " + q.title);
 				w.println("Text: " + q.text);

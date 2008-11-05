@@ -19,9 +19,19 @@
 package com.endlessloopsoftware.egonet;
 
 import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.Window;
 import java.io.Serializable;
-
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  * @author admin
@@ -158,20 +168,63 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
 */
 /* Added by sonam : 08/20.2007 */
 
-public static final String USE_SYSTEM_FONTS_APP_KEY =
-		"Application.useSystemFontSettings";
+    public static final String USE_SYSTEM_FONTS_APP_KEY = "Application.useSystemFontSettings";
 
-public static void setWaitCursor(JFrame frame, boolean waitCursor)
-   {
-      if (waitCursor)
-      {
-         frame.getGlassPane().setVisible(true);
-         frame.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      }
-      else
-      {
-         frame.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-         frame.getGlassPane().setVisible(false);
-      }
-   }
+    public static void setWaitCursor(JFrame frame, boolean waitCursor)
+    {
+        if (waitCursor)
+        {
+            frame.getGlassPane().setVisible(true);
+            frame.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        }
+        else
+        {
+            frame.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            frame.getGlassPane().setVisible(false);
+        }
+    }
+    
+    public static void displayAboutBox(Window parent)
+    {
+        String msg = "<html>";
+        
+        msg += "<p>Egonet is a tool for studying personal networks.</p>";
+        
+        msg += "<p>Thanks to:</p>";
+        msg += "<p>Dr. Chris McCarty <a href=\"mailto:ufchris@ufl.edu\">&lt;ufchris@ufl.edu&gt;</a>";
+        msg += "<br/>University of Florida</p>";
+
+        msg += "<p>Egonet is hosted at SourceForge.net.";
+        msg += "<br/>To contribute or get the latest version, visit:";
+        msg += "<br/><a href=\"http://egonet.sf.net\">http://egonet.sf.net</a></p>";
+        
+        msg += "<p>&nbsp;</p>";
+            
+        JEditorPane editor = new JEditorPane();
+        editor.setEditorKit(new HTMLEditorKit());
+        editor.setText(msg);
+        editor.setEditable(false);
+        editor.setOpaque(false);
+        editor.setBorder(null);
+        
+        // add a CSS rule to force body tags to use the default label font
+        // instead of the value in javax.swing.text.html.default.csss
+        Font font = UIManager.getFont("Label.font");
+        String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
+        ((HTMLDocument)editor.getDocument()).getStyleSheet().addRule(bodyRule);
+        
+        
+        editor.addHyperlinkListener(new HyperlinkListener() {
+                public void hyperlinkUpdate(HyperlinkEvent e)
+                {
+                    if(!e.getEventType().equals(EventType.ACTIVATED))
+                        return;
+                    
+                    try {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (Throwable cause) {}
+                }
+        });
+        JOptionPane.showMessageDialog(parent, editor, "About Egonet", JOptionPane.INFORMATION_MESSAGE);
+    }
 }

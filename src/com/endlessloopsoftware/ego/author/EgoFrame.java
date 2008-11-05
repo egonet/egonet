@@ -20,6 +20,7 @@ package com.endlessloopsoftware.ego.author;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -28,6 +29,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -37,11 +40,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
 
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Question.QuestionType;
 
 public class EgoFrame extends JFrame implements Observer {
-	int lastTab = 0;
-	int curTab = 0;
+    Question.QuestionType lastTab = Question.QuestionType.STUDY_CONFIG;
+	Question.QuestionType curTab = Question.QuestionType.STUDY_CONFIG;
 
 	private final EgoNet egoNet;
 	private JPanel contentPane;
@@ -51,20 +56,15 @@ public class EgoFrame extends JFrame implements Observer {
 	private final JMenuItem jMenuFileNew = new JMenuItem("New Study");
 	private final JMenuItem jMenuFileOpen = new JMenuItem("Open Study");
 	private final JMenuItem jMenuFileClose = new JMenuItem("Close Study");
-	private final JMenuItem jMenuFileImport = new JMenuItem(
-			"Import Questions...");
-	private final JMenuItem jMenuFileExport = new JMenuItem(
-			"Export Questions...");
+	private final JMenuItem jMenuFileImport = new JMenuItem("Import Questions...");
+	private final JMenuItem jMenuFileExport = new JMenuItem("Export Questions...");
 	private final JMenuItem jMenuFileSaveAs = new JMenuItem("Save Study As...");
 	private final JMenuItem jMenuFileSave = new JMenuItem("Save Study");
 	private final JMenuItem jMenuFileExit = new JMenuItem("Quit");
 	private final JMenu jMenuEdit = new JMenu("Edit");
-	private final JMenuItem jMenuEditCut = new JMenuItem(
-			new DefaultEditorKit.CutAction());
-	private final JMenuItem jMenuEditCopy = new JMenuItem(
-			new DefaultEditorKit.CopyAction());
-	private final JMenuItem jMenuEditPaste = new JMenuItem(
-			new DefaultEditorKit.PasteAction());
+	private final JMenuItem jMenuEditCut = new JMenuItem(new DefaultEditorKit.CutAction());
+	private final JMenuItem jMenuEditCopy = new JMenuItem(new DefaultEditorKit.CopyAction());
+	private final JMenuItem jMenuEditPaste = new JMenuItem(new DefaultEditorKit.PasteAction());
 	private final JMenu jMenuHelp = new JMenu("Help");
 	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
@@ -73,7 +73,7 @@ public class EgoFrame extends JFrame implements Observer {
 
 	private final StudyPanel study_panel;
 
-	private final EgoQPanel[] questionPanel;
+	private final Map<QuestionType,EgoQPanel> questionPanel;
 	
 	// Construct the frame
 	public EgoFrame(EgoNet egoNet) throws Exception
@@ -81,13 +81,11 @@ public class EgoFrame extends JFrame implements Observer {
 		this.egoNet = egoNet;
 		study_panel = new StudyPanel(egoNet);
 		
-		questionPanel = new EgoQPanel[] {
-					null,
-					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.EGO_QUESTION),
-					(EgoQPanel) new PromptPanel(egoNet, Question.ALTER_PROMPT),
-					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.ALTER_QUESTION),
-					(EgoQPanel) new AuthoringQuestionPanel(egoNet, Question.ALTER_PAIR_QUESTION), };
-
+		questionPanel = new HashMap<QuestionType,EgoQPanel>();
+		questionPanel.put(QuestionType.EGO, new AuthoringQuestionPanel(egoNet, Question.QuestionType.EGO));
+		questionPanel.put(QuestionType.ALTER_PROMPT, new PromptPanel(egoNet, Question.QuestionType.ALTER_PROMPT));
+		questionPanel.put(Question.QuestionType.ALTER, new AuthoringQuestionPanel(egoNet, Question.QuestionType.ALTER));
+		questionPanel.put(Question.QuestionType.ALTER_PAIR, new AuthoringQuestionPanel(egoNet, Question.QuestionType.ALTER_PAIR));
 		
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 		jbInit();
@@ -155,8 +153,10 @@ public class EgoFrame extends JFrame implements Observer {
 		jTabbedPane.setTabPlacement(JTabbedPane.TOP);
 		jTabbedPane.add(study_panel, "Study");
 
-		for (int i = Question.MIN_QUESTION_TYPE; i <= Question.MAX_QUESTION_TYPE; i++) {
-			jTabbedPane.add(questionPanel[i], Question.questionTypeString(i));
+		for (QuestionType qT : QuestionType.values()) {
+		    if(qT.equals(QuestionType.STUDY_CONFIG))
+		        continue;
+			jTabbedPane.add(questionPanel.get(qT), qT.niceName);
 		}
 		contentPane.add(jTabbedPane);
 
@@ -349,12 +349,7 @@ public class EgoFrame extends JFrame implements Observer {
 
 	// Help | About action performed
 	public void jMenuHelpAbout_actionPerformed(ActionEvent e) {
-
-		JOptionPane.showMessageDialog(this,
-				"Egonet is an egocentric network study tool." +
-				"\n\nThanks to: Dr. Chris McCarty, University of Florida",
-				"About Egonet", JOptionPane.PLAIN_MESSAGE);
-
+	    Shared.displayAboutBox(this);
 	}
 
 	/**
@@ -387,11 +382,10 @@ public class EgoFrame extends JFrame implements Observer {
 		boolean sd = egoNet.getStudy().isModified();
 		boolean sc = egoNet.getStudy().isCompatible();
 
-		if (curTab == Question.STUDY_CONFIG) {
+		if (curTab == Question.QuestionType.STUDY_CONFIG) {
 			study_panel.fillPanel();
-		} else if ((curTab >= Question.MIN_QUESTION_TYPE)
-				&& (curTab <= Question.MAX_QUESTION_TYPE)) {
-			questionPanel[curTab].fillPanel();
+		} else {
+			questionPanel.get(curTab).fillPanel();
 		}
 
 		egoNet.getStudy().setModified(sd);
@@ -401,7 +395,7 @@ public class EgoFrame extends JFrame implements Observer {
 	public void fillStudyPanel() {
 		boolean sd = egoNet.getStudy().isModified();
 
-		if (curTab == Question.STUDY_CONFIG) {
+		if (curTab == Question.QuestionType.STUDY_CONFIG) {
 			study_panel.fillPanel();
 		}
 
@@ -411,18 +405,23 @@ public class EgoFrame extends JFrame implements Observer {
 	private void jTabbedPane_stateChanged(ChangeEvent e)
 	{
 		lastTab = curTab;
-		curTab = jTabbedPane.getSelectedIndex();
+		Component selectedTab = jTabbedPane.getSelectedComponent();
+		if(selectedTab instanceof StudyPanel)
+		{
+		    curTab = Question.QuestionType.STUDY_CONFIG;
+		} else {
+		    curTab = ((EgoQPanel)selectedTab).questionType;
+		}
 
-		if ((lastTab == Question.STUDY_CONFIG) && (curTab != lastTab)) {
+		if ((lastTab == Question.QuestionType.STUDY_CONFIG) && (curTab != lastTab)) {
 			egoNet.getStudy().validateQuestions();
 		}
 
-		if ((curTab >= Question.MIN_QUESTION_TYPE)
-				&& (curTab <= Question.MAX_QUESTION_TYPE)) {
-			questionPanel[curTab].fillPanel();
-		} else if (curTab == Question.STUDY_CONFIG) {
-			study_panel.fillPanel();
-		}
+		if (curTab == Question.QuestionType.STUDY_CONFIG) {
+            study_panel.fillPanel();
+        } else {
+			questionPanel.get(curTab).fillPanel();
+		} 
 	}
 
 	protected void setWaitCursor(boolean waitCursor) {

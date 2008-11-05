@@ -181,14 +181,14 @@ public class CategoryInputPane extends JDialog {
 		listBuilder
 				.setDescription("Enter possible answers to this question below. Press Return to add the option "
 						+ "to the options list. Press OK to set options or Cancel to undo changes.");
-		listBuilder.setNameList(q.questionType == Question.ALTER_PROMPT);
+		listBuilder.setNameList(q.questionType == Question.QuestionType.ALTER_PROMPT);
 		listBuilder.setLetUserPickValues(true);
-		listBuilder.setPresetListsActive(q.answerType == Question.CATEGORICAL);
+		listBuilder.setPresetListsActive(q.answerType == Question.AnswerType.CATEGORICAL);
 		
-//		boolean preset = (q.answerType == Question.CATEGORICAL) ? true : false;
+//		boolean preset = (q.answerType == Question.AnswerType.CATEGORICAL) ? true : false;
 //		System.out.println("Is question categorical? " + preset);
 //		
-		listBuilder.setAdjacencyActive(q.questionType == Question.ALTER_PAIR_QUESTION);
+		listBuilder.setAdjacencyActive(q.questionType == Question.QuestionType.ALTER_PAIR);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		// Center the window

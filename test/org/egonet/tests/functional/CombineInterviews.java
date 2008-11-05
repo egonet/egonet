@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.swing.JOptionPane;
 import com.endlessloopsoftware.ego.client.EgoStore;
 import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
@@ -56,7 +54,7 @@ public class CombineInterviews
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			alterList.addAll(Arrays.asList(interview.getAlterList()));
 
-			Iterator<Long> questions = study.getQuestionOrder(Question.ALTER_PAIR_QUESTION).iterator();
+			Iterator<Long> questions = study.getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				int[][] adj = interview.generateAdjacencyMatrix(q, false);

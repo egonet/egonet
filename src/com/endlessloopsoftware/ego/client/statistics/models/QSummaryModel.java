@@ -72,13 +72,13 @@ public class QSummaryModel extends StatTableModel
 		}
 		else if (columnIndex <= stats.alterStatArray[rowIndex].answerTotals.length)
 		{
-			if ((stats.alterStatArray[rowIndex].answerType == Question.NUMERICAL) && (columnIndex == 1))
+			if ((stats.alterStatArray[rowIndex].answerType == Question.AnswerType.NUMERICAL) && (columnIndex == 1))
 			{
 				return (
 					"Average: "
 						+ stats.alterStatArray[rowIndex].answerTotals[0] / stats.alterStatArray[rowIndex].answerCount);
 			}
-			else if (stats.alterStatArray[rowIndex].answerType == Question.CATEGORICAL)
+			else if (stats.alterStatArray[rowIndex].answerType == Question.AnswerType.CATEGORICAL)
 			{
 				String s = null;
 				try
