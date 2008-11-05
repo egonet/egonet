@@ -22,6 +22,9 @@ import java.util.Date;
 import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.util.listbuilder.Selection;
 
+import com.endlessloopsoftware.egonet.Shared.AnswerType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 import electric.xml.Element;
 import electric.xml.Elements;
 
@@ -52,39 +55,6 @@ public class Question implements Cloneable {
 	private Selection[] selections = new Selection[0];
 
 	public Answer answer = new Answer(new Long(-1));
-
-	/* Constants */
-	public enum QuestionType {
-	    STUDY_CONFIG("Study", "Study questions"),
-	    EGO("Ego", "Questions About You"),
-	    ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
-	    ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
-	    ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
-	    ;
-	    public final String niceName, title;
-	    QuestionType(String niceName, String title)
-	    {
-	        this.niceName = niceName;
-	        this.title = title;
-	    }
-	}
-
-	public enum AnswerType
-	{
-	    CATEGORICAL,
-	    NUMERICAL,
-	    TEXT
-	}
-	
-	/*public static final int MIN_ANSWER_TYPE = 0;
-
-	public static final int CATEGORICAL = 0;
-
-	public static final int NUMERICAL = 1;
-
-	public static final int TEXT = 2;
-
-	public static final int MAX_ANSWER_TYPE = 2;*/
 
 	public static final int MAX_CATEGORICAL_CHOICES = 9;
 
@@ -148,7 +118,7 @@ public class Question implements Cloneable {
 		this.answerType = AnswerType.values()[question.getInt("AnswerType")];
 
 		if (this.questionType == QuestionType.ALTER_PROMPT) {
-			this.answerType = Question.AnswerType.TEXT;
+			this.answerType = Shared.AnswerType.TEXT;
 		}
 
 		if (question.getAttribute("CentralityMarker") != null) {
@@ -156,7 +126,7 @@ public class Question implements Cloneable {
 					.equals("true");
 
 			if (centrality
-					&& (this.questionType != Question.QuestionType.ALTER_PAIR)) {
+					&& (this.questionType != Shared.QuestionType.ALTER_PAIR)) {
 				System.out.println("ID:" + this.UniqueId + " title:"
 						+ this.title);
 				throw (new MalformedQuestionException());
@@ -173,7 +143,7 @@ public class Question implements Cloneable {
 			this.link.answer.string = link.getTextString("string");
 		}
 
-		if (this.answerType == Question.AnswerType.CATEGORICAL) {
+		if (this.answerType == Shared.AnswerType.CATEGORICAL) {
 			Element answerList = question.getElement("Answers");
 
 			if (answerList != null) {

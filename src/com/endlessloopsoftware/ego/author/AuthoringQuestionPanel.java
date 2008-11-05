@@ -34,8 +34,9 @@ import javax.swing.event.ListSelectionListener;
 import org.egonet.exceptions.DuplicateQuestionException;
 
 import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Question.AnswerType;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared;
+import com.endlessloopsoftware.egonet.Shared.AnswerType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 /**
  * Generic Panel creation and handling routines for question editing
@@ -52,7 +53,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_question_label = new JLabel("Question:");
     private final JLabel question_citation_label = new JLabel("Citation:");
     private final JLabel question_type_label = new JLabel("Question Type:");
-    private final JComboBox question_type_menu = new JComboBox(QuestionType.values());
+    private final JComboBox question_type_menu = new JComboBox();
     private final JLabel question_answer_type_label = new JLabel("Answer Type:");
     private final JButton question_answer_type_button = new JButton("Selections");
     private final JLabel question_link_label = new JLabel("Question Link:");
@@ -80,10 +81,22 @@ public class AuthoringQuestionPanel extends EgoQPanel
      * @param type Type of questions on Page (e.g. Alter Questions)
      * @param parent parent frame for referencing composed objects
      */
-    public AuthoringQuestionPanel(EgoNet egoNet, Question.QuestionType type) throws Exception
+    public AuthoringQuestionPanel(EgoNet egoNet, Shared.QuestionType type) throws Exception
     {
         super(type);
         this.egoNet = egoNet;
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for(QuestionType qType : QuestionType.values())
+        {
+        	if(qType.equals(QuestionType.STUDY_CONFIG))
+        		continue;
+        	
+        	model.addElement(qType);
+        }
+        question_type_menu.setModel(model);
+        
+        
         questionLinkDialog = new QuestionLinkDialog(egoNet);
         selectionsDialog = new CategoryInputPane(egoNet, question_list);
         question_title_field.setName("question_title_field");
@@ -408,9 +421,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_follows_menu.setSelectedIndex(index);
 
                 question_type_menu.setEnabled(true);
-                question_answer_type_menu.setEnabled(q.questionType != Question.QuestionType.ALTER_PROMPT);
+                question_answer_type_menu.setEnabled(q.questionType != Shared.QuestionType.ALTER_PROMPT);
 
-                question_answer_type_button.setEnabled(q.answerType == Question.AnswerType.CATEGORICAL);
+                question_answer_type_button.setEnabled(q.answerType == Shared.AnswerType.CATEGORICAL);
                 question_question_field.setEditable(true);
                 question_citation_field.setEditable(true);
                 question_title_field.setEditable(true);
@@ -420,7 +433,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
                 /* Box only appears on alter pair page */
                 question_central_label.setVisible(false);
-                if (q.answerType == Question.AnswerType.CATEGORICAL)
+                if (q.answerType == Shared.AnswerType.CATEGORICAL)
                 {
                     if (q.getSelections().length == 0)
                     {
@@ -428,7 +441,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                         question_central_label.setForeground(Color.red);
                         question_central_label.setVisible(true);
                     }
-                    else if (questionType == Question.QuestionType.ALTER_PAIR)
+                    else if (questionType == Shared.QuestionType.ALTER_PAIR)
                     {
                         question_central_label.setText("No Adjacency Selections");
                         question_central_label.setForeground(Color.red);
@@ -580,9 +593,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
             q.questionType = questionType;
             q.title = new String(questionType.niceName + ":Untitled Question");
 
-            if (q.questionType == Question.QuestionType.ALTER_PROMPT)
+            if (q.questionType == Shared.QuestionType.ALTER_PROMPT)
             {
-                q.answerType = Question.AnswerType.TEXT;
+                q.answerType = Shared.AnswerType.TEXT;
             }
 
             try
@@ -706,8 +719,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 QuestionType type = (QuestionType)question_type_menu.getSelectedItem();
 
                 try {
-                egoNet.getStudy().changeQuestionType(q, type);
-                egoNet.getStudy().setCompatible(false);
+                	egoNet.getStudy().changeQuestionType(q, type);
+                	egoNet.getStudy().setCompatible(false);
                 } catch (DuplicateQuestionException ex)
                 {
                     throw new RuntimeException(ex);

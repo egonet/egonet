@@ -36,8 +36,9 @@ import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import org.egonet.util.listbuilder.Selection;
 import org.w3c.dom.*;
@@ -463,7 +464,7 @@ public class GraphSettings {
 			String questionTitle = "";
 			String answerString = "";
 			Question question = egoClient.getStudy().getQuestion(answer.questionId);
-			if (question.questionType == Question.QuestionType.ALTER) {
+			if (question.questionType == Shared.QuestionType.ALTER) {
 				questionTitle = question.title;
 				answerString = answer.string + " (index="+answer.getIndex()+",value="+answer.getValue()+")";
 				int[] alters = answer.getAlters();

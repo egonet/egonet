@@ -19,7 +19,7 @@
 package com.endlessloopsoftware.ego.author;
 import javax.swing.JPanel;
 
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public abstract class EgoQPanel extends JPanel
 {

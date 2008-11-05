@@ -37,6 +37,7 @@ import org.egonet.util.WholeNumberDocument;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 
 /**
  * Generic Panel creation and handling routines for question editing
@@ -365,12 +366,12 @@ public class QuestionLinkDialog extends JDialog
 			answerPanel.setVisible(false);
 			answerPanel.removeAll();
 			questionText.setText("Please select a question and an answer which will trigger the inclusion of the current question");
-			if (question.questionType == Question.QuestionType.ALTER_PROMPT)
+			if (question.questionType == Shared.QuestionType.ALTER_PROMPT)
 			{
 				// Should never be here
 				//assert(false);
 			}
-			else if (question.answerType == Question.AnswerType.TEXT)
+			else if (question.answerType == Shared.AnswerType.TEXT)
 			{
 				answerPanel.add(textPanel);
 				answerPanel.validate();
@@ -386,7 +387,7 @@ public class QuestionLinkDialog extends JDialog
 					answerTextField.setText("");
 				}
 			}
-			else if (question.answerType == Question.AnswerType.NUMERICAL)
+			else if (question.answerType == Shared.AnswerType.NUMERICAL)
 			{
 				answerPanel.add(textPanel);
 				answerTextField.setDocument(wholeNumberDocument);
@@ -403,7 +404,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else if (question.getSelections().length <= 5)
 			{
-				allAdjacentCheck.setVisible(question.questionType == Question.QuestionType.ALTER_PAIR);
+				allAdjacentCheck.setVisible(question.questionType == Shared.QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 
 				answerPanel.add(radioPanel);
@@ -440,7 +441,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else
 			{
-				allAdjacentCheck.setVisible(question.questionType == Question.QuestionType.ALTER_PAIR);
+				allAdjacentCheck.setVisible(question.questionType == Shared.QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 				answerPanel.add(menuPanel);
 
@@ -493,7 +494,7 @@ public class QuestionLinkDialog extends JDialog
 	{
 		linkAnswer.string = null;
 
-		if(question.answerType.equals(Question.AnswerType.NUMERICAL)) {
+		if(question.answerType.equals(Shared.AnswerType.NUMERICAL)) {
 			if (answerTextField.getText().length() > 0)
 			{
 				linkAnswer.string   	= answerTextField.getText();
@@ -505,11 +506,11 @@ public class QuestionLinkDialog extends JDialog
 				linkAnswer.setValue(Answer.NO_ANSWER);
 				linkAnswer.answered 	= false;
 			}
-		} else if(question.answerType.equals(Question.AnswerType.TEXT)) {
+		} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 			linkAnswer.string   		= answerTextField.getText();
 			linkAnswer.setValue(linkAnswer.string.length());
 			linkAnswer.answered     	= (linkAnswer.getValue() != 0);
-		} else if(question.answerType.equals(Question.AnswerType.CATEGORICAL)) {
+		} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 			if (question.getSelections().length <= 5)
 			{
 				if (allAdjacentCheck.isSelected())

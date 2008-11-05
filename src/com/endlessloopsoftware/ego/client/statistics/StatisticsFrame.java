@@ -44,6 +44,7 @@ import com.endlessloopsoftware.ego.client.statistics.models.DegreeModel;
 import com.endlessloopsoftware.ego.client.statistics.models.InterviewSummaryModel;
 import com.endlessloopsoftware.ego.client.statistics.models.QSummaryModel;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 
 
 
@@ -79,7 +80,7 @@ public class StatisticsFrame extends JPanel {
 		/***********************************************************************
 		 * Fill in alter pair question selection menu
 		 **********************************************************************/
-		Iterator questions = egoClient.getStudy().getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
+		Iterator questions = egoClient.getStudy().getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 		while (questions.hasNext()) {
 			Question q = egoClient.getStudy().getQuestion((Long) questions.next());
 

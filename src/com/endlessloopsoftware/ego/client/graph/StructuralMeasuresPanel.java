@@ -25,7 +25,7 @@ import javax.swing.*;
 import org.egonet.util.listbuilder.Selection;
 
 import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import java.awt.*;
 

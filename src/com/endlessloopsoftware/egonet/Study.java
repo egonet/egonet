@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.MalformedQuestionException;
 
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -51,7 +51,7 @@ public class Study extends Observable
    
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
-
+   
    /**
    * Instantiates Default Study
    */
@@ -66,7 +66,7 @@ public class Study extends Observable
 		
 		// @TODO Move storage to parent package
 		//		EgoNet.storage.setStudyFile(null);
-		this.getQuestions().clear();
+		this._questions.clear();
 
 		for(QuestionType type : QuestionType.values())
 		    _questionOrder.put(type, new ArrayList<Long>());
@@ -139,7 +139,7 @@ public class Study extends Observable
     */
    public Question getQuestion(Long id)
    {
-      return getQuestions().getQuestion(id);
+      return _questions.getQuestion(id);
    }
 
 
@@ -173,15 +173,14 @@ public class Study extends Observable
 	public Question getFirstStatableQuestion()
 	{
 		Question statable = null;
-		Iterator questions;
-
+		
 		/**
 		 * Try to find one all alters answer
 		 */
-		questions = getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
+		 Iterator<Long> questions = getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 		while (questions.hasNext())
 		{
-			Question q = (Question) getQuestions().getQuestion((Long) questions.next());
+			Question q = (Question) _questions.getQuestion(questions.next());
 
 			if (q.statable && !q.link.active)
 			{
@@ -195,10 +194,10 @@ public class Study extends Observable
 		 */
 		if (statable == null)
 		{
-			questions = getQuestionOrder(Question.QuestionType.ALTER).iterator();
+			questions = getQuestionOrder(Shared.QuestionType.ALTER).iterator();
 			while (questions.hasNext())
 			{
-				Question q = (Question) getQuestions().getQuestion((Long) questions.next());
+				Question q = (Question) _questions.getQuestion(questions.next());
 
 				if (q.statable)
 				{
@@ -354,16 +353,12 @@ public class Study extends Observable
 	 */
 	public void addQuestion(Question q) throws DuplicateQuestionException
 	{
-		if (!this.getQuestions().contains(q))
-		{
-			this.getQuestions().addQuestion(q);
-			setModified(true);
-		}
-		else
-		{
+		if (_questions.contains(q.UniqueId))
 			throw new DuplicateQuestionException("Question already added to study");
-		}
-
+		
+		_questions.addQuestion(q);
+		setModified(true);
+		
 		/* If not in appropriate array list, add to that list too */
 		if (!_questionOrder.get(q.questionType).contains(q.UniqueId))
 		{
@@ -429,14 +424,12 @@ public class Study extends Observable
 	 */
 	public void setCentralQuestion(Question q)
 	{
-		Long key;
-		Question listQ;
-		Iterator i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
+		Iterator<Long> i = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
 
 		while (i.hasNext())
 		{
-			key = (Long) i.next();
-			listQ = this.getQuestions().getQuestion(key);
+			Long key = (Long) i.next();
+			Question listQ = this._questions.getQuestion(key);
 
 			if (listQ != null)
 			{
@@ -472,16 +465,13 @@ public class Study extends Observable
 	 */
 	public void validateQuestions()
 	{
-		Long key;
-		Question q;
 		boolean foundCentral = false;
-		;
-		Iterator i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
+		Iterator<Long> it = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
 
-		while (i.hasNext())
+		while (it.hasNext())
 		{
-			key = (Long) i.next();
-			q = this.getQuestions().getQuestion(key);
+			Long key = it.next();
+			Question q = this._questions.getQuestion(key);
 
 			if (q != null)
 			{
@@ -500,14 +490,14 @@ public class Study extends Observable
 		if (!foundCentral)
 		{
 			/* Tag first Alter pair categorical question */
-			i = _questionOrder.get(Question.QuestionType.ALTER_PAIR).iterator();
+			Iterator<Long> it2 = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
 
-			while (i.hasNext() && !foundCentral)
+			while (it2.hasNext() && !foundCentral)
 			{
-				key = (Long) i.next();
-				q = this.getQuestions().getQuestion(key);
+				Long key = it2.next();
+				Question q = this._questions.getQuestion(key);
 
-				if ((q != null) && (q.answerType == Question.AnswerType.CATEGORICAL))
+				if ((q != null) && (q.answerType == Shared.AnswerType.CATEGORICAL))
 				{
 					q.centralMarker = true;
 					foundCentral = true;
@@ -534,8 +524,8 @@ public class Study extends Observable
             
             for(Long id : entry.getValue())
             {
-                if(getQuestions().contains(id))
-                    dlm.addElement(getQuestions().getQuestion(id));
+                if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
             }
         }
 	}
@@ -561,8 +551,8 @@ public class Study extends Observable
             List<Long> questions = entry.getValue();
             for(Long id : questions)
             {
-                if(getQuestions().contains(id))
-                    dlm.addElement(getQuestions().getQuestion(id));
+                if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
             }
         }
     }
@@ -589,8 +579,8 @@ public class Study extends Observable
             {
                 if(id.equals(endId))
                     return;
-                else if(getQuestions().contains(id))
-                    dlm.addElement(getQuestions().getQuestion(id));
+                else if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
             }
         }
     }
@@ -617,8 +607,8 @@ public class Study extends Observable
             {
                 if(id.equals(endId))
                     return;
-                else if(getQuestions().contains(id))
-                    dlm.addElement(getQuestions().getQuestion(id));
+                else if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
             }
         }
 	}
@@ -668,7 +658,7 @@ public class Study extends Observable
 			{
 				Long qid = (Long) it.next();
 
-				if (getQuestions().getQuestion(qid) == null)
+				if (_questions.getQuestion(qid) == null)
 				{
 					it.remove();
 				}
@@ -698,7 +688,7 @@ public class Study extends Observable
 	{
 		Question q;
 
-		Iterator i = this.getQuestions().values().iterator();
+		Iterator i = this._questions.values().iterator();
 
 		while (i.hasNext())
 		{
@@ -719,13 +709,10 @@ public class Study extends Observable
 	{
 		removeLinksToQuestion(q);
 
-		for (int i = 0; i < _questionOrder.size(); i++)
-		{
-		    if(_questionOrder.get(i) != null)
-		        _questionOrder.get(i).remove(q.UniqueId);
-		}
+		for (List<Long> orderList : _questionOrder.values())
+		    orderList.remove(q.UniqueId);
 
-		this.getQuestions().remove(q);
+		_questions.remove(q.UniqueId);
 		setModified(true);
 	}
 
@@ -740,13 +727,11 @@ public class Study extends Observable
 	 */
 	public void removeLinksToQuestion(Question lq)
 	{
-		Question q;
-
-		Iterator i = this.getQuestions().values().iterator();
+		Iterator<Question> i = this._questions.values().iterator();
 
 		while (i.hasNext())
 		{
-			q = (Question) i.next();
+			Question q = (Question) i.next();
 
 			if (q.link.active && (q.link.answer.questionId.equals(lq.UniqueId)))
 			{
@@ -929,7 +914,7 @@ public class Study extends Observable
 	{
 		
 		Element element = document.addElement("QuestionList");
-		for(Question q : getQuestions().values())
+		for(Question q : _questions.values())
 		{
 			q.writeQuestion(element.addElement("Question"));
 		}

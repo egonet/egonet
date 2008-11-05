@@ -21,7 +21,7 @@ package com.endlessloopsoftware.ego.client.statistics.models;
 import javax.swing.JTable;
 
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 
 public class QSummaryModel extends StatTableModel
 {
@@ -72,13 +72,13 @@ public class QSummaryModel extends StatTableModel
 		}
 		else if (columnIndex <= stats.alterStatArray[rowIndex].answerTotals.length)
 		{
-			if ((stats.alterStatArray[rowIndex].answerType == Question.AnswerType.NUMERICAL) && (columnIndex == 1))
+			if ((stats.alterStatArray[rowIndex].answerType == Shared.AnswerType.NUMERICAL) && (columnIndex == 1))
 			{
 				return (
 					"Average: "
 						+ stats.alterStatArray[rowIndex].answerTotals[0] / stats.alterStatArray[rowIndex].answerCount);
 			}
-			else if (stats.alterStatArray[rowIndex].answerType == Question.AnswerType.CATEGORICAL)
+			else if (stats.alterStatArray[rowIndex].answerType == Shared.AnswerType.CATEGORICAL)
 			{
 				String s = null;
 				try

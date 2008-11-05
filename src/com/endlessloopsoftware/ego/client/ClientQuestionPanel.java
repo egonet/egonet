@@ -419,7 +419,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		titleText.setText(strTitle);
 
 		answerPanel.setVisible(false);
-		if ((question.questionType == Question.QuestionType.ALTER_PROMPT)
+		if ((question.questionType == Shared.QuestionType.ALTER_PROMPT)
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
 			String qs = "Enter the names of "
@@ -449,7 +449,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
 			alterList.requestFocusOnFirstVisibleComponent();
-		} else if (question.answerType == Question.AnswerType.TEXT) {
+		} else if (question.answerType == Shared.AnswerType.TEXT) {
 			questionText.setText(question.text);
 
 			answerPanel.showCard(TEXT_CARD);
@@ -468,7 +468,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			answerTextField.requestFocusInWindow();
-		} else if (question.answerType == Question.AnswerType.NUMERICAL) {
+		} else if (question.answerType == Shared.AnswerType.NUMERICAL) {
 			questionText.setText(question.text);
 
 			answerPanel.showCard(NUMERICAL_CARD);
@@ -495,9 +495,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			numericalTextField.requestFocusInWindow();
-		} else if(question.answerType == Question.AnswerType.CATEGORICAL) {
+		} else if(question.answerType == Shared.AnswerType.CATEGORICAL) {
 
-			System.out.println("Displaying CATEGORICAL question: " + Question.AnswerType.TEXT);
+			System.out.println("Displaying CATEGORICAL question: " + Shared.AnswerType.TEXT);
 			questionText.setText(question.text);
 			
 			// can we do radio buttons or do we need the dropdown?
@@ -583,7 +583,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		System.out.println("fillAnswer called for " + answer.getString());
 
-		if (question.questionType == Question.QuestionType.ALTER_PROMPT) {
+		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
 			answer.setValue((alterList.getListStrings().length));
 			answer.answered = (!egoClient.getInterview().isLastAlterPrompt() || (answer.getValue() >= egoClient.getStudy()
@@ -591,7 +591,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getInterview().setAlterList(alterList.getListStrings());
 		} else {
 		    
-			if(question.answerType.equals(Question.AnswerType.NUMERICAL)) {
+			if(question.answerType.equals(Shared.AnswerType.NUMERICAL)) {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
@@ -609,13 +609,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.setValue((Answer.NO_ANSWER));
 					answer.answered = false;
 				}
-			} else if(question.answerType.equals(Question.AnswerType.TEXT)) {
+			} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
 				//System.out.println("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.answered = (answer.getValue() != 0);
-			} else if(question.answerType.equals(Question.AnswerType.CATEGORICAL)) {
+			} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 				if (question.getSelections().length <= answerButtons.length) {
 					int buttonIndex = selectedButtonIndex(answerButtons);
 					answer.answered = (buttonIndex != -1);
@@ -689,7 +689,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (key == -1 && questionButtonNext.isEnabled())
 			questionButtonNext_actionPerformed(e);
 
-		if (question.answerType == Question.AnswerType.CATEGORICAL) {
+		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
 				// System.out.println("Selection value :" +sel.getValue());
@@ -720,7 +720,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-					&& (question.questionType == Question.QuestionType.ALTER_PAIR)) {
+					&& (question.questionType == Shared.QuestionType.ALTER_PAIR)) {
 				setDefaultAnswer();
 			}
 
@@ -775,7 +775,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void setButtonNextState() {
-		if (question.questionType == Question.QuestionType.ALTER_PROMPT) {
+		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			questionButtonNext.setEnabled(question.answer.answered);
 			questionButtonNext.setText("Next Question");
 		} else {
@@ -824,7 +824,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void setDefaultAnswer() {
 		if (!question.answer.answered
-				&& (question.answerType == Question.AnswerType.CATEGORICAL)
+				&& (question.answerType == Shared.AnswerType.CATEGORICAL)
 				&& (question.answer.getAlters()[1] > (question.answer
 						.getAlters()[0] + 1))) {
 			int defaultAnswer = -1;

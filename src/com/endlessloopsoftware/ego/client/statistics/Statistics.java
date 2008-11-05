@@ -31,6 +31,7 @@ import org.egonet.util.FileHelpers;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Element;
@@ -706,7 +707,7 @@ public class Statistics
 	 */
 	private void generateAlterStatArray()
 	{
-		List<Long> qList = _study.getQuestionOrder(Question.QuestionType.ALTER);
+		List<Long> qList = _study.getQuestionOrder(Shared.QuestionType.ALTER);
 		Iterator<Long> qIt = qList.iterator();
 		int index = 0;
 
@@ -717,7 +718,7 @@ public class Statistics
 		{
 			Question q = _study.getQuestions().getQuestion((Long) qIt.next());
 
-			if ((q.answerType == Question.AnswerType.CATEGORICAL) || (q.answerType == Question.AnswerType.NUMERICAL))
+			if ((q.answerType == Shared.AnswerType.CATEGORICAL) || (q.answerType == Shared.AnswerType.NUMERICAL))
 				index++;
 		}
 
@@ -739,7 +740,7 @@ public class Statistics
 			Long qId = (Long) qIt.next();
 			Question q = _study.getQuestions().getQuestion(qId);
 
-			if ((q.answerType == Question.AnswerType.CATEGORICAL) || (q.answerType == Question.AnswerType.NUMERICAL))
+			if ((q.answerType == Shared.AnswerType.CATEGORICAL) || (q.answerType == Shared.AnswerType.NUMERICAL))
 			{
 				Set<Answer> answerSet = _interview.getAnswerSubset(qId);
 				Iterator<Answer> aIt = answerSet.iterator();
@@ -748,12 +749,12 @@ public class Statistics
 				alterStatArray[index].qTitle = q.title;
 				alterStatArray[index].answerType = q.answerType;
 
-				if (q.answerType == Question.AnswerType.NUMERICAL)
+				if (q.answerType == Shared.AnswerType.NUMERICAL)
 				{
 					alterStatArray[index].answerText = new String[] { "Mean" };
 					alterStatArray[index].answerTotals = new int[1];
 				}
-				else if (q.answerType == Question.AnswerType.CATEGORICAL)
+				else if (q.answerType == Shared.AnswerType.CATEGORICAL)
 				{
 					alterStatArray[index].answerTotals = new int[q.getSelections().length];
 					alterStatArray[index].answerText = new String[q.getSelections().length];
@@ -774,7 +775,7 @@ public class Statistics
 					{
 						alterSummary[a.getAlters()[0]][index] = new Integer(a.getValue());
 
-						if (q.answerType == Question.AnswerType.NUMERICAL)
+						if (q.answerType == Shared.AnswerType.NUMERICAL)
 						{
 							if (a.getValue() != -1)
 							{
@@ -782,7 +783,7 @@ public class Statistics
 								alterStatArray[index].answerCount++;
 							}
 						}
-						else if (q.answerType == Question.AnswerType.CATEGORICAL)
+						else if (q.answerType == Shared.AnswerType.CATEGORICAL)
 						{
 							alterStatArray[index].answerTotals[a.getIndex()] += 1;
 							alterStatArray[index].answerCount++;
@@ -942,7 +943,7 @@ public class Statistics
 			Answer answer = (Answer) qIt.next();
 			Question q = _study.getQuestions().getQuestion(answer.questionId);
 
-			if (q.answerType == Question.AnswerType.TEXT)
+			if (q.answerType == Shared.AnswerType.TEXT)
 			{
 				if (answer.answered)
 				{
@@ -953,14 +954,14 @@ public class Statistics
 			}
 		}
 
-		qList = _study.getQuestionOrder(Question.QuestionType.ALTER);
+		qList = _study.getQuestionOrder(Shared.QuestionType.ALTER);
 		qIt = qList.iterator();
 		while (qIt.hasNext())
 		{
 			Long qId = (Long) qIt.next();
 			Question q = _study.getQuestions().getQuestion(qId);
 
-			if (q.answerType == Question.AnswerType.TEXT)
+			if (q.answerType == Shared.AnswerType.TEXT)
 			{
 				w.println("Alter Question: " + q.title);
 				w.println("Text: " + q.text);

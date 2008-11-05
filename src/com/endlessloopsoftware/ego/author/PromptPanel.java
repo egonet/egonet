@@ -38,7 +38,7 @@ import javax.swing.event.ListSelectionListener;
 import org.egonet.exceptions.DuplicateQuestionException;
 
 import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 /**
  * Generic Panel creation and handling routines for question editing

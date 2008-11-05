@@ -10,6 +10,7 @@ import com.endlessloopsoftware.ego.client.EgoStore;
 import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
@@ -54,7 +55,7 @@ public class CombineInterviews
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			alterList.addAll(Arrays.asList(interview.getAlterList()));
 
-			Iterator<Long> questions = study.getQuestionOrder(Question.QuestionType.ALTER_PAIR).iterator();
+			Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				int[][] adj = interview.generateAdjacencyMatrix(q, false);

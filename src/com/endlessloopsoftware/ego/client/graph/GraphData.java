@@ -119,9 +119,9 @@ public class GraphData {
 				.removeAll(interviewAlterPairQuestionList);
 		while (interview.hasNext()) {
 			question = interview.next();
-			if (question.questionType == Question.QuestionType.ALTER) {
+			if (question.questionType == Shared.QuestionType.ALTER) {
 				interviewAlterQuestionList.add(question);
-			} else if (question.questionType == Question.QuestionType.ALTER_PAIR) {
+			} else if (question.questionType == Shared.QuestionType.ALTER_PAIR) {
 				interviewAlterPairQuestionList.add(question);
 			}
 		}
@@ -145,7 +145,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory() == Question.QuestionType.ALTER) {
+		if (graphQuestion.getCategory() == Shared.QuestionType.ALTER) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();
@@ -218,7 +218,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory() == Question.QuestionType.ALTER) {
+		if (graphQuestion.getCategory() == Shared.QuestionType.ALTER) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();

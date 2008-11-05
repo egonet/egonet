@@ -21,6 +21,7 @@ package com.endlessloopsoftware.ego.client.graph;
 import java.util.*;
 
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 
 import org.egonet.util.listbuilder.Selection;
 
@@ -34,11 +35,11 @@ public class GraphQuestionSelectionPair {
 	//used only for ALTER QUESTIONS
 	private List<Integer> alterList = new ArrayList<Integer>();
 	
-	private Question.QuestionType category;
+	private Shared.QuestionType category;
 	
 	private boolean showLabel = false; 
 
-	public GraphQuestionSelectionPair(Question question, Selection selection, Question.QuestionType category) {
+	public GraphQuestionSelectionPair(Question question, Selection selection, Shared.QuestionType category) {
 		this.question = question;
 		this.category = category;
 		this.selection = selection;
@@ -62,7 +63,7 @@ public class GraphQuestionSelectionPair {
 		this.selection = selection;
 	}
 
-	public Question.QuestionType getCategory() {
+	public Shared.QuestionType getCategory() {
 		return category;
 	}
 

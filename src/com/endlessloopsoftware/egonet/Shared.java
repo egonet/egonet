@@ -39,6 +39,36 @@ import javax.swing.text.html.HTMLEditorKit;
  */
 public class Shared
 {
+	public enum AnswerType
+	{
+	    CATEGORICAL,
+	    NUMERICAL,
+	    TEXT
+	}
+
+	/* Constants */
+	public enum QuestionType {
+	    STUDY_CONFIG("Study", "Study questions"),
+	    EGO("Ego", "Questions About You"),
+	    ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
+	    ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
+	    ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
+	    ;
+	    public final String niceName, title;
+	    QuestionType(String niceName, String title)
+	    {
+	        this.niceName = niceName;
+	        this.title = title;
+	    }
+	}
+	
+	   public enum AlterSamplingModel
+	   {
+		   TOTAL_AMOUNT,
+		   RANDOM_SUBSET,
+		   NTH_ALTER;
+	   }
+	
 	/* Constants */
 	public static final int MIN_QUESTION_TYPE			= 1;
    public static final int ERROR                      = -1;

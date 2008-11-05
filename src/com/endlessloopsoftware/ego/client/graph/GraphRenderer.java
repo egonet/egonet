@@ -34,7 +34,8 @@ import org.egonet.util.listbuilder.Selection;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Edge;
@@ -509,7 +510,7 @@ public class GraphRenderer extends PluggableRenderer implements
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
 			GraphQuestionSelectionPair graphQuestion = entry.getGraphQuestion();
-			if ((graphQuestion.getCategory() == Question.QuestionType.ALTER)
+			if ((graphQuestion.getCategory() == Shared.QuestionType.ALTER)
 					&& (entry.getType() == GraphSettingType.Node)) {
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
 				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
@@ -571,7 +572,7 @@ public class GraphRenderer extends PluggableRenderer implements
 				}
 			}
 			// Edge property manipulation
-			else if ((graphQuestion.getCategory() == Question.QuestionType.ALTER_PAIR)
+			else if ((graphQuestion.getCategory() == Shared.QuestionType.ALTER_PAIR)
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();

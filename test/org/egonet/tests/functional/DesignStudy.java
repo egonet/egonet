@@ -30,7 +30,7 @@ import org.junit.Test;
 import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
 import com.endlessloopsoftware.ego.author.EgoNet;
 import com.endlessloopsoftware.ego.author.PromptPanel;
-import com.endlessloopsoftware.egonet.Question.QuestionType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class DesignStudy {
 	
