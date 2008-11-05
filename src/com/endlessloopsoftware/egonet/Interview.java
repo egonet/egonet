@@ -954,8 +954,4 @@ public class Interview {
 		return _answers;
 	}
 
-	public boolean is_complete() {
-		return _complete;
-	}
-
 }

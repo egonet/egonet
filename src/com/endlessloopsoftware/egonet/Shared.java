@@ -64,7 +64,7 @@ public class Shared
 	
 	   public enum AlterSamplingModel
 	   {
-		   TOTAL_AMOUNT,
+		   ALL,
 		   RANDOM_SUBSET,
 		   NTH_ALTER;
 	   }

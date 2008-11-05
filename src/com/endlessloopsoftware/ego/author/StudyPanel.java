@@ -89,26 +89,20 @@ public class StudyPanel extends JPanel
 		instructionPane.setEditable(false);
 		instructionPane.setText(instructionStrings[0]);
 
-		add(titleLabel,       new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0
-			,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		add(study_name_label,          new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1
-			,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
-		add(study_name_field,              new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0
-			,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
-		add(study_path_label,         new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1
-			,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
-		add(study_path_field,           new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0
-			,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
-		add(study_num_alters_label,           new GridBagConstraints(0, 4, 2, 1, 0.0, 0.1
-			,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_num_alters_field,              new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0
-			,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
-		add(instructionPane,            new GridBagConstraints(0, 5, 4, 1, 1.0, 0.15
-			,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
+		add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		add(study_name_label, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
+		add(study_name_field, new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
+		add(study_path_label, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
+		add(study_path_field, new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
+		add(study_num_alters_label, new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_num_alters_field, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+		add(instructionPane, new GridBagConstraints(0, 5, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
 
-		/****
+		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
-		 * @param e event to be handled
+		 * 
+		 * @param e
+		 *            event to be handled
 		 */
 		study_name_field.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) { studyNameTextEvent(); }

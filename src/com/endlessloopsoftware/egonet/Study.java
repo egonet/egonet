@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.MalformedQuestionException;
 
+import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import electric.xml.Document;
@@ -41,7 +42,7 @@ public class Study extends Observable
 {
 	private long              _uniqueId       = -1L;
    private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
-   private int               _numAlters      = -1;
+   private int               _numAlters      = 40;
    private boolean           _studyDirty     = false;
    private boolean           _compatible     = true;
    private boolean           _inUse          = false;
@@ -51,23 +52,18 @@ public class Study extends Observable
    
    private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
+
+   /* Added for UNC */
+   private AlterSamplingModel alterSamplingModel = AlterSamplingModel.ALL;
+   private Integer alterSamplingParameter = null; 
+   
    
    /**
    * Instantiates Default Study
    */
 	public Study()
 	{
-		_studyName 	= "New Study";
-      _uiType      = Shared.TRADITIONAL_QUESTIONS;
-		_numAlters 	= 40;
-		_studyDirty 	= false;
-		_compatible	= true;
-      _uniqueId    = -1;
-		
-		// @TODO Move storage to parent package
-		//		EgoNet.storage.setStudyFile(null);
 		this._questions.clear();
-
 		for(QuestionType type : QuestionType.values())
 		    _questionOrder.put(type, new ArrayList<Long>());
 	}
@@ -773,44 +769,44 @@ public class Study extends Observable
 	 */
 	public void readPackageStudy(Document document)
 	{
-	//	String data;
+		Element root = document.getRoot();
+		setStudyId(Long.parseLong(root.getAttributeValue("Id")));
 
-		try
+		root = root.getElement("Study");
+
+		if (root.getElement("name") != null)
 		{
-			Element root = document.getRoot();
-			setStudyId(Long.parseLong(root.getAttributeValue("Id")));
-
-			root = root.getElement("Study");
-
-			if (root.getElement("name") != null)
-			{
-				setStudyName(root.getTextString("name"));
-			}
-
-			if (root.getElement("numalters") != null)
-			{
-				setNumAlters(root.getInt("numalters"));
-			}
-
-			Elements elements = root.getElements("questionorder");
-			while (elements.hasMoreElements())
-			{
-				Element element = elements.next();
-				int qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
-				QuestionType qType = QuestionType.values()[qOrderId];
-				List<Long> questionOrder = _questionOrder.get(qType);
-
-				Elements ids = element.getElements("id");
-				while (ids.hasMoreElements())
-				{
-					questionOrder.add(new Long(ids.next().getLong()));
-				}
-			}
+			setStudyName(root.getTextString("name"));
 		}
-		catch (Exception e)
+
+		if (root.getElement("numalters") != null)
 		{
-			/** @todo handle exception */
-			e.printStackTrace();
+			setNumAlters(root.getInt("numalters"));
+		}
+
+		if(root.getElement("altersamplingmodel") != null)
+		{
+			setAlterSamplingModel(AlterSamplingModel.values()[root.getInt("altersamplingmodel")]);
+		}
+
+		if(root.getElement("altersamplingparameter") != null)
+		{
+			setAlterSamplingParameter(root.getInt("altersamplingparameter"));
+		}
+
+		Elements elements = root.getElements("questionorder");
+		while (elements.hasMoreElements())
+		{
+			Element element = elements.next();
+			int qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
+			QuestionType qType = QuestionType.values()[qOrderId];
+			List<Long> questionOrder = _questionOrder.get(qType);
+
+			Elements ids = element.getElements("id");
+			while (ids.hasMoreElements())
+			{
+				questionOrder.add(new Long(ids.next().getLong()));
+			}
 		}
 	}
 
@@ -871,6 +867,8 @@ public class Study extends Observable
 
 			study.addElement("name").setText(getStudyName());
 			study.addElement("numalters").setInt(getNumAlters());
+			study.addElement("altersamplingmodel").setInt(alterSamplingModel.ordinal());
+			study.addElement("altersamplingparameter").setInt(alterSamplingParameter == null ? getNumAlters() : alterSamplingParameter);
 
 			for (QuestionType type : QuestionType.values())
 			{
@@ -918,6 +916,22 @@ public class Study extends Observable
 		{
 			q.writeQuestion(element.addElement("Question"));
 		}
+	}
+
+	public AlterSamplingModel getAlterSamplingModel() {
+		return alterSamplingModel;
+	}
+
+	public void setAlterSamplingModel(AlterSamplingModel alterSamplingModel) {
+		this.alterSamplingModel = alterSamplingModel;
+	}
+
+	public Integer getAlterSamplingParameter() {
+		return alterSamplingParameter;
+	}
+
+	public void setAlterSamplingParameter(Integer alterSamplingParameter) {
+		this.alterSamplingParameter = alterSamplingParameter;
 	}
 	
 }

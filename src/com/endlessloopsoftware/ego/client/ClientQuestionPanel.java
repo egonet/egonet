@@ -21,7 +21,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -39,6 +41,8 @@ import com.cim.dlgedit.loader.DialogResource;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
+import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 
 import org.egonet.util.CardPanel;
 import org.egonet.util.FileCreateException;
@@ -582,13 +586,51 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// return;
 		
 		System.out.println("fillAnswer called for " + answer.getString());
+		Study study = egoClient.getStudy();
 
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
-			answer.setValue((alterList.getListStrings().length));
-			answer.answered = (!egoClient.getInterview().isLastAlterPrompt() || (answer.getValue() >= egoClient.getStudy()
-					.getNumAlters()));
-			egoClient.getInterview().setAlterList(alterList.getListStrings());
+			answer.answered = !egoClient.getInterview().isLastAlterPrompt() || answer.getValue() >= study.getNumAlters();
+			
+			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
+			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
+			{
+				answer.setValue(alterList.getListStrings().length);
+				egoClient.getInterview().setAlterList(alterList.getListStrings());
+			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.NTH_ALTER))
+			{
+				String [] oldAlterList = alterList.getListStrings();
+				
+				java.util.List<String> newAlterList = new ArrayList<String>();
+				
+				int nthParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNumAlters();
+				for(int i = 0; i < oldAlterList.length; i++)
+				{
+					if(i + 1 % nthParameter == 0)
+						newAlterList.add(oldAlterList[i]);
+				}
+				
+				answer.setValue(newAlterList.size());
+				egoClient.getInterview().setAlterList(newAlterList.toArray(new String[0]));
+			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.RANDOM_SUBSET))
+			{
+				java.util.List<String> oldAlterList = new ArrayList<String>(Arrays.asList(alterList.getListStrings()));
+				Collections.shuffle(oldAlterList);
+
+				java.util.List<String> newAlterList = new ArrayList<String>();
+				
+				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNumAlters();
+				for(int i = 0; i < subsampleParameter; i++)
+						newAlterList.add(oldAlterList.get(i));
+				
+				answer.setValue(newAlterList.size());
+				egoClient.getInterview().setAlterList(newAlterList.toArray(new String[0]));
+			} else
+			{
+				throw new RuntimeException("Don't know what to do with alter model " + alterSampleModel);
+			}
+			
+			
 		} else {
 		    
 			if(question.answerType.equals(Shared.AnswerType.NUMERICAL)) {

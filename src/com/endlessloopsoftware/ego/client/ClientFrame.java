@@ -198,7 +198,7 @@ public class ClientFrame extends JFrame {
 
 	// File | Exit action performed
 	public void jMenuFileExit_actionPerformed(ActionEvent e) throws Exception{
-		if (egoClient.getInterview() != null && !egoClient.getInterview().is_complete()) {
+		if (egoClient.getInterview() != null && !egoClient.getInterview().isComplete()) {
 			egoClient.getStorage().writeInterviewFile();
 		}
 

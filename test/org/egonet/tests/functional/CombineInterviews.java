@@ -48,9 +48,16 @@ public class CombineInterviews
 			if(!filter.accept(f) || !f.canRead())
 				throw new IOException("Couldn't read file or file not associated with selected study.");
 
-
 			Document document = new Document(f);
 			Interview interview = Interview.readInterview(study, document.getRoot());
+			if(!interview.isComplete())
+			{
+				System.out.println("*** SKIPPED because interview isn't complete: " + f.getName());
+				continue;
+			}
+			
+			System.out.println("** Reading next file " + f.getName());
+			
 
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			alterList.addAll(Arrays.asList(interview.getAlterList()));
