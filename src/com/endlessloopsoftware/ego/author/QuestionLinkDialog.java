@@ -20,6 +20,7 @@ package com.endlessloopsoftware.ego.author;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,6 +34,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
+import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
 
 import com.endlessloopsoftware.egonet.Answer;
@@ -214,24 +216,24 @@ public class QuestionLinkDialog extends JDialog
 			public void valueChanged(ListSelectionEvent e) {
 				question_list_selectionChanged(e); }});
 
-		questionButtonOK.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		questionButtonOK.addActionListener(new CatchingAction("questionButtonOK") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionButtonOK_actionPerformed(e);}});
 
-		questionButtonNone.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		questionButtonNone.addActionListener(new CatchingAction("questionButtonNone") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionButtonNone_actionPerformed(e);}});
 
-		questionButtonCancel.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		questionButtonCancel.addActionListener(new CatchingAction("questionButtonCancel") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionButtonCancel_actionPerformed(e);}});
 
-		answerButtonListener = new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		answerButtonListener = new CatchingAction("answerButtonListener") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionAnsweredEventHandler(e);}};
 
-		answerMenu.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		answerMenu.addActionListener(new CatchingAction("answerMenu") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionAnsweredEventHandler(e); }});
 
 		wholeNumberDocument.addDocumentListener(new DocumentListener() {
@@ -244,12 +246,12 @@ public class QuestionLinkDialog extends JDialog
 			public void changedUpdate(DocumentEvent e) { answerTextEvent(e); }
 			public void removeUpdate(DocumentEvent e) { answerTextEvent(e); }});
 
-		answerButtonListener = new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		answerButtonListener = new CatchingAction("") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionAnsweredEventHandler(e);}};
 
-		allAdjacentCheck.addActionListener(new java.awt.event.ActionListener(){
-			public void actionPerformed(ActionEvent e){
+		allAdjacentCheck.addActionListener(new CatchingAction(""){
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				allAdjacentCheck_actionPerformed(e);}});
 
 		for (int i = 0; i <= MAX_BUTTONS; i++)
@@ -570,7 +572,7 @@ public class QuestionLinkDialog extends JDialog
 		questionSplit.repaint();
 	}
 
-	void questionButtonNone_actionPerformed(ActionEvent e)
+	void questionButtonNone_actionPerformed(ActionEvent e) throws IOException
 	{
 		if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
@@ -589,7 +591,7 @@ public class QuestionLinkDialog extends JDialog
 		this.hide();
 	}
 
-	void questionButtonOK_actionPerformed(ActionEvent e)
+	void questionButtonOK_actionPerformed(ActionEvent e) throws IOException
 	{
 		if ((linkAnswer != null) && (linkAnswer.answered) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{

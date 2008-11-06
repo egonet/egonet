@@ -25,10 +25,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -38,6 +38,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
+
+import org.egonet.util.CatchingAction;
 
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
@@ -162,56 +164,56 @@ public class EgoFrame extends JFrame implements Observer {
 		/***********************************************************************
 		 * Action Listeners for Menu Events
 		 */
-		jMenuFileNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileNew.addActionListener(new CatchingAction("jMenuFileNew") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileNew_actionPerformed(e);
 			}
 		});
 
-		jMenuFileOpen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileOpen.addActionListener(new CatchingAction("jMenuFileOpen") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileOpen_actionPerformed(e);
 			}
 		});
 
-		jMenuFileClose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileClose.addActionListener(new CatchingAction("jMenuFileClose") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileClose_actionPerformed(e);
 			}
 		});
 
-		jMenuFileSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileSave.addActionListener(new CatchingAction("jMenuFileSave") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileSave_actionPerformed(e);
 			}
 		});
 
-		jMenuFileSaveAs.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileSaveAs.addActionListener(new CatchingAction("jMenuFileSaveAs") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileSaveAs_actionPerformed(e);
 			}
 		});
 
-		jMenuFileImport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileImport.addActionListener(new CatchingAction("jMenuFileImport") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileImport_actionPerformed(e);
 			}
 		});
 
-		jMenuFileExport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileExport.addActionListener(new CatchingAction("jMenuFileExport") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileExport_actionPerformed(e);
 			}
 		});
 
-		jMenuFileExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuFileExit.addActionListener(new CatchingAction("jMenuFileExit") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileExit_actionPerformed(e);
 			}
 		});
 
-		jMenuHelpAbout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jMenuHelpAbout.addActionListener(new CatchingAction("jMenuHelpAbout") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuHelpAbout_actionPerformed(e);
 			}
 		});
@@ -221,7 +223,12 @@ public class EgoFrame extends JFrame implements Observer {
 		 */
 		jTabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				jTabbedPane_stateChanged(e);
+				try {
+					jTabbedPane_stateChanged(e);
+				} catch (IOException ex)
+				{
+					throw new RuntimeException(ex);
+				}
 			}
 		});
 
@@ -266,8 +273,9 @@ public class EgoFrame extends JFrame implements Observer {
 	 * 
 	 * @param e
 	 *            Menu UI Event
+	 * @throws IOException 
 	 */
-	private void jMenuFileNew_actionPerformed(ActionEvent e) {
+	private void jMenuFileNew_actionPerformed(ActionEvent e) throws IOException {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
@@ -285,8 +293,9 @@ public class EgoFrame extends JFrame implements Observer {
 	 * 
 	 * @param e
 	 *            Menu UI Event
+	 * @throws IOException 
 	 */
-	private void jMenuFileOpen_actionPerformed(ActionEvent e) {
+	private void jMenuFileOpen_actionPerformed(ActionEvent e) throws IOException {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
@@ -299,7 +308,7 @@ public class EgoFrame extends JFrame implements Observer {
 		}
 	}
 
-	private void jMenuFileClose_actionPerformed(ActionEvent e) {
+	private void jMenuFileClose_actionPerformed(ActionEvent e) throws IOException {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
@@ -311,7 +320,7 @@ public class EgoFrame extends JFrame implements Observer {
 		}
 	}
 
-	private void jMenuFileImport_actionPerformed(ActionEvent e) {
+	private void jMenuFileImport_actionPerformed(ActionEvent e) throws IOException {
 		egoNet.getStorage().importQuestions();
 		fillCurrentPanel();
 	}
@@ -320,7 +329,7 @@ public class EgoFrame extends JFrame implements Observer {
 		egoNet.getStorage().exportQuestions();
 	}
 
-	private void jMenuFileSave_actionPerformed(ActionEvent e) {
+	private void jMenuFileSave_actionPerformed(ActionEvent e) throws IOException {
 		if (egoNet.getStorage().getStudyFile() == null) {
 			jMenuFileSaveAs_actionPerformed(e);
 		} else {
@@ -329,7 +338,7 @@ public class EgoFrame extends JFrame implements Observer {
 		}
 	}
 
-	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) {
+	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) throws IOException {
 		egoNet.getStorage().saveAsStudyFile();
 		fillStudyPanel();
 		egoNet.getStudy().addObserver(this);
@@ -338,7 +347,7 @@ public class EgoFrame extends JFrame implements Observer {
 	}
 
 	// File | Exit action performed
-	private void jMenuFileExit_actionPerformed(ActionEvent e) {
+	private void jMenuFileExit_actionPerformed(ActionEvent e) throws IOException {
 		boolean exit = closeStudyFile();
 
 		if (exit) {
@@ -355,8 +364,9 @@ public class EgoFrame extends JFrame implements Observer {
 	 * Closes question file. If changes made gives user the option of saving.
 	 * 
 	 * @return False iff user cancels save, True otherwise
+	 * @throws IOException 
 	 */
-	public boolean closeStudyFile() {
+	public boolean closeStudyFile() throws IOException {
 		boolean exit = true;
 
 		if (egoNet.getStudy().isModified()) {
@@ -377,7 +387,7 @@ public class EgoFrame extends JFrame implements Observer {
 		return exit;
 	}
 
-	public void fillCurrentPanel() {
+	public void fillCurrentPanel() throws IOException {
 		boolean sd = egoNet.getStudy().isModified();
 		boolean sc = egoNet.getStudy().isCompatible();
 
@@ -391,7 +401,7 @@ public class EgoFrame extends JFrame implements Observer {
 		egoNet.getStudy().setCompatible(sc);
 	}
 
-	public void fillStudyPanel() {
+	public void fillStudyPanel() throws IOException {
 		boolean sd = egoNet.getStudy().isModified();
 
 		if (curTab == Shared.QuestionType.STUDY_CONFIG) {
@@ -401,7 +411,7 @@ public class EgoFrame extends JFrame implements Observer {
 		egoNet.getStudy().setModified(sd);
 	}
 
-	private void jTabbedPane_stateChanged(ChangeEvent e)
+	private void jTabbedPane_stateChanged(ChangeEvent e) throws IOException
 	{
 		lastTab = curTab;
 		Component selectedTab = jTabbedPane.getSelectedComponent();
@@ -443,7 +453,12 @@ public class EgoFrame extends JFrame implements Observer {
 		 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 		 */
 		public void windowClosing(WindowEvent arg0) {
-			jMenuFileExit_actionPerformed(null);
+			try {
+				jMenuFileExit_actionPerformed(null);
+			} catch (Throwable cause)
+			{
+				throw new RuntimeException(cause);
+			}
 		}
 	}
 

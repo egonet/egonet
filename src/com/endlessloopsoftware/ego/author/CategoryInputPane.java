@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -34,6 +35,7 @@ import javax.swing.JScrollPane;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 
+import org.egonet.util.CatchingAction;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 
@@ -97,8 +99,8 @@ public class CategoryInputPane extends JDialog {
 						GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 						new Insets(10, 20, 10, 0), 26, 0));
 
-		jOKButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		jOKButton.addActionListener(new CatchingAction("jOKButton") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				OKButton_actionPerformed(e);
 			}
 		});
@@ -113,7 +115,7 @@ public class CategoryInputPane extends JDialog {
 		this.getContentPane().add(scrollPane);
 	}
 
-	void OKButton_actionPerformed(ActionEvent e) {
+	void OKButton_actionPerformed(ActionEvent e) throws IOException {
 		boolean changed = false;
 		boolean compatible = true;
 		// boolean abort = false;

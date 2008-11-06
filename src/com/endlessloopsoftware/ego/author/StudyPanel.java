@@ -22,12 +22,16 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -36,6 +40,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
 import org.egonet.util.WholeNumberDocument;
+
+import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 
 
 /**
@@ -50,6 +57,21 @@ public class StudyPanel extends JPanel
 	private final JTextField		study_name_field			= new JTextField("< none selected >");
 	private final JLabel				study_num_alters_label	= new JLabel("Number of Alters:");
 	private final JTextField		study_num_alters_field	= new JTextField();
+	
+	private JLabel lblAlterModel = new JLabel("Alter Sampling Method");
+	private ButtonGroup alterSampleGroup = new ButtonGroup();
+	
+	private JRadioButton btnAlterModelAll = new JRadioButton("Select and ask about all alters");
+	
+	private JRadioButton btnAlterModelRandomSubset = new JRadioButton("Select a random subset of alters");
+	private JTextField txtAlterModelRandomSubset = new JTextField("0");
+	
+	private JRadioButton btnAlterModelNth = new JRadioButton("Select every Nth alter");
+	private JTextField txtAlterModelNth = new JTextField("0");
+	
+	
+	
+	
 	private final JLabel				titleLabel					= new JLabel("EgoCentric Network Study Configuration");
 	private final JTextPane			instructionPane			= new JTextPane();
 	private final Document			altersDocument				= new WholeNumberDocument();
@@ -60,6 +82,7 @@ public class StudyPanel extends JPanel
 
 
 	private final EgoNet egoNet;
+	private ActionListener alterModelGroupActionListener;
 	
 	/**
 	 * Generates Panel for study configuration info
@@ -80,6 +103,40 @@ public class StudyPanel extends JPanel
 		this.setMinimumSize(new Dimension(300, 200));
 		this.setPreferredSize(new Dimension(400, 400));
 		study_num_alters_field.setDocument(altersDocument);
+		
+		alterModelGroupActionListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) {
+				txtAlterModelRandomSubset.setEnabled(false);
+				txtAlterModelNth.setEnabled(false);
+				
+				if(alterSampleGroup.getSelection() == null)
+					return;
+				
+				if(alterSampleGroup.isSelected(btnAlterModelAll.getModel()))
+				{
+					
+				}
+				else if(alterSampleGroup.isSelected(btnAlterModelRandomSubset.getModel()))
+				{
+					txtAlterModelRandomSubset.setEnabled(true);
+				}
+				else if(alterSampleGroup.isSelected(btnAlterModelNth.getModel()))
+				{
+					txtAlterModelNth.setEnabled(true);
+				}
+			}
+			
+		};
+		alterSampleGroup.add(btnAlterModelAll); btnAlterModelAll.addActionListener(alterModelGroupActionListener);
+		alterSampleGroup.add(btnAlterModelRandomSubset); btnAlterModelRandomSubset.addActionListener(alterModelGroupActionListener);
+		alterSampleGroup.add(btnAlterModelNth); btnAlterModelNth.addActionListener(alterModelGroupActionListener);
+		alterModelGroupActionListener.actionPerformed(null);
+		
+		btnAlterModelAll.setEnabled(false);
+		btnAlterModelRandomSubset.setEnabled(false);
+		btnAlterModelNth.setEnabled(false);
+
 
 		/* Question Layout */
 		titleLabel.setBorder(BorderFactory.createEtchedBorder());
@@ -88,7 +145,7 @@ public class StudyPanel extends JPanel
 		instructionPane.setBorder(BorderFactory.createLoweredBevelBorder());
 		instructionPane.setEditable(false);
 		instructionPane.setText(instructionStrings[0]);
-
+		
 		add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		add(study_name_label, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_name_field, new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
@@ -96,7 +153,19 @@ public class StudyPanel extends JPanel
 		add(study_path_field, new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_num_alters_label, new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
 		add(study_num_alters_field, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
-		add(instructionPane, new GridBagConstraints(0, 5, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
+		
+		add(lblAlterModel, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+
+		add(btnAlterModelAll, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		
+		add(btnAlterModelRandomSubset, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelRandomSubset, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+
+		add(btnAlterModelNth, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelNth, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+
+		
+		add(instructionPane, new GridBagConstraints(0, 11, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
 
 		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
@@ -130,12 +199,14 @@ public class StudyPanel extends JPanel
 	 * Clear all on screen editable fields
 	 * Generally called when a new survey is started
 	 */
-	public void fillPanel()
+	public void fillPanel() throws IOException
 	{
 		boolean hasEgoNet = egoNet != null;
 		boolean hasStorage = hasEgoNet && egoNet.getStorage() != null;
 		boolean hasStudy = hasStorage && (egoNet.getStorage().getStudyFile() != null);
 
+		Study study = egoNet.getStudy();
+		
 			study_name_field.			setEnabled(hasStudy);
 			study_name_label.			setEnabled(hasStudy);
 			study_num_alters_label.	setEnabled(hasStudy);
@@ -148,14 +219,26 @@ public class StudyPanel extends JPanel
 					.getStudy()
 					.getStudyName());
 			
-			try {
 			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
-			} catch (IOException ex)
-			{
-				throw new RuntimeException(ex);
-			}
-
 			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNumAlters()));
+			
+			lblAlterModel.setEnabled(hasStudy);
+			btnAlterModelAll.setEnabled(hasStudy);
+			btnAlterModelRandomSubset.setEnabled(hasStudy);
+			txtAlterModelRandomSubset.setEnabled(hasStudy);
+			btnAlterModelNth.setEnabled(hasStudy);
+			txtAlterModelNth.setEnabled(hasStudy);
+			
+			if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.RANDOM_SUBSET)) {
+				alterSampleGroup.setSelected(btnAlterModelRandomSubset.getModel(), true);
+			} else if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.NTH_ALTER)) {
+				alterSampleGroup.setSelected(btnAlterModelNth.getModel(), true);
+			} else if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.ALL)) {
+				alterSampleGroup.setSelected(btnAlterModelAll.getModel(), true);
+			} else {
+				alterSampleGroup.clearSelection();
+			}
+			alterModelGroupActionListener.actionPerformed(null);
 	}
 
 	private String filename(File f) throws IOException
