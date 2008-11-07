@@ -3,11 +3,14 @@ package org.egonet.tests.functional;
 import static org.fest.swing.core.matcher.JButtonByTextMatcher.*;
 
 import java.awt.Component;
+import java.io.File;
 import java.util.Collection;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import junit.framework.Assert;
 
 import org.fest.swing.core.ComponentFinder;
 import org.fest.swing.core.NameMatcher;
@@ -34,8 +37,8 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class DesignStudy {
 	
-	private String studyName = "Sample Study " + randomString();
-	private String location = "/home/martins/Desktop/egonet tmp";
+	public final static String studyName = "Sample Egonet Study for Test";
+	public final static String location = System.getProperty("user.home") + File.separator+ "Desktop";
 	
 	private FrameFixture window;
 
@@ -54,10 +57,16 @@ public class DesignStudy {
 
 	@Test
 	public void fullStudyDesign() throws Exception {
+	    Assert.assertTrue("Location must exist: " + location, new File(location).exists());
+	        
 		window.menuItemWithPath("File", "New Study").click();
 		JFileChooserFixture fileChooser = JFileChooserFinder.findFileChooser().using(window.robot);
 		fileChooser.fileNameTextBox().enterText(location + "/" + studyName);
 		fileChooser.approve();
+		
+		window.textBox("study_num_alters_field").deleteText().enterText("15");
+		window.radioButton("btnAlterModelRandomSubset").click();
+		window.textBox("txtAlterModelRandomSubset").deleteText().enterText("5");
 		
 		JTabbedPaneFixture tabs = window.tabbedPane();
 

@@ -17,6 +17,7 @@ import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JPanelFixture;
 import org.fest.swing.fixture.JTextComponentFixture;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,10 +40,13 @@ public class DoInterview {
 	
 	private FrameFixture window;
 
+	private static final String studyName = DesignStudy.studyName;
+	private static final String location = DesignStudy.location + File.separator + studyName + File.separator + studyName + ".ego";
+	
 	@Before
 	public void setUp() throws Exception
 	{
-		studyFile = new File("//home/martins/Desktop/egonet tmp/Martin study/Martin study.ego");
+		studyFile = new File(location);
 		
 		window = new FrameFixture(EgoClient.getInstance().getFrame());
 		window.show(); // shows the frame to test
@@ -94,9 +98,6 @@ public class DoInterview {
 		DialogFixture dialog = WindowFinder.findDialog(DialogByTitleMatcher.withTitle("Interview Complete")).withTimeout(5000).using(window.robot);
 		dialog.button(withText("OK")).click();
 
-		
-		Thread.sleep(60*1000);
-
 	}
 	
 	private final String ALTER_CARD = "ALTER";
@@ -114,6 +115,7 @@ public class DoInterview {
 		CardPanel cp = window.robot.finder().findByType(CardPanel.class);
 		JPanelFixture cardFixture = new JPanelFixture(window.robot,cp);
 		
+		window.robot.waitForIdle();
 		String card = cp.getVisibleCard();
 		System.out.println("*** New visible card " + card + ", attempting to handle it!");
 		
@@ -151,7 +153,10 @@ public class DoInterview {
 		} else if(card.equals(NUMERICAL_CARD)) {
 			cardFixture.textBox().enterText("1234");
 		} else if(card.equals(RADIO_CARD)) {
-			Collection<Component> comps = cardFixture.robot.finder().findAll(cp, new TypeMatcher(JRadioButton.class, true));
+		    Collection<Component> comps = cardFixture.robot.finder().findAll(cp, new TypeMatcher(JRadioButton.class, true));
+		    comps = cardFixture.robot.finder().findAll(cp, new TypeMatcher(JRadioButton.class, true));
+			
+			Assert.assertTrue("radio cards must have at least 1 radio button", comps.size() > 0);
 			ArrayList<Component> buttons = new ArrayList<Component>(comps);
 			Collections.shuffle(buttons);
 			JRadioButton btn = (JRadioButton)buttons.remove(0);

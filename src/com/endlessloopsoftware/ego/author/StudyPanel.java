@@ -91,6 +91,9 @@ public class StudyPanel extends JPanel
 	public StudyPanel(EgoNet egoNet) throws Exception
 	{
 		this.egoNet = egoNet;
+		study_num_alters_field.setName("study_num_alters_field");
+		btnAlterModelRandomSubset.setName("btnAlterModelRandomSubset");
+		txtAlterModelRandomSubset.setName("txtAlterModelRandomSubset");
 		jbInit();
 	}
 
