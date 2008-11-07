@@ -633,7 +633,7 @@ public class EgoStore extends Observable {
 
 			interviewDocument.setAttribute("StudyId", Long.toString(egoClient.getStudy().getStudyId()));
 			interviewDocument.setAttribute("StudyName", egoClient.getStudy().getStudyName());
-			interviewDocument.setAttribute("NumAlters", Integer.toString(egoClient.getStudy().getNumAlters()));
+			interviewDocument.setAttribute("NumAlters", Integer.toString(egoClient.getStudy().getNetworkSize()));
 			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 			egoClient.getInterview().writeInterview(interviewDocument);

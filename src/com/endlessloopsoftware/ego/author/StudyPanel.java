@@ -113,17 +113,30 @@ public class StudyPanel extends JPanel
 				if(alterSampleGroup.getSelection() == null)
 					return;
 				
+				Study study = egoNet.getStudy();
+				
 				if(alterSampleGroup.isSelected(btnAlterModelAll.getModel()))
 				{
-					
+                    if(study != null)
+                        study.setAlterSamplingModel(AlterSamplingModel.ALL);
 				}
 				else if(alterSampleGroup.isSelected(btnAlterModelRandomSubset.getModel()))
 				{
 					txtAlterModelRandomSubset.setEnabled(true);
+                    if(study != null)
+                    {
+                        study.setAlterSamplingModel(AlterSamplingModel.RANDOM_SUBSET);
+                        study.setAlterSamplingParameter(Integer.parseInt(txtAlterModelRandomSubset.getText()));
+                    }
 				}
 				else if(alterSampleGroup.isSelected(btnAlterModelNth.getModel()))
 				{
 					txtAlterModelNth.setEnabled(true);
+                    if(study != null)
+                    {
+                        study.setAlterSamplingModel(AlterSamplingModel.NTH_ALTER);
+                        study.setAlterSamplingParameter(Integer.parseInt(txtAlterModelNth.getText()));
+                    }
 				}
 			}
 			
@@ -182,6 +195,16 @@ public class StudyPanel extends JPanel
 			public void insertUpdate(DocumentEvent e) { studyAltersTextEvent(); }
 			public void changedUpdate(DocumentEvent e) { studyAltersTextEvent(); }
 			public void removeUpdate(DocumentEvent e) { studyAltersTextEvent(); }});
+		
+	      txtAlterModelRandomSubset.getDocument().addDocumentListener(new DocumentListener() {
+	            public void insertUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }
+	            public void changedUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }
+	            public void removeUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }});
+          txtAlterModelNth.getDocument().addDocumentListener(new DocumentListener() {
+              public void insertUpdate(DocumentEvent e) { studyAltersParamTextEventNth(); }
+              public void changedUpdate(DocumentEvent e) { studyAltersParamTextEventNth(); }
+              public void removeUpdate(DocumentEvent e) { studyAltersParamTextEventNth(); }});
+
 	}
 
 
@@ -220,7 +243,7 @@ public class StudyPanel extends JPanel
 					.getStudyName());
 			
 			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
-			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNumAlters()));
+			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNetworkSize()));
 			
 			lblAlterModel.setEnabled(hasStudy);
 			btnAlterModelAll.setEnabled(hasStudy);
@@ -231,8 +254,10 @@ public class StudyPanel extends JPanel
 			
 			if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.RANDOM_SUBSET)) {
 				alterSampleGroup.setSelected(btnAlterModelRandomSubset.getModel(), true);
+				txtAlterModelRandomSubset.setText((study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : 0)+"");
 			} else if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.NTH_ALTER)) {
 				alterSampleGroup.setSelected(btnAlterModelNth.getModel(), true);
+				txtAlterModelNth.setText((study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : 0)+"");
 			} else if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.ALL)) {
 				alterSampleGroup.setSelected(btnAlterModelAll.getModel(), true);
 			} else {
@@ -263,6 +288,33 @@ public class StudyPanel extends JPanel
 		}
 	}
 
+	private void studyAltersSamplingParams(String s)
+	{
+        int         i = 0;
+        
+        if (!s.equals(""))
+        {
+            i = Integer.parseInt(s);
+        }
+        
+        if (i != egoNet.getStudy().getAlterSamplingParameter())
+        {
+            egoNet.getStudy().setAlterSamplingParameter(i);
+        }
+	}
+	
+	   private void studyAltersParamTextEventRandom()
+	    {
+	        String  s = txtAlterModelRandomSubset.getText();
+	        studyAltersSamplingParams(s);
+	    }
+	
+	private void studyAltersParamTextEventNth()
+    {
+        String  s = txtAlterModelNth.getText();
+        studyAltersSamplingParams(s);
+    }
+
 	private void studyAltersTextEvent()
 	{
 		String 	s = study_num_alters_field.getText();
@@ -273,9 +325,9 @@ public class StudyPanel extends JPanel
 			i = Integer.parseInt(s);
 		}
 		
-		if (i != egoNet.getStudy().getNumAlters())
+		if (i != egoNet.getStudy().getNetworkSize())
 		{
-			egoNet.getStudy().setNumAlters(i);
+			egoNet.getStudy().setNetworkSize(i);
 		}
 	}
 	

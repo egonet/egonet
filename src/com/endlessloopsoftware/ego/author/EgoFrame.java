@@ -22,7 +22,6 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -100,8 +99,6 @@ public class EgoFrame extends JFrame implements Observer {
 
 		contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(borderLayout1);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setSize(screenSize);
 		this.setTitle("Egocentric Network Study");
 
 		jMenuFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -234,6 +231,7 @@ public class EgoFrame extends JFrame implements Observer {
 
 		/* Fill panel, initialize frame */
 		egoNet.setStudy(new Study());
+		pack();
 		fillCurrentPanel();
 		egoNet.getStudy().setModified(false);
 		updateMenus();

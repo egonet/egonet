@@ -427,10 +427,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
 			String qs = "Enter the names of "
-				+ egoClient.getStudy().getNumAlters() + " people. ";
+				+ egoClient.getStudy().getNetworkSize() + " people. ";
 
 			if (egoClient.getInterview().isLastAlterPrompt()) {
-				qs += "After entering " + egoClient.getStudy().getNumAlters()
+				qs += "After entering " + egoClient.getStudy().getNetworkSize()
 				+ " names you can continue.";
 			} else {
 				qs += "";
@@ -439,7 +439,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			questionText.setText(question.text);
 
 			answerPanel.showCard(ALTER_CARD);
-			alterList.setMaxListSize(egoClient.getStudy().getNumAlters());
+			alterList.setMaxListSize(egoClient.getStudy().getNetworkSize());
 			alterList.setDescription(qs);
 			alterList.setElementName("Name: ");
 			alterList.setPresetListsActive(false);
@@ -590,7 +590,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
-			answer.answered = !egoClient.getInterview().isLastAlterPrompt() || answer.getValue() >= study.getNumAlters();
+			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
+			System.out.println("More prompts? " + morePrompts);
+			boolean maxAlters = answer.getValue() >= study.getNumAlters();
+			System.out.println("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
+			answer.answered = morePrompts || maxAlters;
 			
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
@@ -603,7 +607,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				
 				java.util.List<String> newAlterList = new ArrayList<String>();
 				
-				int nthParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNumAlters();
+				int nthParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNetworkSize();
 				for(int i = 0; i < oldAlterList.length; i++)
 				{
 					if(i + 1 % nthParameter == 0)
@@ -619,8 +623,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 				java.util.List<String> newAlterList = new ArrayList<String>();
 				
-				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNumAlters();
-				for(int i = 0; i < subsampleParameter; i++)
+				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNetworkSize();
+				for(int i = 0; i < subsampleParameter && i < oldAlterList.size()-1; i++)
 						newAlterList.add(oldAlterList.get(i));
 				
 				answer.setValue(newAlterList.size());

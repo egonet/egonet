@@ -76,9 +76,8 @@ public class GraphData {
 	public GraphData(EgoClient egoClient) {
 		this.egoClient=egoClient;
 		
-		adjacencyMatrix = new int[egoClient.getInterview()
-		                           .getStudy().getNumAlters()][egoClient.getInterview().getStudy()
-		                           .getNumAlters()];
+		int x = egoClient.getInterview().getStudy().getNumAlters();
+		adjacencyMatrix = new int[x][x];
 		
 		interview = egoClient.getInterview();
 		completeAlterNameList = egoClient.getInterview().getStats().alterList;

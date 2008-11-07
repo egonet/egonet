@@ -325,7 +325,7 @@ public class Question implements Cloneable {
 
 	public String getString() {
 		String str = "";
-		str = "ID : " + UniqueId + " Title : " + title + " text : " + text
+		str = "ID : " + UniqueId + ", type="+questionType+", Title : " + title + " text : " + text
 				+ "\nAnswer : " + answer.getString();
 		return str;
 	}

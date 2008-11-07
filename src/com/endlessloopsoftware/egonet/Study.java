@@ -117,7 +117,7 @@ public class Study extends Observable
 	 * 
 	 * @return numAlters number of alters for which to prompt
 	 */
-	public int getNumAlters()
+	public int getNetworkSize()
 	{
 		return (_numAlters);
 	}
@@ -237,7 +237,7 @@ public class Study extends Observable
 	 * @param n
 	 *            number of alters for which to elicit
 	 */
-	public void setNumAlters(int n)
+	public void setNetworkSize(int n)
 	{
 		if (_numAlters != n)
 		{
@@ -742,7 +742,7 @@ public class Study extends Observable
 	 */
 	public void writeInterviewStudy(Element e)
 	{
-		e.setInt("numalters", getNumAlters());
+		e.setInt("numalters", getNetworkSize());
 	}
 
 	/***************************************************************************
@@ -756,7 +756,7 @@ public class Study extends Observable
 	{
 			if (e.getElement("numalters") != null)
 			{
-				setNumAlters(e.getInt("numalters"));
+				setNetworkSize(e.getInt("numalters"));
 			}
 	}
 
@@ -781,7 +781,7 @@ public class Study extends Observable
 
 		if (root.getElement("numalters") != null)
 		{
-			setNumAlters(root.getInt("numalters"));
+			setNetworkSize(root.getInt("numalters"));
 		}
 
 		if(root.getElement("altersamplingmodel") != null)
@@ -866,9 +866,9 @@ public class Study extends Observable
 			Element study = document.addElement("Study");
 
 			study.addElement("name").setText(getStudyName());
-			study.addElement("numalters").setInt(getNumAlters());
+			study.addElement("numalters").setInt(getNetworkSize());
 			study.addElement("altersamplingmodel").setInt(alterSamplingModel.ordinal());
-			study.addElement("altersamplingparameter").setInt(alterSamplingParameter == null ? getNumAlters() : alterSamplingParameter);
+			study.addElement("altersamplingparameter").setInt(alterSamplingParameter == null ? getNetworkSize() : alterSamplingParameter);
 
 			for (QuestionType type : QuestionType.values())
 			{
@@ -933,5 +933,15 @@ public class Study extends Observable
 	public void setAlterSamplingParameter(Integer alterSamplingParameter) {
 		this.alterSamplingParameter = alterSamplingParameter;
 	}
+
+    public int getNumAlters()
+    {
+        if(alterSamplingModel.equals(AlterSamplingModel.RANDOM_SUBSET))
+            return alterSamplingParameter;
+        else if(alterSamplingModel.equals(AlterSamplingModel.NTH_ALTER))
+            return getNetworkSize()/alterSamplingParameter;
+        else
+            return getNetworkSize();
+    }
 	
 }
