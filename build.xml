@@ -8,8 +8,6 @@
 
 	<!-- Global Properties-->
 	<property name="dir.lib.Enet" location="lib" />
-	<property name="dir.lib.Egoweb.appletlib" location="lib/appletlib" />
-	<property name="dir.lib.Egoweb.strutslib" location="lib/strutslib" />
 	<property name="dir.src.Egonet" location="src" />
 	<property name="dir.build.Egonet" location="build" />
 	<property name="dir.dist.Egonet" location="dist" />
@@ -22,23 +20,13 @@
 	<path id="classpath.project.Egonet">
 		<pathelement location="${dir.build.Egonet}" />
 		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
-		<fileset dir="${dir.lib.Egoweb.strutslib}" includes="jbossall-client.jar" />
-		<fileset dir="${dir.lib.Egoweb.appletlib}" includes="colt.jar" />
 	</path>
-	<path id="classpath.project.Egoweb">
-		<pathelement location="${dir.build.Egonet}" />
-		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
-		<fileset dir="${dir.lib.Egoweb.strutslib}" includes="*.jar" />
-		<fileset dir="${dir.lib.Egoweb.appletlib}" includes="*.jar" />
-	</path>
-
 
 
 	<!-- Compiling the Egoweb and Enet java Files -->
 	<target name="compile" description="compile the Enet source" depends="init">
 		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}" target="1.5">
 			<classpath refid="classpath.project.Egonet" />
-			<classpath refid="classpath.project.Egoweb" />
 		</javac>
 	</target>
 
@@ -65,8 +53,7 @@
 			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
-			<zipfileset src="${dir.lib.Egoweb.strutslib}/jbossall-client.jar" />
-			<zipfileset src="${dir.lib.Egoweb.appletlib}/colt.jar" />
+			<zipfileset src="${dir.lib.Enet}/colt.jar" />
 		
 		</jar>
 	</target>
