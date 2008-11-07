@@ -225,7 +225,7 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
         msg += "<br/>University of Florida</p>";
 
         msg += "<p>Egonet is hosted at SourceForge.net.";
-        msg += "<br/>To contribute or get the latest version, visit:";
+        msg += "<br/>To contribute code, report bugs, or get the latest version, visit:";
         msg += "<br/><a href=\"http://egonet.sf.net\">http://egonet.sf.net</a></p>";
         
         msg += "<p>&nbsp;</p>";
