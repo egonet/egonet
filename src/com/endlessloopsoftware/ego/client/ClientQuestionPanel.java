@@ -592,7 +592,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answer.string = "Egonet - University of Florida";
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
 			System.out.println("More prompts? " + morePrompts);
-			boolean maxAlters = answer.getValue() >= study.getNumAlters();
+			
+			// value starts at zero, so add one to compare to # alters needed
+			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
 			System.out.println("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
 			answer.answered = morePrompts || maxAlters;
 			
