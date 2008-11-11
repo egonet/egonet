@@ -726,7 +726,7 @@ public class EgoStore extends Observable {
 					+ suffix, startdir, egoClient.getFrame(), false);
 
 			if (file == null) {
-				throw new IOException();
+				throw new IOException("empty file");
 			}
 
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file),

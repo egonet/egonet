@@ -941,8 +941,10 @@ public class Interview {
 			{
 				Answer a = it.next();
 				
-
+				// in a weighted one, print all values
 				int weightedValue = a.getValue();
+				
+				// in unweighted, just print 0 or 1, ignore answer value
 				int nonweightedValue = a.adjacent ? 1 : 0;
 
 				int value = weighted ? weightedValue : nonweightedValue;
