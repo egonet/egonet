@@ -32,11 +32,11 @@
 
 	<!-- Creat a build folder to put the class files-->
 	<target name="init">
-		
-		  <tstamp>
-		      <format property="build.date" pattern="yyyy-MM-dd"/>
-		  </tstamp>
-		
+
+		<tstamp>
+			<format property="build.date" pattern="yyyy-MM-dd"/>
+		</tstamp>
+
 		<mkdir dir="${dir.build.Egonet}" />
 		<mkdir dir="${dir.dist.Egonet}" />
 	</target>
@@ -54,7 +54,7 @@
 			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
 			<zipfileset src="${dir.lib.Enet}/colt.jar" />
-		
+
 		</jar>
 	</target>
 
@@ -82,7 +82,7 @@
 		</jar>
 		<delete file="${dir.dist.Egonet}/Egonet-lib.jar"/>
 	</target>
-	
+
 	<target name="clean">
 		<delete dir="${dir.build.egonet}" />
 		<delete dir="${dir.dist.Egonet}" />
@@ -91,7 +91,7 @@
 	<target name="dist" depends="clean,jar" description="Create Windows-compatible executables from the built Jar files">
 		<taskdef name="jsmoothgen" classname="net.charabia.jsmoothgen.ant.JSmoothGen" classpath="${dir.lib.Enet}/jsmooth/jsmoothgen-ant.jar" />
 
-		
+
 		<jsmoothgen project="Egoauthor.jsmooth" skeletonroot="lib/jsmooth/" />
 		<move file="${dir.dist.Egonet}/EgoAuthor.jar" tofile="${dir.dist.Egonet}/EgoAuthor-${build.date}.jar"/>
 		<move file="${dir.dist.Egonet}/EgoAuthor.exe" tofile="${dir.dist.Egonet}/EgoAuthor-${build.date}.exe"/>
@@ -99,9 +99,22 @@
 		<jsmoothgen project="Egonet.jsmooth" skeletonroot="lib/jsmooth/" />
 		<move file="${dir.dist.Egonet}/EgoClient.jar" tofile="${dir.dist.Egonet}/EgoClient-${build.date}.jar"/>
 		<move file="${dir.dist.Egonet}/EgoClient.exe" tofile="${dir.dist.Egonet}/EgoClient-${build.date}.exe"/>
-		
+
 		<zip destfile="${dir.dist.Egonet}/Ego-exe-${build.date}.zip" basedir="${dir.dist.Egonet}" includes="*.exe"/>
 		<zip destfile="${dir.dist.Egonet}/Ego-jar-${build.date}.zip" basedir="${dir.dist.Egonet}" includes="*.jar"/>
+	</target>
+
+	<!-- appears to be broken currently -->
+	<target name="copy-to-sourceforge">
+		<input message="Please enter SourceForge username:" addproperty="sf.user" />
+		<input message="Please enter SourceForge password:" addproperty="sf.pass" />
+		<scp 
+			verbose="true" failonerror="true"
+			remoteTodir="${sf.user}@frs.sourceforge.net:uploads/"
+			password="${sf.pass}">
+			<fileset file="${dir.dist.Egonet}/Ego-exe-${build.date}.zip"/>
+			<fileset file="${dir.dist.Egonet}/Ego-jar-${build.date}.zip"/>
+		</scp>
 	</target>
 </project>
 
