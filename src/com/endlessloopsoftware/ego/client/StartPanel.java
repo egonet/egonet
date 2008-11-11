@@ -33,8 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.egonet.util.AlphaDocument;
-import org.egonet.util.FileCreateException;
-import org.egonet.util.FileReadException;
+import java.io.IOException;
 
 
 
@@ -229,11 +228,7 @@ public class StartPanel extends JPanel
 
 			success = egoClient.getStorage().saveInterview();
 		}
-		catch (FileCreateException ex)
-		{
-			success = false;
-		}
-		catch (FileReadException ex)
+		catch (IOException ex)
 		{
 			success = false;
 		}

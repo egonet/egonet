@@ -35,10 +35,7 @@ import org.jdesktop.swingworker.*;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.FileMismatchException;
 import org.egonet.util.ExtensionFileFilter;
-import org.egonet.util.FileCreateException;
 import org.egonet.util.FileHelpers;
-import org.egonet.util.FileReadException;
-
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
@@ -138,9 +135,9 @@ public class EgoStore extends Observable {
 	 * @param parent a parent Window for the dialog box
 	 * @param packageFile a parent directory for the study
 	 * @return null the selected file
-	 * @throws FileReadException if the dialog was cancelled 
+	 * @throws IOException if the dialog was cancelled 
 	 */
-	public static File selectStudy(Window parent, File packageFile) throws FileReadException
+	public static File selectStudy(Window parent, File packageFile) throws IOException
 	{
 
 		JFileChooser jNewStudyChooser = new JFileChooser();
@@ -173,7 +170,7 @@ public class EgoStore extends Observable {
 			if (f != null) {
 				try {
 					if (!f.canRead()) 
-						throw new FileReadException("File exists but was unreadable");
+						throw new IOException("File exists but was unreadable");
 					
 					// Store location in prefs file
 					if (prefs != null)
@@ -187,10 +184,10 @@ public class EgoStore extends Observable {
 			}
 		}
 		
-		throw new FileReadException("Dialog cancelled");
+		throw new IOException("Dialog cancelled");
 	}
 	
-	public void selectStudy() throws FileReadException
+	public void selectStudy() throws IOException
 	{
 		Window parent = egoClient.getFrame();
 		setPackageFile(selectStudy(parent, getPackageFile()));
@@ -428,7 +425,7 @@ public class EgoStore extends Observable {
 
 		try {
 			interview = readInterview(getInterviewFile());
-		} catch (FileReadException e) {
+		} catch (IOException e) {
 			String msg = (e != null && !e.getMessage().equals("") ? " " + e.getMessage() : "");
 			
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
@@ -450,10 +447,10 @@ public class EgoStore extends Observable {
 	 * @param f
 	 *            file from which to read interview
 	 * @return Interview derived from file
-	 * @throws FileReadException
+	 * @throws IOException
 	 * @throws FileMismatchException
 	 */
-	public static Interview readInterview(Study study, File interviewFile) throws FileReadException, FileMismatchException {
+	public static Interview readInterview(Study study, File interviewFile) throws IOException, FileMismatchException {
 		Interview interview = null;
 		long studyId;
 
@@ -472,17 +469,17 @@ public class EgoStore extends Observable {
 		} catch (CorruptedInterviewException ex) {
 			interview = null;
 
-			throw (new FileReadException(ex));
+			throw (new IOException(ex));
 		} catch (ParseException ex) {
 			interview = null;
 
-			throw (new FileReadException());
+			throw (new IOException());
 		}
 
 		return (interview);
 	}
 	
-	public Interview readInterview(File interviewFile) throws FileReadException, FileMismatchException
+	public Interview readInterview(File interviewFile) throws IOException, FileMismatchException
 	{
 		return readInterview(egoClient.getStudy(), interviewFile);
 	}
@@ -491,11 +488,10 @@ public class EgoStore extends Observable {
 	 * Writes all questions to a package file for later use
 	 * 
 	 * @return successful
-	 * @throws FileCreateException
-	 * @throws FileReadException
+	 * @throws IOException
+	 * @throws IOException
 	 */
-	public boolean saveInterview() throws FileCreateException,
-			FileReadException {
+	public boolean saveInterview() throws IOException {
 		boolean exists = false;
 		boolean complete = false;
 		boolean confirmed = false;
@@ -589,17 +585,17 @@ public class EgoStore extends Observable {
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to create interview directory.",
 					"New Interview Error", JOptionPane.ERROR_MESSAGE);
-			throw new FileCreateException();
-		} catch (FileReadException e) {
+			throw new IOException(e);
+		} catch (IOException e) {
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to Read Interview.", "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
-			throw new FileCreateException();
+			throw new IOException();
 		} catch (FileMismatchException e) {
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Interview file not created from this study file.",
 					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
-			throw new FileCreateException();
+			throw new IOException();
 		}
 
 		return (success);
@@ -608,9 +604,9 @@ public class EgoStore extends Observable {
 	/***************************************************************************
 	 * Writes all questions to a package file for later use
 	 * 
-	 * @throws FileCreateException
+	 * @throws IOException
 	 */
-	public void writeInterviewFile() throws FileCreateException {
+	public void writeInterviewFile() throws IOException {
 		if (getInterviewFile() != null) {
 			writeInterviewFile(getInterviewFile());
 		}
@@ -621,9 +617,9 @@ public class EgoStore extends Observable {
 	 * 
 	 * @param f
 	 *            File to write data to
-	 * @throws FileCreateException
+	 * @throws IOException
 	 */
-	private void writeInterviewFile(File f) throws FileCreateException {
+	private void writeInterviewFile(File f) throws IOException {
 		Document document = new Document();
 
 		if (f != null) {
@@ -637,17 +633,7 @@ public class EgoStore extends Observable {
 			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 			egoClient.getInterview().writeInterview(interviewDocument);
-
-			try {
-				document.write(f);
-			} catch (Exception e) {
-				JOptionPane
-						.showMessageDialog(
-								egoClient.getFrame(),
-								"Unable to write interview. \nYour answers are not being saved so the interview will now abort.\n Please report this error.",
-								"Interview Error", JOptionPane.ERROR_MESSAGE);
-				throw new RuntimeException(e);
-			}
+			document.write(f);
 		}
 	}
 
@@ -656,24 +642,19 @@ public class EgoStore extends Observable {
 	 * 
 	 * @param stats
 	 *            Statistics object
-	 * @throws FileCreateException
+	 * @throws IOException
+	 * @throws IOException 
 	 */
-	public void writeStatisticsFiles(Statistics stats, String[] egoName)
-			throws FileCreateException {
+	public void writeStatisticsFiles(Statistics stats, String[] egoName) throws IOException {
 		File file = getInterviewFile();
 		String name = file.getName();
 		String statdir;
 		String parentDir;
 
 		if (getPackageFile() != null) {
-			try {
-				parentDir = getPackageFile().getParent();
-				statdir = (new File(parentDir, "/Statistics/"))
-						.getCanonicalPath();
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new FileCreateException();
-			}
+			parentDir = getPackageFile().getParent();
+			statdir = (new File(parentDir, "/Statistics/"))
+					.getCanonicalPath();
 
 			file = int2ist(statdir, name);
 			writeStatisticsFile(file, stats);
@@ -694,25 +675,16 @@ public class EgoStore extends Observable {
 	 *            File to write data to
 	 * @param stats
 	 *            Statistics Object
-	 * @throws FileCreateException
+	 * @throws IOException 
+	 * @throws IOException
 	 */
-	private void writeAdjacencyFile(File f, Statistics stats, String[] name,
-			boolean weighted) {
+	private void writeAdjacencyFile(File f, Statistics stats, String[] name, boolean weighted) throws IOException {
 		PrintWriter adjacencyWriter;
+		adjacencyWriter = new PrintWriter(new BufferedWriter(new FileWriter(f), (32 * 1024)));
 		try {
-			adjacencyWriter = new PrintWriter(new BufferedWriter(
-					new FileWriter(f), (32 * 1024)));
-		} catch (IOException e1) {
-			adjacencyWriter = null;
-		}
-
-		if (adjacencyWriter != null) {
-			try {
-				stats.writeAdjacencyArray(name[0] + " " + name[1],
-						adjacencyWriter, weighted);
-			} finally {
-				adjacencyWriter.close();
-			}
+			stats.writeAdjacencyArray(name[0] + " " + name[1], adjacencyWriter, weighted);
+		} finally {
+			adjacencyWriter.close();
 		}
 	}
 
@@ -723,10 +695,9 @@ public class EgoStore extends Observable {
 	 *            File to write data to
 	 * @param stats
 	 *            Statistics Object
-	 * @throws FileCreateException
+	 * @throws IOException
 	 */
-	private void writeStatisticsFile(File f, Statistics stats)
-			throws FileCreateException {
+	private void writeStatisticsFile(File f, Statistics stats) throws IOException {
 		Document document = new Document();
 
 		document.setEncoding("UTF-8");
@@ -741,14 +712,7 @@ public class EgoStore extends Observable {
 		egoClient.getInterview().writeEgoAnswers(study);
 		stats.writeCompositionalStatistics(study);
 
-		try {
-			document.write(f);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(egoClient.getFrame(),
-					"Unable to write statistics.", "Interview Error",
-					JOptionPane.ERROR_MESSAGE);
-			throw new FileCreateException();
-		}
+		document.write(f);
 	}
 
 	/***************************************************************************
@@ -781,7 +745,7 @@ public class EgoStore extends Observable {
 					+ suffix, startdir, egoClient.getFrame(), false);
 
 			if (file == null) {
-				throw new FileCreateException();
+				throw new IOException();
 			}
 
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file),
@@ -802,10 +766,11 @@ public class EgoStore extends Observable {
 	 * 
 	 * @param interviewFile
 	 *            File from which to read interview
-	 * @throws FileCreateException
+	 * @throws IOException
+	 * @throws IOException 
 	 */
 	public void generateStatisticsFile(File interviewFile)
-			throws FileCreateException {
+			throws IOException, IOException {
 		egoClient.setInterview(null);
 
 		setInterviewFile(interviewFile);
@@ -817,9 +782,9 @@ public class EgoStore extends Observable {
 		if ((egoClient.getInterview() != null) && egoClient.getInterview().isComplete()) {
 			egoClient.getInterview().completeInterview(egoClient);
 		} else if(egoClient.getInterview() == null) {
-			throw new FileCreateException("Interview for " + interviewFile.getName() + " could not be read.");
+			throw new IOException("Interview for " + interviewFile.getName() + " could not be read.");
 		} else {
-			throw new FileCreateException("Interview for " + interviewFile.getName() + " was not completed.");
+			throw new IOException("Interview for " + interviewFile.getName() + " was not completed.");
 		}
 	}
 

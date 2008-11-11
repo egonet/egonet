@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +46,8 @@ import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 
 import org.egonet.util.CardPanel;
-import org.egonet.util.FileCreateException;
+import org.egonet.util.CatchingAction;
+
 import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
@@ -88,8 +90,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			KeyStroke.getKeyStroke(KeyEvent.VK_8, 0),
 			KeyStroke.getKeyStroke(KeyEvent.VK_9, 0) };
 
-	private final ActionListener keyActionListener = new java.awt.event.ActionListener() {
-		public void actionPerformed(ActionEvent e) {
+	private final ActionListener keyActionListener = new CatchingAction("keyActionListener") {
+	    public void safeActionPerformed(ActionEvent e) throws Exception {
 			numberKey_actionPerformed(e);
 		}
 	};
@@ -219,8 +221,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		});
 
 		questionButtonNext
-		.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		.addActionListener(new CatchingAction("Next Question Button") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionButtonNext_actionPerformed(e);
 			}
 		});
@@ -731,7 +733,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		return timestamp;
 	}
 
-	private void numberKey_actionPerformed(ActionEvent e) {
+	private void numberKey_actionPerformed(ActionEvent e) throws IOException {
 		int key = Integer.parseInt(e.getActionCommand()) - 1;
 		System.out.println("Key pressed " + key);
 		if (key == -1 && questionButtonNext.isEnabled())
@@ -754,17 +756,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
-	private void questionButtonNext_actionPerformed(ActionEvent e) {
+	private void questionButtonNext_actionPerformed(ActionEvent e) throws IOException {
 		if (egoClient.getInterview().hasNext()) {
 			question = egoClient.getInterview().next();
 			
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
 			{
-				try {
-					egoClient.getStorage().writeInterviewFile();
-				} catch (FileCreateException ex) {
-					/* reported at lower level */
-				}
+			    egoClient.getStorage().writeInterviewFile();
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
@@ -781,7 +779,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		} else {
 			try {
 				egoClient.getInterview().completeInterview(egoClient);
-			} catch (FileCreateException ex) {
+			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(egoClient.getFrame(),
 						"Unable to create interview statistics summary file.",
 						"Statistics Error", JOptionPane.WARNING_MESSAGE);

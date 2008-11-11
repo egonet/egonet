@@ -33,7 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.egonet.util.FileCreateException;
+import java.io.IOException;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.models.BetweennessModel;
@@ -304,7 +304,7 @@ public class StatisticsFrame extends JPanel {
 				egoClient.getStorage().writeStatisticsFiles(stats,
 						egoClient.getInterview().getName());
 			}
-		} catch (FileCreateException ex) {
+		} catch (IOException ex) {
 		}
 	}
 }

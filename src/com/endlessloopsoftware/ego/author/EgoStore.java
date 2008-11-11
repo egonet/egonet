@@ -30,8 +30,6 @@ import javax.swing.filechooser.FileFilter;
 import org.egonet.util.DateUtils;
 import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
-import org.egonet.util.FileCreateException;
-import org.egonet.util.FileReadException;
 import org.egonet.util.FileWriteException;
 
 import com.endlessloopsoftware.egonet.Question;
@@ -153,7 +151,7 @@ public class EgoStore
             			"Unable to create study directories.",
 						"New Study Error",
 						JOptionPane.ERROR_MESSAGE);
-            	throw new FileCreateException(false);
+            	throw new IOException("Cannot create study directory for " + projectPath);
             }
 
             try
@@ -172,7 +170,7 @@ public class EgoStore
                   if (confirm != JOptionPane.OK_OPTION)
                   {
                 	  //do not overwrite
-                     throw new FileCreateException(true);
+                     throw new IOException("Won't overwrite " + newStudyFile.getName());
                   }else{
                 	  //delete the existing file and create a new one 
                 	  newStudyFile.delete();
@@ -199,7 +197,7 @@ public class EgoStore
                		"Unable to create study file.",
 					"File Error",
 					JOptionPane.ERROR_MESSAGE);
-               throw new FileCreateException(false);
+               throw new IOException(e);
             }
 
             try
@@ -217,17 +215,13 @@ public class EgoStore
             		"Unable to create study directories.",
 					"New Study Error",
 					JOptionPane.ERROR_MESSAGE);
-            	throw new FileCreateException(false);
+            	throw new IOException(e);
             }
          }
       }
-      catch (FileCreateException e)
+      catch (IOException e)
       {
-         if (e.report)
-         {
-            JOptionPane.showMessageDialog(egoNet.getFrame(), "Study not created.");
-         }
-
+         JOptionPane.showMessageDialog(egoNet.getFrame(), "Study not created.");
          setStudyFile(null);
       }
    }
@@ -261,7 +255,7 @@ public class EgoStore
          {
             if (!f.canRead())
             {
-               throw new FileReadException("Cannot read study file");
+               throw new IOException("Cannot read study file");
             }
             else
             {
@@ -300,7 +294,7 @@ public class EgoStore
          {
             if (!newFile.canRead())
             {
-               throw (new FileReadException());
+               throw (new IOException());
             }
 
             /* read question file here */
@@ -375,7 +369,7 @@ public class EgoStore
 
                if (confirm != JOptionPane.OK_OPTION)
                {
-                  throw new FileCreateException(true);
+                  throw new IOException("Won't overwrite " + newQuestionFile.getName());
                }
             }
 

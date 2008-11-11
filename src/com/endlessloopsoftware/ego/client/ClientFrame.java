@@ -39,7 +39,6 @@ import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
 import org.egonet.util.ExtensionFileFilter;
-import org.egonet.util.FileCreateException;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
 import org.egonet.util.SwingWorker;
@@ -156,7 +155,7 @@ public class ClientFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					egoClient.getInterview().completeInterview(egoClient);
-				} catch (FileCreateException ex) {
+				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
 			}

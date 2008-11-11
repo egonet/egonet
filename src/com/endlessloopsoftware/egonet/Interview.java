@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,8 +29,6 @@ import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.ELSMath;
-import org.egonet.util.FileCreateException;
-
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
@@ -767,9 +766,10 @@ public class Interview {
 	/***************************************************************************
 	 * Ego has answered all questions. Write file and generate stats
 	 * 
-	 * @throws FileCreateException
+	 * @throws IOException
+	 * @throws IOException 
 	 */
-	public void completeInterview(EgoClient egoClient) throws FileCreateException {
+	public void completeInterview(EgoClient egoClient) throws IOException {
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
