@@ -256,6 +256,9 @@ public class Question implements Cloneable {
 	 *            question
 	 */
 	public void writeQuestion(Element e) {
+	    
+	    e.addComment(getString());
+	    
 		if (this.centralMarker) {
 			e.setAttribute("CentralityMarker", "true");
 		}

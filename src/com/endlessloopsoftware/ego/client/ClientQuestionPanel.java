@@ -871,8 +871,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private void setDefaultAnswer() {
 		if (!question.answer.answered
 				&& (question.answerType == Shared.AnswerType.CATEGORICAL)
-				&& (question.answer.getAlters()[1] > (question.answer
-						.getAlters()[0] + 1))) {
+				&& (question.answer.secondAlter() > (question.answer
+						.firstAlter() + 1))) {
 			int defaultAnswer = -1;
 			if (!question.getSelections()[question.getSelections().length - 1]
 			                              .isAdjacent()) {

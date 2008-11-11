@@ -197,11 +197,11 @@ public class Interview {
 				String s = q.toString();
 
 				if (q.questionType == Shared.QuestionType.ALTER) {
-					s = s + "; " + _answers[i].getAlters()[0];
+					s = s + "; " + _answers[i].firstAlter();
 				} else if (q.questionType == Shared.QuestionType.ALTER_PAIR) {
 					s = s + "; "
-							+ _answers[i].getAlters()[0] + " & "
-							+ _answers[i].getAlters()[1];
+							+ _answers[i].firstAlter() + " & "
+							+ _answers[i].secondAlter();
 				}
 
 				s = q.questionType.niceName + ": " + s;
@@ -555,14 +555,14 @@ public class Interview {
 		String[] s = new String[2];
 
 		try {
-			if ((q.answer.getAlters().length > 0)
-					&& (q.answer.getAlters()[0] != -1)) {
-				s[0] = _alterList[q.answer.getAlters()[0]];
+			if ((q.answer.hasAtLeastOneAlter())
+					&& (q.answer.firstAlter() != -1)) {
+				s[0] = _alterList[q.answer.firstAlter()];
 			}
 
-			if ((q.answer.getAlters().length > 1)
-					&& (q.answer.getAlters()[1] != -1)) {
-				s[1] = _alterList[q.answer.getAlters()[1]];
+			if ((q.answer.hasTwoAlters())
+					&& (q.answer.secondAlter() != -1)) {
+				s[1] = _alterList[q.answer.secondAlter()];
 			}
 		} catch (Exception ex) {
 			s[0] = "";
@@ -573,9 +573,18 @@ public class Interview {
 	}
 
 	private Question getQuestion(int index) {
-		return ((Question) _study.getQuestion(_answers[index].questionId));
+		return _study.getQuestion(_answers[index].questionId);
 	}
 
+	private String completeText(String s, List<Integer> alters) {
+	    int [] aa = new int[alters.size()];
+	    int i = 0;
+	    for(Integer alt : alters)
+	        aa[i++] = alt;
+	    
+	    return completeText(s, aa);
+	}
+	
 	/***************************************************************************
 	 * Replaces alter name placeholders with alter names
 	 * 
@@ -702,25 +711,27 @@ public class Interview {
 	 */
 	private static void readAnswers(Study study, Interview interview, Element e)
 			throws CorruptedInterviewException {
+		
 		Elements answerIter = e.getElements("Answer");
-		int index = 0;
-
 		if (interview._numAnswers != answerIter.size()) {
 			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview._numAnswers + "!";
 			System.err.println(err);
 			throw (new CorruptedInterviewException(err));
 		}
 
-		while (answerIter.hasMoreElements()) {
+		int index = 0;
+		while(answerIter.hasMoreElements()) {
 			try {
+			    Element answerElement = answerIter.next();
 				Answer oldAnswer = interview._answers[index];
-				Answer newAnswer = Answer.readAnswer(study, answerIter.next());
+				Answer newAnswer = Answer.readAnswer(study, answerElement);
 
 				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
 					interview._answers[index++] = newAnswer;
 				} else {
 					throw (new CorruptedInterviewException());
 				}
+				
 			} catch (Exception ex) {
 				System.err
 						.println("Answer::readAnswer failed in Interview::readAnswers; "
@@ -750,7 +761,7 @@ public class Interview {
 		}
 
 		for (int i = 0; i < _answers.length; i++) {
-				_answers[i].writeAnswer(answerListElem);
+				_answers[i].writeAnswer(answerListElem, getQuestion(i), this);
 		}
 	}
 
@@ -906,8 +917,10 @@ public class Interview {
 	 * @return Matrix representing non-directed graph of alters
 	 * @throws MissingPairException
 	 */
-	public int[][] generateAdjacencyMatrix(Question q, boolean weighted)
-			throws MissingPairException {
+	public int[][] generateAdjacencyMatrix(Question q, boolean weighted) throws MissingPairException {
+	    
+	    System.out.println("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
+	    
 		if (_study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
 			int[][] m = new int[_numAlters][_numAlters];
 
@@ -924,24 +937,33 @@ public class Interview {
 				m[i][i] = 1;
 			}
 
-			for (Iterator it = getAnswerSubset(q.UniqueId).iterator(); it.hasNext();) 
+			for (Iterator<Answer> it = getAnswerSubset(q.UniqueId).iterator(); it.hasNext();) 
 			{
-				Answer a = (Answer) it.next();
+				Answer a = it.next();
+				
 
-				if (weighted) {
-					// m[a.getAlters()[0]][a.getAlters()[1]] = a.value;
-					// m[a.getAlters()[1]][a.getAlters()[0]] = a.value;
-					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? a.getValue() : 0;
-					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? a.getValue() : 0;
-				} else {
-					m[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? 1 : 0;
-					m[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? 1 : 0;
-				}
+				int weightedValue = a.getValue();
+				int nonweightedValue = a.adjacent ? 1 : 0;
+
+				int value = weighted ? weightedValue : nonweightedValue;
+				//System.out.println("Working on answer (adj="+a.adjacent+",v="+value+",nw="+nonweightedValue+",w="+weightedValue+") for adj: " + a.getString());
+				
+				m[a.firstAlter()][a.secondAlter()] = value;
+				m[a.secondAlter()][a.firstAlter()] = value;
 			}
 
 			_matrix = m;
 		}
 
+		for(int x = 0; x < _matrix.length; x++)
+		{
+		    for(int y = 0; y < _matrix[x].length; y++)
+		    {
+		        System.out.print(_matrix[x][y] + "\t");
+		    }
+		    System.out.println();
+		}
+		
 		return (_matrix);
 	}
 

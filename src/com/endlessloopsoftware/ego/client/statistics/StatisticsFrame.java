@@ -33,6 +33,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.egonet.util.CatchingAction;
+
 import java.io.IOException;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
@@ -153,24 +155,24 @@ public class StatisticsFrame extends JPanel {
 
 				removeAllActionListeners(egoClient.getFrame().saveWeightedAdjacencyMatrix);
 				egoClient.getFrame().saveWeightedAdjacencyMatrix
-						.addActionListener(new java.awt.event.ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								saveWeightedAdjacencyMatrix_actionPerformed(e);
+						.addActionListener(new CatchingAction("saveWeightedAdjacencyMatrix") {
+						    public void safeActionPerformed(ActionEvent e) throws Exception {
+							    saveAdjacencyMatrix_actionPerformed(e, true);
 							}
 						});
 
 				removeAllActionListeners(egoClient.getFrame().saveAdjacencyMatrix);
 				egoClient.getFrame().saveAdjacencyMatrix
-						.addActionListener(new java.awt.event.ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								saveAdjacencyMatrix_actionPerformed(e);
+						.addActionListener(new CatchingAction("saveAdjacencyMatrix") {
+							public void safeActionPerformed(ActionEvent e) throws Exception {
+							    saveAdjacencyMatrix_actionPerformed(e, false);
 							}
 						});
 
 				removeAllActionListeners(egoClient.getFrame().saveInterviewStatistics);
 				egoClient.getFrame().saveInterviewStatistics
-						.addActionListener(new java.awt.event.ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+						.addActionListener(new CatchingAction("saveInterviewStatistics") {
+						    public void safeActionPerformed(ActionEvent e) throws Exception {
 								saveInterviewStatistics_actionPerformed(e);
 							}
 						});
@@ -256,36 +258,14 @@ public class StatisticsFrame extends JPanel {
 			}
 		}
 	}
-
-	void saveAdjacencyMatrix_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String filename = name[0] + "_" + name[1] + "_Adjacency_Matrix";
-		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
-				"Adjaceny Matrix", "csv", filename);
-
-		if (w != null) {
-			try {
-				stats.writeAdjacencyArray(name[0] + " " + name[1], w, false);
-			} finally {
-				w.close();
-			}
-		}
-	}
-
-	void saveWeightedAdjacencyMatrix_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String filename = name[0] + "_" + name[1]
-				+ "_Weighted_Adjacency_Matrix";
-		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
-				"Adjaceny Matrix", "csv", filename);
-
-		if (w != null) {
-			try {
-				stats.writeAdjacencyArray(name[0] + " " + name[1], w, true);
-			} finally {
-				w.close();
-			}
-		}
+	
+	void saveAdjacencyMatrix_actionPerformed(ActionEvent e, boolean weighted) throws IOException {
+	    String[] name = egoClient.getInterview().getName();
+	    String filename = name[0] + "_" + name[1] + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
+	    
+	    PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
+	    
+	    stats.writeAdjacencyFile(w, name, weighted);
 	}
 
 	void close_actionPerformed(ActionEvent e) {
@@ -293,18 +273,18 @@ public class StatisticsFrame extends JPanel {
 		egoClient.getFrame().gotoSourceSelectPanel(false);
 	}
 
-	void saveInterviewStatistics_actionPerformed(ActionEvent e) {
+	void saveInterviewStatistics_actionPerformed(ActionEvent e) throws IOException {
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
 		Question q = egoClient.getStudy().getFirstStatableQuestion();
 
-		try {
-			if (q != null) {
-				egoClient.getStorage().writeStatisticsFiles(stats,
-						egoClient.getInterview().getName());
-			}
-		} catch (IOException ex) {
+		if (q != null) {
+			egoClient.getStorage().writeStatisticsFiles(stats,
+					egoClient.getInterview().getName());
+		} else {
+		    throw new IOException("No statable questions");
 		}
+
 	}
 }

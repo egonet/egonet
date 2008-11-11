@@ -467,8 +467,7 @@ public class GraphSettings {
 			if (question.questionType == Shared.QuestionType.ALTER) {
 				questionTitle = question.title;
 				answerString = answer.string + " (index="+answer.getIndex()+",value="+answer.getValue()+")";
-				int[] alters = answer.getAlters();
-				for (int alter : alters) {
+				for (int alter : answer.getAlters()) {
 					alterToolTip[alter] += questionTitle + " : " + answerString
 							+ "<br>";
 				}

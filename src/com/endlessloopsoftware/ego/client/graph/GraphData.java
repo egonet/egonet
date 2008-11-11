@@ -161,11 +161,7 @@ public class GraphData {
 
 			if (interviewQuestion.UniqueId == QID) {
 				if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
-					int[] alterNumArray = interviewQuestion.answer.getAlters();
-					for (int alterNum : alterNumArray) {
-						alterNumbers.add(alterNum);
-						// System.out.println(alterNum);
-					}
+				    alterNumbers.addAll(interviewQuestion.answer.getAlters());
 				}
 			}
 		}
@@ -188,11 +184,7 @@ public class GraphData {
 			}
 			if (interviewQuestion.UniqueId == QID) {
 				if (interviewQuestion.answer.getValue() == selection.getValue()) {
-					int[] alterNumArray = interviewQuestion.answer.getAlters();
-					for (int alterNum : alterNumArray) {
-						alterNumbers.add(alterNum);
-						// System.out.println(alterNum);
-					}
+				    alterNumbers.addAll(interviewQuestion.answer.getAlters());
 				}
 			}
 		}
@@ -232,8 +224,8 @@ public class GraphData {
 			}
 			if (interviewQuestion.UniqueId == QID) {
 			    if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
-					int[] alterNumArray = interviewQuestion.answer.getAlters();
-					for (int alterNum : alterNumArray) {
+					
+					for (int alterNum : interviewQuestion.answer.getAlters()) {
 						alterNames.add(completeAlterNameList[alterNum]);
 					}
 				}
@@ -251,25 +243,25 @@ public class GraphData {
 					question.UniqueId).iterator(); it.hasNext();) {
 				Answer a = (Answer) it.next();
 				if (weighted) {
-					if ((adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] == 0)
-							&& (adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] == 0)
+					if ((adjacencyMatrix[a.firstAlter()][a.secondAlter()] == 0)
+							&& (adjacencyMatrix[a.secondAlter()][a.firstAlter()] == 0)
 							&& (a.getValue() == selection.getValue())) {
-						adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? selection
+						adjacencyMatrix[a.firstAlter()][a.secondAlter()] = (a.adjacent) ? selection
 								.getValue()
 								: 0;
-						adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? selection
+						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? selection
 								.getValue()
 								: 0;
 						System.out
 								.println("Updating weighted adjacency matrix");
 					}
 				} else {
-					if ((adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] == 0)
-							&& (adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] == 0)
+					if ((adjacencyMatrix[a.firstAlter()][a.secondAlter()] == 0)
+							&& (adjacencyMatrix[a.secondAlter()][a.firstAlter()] == 0)
 							&& (a.getValue() == selection.getValue())) {
-						adjacencyMatrix[a.getAlters()[0]][a.getAlters()[1]] = (a.adjacent) ? 1
+						adjacencyMatrix[a.firstAlter()][a.secondAlter()] = (a.adjacent) ? 1
 								: 0;
-						adjacencyMatrix[a.getAlters()[1]][a.getAlters()[0]] = (a.adjacent) ? 1
+						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? 1
 								: 0;
 						System.out
 								.println("Updating weighted adjacency matrix");

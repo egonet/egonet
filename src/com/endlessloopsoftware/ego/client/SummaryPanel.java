@@ -145,9 +145,9 @@ public class SummaryPanel extends JPanel
 			try
 			{
 				String istPathString = istPath.getCanonicalPath();
-				thisIstFile = EgoStore.int2ist(istPathString, intFiles[i]);
-				thisMatrixFile = EgoStore.int2matrix(istPathString, intFiles[i]);
-				thisWeightedMatrixFile = EgoStore.int2weightedmatrix(istPathString, intFiles[i]);
+				thisIstFile = EgoStore.interviewStatisticsFile(istPathString, intFiles[i]);
+				thisMatrixFile = EgoStore.interviewMatrixFile(istPathString, intFiles[i]);
+				thisWeightedMatrixFile = EgoStore.interviewWeightedMatrixFile(istPathString, intFiles[i]);
 				
 				if (!(thisIstFile.exists() && thisMatrixFile.exists() && thisWeightedMatrixFile.exists()))
 				{

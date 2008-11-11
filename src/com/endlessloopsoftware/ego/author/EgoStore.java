@@ -30,7 +30,6 @@ import javax.swing.filechooser.FileFilter;
 import org.egonet.util.DateUtils;
 import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
-import org.egonet.util.FileWriteException;
 
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
@@ -323,11 +322,11 @@ public class EgoStore
       {
     	  if (!studyFile.exists())
     	  {
-    		  throw new FileWriteException("File "+studyFile.getName()+" does not exist");
+    		  throw new java.io.IOException("File "+studyFile.getName()+" does not exist");
     	  }
          if (!studyFile.canWrite())
          {
-            throw new FileWriteException("File "+studyFile.getName()+" is not writeable");
+            throw new java.io.IOException("File "+studyFile.getName()+" is not writeable");
          }
 
          writeStudy(studyFile, new Long(egoNet.getStudy().getStudyId()));
@@ -429,7 +428,7 @@ public class EgoStore
 
 					if (confirm == JOptionPane.OK_OPTION)
 					{
-						if (!newStudyFile.canWrite()) { throw (new FileWriteException()); }
+						if (!newStudyFile.canWrite()) { throw (new java.io.IOException()); }
 
 						writeStudy(newStudyFile, new Long(System.currentTimeMillis()));
 						setStudyFile(newStudyFile);
@@ -440,11 +439,6 @@ public class EgoStore
 						Preferences prefs = Preferences.userNodeForPackage(EgoNet.class);
 						prefs.put(FILE_PREF, newStudyFile.getParent());
 					}
-				}
-				catch (FileWriteException e)
-				{
-					JOptionPane.showMessageDialog(egoNet.getFrame(), "Unable to write to study file. Study not saved.");
-					throw new RuntimeException(e);
 				}
 				catch (java.io.IOException e)
 				{

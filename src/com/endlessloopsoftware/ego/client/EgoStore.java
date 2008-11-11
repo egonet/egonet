@@ -646,8 +646,7 @@ public class EgoStore extends Observable {
 	 * @throws IOException 
 	 */
 	public void writeStatisticsFiles(Statistics stats, String[] egoName) throws IOException {
-		File file = getInterviewFile();
-		String name = file.getName();
+		String name = getInterviewFile().getName();
 		String statdir;
 		String parentDir;
 
@@ -656,36 +655,18 @@ public class EgoStore extends Observable {
 			statdir = (new File(parentDir, "/Statistics/"))
 					.getCanonicalPath();
 
-			file = int2ist(statdir, name);
-			writeStatisticsFile(file, stats);
+			File statFile = interviewStatisticsFile(statdir, name);
+			writeStatisticsFile(statFile, stats);
 
-			file = int2matrix(statdir, name);
-			writeAdjacencyFile(file, stats, egoName, false);
+			File adjFile = interviewMatrixFile(statdir, name);
+			PrintWriter pwNA = new PrintWriter(adjFile);
+			stats.writeAdjacencyFile(pwNA, egoName, false);
 
-			file = int2weightedmatrix(statdir, name);
-			writeAdjacencyFile(file, stats, egoName, true);
+			File wadjFile = interviewWeightedMatrixFile(statdir, name);
+			PrintWriter pwAA = new PrintWriter(wadjFile);
+			stats.writeAdjacencyFile(pwAA, egoName, true);
 		}
 
-	}
-
-	/***************************************************************************
-	 * Writes all questions to a package file for later use
-	 * 
-	 * @param f
-	 *            File to write data to
-	 * @param stats
-	 *            Statistics Object
-	 * @throws IOException 
-	 * @throws IOException
-	 */
-	private void writeAdjacencyFile(File f, Statistics stats, String[] name, boolean weighted) throws IOException {
-		PrintWriter adjacencyWriter;
-		adjacencyWriter = new PrintWriter(new BufferedWriter(new FileWriter(f), (32 * 1024)));
-		try {
-			stats.writeAdjacencyArray(name[0] + " " + name[1], adjacencyWriter, weighted);
-		} finally {
-			adjacencyWriter.close();
-		}
 	}
 
 	/***************************************************************************
@@ -793,19 +774,19 @@ public class EgoStore extends Observable {
 
 	}
 
-	public static File int2ist(String istPath, String intFile) {
+	public static File interviewStatisticsFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ ".ist"));
 	}
 
-	public static File int2matrix(String istPath, String intFile) {
+	public static File interviewMatrixFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_matrix.csv"));
 	}
 
-	public static File int2weightedmatrix(String istPath, String intFile) {
+	public static File interviewWeightedMatrixFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_weighted_matrix.csv"));

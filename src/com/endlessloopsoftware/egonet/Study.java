@@ -307,11 +307,6 @@ public class Study extends Observable
       return _uiType;
    }
    
-   public boolean isAppletUI()
-   {
-      return (getUIType().equals(Shared.PAIR_ELICITATION) || getUIType().equals(Shared.THREE_STEP_ELICITATION));
-   }
-
 	/**
 	 * Warn user this change will make study no longer compatible with previous interviews
 	 * @param q
