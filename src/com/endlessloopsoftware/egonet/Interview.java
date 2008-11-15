@@ -105,7 +105,7 @@ public class Interview {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId, null);
+				_answers[_qIndex++] = new Answer(question.UniqueId);
 			}
 		}
 
@@ -119,7 +119,7 @@ public class Interview {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId, null);
+				_answers[_qIndex++] = new Answer(question.UniqueId);
 			}
 		}
 
@@ -157,8 +157,7 @@ public class Interview {
 							_statisticsAvailable = true;
 						}
 
-						_answers[_qIndex++] = new Answer(question.UniqueId,
-								alters);
+						_answers[_qIndex++] = new Answer(question.UniqueId, alters);
 					}
 				}
 			}

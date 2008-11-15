@@ -21,6 +21,7 @@ import electric.xml.Element;
 import electric.xml.Elements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,7 @@ public class Answer implements Cloneable {
     }
 
     public Answer(Long Id, int[] alters) {
+        //System.out.println("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
         questionId = Id;
         answered = false;
         adjacent = false;
@@ -68,7 +70,7 @@ public class Answer implements Cloneable {
         timestamp = DateFormat.getDateInstance().format(new Date());
 
         if (alters == null) {
-            this.alters = new ArrayList<Integer>(0);
+            this.alters = new ArrayList<Integer>();
         } else {
             this.alters = new ArrayList<Integer>(alters.length);
             for(Integer a : alters)
@@ -132,7 +134,9 @@ public class Answer implements Cloneable {
             Element altersElement = answerElement.addElement("Alters");
             for (int i = 0; i < alters.size(); i++) {
                 int alterNumber = alters.get(i);
-                String alterName = alterList[alterNumber];
+                
+                // alter may not have a name yet
+                String alterName = alterList.length > alterNumber ? alterList[alterNumber] : "Undefined alter name (#"+alterNumber+")";
                 
                 Element thisAlterElement = altersElement.addElement("Index");
                 thisAlterElement.setInt(alterNumber);
