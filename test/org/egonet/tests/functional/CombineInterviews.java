@@ -7,8 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
+import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.util.Pair;
 
 import com.endlessloopsoftware.ego.client.ClientFrame;
 import com.endlessloopsoftware.ego.client.EgoClient;
@@ -33,6 +38,40 @@ import electric.xml.Document;
 
 public class CombineInterviews
 {
+	// end up doing this for studies and interviews, readers and writers
+	public interface InterviewReader
+	{
+		public Interview getInterview() throws CorruptedInterviewException;
+	}
+	
+	public abstract class DefaultInterviewReader implements InterviewReader
+	{
+		protected Study study;
+		public DefaultInterviewReader(Study study)
+		{
+			// some generic functionality related to studies when you're reading interview data
+			this.study = study;
+		}
+	}
+	
+	public class InterviewFileReader extends DefaultInterviewReader
+	{
+		private File interviewFile;
+		public InterviewFileReader(Study study, File interviewFile)
+		{
+			super(study);
+			this.interviewFile = interviewFile;
+		}
+		
+
+		public Interview getInterview() throws CorruptedInterviewException {
+			// TODO move all of the XML format reading here from EgoStore#readInterview and Interview#readInterview
+			Interview interview = EgoStore.readInterview(study, interviewFile);
+			return interview;
+		}
+		
+	}
+	
 	private Map<ArchetypeVertex, NodeProperty> nodeSettingsMap = Collections
 	.synchronizedMap(new HashMap<ArchetypeVertex, NodeProperty>());
 
@@ -71,6 +110,9 @@ public class CombineInterviews
 		Interview interview = null;
 		int[][] adj = null;
 
+		Set<Pair<String>> allPairs = new HashSet<Pair<String>>();
+		Set<String> pairedAlters = new HashSet<String>();
+		
 		for (String s: fileList){
 
 			File f = new File(currentDirectory.toString() + "/" + s);			
@@ -86,6 +128,7 @@ public class CombineInterviews
 			}
 			
 			System.out.println("** Reading next file " + f.getName());
+			
 			
 
 			String [] thisInterviewAlterlist = interview.getAlterList();
@@ -103,12 +146,20 @@ public class CombineInterviews
 				{
 					for(int j = 0; j < adj[i].length; j++)
 					{
-						if(adj[i][j] == 1)
+						if(adj[i][j] == 1 && i != j)
 						{
+							
 							String alter1 = thisInterviewAlterlist[i];
 							String alter2 = thisInterviewAlterlist[j];
+							
+							Pair<String> p = new Pair<String>(alter1, alter2);
+							allPairs.add(p);
+							
+							pairedAlters.add(alter1);
+							pairedAlters.add(alter2);
+							
 							// mark those as adjacent in the new big matrix
-							System.out.println(alter1 + " and " + alter2 +  " are adjacent");
+							//System.out.println(p +  " are adjacent");
 						}
 					}
 				}
@@ -116,7 +167,13 @@ public class CombineInterviews
 
 		}
 
-		System.out.println(alterList);
+		System.out.println("Pairs: " + allPairs);
+		alterList.removeAll(pairedAlters);
+		
+		System.out.println("Single alters: " + alterList);
+		
+		if(true)
+			return;
 		
 //----Tried to see if I could manipulate EgoClient to do my bidding----		
 		String[] bleh = new String[alterList.size()];

@@ -425,16 +425,12 @@ public class EgoStore extends Observable {
 
 		try {
 			interview = readInterview(getInterviewFile());
-		} catch (IOException e) {
+		} catch (CorruptedInterviewException e) {
 			String msg = (e != null && !e.getMessage().equals("") ? " " + e.getMessage() : "");
 			
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Unable to Read Interview."+msg, "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
-		} catch (FileMismatchException e) {
-			JOptionPane.showMessageDialog(egoClient.getFrame(),
-					"Interview file not created from this study file.",
-					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		return (interview);
@@ -450,7 +446,7 @@ public class EgoStore extends Observable {
 	 * @throws IOException
 	 * @throws FileMismatchException
 	 */
-	public static Interview readInterview(Study study, File interviewFile) throws IOException, FileMismatchException {
+	public static Interview readInterview(Study study, File interviewFile) throws CorruptedInterviewException {
 		Interview interview = null;
 		long studyId;
 
@@ -463,23 +459,19 @@ public class EgoStore extends Observable {
 					.parseLong(document.getRoot().getAttribute("StudyId"));
 			if (studyId != study.getStudyId()) {
 				interview = null;
-				throw (new FileMismatchException());
+				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
 			}
 			interview = Interview.readInterview(study, document.getRoot());
-		} catch (CorruptedInterviewException ex) {
-			interview = null;
-
-			throw (new IOException(ex));
 		} catch (ParseException ex) {
 			interview = null;
 
-			throw (new IOException());
+			throw (new CorruptedInterviewException(ex));
 		}
 
 		return (interview);
 	}
 	
-	public Interview readInterview(File interviewFile) throws IOException, FileMismatchException
+	public Interview readInterview(File interviewFile) throws CorruptedInterviewException
 	{
 		return readInterview(egoClient.getStudy(), interviewFile);
 	}
@@ -591,7 +583,7 @@ public class EgoStore extends Observable {
 					"Unable to Read Interview.", "Read Interview Error",
 					JOptionPane.ERROR_MESSAGE);
 			throw new IOException();
-		} catch (FileMismatchException e) {
+		} catch (CorruptedInterviewException e) {
 			JOptionPane.showMessageDialog(egoClient.getFrame(),
 					"Interview file not created from this study file.",
 					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
