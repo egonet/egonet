@@ -185,7 +185,7 @@ public class Answer implements Cloneable {
             r.string = null;
         }
 
-        System.out.println("Read answer: " + r.getString());
+        //System.out.println("Read answer: " + r.getString());
         return r;
     }
 

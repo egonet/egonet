@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
@@ -83,8 +84,9 @@ public class SummaryPanel extends JPanel
       });
    }
 
-	public SummaryPanel(ProgressMonitor progress)
+	public SummaryPanel(EgoClient egoClient, ProgressMonitor progress)
 	{
+		this.egoClient = egoClient;
 		setLayout(new GridBagLayout());
 
 		/* Get data to display */
@@ -186,6 +188,7 @@ public class SummaryPanel extends JPanel
 			}
 			catch (Exception ignored)
 			{
+				JOptionPane.showMessageDialog(null, ignored.getMessage())
 				ignored.printStackTrace();
 			}
 		}

@@ -497,7 +497,7 @@ public class ClientFrame extends JFrame {
              // Build Screen
              egoClient.getFrame().setVisible(false);
              com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
-             egoClient.getFrame().setContentPane(new SummaryPanel(progressMonitor));
+             egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, progressMonitor));
              egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
              egoClient.getFrame().pack();
              //egoClient.getFrame().setSize(640, 530);
