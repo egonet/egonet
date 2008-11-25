@@ -1,40 +1,28 @@
 package org.egonet.tests.functional;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.Pair;
 
-import com.endlessloopsoftware.ego.client.ClientFrame;
-import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.EgoStore;
 import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
-import com.endlessloopsoftware.ego.client.graph.EdgeProperty;
-import com.endlessloopsoftware.ego.client.graph.GraphData;
-import com.endlessloopsoftware.ego.client.graph.GraphRenderer;
-import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry;
-import com.endlessloopsoftware.ego.client.graph.NodeProperty;
-import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
-import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
+import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
-import edu.uci.ics.jung.graph.ArchetypeVertex;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 import electric.xml.Document;
+import electric.xml.Element;
+import electric.xml.Elements;
+import electric.xml.ParseException;
 
 public class CombineInterviews
 {
@@ -61,28 +49,109 @@ public class CombineInterviews
 		{
 			super(study);
 			this.interviewFile = interviewFile;
-		}
-		
+		}	
 
 		public Interview getInterview() throws CorruptedInterviewException {
 			// TODO move all of the XML format reading here from EgoStore#readInterview and Interview#readInterview
-			Interview interview = EgoStore.readInterview(study, interviewFile);
+			Interview interview = null;
+			long studyId;
+			
+			try {
+				Document document = new Document(interviewFile);
+				studyId = Long.parseLong(document.getRoot().getAttribute("StudyId"));
+				if (studyId != study.getStudyId()) {
+					interview = null;
+					throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
+				}
+				interview = parseInterviewFile(study, document.getRoot());				
+			} catch (ParseException ex) {
+				interview = null;
+
+				throw (new CorruptedInterviewException(ex));
+			}
 			return interview;
 		}
 		
-	}
+		public Interview parseInterviewFile(Study study, Element e) throws CorruptedInterviewException{
+			Interview interview;
+			String[] lAlterList;
+			Element alterListElem = e.getElement("AlterList");
+			Element answerListElem = e.getElement("AnswerList");
+
+			try {
+				/* Read alter list so we can size interview record */
+				lAlterList = readAlters(alterListElem);
+				interview = new Interview(study);
+				interview.setAlterList(lAlterList);
+
+				/* Read answers */
+				study.readInterviewStudy(e);
+				interview.setComplete(e.getBoolean("Complete"));
+
+				/* Read interviewee name */
+				Element egoNameElem = e.getElement("EgoName");
+
+				if (egoNameElem != null) {
+					interview.setName(egoNameElem.getString("First"), egoNameElem.getString("Last"));
+				}
+				readAnswers(study, interview, answerListElem);
+			} catch (CorruptedInterviewException ex) {
+				interview = null;
+				throw (ex);
+			} catch (Exception ex) {
+				interview = null;
+				throw new RuntimeException(ex);
+			}
+
+			return (interview);
+		}
+
+		private String[] readAlters(Element alterListElem) throws CorruptedInterviewException{
+			Elements alterIter = alterListElem.getElements("Name");
+			String[] lAlterList;
+			int lNumAlters;
+			int index = 0;
+
+			lNumAlters = alterIter.size();
+			lAlterList = new String[lNumAlters];
+
+			while (alterIter.hasMoreElements()) {
+				lAlterList[index++] = alterIter.next().getTextString();
+			}
+
+			return (lAlterList);
+		}		
+		
+		private void readAnswers(Study study, Interview interview, Element e)
+		throws CorruptedInterviewException {
 	
-	private Map<ArchetypeVertex, NodeProperty> nodeSettingsMap = Collections
-	.synchronizedMap(new HashMap<ArchetypeVertex, NodeProperty>());
-
-	private Map<Edge, EdgeProperty> edgeSettingsMap = Collections
-	.synchronizedMap(new HashMap<Edge, EdgeProperty>());
-
-	private java.util.List<GraphSettingsEntry> QAsettings = Collections
-	.synchronizedList(new ArrayList<GraphSettingsEntry>());
-
-	GraphRenderer renderer;
-	private EgoClient egoClient;
+			Elements answerIter = e.getElements("Answer");
+			if (interview.get_numAnswers() != answerIter.size()) {
+				String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview.get_numAnswers()
+					+ "!";
+				System.err.println(err);
+				throw (new CorruptedInterviewException(err));
+			}
+		
+			int index = 0;
+			while(answerIter.hasMoreElements()) {
+				try {
+				    Element answerElement = answerIter.next();
+					Answer oldAnswer = interview.get_answerElement(index);
+					Answer newAnswer = Answer.readAnswer(study, answerElement);
+		
+					if (oldAnswer.questionId.equals(newAnswer.questionId)) {
+						interview.set_answerElement(index++, newAnswer);
+					} else {
+						throw (new CorruptedInterviewException());
+					}
+					
+				} catch (Exception ex) {
+					System.err.println("Answer::readAnswer failed in Interview::readAnswers; " + ex);
+				}
+			}
+		}
+	}
 
 	public void doCombineInterviews() throws Exception
 	{
@@ -174,55 +243,6 @@ public class CombineInterviews
 		
 		if(true)
 			return;
-		
-//----Tried to see if I could manipulate EgoClient to do my bidding----		
-		String[] bleh = new String[alterList.size()];
-		for (int i = 0; i < alterList.size(); i++){
-			bleh[i] = alterList.get(i);
-		}
-		interview.setAlterList(bleh);
-		egoClient.setStudy(study);
-		egoClient.setStorage(new EgoStore(egoClient));
-		egoClient.setFrame(new ClientFrame(egoClient));
-		egoClient.setInterview(interview); 
-		renderer = new GraphRenderer(egoClient);
-//----So far unsuccessful----
-		
-//----Kinda stuck here...don't know how to get around not using EgoClient----		
-		int noOfAlters = interview.getNumAlters();
-		// initialize nodes with default settings
-		for (int i = 0; i < noOfAlters; i++) {
-			String alterName = interview.getAlterList()[i];
-			Color color = Color.RED;
-			int size = 1;
-			NodeShape shape = NodeShape.Circle;
-			NodeProperty nodeProperty = new NodeProperty(alterName, color,
-					shape, size);
-//			String toolTipText = getAlterInfo(i);
-//			nodeProperty.setToolTipText(toolTipText);
-			nodeSettingsMap.put(renderer.getvertexArray()[i], nodeProperty);
-		}
-		// initialize edges with default settings
-		GraphRenderer.getGraph().removeAllEdges();
-//		GraphData graphData = new GraphData(egoClient);
-		int[][] adjacencyMatrix = adj;
-		for (int i = 0; i < adjacencyMatrix.length; ++i) {
-			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
-				if (adjacencyMatrix[i][j] > 0) {
-					UndirectedSparseEdge edge = new UndirectedSparseEdge(
-							renderer.getvertexArray()[i], renderer
-									.getvertexArray()[j]);
-					GraphRenderer.getGraph().addEdge(edge);
-					String label = ((Integer) interview.getStats().proximityMatrix[i][j])
-							.toString();
-					EdgeProperty edgeProperty = new EdgeProperty(label,
-							Color.BLACK, EdgeShape.Line, 1);
-					edgeProperty.setVisible(true);
-					edgeSettingsMap.put(edge, edgeProperty);
-				}
-			}
-		}
-//----End----
 	}
 
 	public static void main(String[] args) throws Exception

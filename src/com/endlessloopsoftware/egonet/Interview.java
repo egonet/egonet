@@ -82,15 +82,15 @@ public class Interview {
 		_study = study;
 		_numAlters = study.getNumAlters();
 		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		_numAnswers = study.getQuestionOrder(Shared.QuestionType.EGO)
+		set_numAnswers(study.getQuestionOrder(Shared.QuestionType.EGO)
 				.size()
 				+ study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
 						.size()
 				+ (_numAlters * study.getQuestionOrder(
 						Shared.QuestionType.ALTER).size())
 				+ (_numAlterPairs * study.getQuestionOrder(
-						Shared.QuestionType.ALTER_PAIR).size());
-		_answers = new Answer[_numAnswers];
+						Shared.QuestionType.ALTER_PAIR).size()));
+		_answers = new Answer[get_numAnswers()];
 
 		/* Generate answer instances */
 		_qIndex = 0;
@@ -182,7 +182,7 @@ public class Interview {
 	public void fillList(DefaultListModel dlm) {
 		dlm.removeAllElements();
 
-		for (int i = 0; i < _numAnswers; i++) {
+		for (int i = 0; i < get_numAnswers(); i++) {
 			// Question q = getQuestion(i);
 
 			Question q = _study.getQuestions().getQuestion(
@@ -216,7 +216,7 @@ public class Interview {
 	 * @return i number of questions
 	 */
 	public int getNumQuestions() {
-		return _numAnswers;
+		return get_numAnswers();
 	}
 
 	/***************************************************************************
@@ -344,7 +344,7 @@ public class Interview {
 			i = nextValidAnswer(i, true);
 		}
 
-		if ((i >= 0) && (i < _numAnswers)) {
+		if ((i >= 0) && (i < get_numAnswers())) {
 			_qIndex = i;
 
 			q = (Question) getQuestion(_qIndex).clone();
@@ -472,7 +472,7 @@ public class Interview {
 	private int nextValidAnswer(int checkIndex, boolean forward) {
 		boolean b = false;
 
-		while (!b && (checkIndex < _numAnswers) && (checkIndex >= 0)) {
+		while (!b && (checkIndex < get_numAnswers()) && (checkIndex >= 0)) {
 			if (checkQuestionLink(checkIndex)) {
 				b = true;
 			} else {
@@ -712,8 +712,8 @@ public class Interview {
 			throws CorruptedInterviewException {
 		
 		Elements answerIter = e.getElements("Answer");
-		if (interview._numAnswers != answerIter.size()) {
-			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview._numAnswers + "!";
+		if (interview.get_numAnswers() != answerIter.size()) {
+			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview.get_numAnswers() + "!";
 			System.err.println(err);
 			throw (new CorruptedInterviewException(err));
 		}
@@ -771,6 +771,10 @@ public class Interview {
 	 */
 	public boolean isComplete() {
 		return _complete;
+	}
+	
+	public void setComplete(boolean complete) {
+		_complete = complete;
 	}
 
 	/***************************************************************************
@@ -855,15 +859,6 @@ public class Interview {
 		}
 
 		return egoAnswers;
-	}
-
-	/***************************************************************************
-	 * Has ego completed all questions?
-	 * 
-	 * @return Complete
-	 */
-	public boolean getInterviewComplete() {
-		return (_complete);
 	}
 
 	/***************************************************************************
@@ -975,6 +970,22 @@ public class Interview {
 
 	public Answer[] get_answers() {
 		return _answers;
+	}
+	
+	public Answer get_answerElement(int index){
+		return _answers[index];
+	}
+	
+	public void set_answerElement(int index, Answer value){
+		_answers[index] = value;
+	}
+
+	public void set_numAnswers(int _numAnswers) {
+		this._numAnswers = _numAnswers;
+	}
+
+	public int get_numAnswers() {
+		return _numAnswers;
 	}
 
 }
