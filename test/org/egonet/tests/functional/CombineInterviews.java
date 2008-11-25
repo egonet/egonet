@@ -122,13 +122,12 @@ public class CombineInterviews
 			return (lAlterList);
 		}		
 		
-		private void readAnswers(Study study, Interview interview, Element e)
-		throws CorruptedInterviewException {
+		private void readAnswers(Study study, Interview interview, Element e) throws CorruptedInterviewException {
 	
 			Elements answerIter = e.getElements("Answer");
 			if (interview.get_numAnswers() != answerIter.size()) {
-				String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview.get_numAnswers()
-					+ "!";
+				String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " 
+					+ interview.get_numAnswers() + "!";
 				System.err.println(err);
 				throw (new CorruptedInterviewException(err));
 			}
@@ -181,6 +180,8 @@ public class CombineInterviews
 
 		Set<Pair<String>> allPairs = new HashSet<Pair<String>>();
 		Set<String> pairedAlters = new HashSet<String>();
+		CombineInterviews.InterviewFileReader interviewReader = null;
+		
 		
 		for (String s: fileList){
 
@@ -189,7 +190,8 @@ public class CombineInterviews
 				throw new IOException("Couldn't read file or file not associated with selected study.");
 
 			Document document = new Document(f);
-			interview = Interview.readInterview(study, document.getRoot());
+			interviewReader = new InterviewFileReader(study, f);
+			interview = interviewReader.parseInterviewFile(study, document.getRoot());
 			if(!interview.isComplete())
 			{
 				System.out.println("*** SKIPPED because interview isn't complete: " + f.getName());
