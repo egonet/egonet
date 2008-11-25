@@ -23,9 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-import electric.xml.Element;
-import electric.xml.Elements;
-
 public class StatRecord
 {
 	public String  name           = "";
@@ -52,6 +49,10 @@ public class StatRecord
    public List<EgoAnswer>    egoAnswers     = new ArrayList<EgoAnswer>();
    public List<AlterAnswer>    alterAnswers   = new ArrayList<AlterAnswer>();
 
+   public StatRecord()
+   {
+	   
+   }
  
   public List getEgoAnswers()
    {
@@ -60,47 +61,6 @@ public class StatRecord
    public List getAlterAnswers()
    {
 	   return alterAnswers;
-   }
-   
-   public StatRecord(Element e)
-   {
-      Element nameElem = e.getElement("EgoName");
-      if (nameElem != null)
-      {
-         name = nameElem.getString("First") + " " + nameElem.getString("Last");
-      }
-
-      degreeName     = e.getString("DegreeName");
-      degreeValue    = new Integer(e.getInt("DegreeValue"));
-      degreeMean     = new Float(e.getFloat("DegreeMean"));
-      degreeNC       = new Float(e.getFloat("DegreeNC"));
-      
-      closenessName  = e.getString("ClosenessName");
-      closenessValue = new Float(e.getFloat("ClosenessValue"));
-      closenessMean  = new Float(e.getFloat("ClosenessMean"));
-      closenessNC    = new Float(e.getFloat("ClosenessNC"));
-      
-      betweenName    = e.getString("BetweenName");
-      betweenValue   = new Float(e.getFloat("BetweenValue"));
-      betweenMean    = new Float(e.getFloat("BetweenMean"));
-      betweenNC      = new Float(e.getFloat("BetweenNC"));
-         
-      numCliques     = new Integer(e.getInt("NumCliques"));
-      numComponents  = new Integer(e.getInt("NumComponents"));
-      numIsolates    = new Integer(e.getInt("NumIsolates"));
-      numDyads       = new Integer(e.getInt("NumDyads"));
-      
-      Elements egoList = e.getElement("EgoAnswers").getElements("EgoAnswer");
-      while (egoList.hasMoreElements())
-      {
-         egoAnswers.add(new EgoAnswer(egoList.next()));
-      }
-
-      Elements alterList = e.getElement("AlterQuestionSummaries").getElements("AlterQuestionSummary");
-      while (alterList.hasMoreElements())
-      {
-         alterAnswers.add(new AlterAnswer(alterList.next()));
-      }
    }
    
    public StatRecord(Statistics stats)
@@ -135,19 +95,12 @@ public class StatRecord
       }
    }
 
-   public class EgoAnswer
+   public static class EgoAnswer
    {
       public final String title;
       public final String answer;
       public final int    index;
 
-      protected EgoAnswer(Element e)
-      {
-         title   = e.getString("Title");
-         answer  = e.getString("Answer");
-         index   = e.getInt("AnswerIndex");
-      }
-      
       public EgoAnswer(String title, String answer, int index)
       {
          this.title  = title;
@@ -156,7 +109,7 @@ public class StatRecord
       }
    }
 
-   public class AlterAnswer
+   public static class AlterAnswer
    {
 	  public String   title;
       public int      count;
@@ -166,41 +119,24 @@ public class StatRecord
       public int[] 	   AnswerIndex;
       //end of add
       
-      protected AlterAnswer(Element e)
-      {
-         int index=0;
+      public AlterAnswer(String title, int count, String[] selections,
+			int[] totals, int[] answerIndex) {
+		super();
+		this.title = title;
+		this.count = count;
+		this.selections = selections;
+		this.totals = totals;
+		AnswerIndex = answerIndex;
+	}
 
-         title                = e.getString("Title");
-         count                = e.getInt("Count");
-         
-     
-         Elements answerList = e.getElement("Answers").getElements("Answer");
-         selections          = new String[answerList.size()];
-         totals              = new int[answerList.size()];
-         //added by sonam 08/24/07
-         AnswerIndex 		 = new int[answerList.size()];
-         //end
-         while (answerList.hasMoreElements())
-         {
-            Element a          = answerList.next();
-            
-            index              = a.getInt("AnswerIndex");
-            selections[index]  = a.getString("Text");
-            totals[index]      = a.getInt("Total");
-            //added by sonam 08/24/07
-            AnswerIndex[index] = a.getInt("AnswerIndex");
-            //end
-         }
-      }
-      
-      protected AlterAnswer(AlterStats alterStats)
+	public AlterAnswer(AlterStats alterStats)
       {
          title       = alterStats.qTitle;
          count       = alterStats.answerCount;
          selections  = (String[]) alterStats.answerText.clone();
          totals      = (int[]) alterStats.answerTotals.clone();
       }
-
+      
 	public String[] getSelections() {
 		return selections;
 	}

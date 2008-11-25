@@ -33,16 +33,17 @@ import javax.swing.ProgressMonitor;
 import org.jdesktop.swingworker.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
-import org.egonet.exceptions.FileMismatchException;
+import org.egonet.exceptions.EgonetException;
+import org.egonet.io.InterviewReader;
+import org.egonet.io.InterviewWriter;
+import org.egonet.io.StatisticsFileWriter;
+import org.egonet.io.StudyReader;
+import org.egonet.io.StudyWriter;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
-
-import electric.xml.Document;
-import electric.xml.Element;
-import electric.xml.ParseException;
 
 /**
  * Client Session object that contains storage functionality
@@ -54,7 +55,7 @@ public class EgoStore extends Observable {
 
 	private boolean loaded = false;
 
-	private Document packageDocument = null;
+	//private Document packageDocument = null;
 
 	private static final FileFilter packageFilter = new ExtensionFileFilter(
 			"Study Definition Files", "ego");
@@ -201,17 +202,16 @@ public class EgoStore extends Observable {
 	 * @author sonam
 	 * 
 	 */
-	public static class VersionFileFilter extends ExtensionFileFilter {
+	public static class InterviewFileFilter extends ExtensionFileFilter {
 		private final Map<File, Boolean> cacheResults = new HashMap<File, Boolean>();
-		private final long studyId;
+		private final Study study;
 		
-		public VersionFileFilter(long studyId, String description, String extension) {
+		public InterviewFileFilter(Study study, String description, String extension) {
 			super(description, extension);
-			this.studyId = studyId;
+			this.study = study;
 		}
 
-		public void cacheList(File currentDirectory,
-				final ProgressMonitor progress) {
+		public void cacheList(File currentDirectory, final ProgressMonitor progress) {
 			int ct = 0;
 
 			for (File ptr : currentDirectory.listFiles()) {
@@ -250,20 +250,15 @@ public class EgoStore extends Observable {
 
 			boolean accept = true;
 			try {
-				// compare study id of interview file with id of currently
-				// selected study
-				Document document = new Document(f);
-				long studyId = Long.parseLong(document.getRoot().getAttribute(
-						"StudyId"));
-				if (studyId != this.studyId) {
-					throw (new FileMismatchException());
+				// compare study id of interview file with id of currently selected study
+				InterviewReader sr = new InterviewReader(study, f);
+				try { 
+					sr.getInterview();
+					accept = true;
+				} catch (Throwable ex)
+				{
+					accept = false;
 				}
-				// readInterview(f);
-			} catch (FileMismatchException exception) {
-				accept = false;
-				// exception.printStackTrace();
-			} catch (ParseException ex) {
-				accept = false;
 			} catch (Throwable t) {
 				accept = false;
 			}
@@ -299,7 +294,7 @@ public class EgoStore extends Observable {
 
 		final int numFiles = currentDirectory.list().length;
 
-		final VersionFileFilter filter = new VersionFileFilter(egoClient.getStudy().getStudyId(), "Interview Files", "int");
+		final InterviewFileFilter filter = new InterviewFileFilter(egoClient.getStudy(), "Interview Files", "int");
 		final JFileChooser jNewInterviewChooser = new JFileChooser();
 		final ProgressMonitor progressMonitor = new ProgressMonitor(
 				egoClient.getFrame(),
@@ -335,9 +330,8 @@ public class EgoStore extends Observable {
 							boolean complete = true;
 
 							try {
-								Document document = new Document(f);
-								Element e = document.getRoot();
-								complete = e.getBoolean("Complete");
+								InterviewReader sr = new InterviewReader(egoClient.getStudy(), f);
+								complete = sr.getInterview().isComplete();
 							} catch (Exception ex) {
 								complete = false;
 							}
@@ -383,14 +377,15 @@ public class EgoStore extends Observable {
 		File file = getPackageFile();
 
 		if (file != null) {
-			try {
-				packageDocument = new Document(file);
-				egoClient.setStudy(new Study(packageDocument));
+				StudyReader sr = new StudyReader(file);
+				Study study;
+				try {
+					study = sr.getStudy();
+				} catch (EgonetException e) {
+					throw new RuntimeException(e);
+				}
+				egoClient.setStudy(study);
 				loaded = true;
-			} catch (ParseException ex) {
-				/** @todo handle package parsing error */
-				loaded = false;
-			}
 		}
 	}
 
@@ -400,17 +395,11 @@ public class EgoStore extends Observable {
 	 */
 	public void setPackageInUse() {
 		try {
-			if (getPackageFile().canWrite()) {
-				Element root = packageDocument.getRoot();
-				root.setAttribute("InUse", "Y");
-				packageDocument.write(getPackageFile());
-
-				getPackageFile().setReadOnly();
-			}
-		} catch (IOException ex) {
+			StudyWriter sr = new StudyWriter(getPackageFile());
+			sr.setStudyInUse(true);
+		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Unable to update study file.",
 					"File Error", JOptionPane.ERROR_MESSAGE);
-		} catch (SecurityException ignored) {
 		}
 	}
 
@@ -435,45 +424,11 @@ public class EgoStore extends Observable {
 
 		return (interview);
 	}
-
-	/***************************************************************************
-	 * Reads in study information from an XML like input file Includes files
-	 * paths and arrays of question orders
-	 * 
-	 * @param f
-	 *            file from which to read interview
-	 * @return Interview derived from file
-	 * @throws IOException
-	 * @throws FileMismatchException
-	 */
-	public static Interview readInterview(Study study, File interviewFile) throws CorruptedInterviewException {
-		Interview interview = null;
-		long studyId;
-
-		try {
-
-			Document document = new Document(interviewFile);
-
-			/* make sure id matches study */
-			studyId = Long
-					.parseLong(document.getRoot().getAttribute("StudyId"));
-			if (studyId != study.getStudyId()) {
-				interview = null;
-				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
-			}
-			interview = Interview.readInterview(study, document.getRoot());
-		} catch (ParseException ex) {
-			interview = null;
-
-			throw (new CorruptedInterviewException(ex));
-		}
-
-		return (interview);
-	}
 	
 	public Interview readInterview(File interviewFile) throws CorruptedInterviewException
 	{
-		return readInterview(egoClient.getStudy(), interviewFile);
+		InterviewReader ir = new InterviewReader(egoClient.getStudy(), interviewFile);
+		return ir.getInterview();
 	}
 
 	/***************************************************************************
@@ -504,9 +459,8 @@ public class EgoStore extends Observable {
 				exists = true;
 
 				try {
-					Document document = new Document(f);
-					Element e = document.getRoot();
-					complete = e.getBoolean("Complete");
+					InterviewReader ir = new InterviewReader(egoClient.getStudy(), f);
+					complete = ir.getInterview().isComplete();
 				} catch (Exception ex) {
 					exists = false;
 					complete = false;
@@ -612,21 +566,8 @@ public class EgoStore extends Observable {
 	 * @throws IOException
 	 */
 	private void writeInterviewFile(File f) throws IOException {
-		Document document = new Document();
-
-		if (f != null) {
-			document.setEncoding("UTF-8");
-			document.setVersion("1.0");
-			Element interviewDocument = document.setRoot("Interview");
-
-			interviewDocument.setAttribute("StudyId", Long.toString(egoClient.getStudy().getStudyId()));
-			interviewDocument.setAttribute("StudyName", egoClient.getStudy().getStudyName());
-			interviewDocument.setAttribute("NumAlters", Integer.toString(egoClient.getStudy().getNetworkSize()));
-			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
-
-			egoClient.getInterview().writeInterview(interviewDocument);
-			document.write(f);
-		}
+		InterviewWriter iw = new InterviewWriter(egoClient.getStudy(), f);
+		iw.setInterview(egoClient.getInterview());
 	}
 
 	/***************************************************************************
@@ -671,21 +612,8 @@ public class EgoStore extends Observable {
 	 * @throws IOException
 	 */
 	private void writeStatisticsFile(File f, Statistics stats) throws IOException {
-		Document document = new Document();
-
-		document.setEncoding("UTF-8");
-		document.setVersion("1.0");
-		Element study = document.setRoot("Statistics");
-
-		study.setAttribute("StudyId", Long.toString(egoClient.getStudy()
-				.getStudyId()));
-		study.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
-
-		stats.writeStructuralStatistics(study);
-		egoClient.getInterview().writeEgoAnswers(study);
-		stats.writeCompositionalStatistics(study);
-
-		document.write(f);
+		StatisticsFileWriter sfw = new StatisticsFileWriter(egoClient.getStudy(), egoClient.getInterview(), f);
+		sfw.writeStatisticsFile(stats);
 	}
 
 	/***************************************************************************

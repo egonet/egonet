@@ -19,14 +19,10 @@
 package com.endlessloopsoftware.egonet;
 import java.util.Date;
 
-import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.util.listbuilder.Selection;
 
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
-
-import electric.xml.Element;
-import electric.xml.Elements;
 
 /*******************************************************************************
  * Routines for creating and handling atomic question elements
@@ -77,138 +73,6 @@ public class Question implements Cloneable {
 		this.title = s;
 	}
 
-	/***************************************************************************
-	 * Reads a single question from an input stream
-	 * 
-	 * @param question
-	 *            XML element of question
-	 * @param base
-	 *            whether this is from the base file
-	 * @throws MalformedQuestionException
-	 *             if theres is a problem with the XML representation
-	 */
-	public Question(Element question) throws MalformedQuestionException {
-//		if ((question.getElement("QuestionTitle") == null)
-//				|| (question.getElement("QuestionText") == null)
-//				|| (question.getElement("Id") == null)
-//				|| (question.getElement("QuestionType") == null)
-//				|| (question.getElement("AnswerType") == null)) {
-//			System.out.println("title:" + question.getElement("QuestionTitle")
-//					+ "ID:" + question.getElement("Id"));
-//			throw (new MalformedQuestionException());
-//		}
-		
-		if(question.getElement("QuestionTitle") == null) {
-			this.title = "";
-		} else if(question.getElement("QuestionText") == null) {
-			this.text = "";
-		} 
-		
-		this.title = question.getTextString("QuestionTitle");
-		this.title = (this.title == null) ? "" : this.title;
-
-		this.text = question.getTextString("QuestionText");
-		this.text = (this.text == null) ? "" : this.text;
-
-		this.citation = question.getTextString("Citation");
-		this.citation = (this.citation == null) ? "" : this.citation;
-
-		this.UniqueId = new Long(question.getLong("Id"));
-		this.questionType = QuestionType.values()[question.getInt("QuestionType")];
-		this.answerType = AnswerType.values()[question.getInt("AnswerType")];
-
-		if (this.questionType == QuestionType.ALTER_PROMPT) {
-			this.answerType = Shared.AnswerType.TEXT;
-		}
-
-		if (question.getAttribute("CentralityMarker") != null) {
-			boolean centrality = question.getAttribute("CentralityMarker")
-					.equals("true");
-
-			if (centrality
-					&& (this.questionType != Shared.QuestionType.ALTER_PAIR)) {
-				System.out.println("ID:" + this.UniqueId + " title:"
-						+ this.title);
-				throw (new MalformedQuestionException());
-			}
-		}
-
-		Element link = question.getElement("Link");
-		if (link != null) {
-			this.link.active = true;
-			this.link.answer = new Answer(new Long(link.getLong("Id")));
-			this.link.answer.setValue(link.getInt("value"));
-
-			/* Only support questions with single answers for link */
-			this.link.answer.string = link.getTextString("string");
-		}
-
-		if (this.answerType == Shared.AnswerType.CATEGORICAL) {
-			Element answerList = question.getElement("Answers");
-
-			if (answerList != null) {
-				Elements selections = answerList.getElements("AnswerText");
-
-				if (selections.size() == 0) {
-					throw (new MalformedQuestionException());
-				}
-
-				/*
-				 * temp vars for determining statable, a question must have at
-				 * least one of each selection type to be statable
-				 */
-				boolean adjacent = false;
-				boolean nonadjacent = false;
-
-				this.setSelections(new Selection[selections.size()]);
-
-				while (selections.hasMoreElements()) {
-
-					Element selection = selections.next();
-					int index = Integer.parseInt(selection
-							.getAttributeValue("index"));
-
-					try {
-						this.getSelections()[index] = new Selection();
-						this.getSelections()[index].setString(selection
-								.getTextString());
-						this.getSelections()[index]
-								.setValue(Integer.parseInt(selection
-										.getAttributeValue("value")));
-
-						this.getSelections()[index].setAdjacent(Boolean.valueOf(
-								selection.getAttributeValue("adjacent"))
-								.booleanValue());
-						this.getSelections()[index].setIndex(index);
-
-					} catch (NumberFormatException ex) {
-						System.out.println("Throwing exception");
-						this.getSelections()[index].setValue(selections.size()
-								- (index + 1));
-						this.getSelections()[index].setAdjacent(false);
-					}
-
-					if (this.getSelections()[index].isAdjacent())
-						adjacent = true;
-					else
-						nonadjacent = true;
-				}
-
-				/*
-				 * a question must have at least one of each selection type to
-				 * be statable
-				 */
-				this.statable = adjacent && nonadjacent;
-
-				/* Check to make sure all answers are contiguous */
-				for (int i = 0; i < selections.size(); i++) {
-					if (this.getSelections()[i] == null) {
-						throw (new MalformedQuestionException());
-					}
-				}
-			}
-		}
-	}
 
 	/***************************************************************************
 	 * Returns whether a given selection is adjacent based on the values stored
@@ -244,61 +108,6 @@ public class Question implements Cloneable {
 			return (new String("Untitled"));
 		} else {
 			return (title);
-		}
-	}
-
-	/***************************************************************************
-	 * Writes a single question to an output stream
-	 * 
-	 * @param w
-	 *            Print Writer of open output file
-	 * @param q
-	 *            question
-	 */
-	public void writeQuestion(Element e) {
-	    
-	    e.addComment(getString());
-	    
-		if (this.centralMarker) {
-			e.setAttribute("CentralityMarker", "true");
-		}
-
-		e.addElement("Id").setLong(this.UniqueId.longValue());
-		e.addElement("QuestionType").setInt(this.questionType.ordinal());
-		e.addElement("AnswerType").setInt(this.answerType.ordinal());
-
-		if ((this.title != null) && (!this.title.equals(""))) {
-			e.addElement("QuestionTitle").setText(this.title);
-		}
-
-		if ((this.text != null) && (!this.text.equals(""))) {
-			e.addElement("QuestionText").setText(this.text);
-		}
-
-		if ((this.citation != null) && (!this.citation.equals(""))) {
-			e.addElement("Citation").setText(this.citation);
-		}
-
-		if (this.getSelections().length > 0) {
-			int size = this.getSelections().length;
-			Element selections = e.addElement("Answers");
-
-			for (int i = 0; i < size; i++) {
-				Element answer = selections.addElement("AnswerText");
-				answer.setText(this.getSelections()[i].getString());
-				answer.setAttribute("index", Integer.toString(i));
-				answer.setAttribute("value", Integer
-						.toString(this.getSelections()[i].getValue()));
-				answer.setAttribute("adjacent",
-						this.getSelections()[i].isAdjacent() ? "true" : "false");
-			}
-		}
-
-		if (this.link.active) {
-			Element link = e.addElement("Link");
-			link.addElement("Id").setLong(this.link.answer.questionId);
-			link.addElement("value").setInt(this.link.answer.getValue());
-			link.addElement("string").setText(this.link.answer.string);
 		}
 	}
 

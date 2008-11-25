@@ -35,8 +35,6 @@ import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
-import electric.xml.Element;
-
 public class Statistics
 {
     private final Study     _study;
@@ -805,64 +803,6 @@ public class Statistics
                 }
 
                 index++;
-            }
-        }
-    }
-
-    /********
-     * Add interview information to an xml structure for output to a file
-     * @param e XML Element, parent of interview tree
-     */
-    public void writeStructuralStatistics(Element e)
-    {
-        String[] egoName = _interview.getName();
-        Element egoNameElem = e.addElement("EgoName");
-        egoNameElem.addElement("First").setString(egoName[0]);
-        egoNameElem.addElement("Last").setString(egoName[1]);
-
-        e.addElement("DegreeValue").setInt(mostCentralDegreeAlterValue);
-        e.addElement("DegreeName").setString(mostCentralDegreeAlterName);
-        e.addElement("DegreeMean").setFloat(meanCentralDegreeValue);
-        e.addElement("DegreeNC").setFloat(degreeNC);
-
-        e.addElement("BetweenValue").setFloat(mostCentralBetweenAlterValue);
-        e.addElement("BetweenName").setString(mostCentralBetweenAlterName);
-        e.addElement("BetweenMean").setFloat(meanCentralBetweenAlterValue);
-        e.addElement("BetweenNC").setFloat(betweenNC);
-
-        e.addElement("ClosenessValue").setFloat(mostCentralClosenessAlterValue);
-        e.addElement("ClosenessName").setString(mostCentralClosenessAlterName);
-        e.addElement("ClosenessMean").setFloat(meanCentralClosenessValue);
-        e.addElement("ClosenessNC").setFloat(closenessNC);
-
-        e.addElement("NumCliques").setInt(cliqueSet.size());
-        e.addElement("NumComponents").setInt(componentSet.size()-isolates-dyads);
-        e.addElement("NumIsolates").setInt(isolates);
-        e.addElement("NumDyads").setInt(dyads);
-    }
-
-    /********
-     * Add interview information to an xml structure for output to a file
-     * @param e XML Element, parent of interview tree
-     */
-    public void writeCompositionalStatistics(Element e)
-    {
-        Element aqList = e.addElement("AlterQuestionSummaries");
-
-        for (int i = 0; i < alterStatArray.length; ++i)
-        {
-            Element aqElement = aqList.addElement("AlterQuestionSummary");
-
-            aqElement.addElement("Title").setString(alterStatArray[i].qTitle);
-            aqElement.addElement("Count").setInt(alterStatArray[i].answerCount);
-
-            Element aList = aqElement.addElement("Answers");
-            for (int j = 0; j < alterStatArray[i].answerText.length; ++j)
-            {
-                Element aElement = aList.addElement("Answer");
-                aElement.addElement("Text").setString(alterStatArray[i].answerText[j]);
-                aElement.addElement("Total").setInt(alterStatArray[i].answerTotals[j]);
-                aElement.addElement("AnswerIndex").setInt(j);
             }
         }
     }

@@ -34,9 +34,6 @@ import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
 
-import electric.xml.Element;
-import electric.xml.Elements;
-
 public class Interview {
 
 	private final Answer[] _answers;
@@ -571,7 +568,7 @@ public class Interview {
 		return s;
 	}
 
-	private Question getQuestion(int index) {
+	public Question getQuestion(int index) {
 		return _study.getQuestion(_answers[index].questionId);
 	}
 
@@ -629,142 +626,6 @@ public class Interview {
 	}
 
 	/***************************************************************************
-	 * Read interview information from an xml structure
-	 * 
-	 * @param parent
-	 *            scope for extracting globals
-	 * @param e
-	 *            XML Element, parent of interview tree
-	 * @return Interview which is read
-	 * @throws CorruptedInterviewException
-	 *             if unable to read interview
-	 */
-	public static Interview readInterview(Study study, Element e)
-			throws CorruptedInterviewException {
-		Interview interview;
-		String[] lAlterList;
-		Element alterListElem = e.getElement("AlterList");
-		Element answerListElem = e.getElement("AnswerList");
-
-		try {
-			/* Read alter list so we can size interview record */
-			lAlterList = readAlters(alterListElem);
-			interview = new Interview(study);
-			interview._alterList = lAlterList;
-
-			/* Read answers */
-			study.readInterviewStudy(e);
-			interview._complete = e.getBoolean("Complete");
-
-			/* Read interviewee name */
-			Element egoNameElem = e.getElement("EgoName");
-
-			if (egoNameElem != null) {
-				interview._egoName[0] = egoNameElem.getString("First");
-				interview._egoName[1] = egoNameElem.getString("Last");
-			}
-			readAnswers(study, interview, answerListElem);
-		} catch (CorruptedInterviewException ex) {
-			interview = null;
-			throw (ex);
-		} catch (Exception ex) {
-			interview = null;
-			throw new RuntimeException(ex);
-		}
-
-		return (interview);
-	}
-
-	/***************************************************************************
-	 * Read alter list from an xml tree
-	 * 
-	 * @param e
-	 *            XML Element, parent of alter list
-	 * @return list List of Alters
-	 */
-	private static String[] readAlters(Element e) {
-		Elements alterIter = e.getElements("Name");
-		String[] lAlterList;
-		int lNumAlters;
-		int index = 0;
-
-		lNumAlters = alterIter.size();
-		lAlterList = new String[lNumAlters];
-
-		while (alterIter.hasMoreElements()) {
-			lAlterList[index++] = alterIter.next().getTextString();
-		}
-
-		return (lAlterList);
-	}
-
-	/***************************************************************************
-	 * Read alter list from an xml tree
-	 * 
-	 * @param interview
-	 *            Interview to read answers into
-	 * @param e
-	 *            XML Element, parent of alter list
-	 * @throws CorruptedInterviewException
-	 *             if unable to read interview
-	 */
-	private static void readAnswers(Study study, Interview interview, Element e)
-			throws CorruptedInterviewException {
-		
-		Elements answerIter = e.getElements("Answer");
-		if (interview.get_numAnswers() != answerIter.size()) {
-			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview.get_numAnswers() + "!";
-			System.err.println(err);
-			throw (new CorruptedInterviewException(err));
-		}
-
-		int index = 0;
-		while(answerIter.hasMoreElements()) {
-			try {
-			    Element answerElement = answerIter.next();
-				Answer oldAnswer = interview._answers[index];
-				Answer newAnswer = Answer.readAnswer(study, answerElement);
-
-				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
-					interview._answers[index++] = newAnswer;
-				} else {
-					throw (new CorruptedInterviewException());
-				}
-				
-			} catch (Exception ex) {
-				System.err
-						.println("Answer::readAnswer failed in Interview::readAnswers; "
-								+ ex);
-			}
-		}
-	}
-
-	/***************************************************************************
-	 * Add interview information to an xml structure for output to a file
-	 * 
-	 * @param e
-	 *            XML Element, parent of interview tree
-	 */
-	public void writeInterview(Element e) {
-		Element alterListElem = e.addElement("AlterList");
-		Element answerListElem = e.addElement("AnswerList");
-		Element egoNameElem = e.addElement("EgoName");
-
-		_study.writeInterviewStudy(e);
-		e.addElement("Complete").setBoolean(_complete);
-		egoNameElem.addElement("First").setString(_egoName[0]);
-		egoNameElem.addElement("Last").setString(_egoName[1]);
-
-		for (int i = 0; i < _alterList.length; i++) {
-			alterListElem.addElement("Name").setText(_alterList[i]);
-		}
-
-		for (int i = 0; i < _answers.length; i++) {
-				_answers[i].writeAnswer(answerListElem, getQuestion(i), this);
-		}
-	}
-
-	/***************************************************************************
 	 * Returns complete attribut for interview
 	 * 
 	 * @returns complete
@@ -804,41 +665,6 @@ public class Interview {
 	 * @param e
 	 *            XML Element, parent of interview tree
 	 */
-	public void writeEgoAnswers(Element e) {
-		Iterator egoAnswers = getEgoAnswers().iterator();
-		Element eqList = e.addElement("EgoAnswers");
-
-		while (egoAnswers.hasNext()) {
-			Answer answer = (Answer) egoAnswers.next();
-
-			try {
-				Element aElement = eqList.addElement("EgoAnswer");
-				aElement.addElement("Title")
-						.setString(
-								_study.getQuestions().getQuestion(
-										answer.questionId).title);
-
-				if (answer.answered) {
-					aElement.addElement("Answer").setString(answer.string);
-					aElement.addElement("AnswerIndex")
-							.setInt(answer.getValue());
-				} else {
-					aElement.addElement("Answer").setString("N/A");
-					aElement.addElement("AnswerIndex").setInt(Answer.NO_ANSWER);
-				}
-			} catch (Exception ex) {
-				System.err.println("Failure in Interview::writeEgoAnswers; "
-						+ ex);
-			}
-		}
-	}
-
-	/***************************************************************************
-	 * Add interview information to an xml structure for output to a file
-	 * 
-	 * @param e
-	 *            XML Element, parent of interview tree
-	 */
 	public EgoAnswer[] getEgoAnswerArray(StatRecord record) {
 		Iterator egoAnswerIter = getEgoAnswers().iterator();
 		EgoAnswer[] egoAnswers = new EgoAnswer[getEgoAnswers().size()];
@@ -848,11 +674,11 @@ public class Interview {
 			Answer answer = (Answer) egoAnswerIter.next();
 
 			if (answer.answered) {
-				egoAnswers[index++] = record.new EgoAnswer(_study
+				egoAnswers[index++] = new EgoAnswer(_study
 						.getQuestions().getQuestion(answer.questionId).title,
 						answer.string, answer.getValue());
 			} else {
-				egoAnswers[index++] = record.new EgoAnswer(_study
+				egoAnswers[index++] = new EgoAnswer(_study
 						.getQuestions().getQuestion(answer.questionId).title,
 						"N/A", Answer.NO_ANSWER);
 			}
@@ -913,7 +739,7 @@ public class Interview {
 	 */
 	public int[][] generateAdjacencyMatrix(Question q, boolean weighted) throws MissingPairException {
 	    
-	    System.out.println("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
+	    //System.out.println("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
 	    
 		if (_study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
 			int[][] m = new int[_numAlters][_numAlters];
@@ -955,9 +781,9 @@ public class Interview {
 		{
 		    for(int y = 0; y < _matrix[x].length; y++)
 		    {
-		        System.out.print(_matrix[x][y] + "\t");
+		        //System.out.print(_matrix[x][y] + "\t");
 		    }
-		    System.out.println();
+		    //System.out.println();
 		}
 		
 		return (_matrix);

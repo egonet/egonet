@@ -19,24 +19,20 @@
 package com.endlessloopsoftware.ego.author;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.egonet.util.DateUtils;
+import org.egonet.io.StudyReader;
+import org.egonet.io.StudyWriter;
 import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
 
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
-
-import electric.xml.Document;
-import electric.xml.Element;
-import electric.xml.Elements;
 
 /****
  * Handles IO for the EgoNet program
@@ -178,12 +174,16 @@ public class EgoStore
                }
 
                /* Clean out study variables */
-               egoNet.setStudy(new Study());
+               Study study = new Study();
+               study.setStudyId(System.currentTimeMillis());
+               
+               egoNet.setStudy(study);
                setStudyFile(newStudyFile);
                egoNet.getStudy().setStudyName(projectName);
 
                /* Write out default info */
-               writeStudy(newStudyFile, new Long(System.currentTimeMillis()));
+               StudyWriter sw = new StudyWriter(newStudyFile);
+               sw.setStudy(study);
                studyFileInUse = false;
 
                // Store location in prefs file
@@ -293,12 +293,13 @@ public class EgoStore
          {
             if (!newFile.canRead())
             {
-               throw (new IOException());
+               throw (new IOException("Cannot read file " + newFile));
             }
 
-            /* read question file here */
-            Document document = new Document(newFile);
-            readQuestions(document);
+	      	StudyReader sr = new StudyReader(studyFile);
+	    		List<Question> questions = sr.getQuestions();
+	  		for(Question q : questions)
+	  			egoNet.getStudy().addQuestion(q);
          }
          catch (Exception e)
          {
@@ -329,7 +330,10 @@ public class EgoStore
             throw new java.io.IOException("File "+studyFile.getName()+" is not writeable");
          }
 
-         writeStudy(studyFile, new Long(egoNet.getStudy().getStudyId()));
+         StudyWriter sw = new StudyWriter(studyFile);
+         sw.setStudy(egoNet.getStudy());
+
+         
       }
       catch (Throwable ex)
       {
@@ -430,7 +434,11 @@ public class EgoStore
 					{
 						if (!newStudyFile.canWrite()) { throw (new java.io.IOException()); }
 
-						writeStudy(newStudyFile, new Long(System.currentTimeMillis()));
+				         StudyWriter sw = new StudyWriter(newStudyFile);
+				         egoNet.getStudy().setStudyId(System.currentTimeMillis());
+				         sw.setStudy(egoNet.getStudy());
+
+						
 						setStudyFile(newStudyFile);
 						studyFileInUse = false;
 						complete 		= true;
@@ -454,74 +462,6 @@ public class EgoStore
 	}
 
    /************************************************************************************************************************************************************
-    * Writes Study information to a file for later retrieval Includes files paths and arrays of question orders
-    * 
-    * @param f File into which to write study @todo prune order lists, possibly need to load question files to do this
-    * @throws IOException
-    */
-   private void writeStudy(File f, Long id) throws IOException
-   {
-      Document document = new Document();
-
-      document.setEncoding("UTF-8");
-      document.setVersion("1.0");
-      Element studyElement = document.setRoot("Package");
-      studyElement.setAttribute("Id", id.toString());
-      studyElement.setAttribute("InUse", studyFileInUse ? "Y" : "N");
-      studyElement.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
-      studyElement.setAttribute("Updated", DateUtils.getDateString(Calendar.getInstance().getTime(), "dd/MM/yyyy hh:mm a"));
-      
-      egoNet.getStudy().writeStudyData(studyElement);
-      egoNet.getStudy().writeAllQuestionData(studyElement);
-
-      document.write(f);
-   }
-
-   /************************************************************************************************************************************************************
-    * Reads in questions from an XML like input file Includes files paths and arrays of question orders
-    * 
-    * @param document   XML tree containing question list
-    */
-   private void readQuestions(Document document)
-   {
-    //  File f;
-      Element root;
-      Elements questions;
-
-      /**
-	   * Load new questions from array
-	   */
-      try
-      {
-         /**
-		  * Parse XML file
-		  */
-         root = document.getRoot();
-         root = root.getElement("QuestionList");
-         questions = root.getElements("Question");
-
-         while (questions.hasMoreElements())
-         {
-               Question q = new Question(questions.next());
-
-               if (q != null)
-               {
-                  /* Question complete, add it */
-                  egoNet.getStudy().addQuestion(q);
-               }
-         }
-      }
-      catch (Exception e)
-      {
-         JOptionPane.showMessageDialog(
-         	egoNet.getFrame(),
-            "Unable to read question file",
-            "Question Reading Error",
-            JOptionPane.ERROR_MESSAGE);
-      }
-   }
-
-   /************************************************************************************************************************************************************
     * Writes all questions to a package file for later use
     * 
     * @param f
@@ -530,17 +470,9 @@ public class EgoStore
     */
    private void writeAllQuestions(File f) throws IOException
    {
-      Document document = new Document();
-
-      //document.addChild( new XMLDecl( "1.0", "UTF-8" ) );
-      document.setEncoding("UTF-8");
-      document.setVersion("1.0");
-      Element study = document.setRoot("QuestionFile");
-      study.setAttribute("Id", Long.toString(new Date().getTime()));
-
-      egoNet.getStudy().writeAllQuestionData(study);
-
-      document.write(f);
+      
+	   StudyWriter sw = new StudyWriter(f);
+	   sw.writeAllQuestionData(egoNet.getStudy().getQuestions());
    }
 
    /************************************************************************************************************************************************************
@@ -555,11 +487,10 @@ public class EgoStore
       {
          try
          {
-            Document document = new Document(file);
-            Element root = document.getRoot();
-            String inUse = root.getAttribute("InUse");
-
-            if ((inUse != null) && inUse.equals("Y"))
+        	 StudyReader sr = new StudyReader(file);
+        	 
+        	 
+            if (sr.isStudyInUse())
             {
                studyFileInUse = true;
 
@@ -573,8 +504,9 @@ public class EgoStore
                      JOptionPane.WARNING_MESSAGE);
             }
 
-            egoNet.setStudy(new Study(document));
-            egoNet.getStudy().setInUse(studyFileInUse);
+            
+            Study study = sr.getStudy();
+            egoNet.setStudy(study);
          }
          catch (Exception e)
          {

@@ -1,163 +1,49 @@
 package org.egonet.tests.functional;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
-import org.egonet.exceptions.CorruptedInterviewException;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.egonet.io.InterviewReader;
+import org.egonet.io.StudyReader;
 import org.egonet.util.Pair;
 
+import samples.graph.BasicRenderer;
+
 import com.endlessloopsoftware.ego.client.EgoStore;
-import com.endlessloopsoftware.ego.client.EgoStore.VersionFileFilter;
-import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.ego.client.EgoStore.InterviewFileFilter;
+import com.endlessloopsoftware.ego.client.graph.ELSFRLayout;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
-import electric.xml.Document;
-import electric.xml.Element;
-import electric.xml.Elements;
-import electric.xml.ParseException;
+import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.graph.impl.SparseGraph;
+import edu.uci.ics.jung.graph.impl.SparseVertex;
+import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
+import edu.uci.ics.jung.visualization.Layout;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class CombineInterviews
 {
-	// end up doing this for studies and interviews, readers and writers
-	public interface InterviewReader
-	{
-		public Interview getInterview() throws CorruptedInterviewException;
-	}
-	
-	public abstract class DefaultInterviewReader implements InterviewReader
-	{
-		protected Study study;
-		public DefaultInterviewReader(Study study)
-		{
-			// some generic functionality related to studies when you're reading interview data
-			this.study = study;
-		}
-	}
-	
-	public class InterviewFileReader extends DefaultInterviewReader
-	{
-		private File interviewFile;
-		public InterviewFileReader(Study study, File interviewFile)
-		{
-			super(study);
-			this.interviewFile = interviewFile;
-		}	
-
-		public Interview getInterview() throws CorruptedInterviewException {
-			// TODO move all of the XML format reading here from EgoStore#readInterview and Interview#readInterview
-			Interview interview = null;
-			long studyId;
-			
-			try {
-				Document document = new Document(interviewFile);
-				studyId = Long.parseLong(document.getRoot().getAttribute("StudyId"));
-				if (studyId != study.getStudyId()) {
-					interview = null;
-					throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
-				}
-				interview = parseInterviewFile(study, document.getRoot());				
-			} catch (ParseException ex) {
-				interview = null;
-
-				throw (new CorruptedInterviewException(ex));
-			}
-			return interview;
-		}
-		
-		public Interview parseInterviewFile(Study study, Element e) throws CorruptedInterviewException{
-			Interview interview;
-			String[] lAlterList;
-			Element alterListElem = e.getElement("AlterList");
-			Element answerListElem = e.getElement("AnswerList");
-
-			try {
-				/* Read alter list so we can size interview record */
-				lAlterList = readAlters(alterListElem);
-				interview = new Interview(study);
-				interview.setAlterList(lAlterList);
-
-				/* Read answers */
-				study.readInterviewStudy(e);
-				interview.setComplete(e.getBoolean("Complete"));
-
-				/* Read interviewee name */
-				Element egoNameElem = e.getElement("EgoName");
-
-				if (egoNameElem != null) {
-					interview.setName(egoNameElem.getString("First"), egoNameElem.getString("Last"));
-				}
-				readAnswers(study, interview, answerListElem);
-			} catch (CorruptedInterviewException ex) {
-				interview = null;
-				throw (ex);
-			} catch (Exception ex) {
-				interview = null;
-				throw new RuntimeException(ex);
-			}
-
-			return (interview);
-		}
-
-		private String[] readAlters(Element alterListElem) throws CorruptedInterviewException{
-			Elements alterIter = alterListElem.getElements("Name");
-			String[] lAlterList;
-			int lNumAlters;
-			int index = 0;
-
-			lNumAlters = alterIter.size();
-			lAlterList = new String[lNumAlters];
-
-			while (alterIter.hasMoreElements()) {
-				lAlterList[index++] = alterIter.next().getTextString();
-			}
-
-			return (lAlterList);
-		}		
-		
-		private void readAnswers(Study study, Interview interview, Element e) throws CorruptedInterviewException {
-	
-			Elements answerIter = e.getElements("Answer");
-			if (interview.get_numAnswers() != answerIter.size()) {
-				String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " 
-					+ interview.get_numAnswers() + "!";
-				System.err.println(err);
-				throw (new CorruptedInterviewException(err));
-			}
-		
-			int index = 0;
-			while(answerIter.hasMoreElements()) {
-				try {
-				    Element answerElement = answerIter.next();
-					Answer oldAnswer = interview.get_answerElement(index);
-					Answer newAnswer = Answer.readAnswer(study, answerElement);
-		
-					if (oldAnswer.questionId.equals(newAnswer.questionId)) {
-						interview.set_answerElement(index++, newAnswer);
-					} else {
-						throw (new CorruptedInterviewException());
-					}
-					
-				} catch (Exception ex) {
-					System.err.println("Answer::readAnswer failed in Interview::readAnswers; " + ex);
-				}
-			}
-		}
-	}
-
 	public void doCombineInterviews() throws Exception
 	{
 		/* Read new study */
 		File studyFile = EgoStore.selectStudy(null, new File("."));
-		Document packageDocument = new Document(studyFile);
-		Study study = new Study(packageDocument);
+		
+		StudyReader sr = new StudyReader(studyFile);
+		Study study = sr.getStudy();
 
 		//Find the interview files associated with this study
 		File parentFile = studyFile.getParentFile();
@@ -173,14 +59,13 @@ public class CombineInterviews
 		final File currentDirectory = guessLocation;
 
 		String[] fileList = currentDirectory.list();	
-		VersionFileFilter filter = new VersionFileFilter(study.getStudyId(), "Interview Files", "int");
+		InterviewFileFilter filter = new InterviewFileFilter(study, "Interview Files", "int");
 		ArrayList<String> alterList = new ArrayList<String>();
-		Interview interview = null;
 		int[][] adj = null;
 
 		Set<Pair<String>> allPairs = new HashSet<Pair<String>>();
 		Set<String> pairedAlters = new HashSet<String>();
-		CombineInterviews.InterviewFileReader interviewReader = null;
+		
 		
 		
 		for (String s: fileList){
@@ -189,9 +74,8 @@ public class CombineInterviews
 			if(!filter.accept(f) || !f.canRead())
 				throw new IOException("Couldn't read file or file not associated with selected study.");
 
-			Document document = new Document(f);
-			interviewReader = new InterviewFileReader(study, f);
-			interview = interviewReader.parseInterviewFile(study, document.getRoot());
+			InterviewReader interviewReader = new InterviewReader(study, f);
+			Interview interview = interviewReader.getInterview();
 			if(!interview.isComplete())
 			{
 				System.out.println("*** SKIPPED because interview isn't complete: " + f.getName());
@@ -238,13 +122,61 @@ public class CombineInterviews
 
 		}
 
+		Map<String,Vertex> vertices = new HashMap<String,Vertex>();
+		for(Pair<String> pair : allPairs)
+		{
+			if(!vertices.containsKey(pair.first()))
+					vertices.put(pair.first(), new SparseVertex());
+			if(!vertices.containsKey(pair.second()))
+				vertices.put(pair.second(), new SparseVertex());
+		}
+		
+		for(String isolate : alterList)
+		{
+			if(!vertices.containsKey(isolate))
+			{
+				vertices.put(isolate, new SparseVertex());
+			}
+		}
+		
+		SparseGraph graph = new SparseGraph();
+		for(Pair<String> pair : allPairs)
+		{
+			if(!graph.getVertices().contains(vertices.get(pair.first())))
+				graph.addVertex(vertices.get(pair.first()));
+			if(!graph.getVertices().contains(vertices.get(pair.second())))
+				graph.addVertex(vertices.get(pair.second()));
+			
+			graph.addEdge(new UndirectedSparseEdge(vertices.get(pair.first()), vertices.get(pair.second())));
+		}
+		
+		for(String isolate : alterList)
+		{
+				Vertex v = vertices.get(isolate);
+				if(!graph.getVertices().contains(v))
+					graph.addVertex(v);
+		}
+		
+        Layout layout = new ELSFRLayout(graph);
+        VisualizationViewer vv = new VisualizationViewer(layout, new BasicRenderer());
+        
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(vv, BorderLayout.CENTER);
+        
+        frame.setContentPane(panel);
+        frame.pack();
+
+        frame.setVisible(true);
+
+		// TODO: how do isolates exist from combining personal networks into a whole network?
 		System.out.println("Pairs: " + allPairs);
 		alterList.removeAll(pairedAlters);
-		
 		System.out.println("Single alters: " + alterList);
 		
-		if(true)
-			return;
+		// TODO: write to file using save dialog
 	}
 
 	public static void main(String[] args) throws Exception

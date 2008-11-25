@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
-import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -26,14 +25,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
-import org.egonet.exceptions.MalformedQuestionException;
-
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
-
-import electric.xml.Document;
-import electric.xml.Element;
-import electric.xml.Elements;
 
 /*******************************************************************************
  * Stores basic configuration data for the study including question order lists
@@ -68,21 +61,6 @@ public class Study extends Observable
 		    _questionOrder.put(type, new ArrayList<Long>());
 	}
 	
-  /**********
-    * Instantiates study from an XML Document
-    * @param document
-    */
-	public Study(Document document)
-	{
-      // Start with default study
-		this();
-
-		readPackageStudy(document);
-		readQuestions(document);
-		verifyStudy();
-	}
-
-
 	/***************************************************************************
 	 * Returns UniqueId of study read from file
 	 * 
@@ -729,187 +707,6 @@ public class Study extends Observable
 				q.link.active = false;
 				q.link.answer = null;
 			}
-		}
-	}
-
-	/***************************************************************************
-	 * Writes study specific information to xml output file
-	 */
-	public void writeInterviewStudy(Element e)
-	{
-		e.setInt("numalters", getNetworkSize());
-	}
-
-	/***************************************************************************
-	 * Reads in study information from an XML input file Includes files paths
-	 * and arrays of question orders
-	 * 
-	 * @param studyFile
-	 *            File from which to read study
-	 */
-	public void readInterviewStudy(Element e)
-	{
-			if (e.getElement("numalters") != null)
-			{
-				setNetworkSize(e.getInt("numalters"));
-			}
-	}
-
-	/***************************************************************************
-	 * Reads in study information from an XML input file Includes files paths
-	 * and arrays of question orders
-	 * 
-	 * @param studyFile
-	 *            File from which to read study
-	 */
-	public void readPackageStudy(Document document)
-	{
-		Element root = document.getRoot();
-		setStudyId(Long.parseLong(root.getAttributeValue("Id")));
-
-		root = root.getElement("Study");
-
-		if (root.getElement("name") != null)
-		{
-			setStudyName(root.getTextString("name"));
-		}
-
-		if (root.getElement("numalters") != null)
-		{
-			setNetworkSize(root.getInt("numalters"));
-		}
-
-		if(root.getElement("altersamplingmodel") != null)
-		{
-			setAlterSamplingModel(AlterSamplingModel.values()[root.getInt("altersamplingmodel")]);
-		}
-
-		if(root.getElement("altersamplingparameter") != null)
-		{
-			setAlterSamplingParameter(root.getInt("altersamplingparameter"));
-		}
-
-		Elements elements = root.getElements("questionorder");
-		while (elements.hasMoreElements())
-		{
-			Element element = elements.next();
-			int qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
-			QuestionType qType = QuestionType.values()[qOrderId];
-			List<Long> questionOrder = _questionOrder.get(qType);
-
-			Elements ids = element.getElements("id");
-			while (ids.hasMoreElements())
-			{
-				questionOrder.add(new Long(ids.next().getLong()));
-			}
-		}
-	}
-
-	/***************************************************************************
-	 * Reads all the questions from a file
-	 * 
-	 * @param f
-	 *            File from which to read questions
-	 */
-	public void readQuestions(Document document)
-	{
-		Element root;
-		Elements questions;
-
-		/**
-		 * Parse XML file
-		 */
-		root = document.getRoot();
-		root = root.getElement("QuestionList");
-		questions = root.getElements("Question");
-
-		while (questions.hasMoreElements())
-		{
-			Question q = null;
-			try
-			{
-				/* Question complete, add it */
-				 q = new Question(questions.next());
-				addQuestion(q);
-			}
-			catch (MalformedQuestionException e)
-			{
-				/* Don't create this question. Incomplete */
-				//System.out.println("Question:" + q.getString());
-				System.err.println("Malformed Question in file.");
-				
-			}
-			catch (DuplicateQuestionException e)
-			{
-				/* Don't create this question. Incomplete */
-				System.err.println("Duplicate Question in file.");
-			}
-		}
-	}
-
-	/**************************************************************
-	 * Writes Study information to a file for later retrieval 
-	 * Includes files paths and arrays of question orders
-	 * 
-	 * @param document XML element to which to add study information 
-	 * @todo prune order lists, possibly need to load question files to do this
-	 */
-	public void writeStudyData(Element document)
-	{
-		try
-		{
-			Element study = document.addElement("Study");
-
-			study.addElement("name").setText(getStudyName());
-			study.addElement("numalters").setInt(getNetworkSize());
-			study.addElement("altersamplingmodel").setInt(alterSamplingModel.ordinal());
-			study.addElement("altersamplingparameter").setInt(alterSamplingParameter == null ? getNetworkSize() : alterSamplingParameter);
-
-			for (QuestionType type : QuestionType.values())
-			{
-			    
-			    if(type.equals(QuestionType.STUDY_CONFIG))
-			        continue;
-			    
-				Element qorder = new Element("questionorder");
-				Iterator<Long> it = _questionOrder.get(type).iterator();
-
-				if (it.hasNext())
-				{
-					study.addElement(qorder).setAttribute("questiontype", Integer.toString(type.ordinal()));
-					while (it.hasNext())
-					{
-						qorder.addElement("id").setLong(((Long) it.next()).longValue());
-					}
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			JOptionPane.showMessageDialog(
-					null,
-					"Unable to write to this study file",
-					"Study Writing Error",
-					JOptionPane.ERROR_MESSAGE);
-
-		}
-	}
-
-	/***********************************************************
-	 * Writes all questions to a package file for later use
-	 * 
-	 * @param document
-	 *            XML tree to which to add question
-	 * @throws IOException
-	 */
-	public void writeAllQuestionData(Element document) 
-		throws IOException
-	{
-		
-		Element element = document.addElement("QuestionList");
-		for(Question q : _questions.values())
-		{
-			q.writeQuestion(element.addElement("Question"));
 		}
 	}
 

@@ -1,6 +1,6 @@
 package org.egonet.util;
 
-public class Pair<A extends Comparable<A>> {
+public class Pair<A extends Comparable<A>> extends Object {
 	private final A a;
 	private final A b;
 	public Pair(A a, A b) {
@@ -21,12 +21,16 @@ public class Pair<A extends Comparable<A>> {
 	}
 	@Override
 	public boolean equals(Object o) {
-		try {
-			Pair<A> p = (Pair<A>) o;
-			return p.first().equals(first()) && p.second().equals(second());
-		} catch(ClassCastException ex) {
+		// we don't really need generics in this implementation, since we delegate to A#equals which
+		// always exists because the type A is always somehow a subtype of Object which has #equals.
+		
+		if(!(o instanceof Pair))
 			return false;
-		}
+		
+		@SuppressWarnings("unchecked")
+		Pair p = (Pair)o;
+		
+		return p.first().equals(first()) && p.second().equals(second());
 	}
 	@Override
 	public String toString() {

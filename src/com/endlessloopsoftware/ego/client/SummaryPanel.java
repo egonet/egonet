@@ -34,15 +34,15 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 
+import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.io.InterviewReader;
+import org.egonet.io.StatisticsFileReader;
 import org.egonet.util.DirList;
 import org.egonet.util.FileHelpers;
 
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
-
-import electric.xml.Document;
-import electric.xml.Element;
 
 public class SummaryPanel extends JPanel
 {
@@ -141,50 +141,25 @@ public class SummaryPanel extends JPanel
 			System.out.println("Loading file " + thisIntFileName);
 			
 			File intFile = new File(intPath, thisIntFileName);
-			File thisIstFile, thisMatrixFile, thisWeightedMatrixFile;
 
 			// Check that this has the correct Study Id
 			try
 			{
 				String istPathString = istPath.getCanonicalPath();
-				thisIstFile = EgoStore.interviewStatisticsFile(istPathString, intFiles[i]);
-				thisMatrixFile = EgoStore.interviewMatrixFile(istPathString, intFiles[i]);
-				thisWeightedMatrixFile = EgoStore.interviewWeightedMatrixFile(istPathString, intFiles[i]);
-				
-				if (!(thisIstFile.exists() && thisMatrixFile.exists() && thisWeightedMatrixFile.exists()))
-				{
-					Document document = new Document(intFile);
-					Element root = document.getRoot();
-					long id = Long.parseLong(root.getAttribute("StudyId"));
 
-					if (id == egoClient.getStudy().getStudyId())
-					{
+				File thisIstFile = EgoStore.interviewStatisticsFile(istPathString, intFiles[i]);
+				
+					InterviewReader ir = new InterviewReader(egoClient.getStudy(), intFile);
+
+					try {
+						ir.getInterview();
 						egoClient.getStorage().generateStatisticsFile(intFile);
 						istFileSet.add(thisIstFile);
-					}
-				}
-				else
-				{
-					// IST files exists, check for compliance
-					Document document = new Document(thisIstFile);
-					Element root = document.getRoot();
-					long id = Long.parseLong(root.getAttribute("StudyId"));
-					String creator = root.getAttribute("Creator");
-
-					if (id == egoClient.getStudy().getStudyId())
+					} catch (CorruptedInterviewException ex)
 					{
-						//Commented this out because it would not create a new IST file when new measures are added
-						if (creator.equals(com.endlessloopsoftware.egonet.Shared.version))
-						{
-							istFileSet.add(thisIstFile);
-						}
-						else
-						{
-							egoClient.getStorage().generateStatisticsFile(intFile);
-							istFileSet.add(thisIstFile);
-						}
+						// no match, eat silently
 					}
-				}
+					
 			}
 			catch (Exception ignored)
 			{
@@ -196,16 +171,14 @@ public class SummaryPanel extends JPanel
 		_stats = new StatRecord[istFileSet.size()];
 
 		progress.setMaximum(intFiles.length + istFileSet.size());
-		for (Iterator it = istFileSet.iterator(); it.hasNext() && !progress.isCanceled();)
+		for (Iterator<File> it = istFileSet.iterator(); it.hasNext() && !progress.isCanceled();)
 		{
 			progress.setProgress(++p);
 
 			try
 			{
-				Document document = new Document((File) it.next());
-				Element root = document.getRoot();
-
-				StatRecord rec = new StatRecord(root);
+				StatisticsFileReader sfr = new StatisticsFileReader(it.next());
+				StatRecord rec = sfr.readStatRecord();
 
 				if (rec != null)
 				{

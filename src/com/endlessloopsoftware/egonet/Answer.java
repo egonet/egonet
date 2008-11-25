@@ -17,11 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
-import electric.xml.Element;
-import electric.xml.Elements;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -100,93 +96,6 @@ public class Answer implements Cloneable {
     
     public Object clone() throws CloneNotSupportedException {
         return (super.clone());
-    }
-
-    /***************************************************************************
-     * Add answer information to an xml structure for output to a file
-     * 
-     * @param e
-     *            XML Element, parent of answer tree
-     */
-    public void writeAnswer(Element e, Question question, Interview interview) {
-        Element answerElement = new Element("Answer");
-
-        
-        answerElement.addComment("Answer element: " + toString());
-        if(question != null)
-            answerElement.addComment("Corresp question: " + question.getString());
-        
-        
-        answerElement.addElement("QuestionId").setLong(questionId.longValue());
-        answerElement.addElement("Answered").setBoolean(answered);
-
-        if (answered) {
-            if(questionId.equals(1205185478364L)) System.err.println("Printed a value into the XML file that was zero: " + getString());
-            answerElement.addElement("Value").setInt(getValue());
-            answerElement.addElement("Index").setInt(getIndex());
-            answerElement.addElement("Adjacent").setBoolean(adjacent);
-            answerElement.addElement("String").setText(string);
-            answerElement.addElement("TimeStamp").setText(timestamp);
-        }
-
-        if (alters.size() > 0) {
-            String[] alterList = interview.getAlterList();
-            Element altersElement = answerElement.addElement("Alters");
-            for (int i = 0; i < alters.size(); i++) {
-                int alterNumber = alters.get(i);
-                
-                // alter may not have a name yet
-                String alterName = alterList.length > alterNumber ? alterList[alterNumber] : "Undefined alter name (#"+alterNumber+")";
-                
-                Element thisAlterElement = altersElement.addElement("Index");
-                thisAlterElement.setInt(alterNumber);
-                
-                // handy extra attribute
-                thisAlterElement.setAttribute("name", alterName);
-            }
-        }
-
-        e.addElement(answerElement);
-    }
-
-    /***************************************************************************
-     * Read alter list from an xml tree
-     * 
-     * @param interview
-     *            Interview to read answers into
-     * @param e
-     *            XML Element, parent of alter list
-     */
-    public static Answer readAnswer(Study study, Element e) {
-        int qAlters[] = null;
-        Long qId = new Long(e.getLong("QuestionId"));
-        Question q = (Question) study.getQuestions().getQuestion(qId);
-        Element alterElem = e.getElement("Alters");
-
-        if (alterElem != null) {
-            Elements alterElems = alterElem.getElements("Index");
-            qAlters = new int[alterElems.size()];
-
-            for (int i = 0; i < alterElems.size(); i++) {
-                qAlters[i] = alterElems.next().getInt();
-            }
-        }
-
-        Answer r = new Answer(qId, qAlters);
-
-        r.answered = e.getBoolean("Answered");
-
-        if (r.answered) {
-            r.string = e.getString("String");
-            r.setValue(e.getInt("Value"));
-            r.setIndex(e.getInt("Index"));
-            r.adjacent = q.selectionAdjacent(r.getValue());
-        } else {
-            r.string = null;
-        }
-
-        //System.out.println("Read answer: " + r.getString());
-        return r;
     }
 
     public String toString() {

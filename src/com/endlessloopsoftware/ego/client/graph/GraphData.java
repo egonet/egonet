@@ -252,8 +252,7 @@ public class GraphData {
 						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? selection
 								.getValue()
 								: 0;
-						System.out
-								.println("Updating weighted adjacency matrix");
+						//System.out.println("Updating weighted adjacency matrix");
 					}
 				} else {
 					if ((adjacencyMatrix[a.firstAlter()][a.secondAlter()] == 0)
@@ -263,8 +262,7 @@ public class GraphData {
 								: 0;
 						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? 1
 								: 0;
-						System.out
-								.println("Updating weighted adjacency matrix");
+						System.out.println("Updating weighted adjacency matrix");
 					}
 
 				}
