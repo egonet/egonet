@@ -188,7 +188,7 @@ public class SummaryPanel extends JPanel
 			}
 			catch (Exception ignored)
 			{
-				JOptionPane.showMessageDialog(null, ignored.getMessage())
+				JOptionPane.showMessageDialog(null, ignored.getMessage());
 				ignored.printStackTrace();
 			}
 		}
