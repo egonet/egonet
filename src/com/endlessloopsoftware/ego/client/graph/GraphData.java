@@ -30,6 +30,8 @@ import java.util.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -38,6 +40,7 @@ import java.awt.Point;
 import java.util.Set;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.decorators.StringLabeller;
@@ -274,8 +277,7 @@ public class GraphData {
 		int width = GraphRenderer.getVv().getWidth();
 		int height = GraphRenderer.getVv().getHeight();
 
-		BufferedImage bi = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics = bi.createGraphics();
 		GraphRenderer.getVv().paint(graphics);
 
@@ -286,6 +288,29 @@ public class GraphData {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public static void writeCoordinates(File dataFile) throws IOException {
+		VisualizationViewer vv = GraphRenderer.getVv();
+		Layout layout = vv.getGraphLayout();
+		Graph g = layout.getGraph();
+
+		FileWriter fw = new FileWriter(dataFile);
+		
+		@SuppressWarnings("unchecked")
+		Set<Vertex> verts = g.getVertices();
+		for(Vertex v : verts)
+		{
+			
+			String nodeLabel = GraphRenderer.getGraphSettings().getNodeLabel(v);
+			Point2D pt = layout.getLocation(v);
+			String line = ("\""+nodeLabel + "\"," + pt.getX() + "," + pt.getY() + "\n");
+			System.out.print(line);
+			fw.write(line);
+		}
+		
+		fw.close();
 	}
 
 	public static StringLabeller getStringLabeller(Graph graph) {

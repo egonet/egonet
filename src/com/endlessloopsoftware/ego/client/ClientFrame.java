@@ -25,7 +25,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -45,7 +48,10 @@ import org.egonet.util.SwingWorker;
 
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
+import com.endlessloopsoftware.egonet.Interview;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
+import com.endlessloopsoftware.egonet.Study;
 
 
 public class ClientFrame extends JFrame {
@@ -92,6 +98,10 @@ public class ClientFrame extends JFrame {
 	
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
+	public final JMenuItem saveGraphCoordinates = new JMenuItem("Save Graph coordinates");
+	public final JMenuItem saveEdgeList = new JMenuItem("Save Egde list");
+	
+	
 
 	public final JMenuItem recalculateStatistics = new JMenuItem(
 			"Recalculate Statistics");
@@ -141,6 +151,18 @@ public class ClientFrame extends JFrame {
 		saveGraph.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveGraph_actionPerformed(e);
+			}
+		});
+		
+		saveGraphCoordinates.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveGraphCoordinates_actionPerformed(e);
+			}
+		});
+		
+		saveEdgeList.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveEdgeList_actionPerformed(e);
 			}
 		});
 
@@ -241,6 +263,8 @@ public class ClientFrame extends JFrame {
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(applyGraphSettings);
+			jMenuFile.add(saveGraphCoordinates);
+			jMenuFile.add(saveEdgeList);
 
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraph);
@@ -315,7 +339,97 @@ public class ClientFrame extends JFrame {
 		}
 
 	}
+	
+	void saveEdgeList_actionPerformed(ActionEvent e) {
+		String fileName;
+		fileName = egoClient.getInterview().getName() + "_edgelist";
+		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
+				.getParent()
+				+ "/Graphs");
+		currentDirectory.mkdir();
 
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(currentDirectory);
+		fileChooser.setSelectedFile(new File(fileName + ".csv"));
+		fileChooser.setDialogTitle("Save Graph EdgeList");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+		int returnValue = JFileChooser.APPROVE_OPTION;
+		while (returnValue == JFileChooser.APPROVE_OPTION) {
+			returnValue = fileChooser.showSaveDialog(this);
+			File dataFile = fileChooser.getSelectedFile();
+			try {
+				
+				FileWriter fw = new FileWriter(dataFile);
+				
+				Interview interview = egoClient.getInterview();
+				Study study = egoClient.getStudy();
+				
+				String [] thisInterviewAlterlist = interview.getAlterList();
+
+				Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+				while (questions.hasNext()) {
+					Question q = study.getQuestion((Long) questions.next());
+					int[][] adj = interview.generateAdjacencyMatrix(q, true);
+
+					// loop through adj
+					// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
+
+					for(int i = 0; i < adj.length; i++)
+					{
+						for(int j = i+1; j < adj[i].length; j++)
+						{
+							// adj[i][j] != 0 && 
+							if(i != j)
+							{
+								
+								String alter1 = thisInterviewAlterlist[i];
+								String alter2 = thisInterviewAlterlist[j];
+								
+								// mark those as adjacent in the new big matrix
+								String line = ("\"" + alter1 + "\",\"" + alter2 + "\","+adj[i][j] +"\n");
+								System.out.print(line);
+								fw.write(line);
+							}
+						}
+					}
+				}
+				
+				fw.close();
+			} catch (Exception e1) {
+				throw new RuntimeException(e1);
+			}
+			break;
+		}
+	}
+	
+	void saveGraphCoordinates_actionPerformed(ActionEvent e) {
+		String fileName;
+		fileName = egoClient.getInterview().getName() + "_graph_coordinates";
+		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
+				.getParent()
+				+ "/Graphs");
+		currentDirectory.mkdir();
+
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(currentDirectory);
+		fileChooser.setSelectedFile(new File(fileName + ".csv"));
+		fileChooser.setDialogTitle("Save Graph Coordinates");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+		int returnValue = JFileChooser.APPROVE_OPTION;
+		while (returnValue == JFileChooser.APPROVE_OPTION) {
+			returnValue = fileChooser.showSaveDialog(this);
+			File dataFile = fileChooser.getSelectedFile();
+			try {
+				GraphData.writeCoordinates(dataFile);
+			} catch (IOException e1) {
+				throw new RuntimeException(e1);
+			}
+			break;
+		}
+	}
+	
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 		String[] name = egoClient.getInterview().getName();
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
