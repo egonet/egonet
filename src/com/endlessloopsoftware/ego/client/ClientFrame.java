@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.client;
 
+import javax.swing.JCheckBoxMenuItem;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -95,21 +96,21 @@ public class ClientFrame extends JFrame {
 
 	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 	public final JMenuItem applyGraphSettings = new JMenuItem("Load/Apply graph settings");
+	public final JCheckBoxMenuItem detailedTooltips = new JCheckBoxMenuItem("Show extended node tooltips");
+	
 	
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 	public final JMenuItem saveGraphCoordinates = new JMenuItem("Save Graph coordinates");
-	public final JMenuItem saveEdgeList = new JMenuItem("Save Egde list");
+	public final JMenuItem saveEdgeList = new JMenuItem("Save Edgelist");
 	
 	
 
-	public final JMenuItem recalculateStatistics = new JMenuItem(
-			"Recalculate Statistics");
+	public final JMenuItem recalculateStatistics = new JMenuItem("Recalculate Statistics");
 
 	public final JMenuItem close = new JMenuItem("Return to Main Menu");
 
-	public final JMenuItem saveInterviewStatistics = new JMenuItem(
-			"Save Interview Statistics");
+	public final JMenuItem saveInterviewStatistics = new JMenuItem("Save Interview Statistics");
 
 	private final EgoClient egoClient;
 	// Construct the frame
@@ -193,7 +194,18 @@ public class ClientFrame extends JFrame {
 						}
 					}
 				});
-
+		detailedTooltips
+		.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					GraphRenderer.getGraphSettings().setDetailedTooltips(detailedTooltips.isSelected());
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+		
+		
 		recalculateStatistics
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -265,6 +277,7 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(applyGraphSettings);
 			jMenuFile.add(saveGraphCoordinates);
 			jMenuFile.add(saveEdgeList);
+			jMenuFile.add(detailedTooltips);
 
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraph);

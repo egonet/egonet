@@ -59,6 +59,16 @@ public class GraphSettings {
 
 	private java.util.List<GraphSettingsEntry> QAsettings = Collections
 			.synchronizedList(new ArrayList<GraphSettingsEntry>());
+	
+	private boolean detailedTooltips = false;
+
+	public boolean isDetailedTooltips() {
+		return detailedTooltips;
+	}
+
+	public void setDetailedTooltips(boolean detailedTooltips) {
+		this.detailedTooltips = detailedTooltips;
+	}
 
 	GraphRenderer renderer;
 
@@ -79,8 +89,8 @@ public class GraphSettings {
 			NodeShape shape = NodeShape.Circle;
 			NodeProperty nodeProperty = new NodeProperty(alterName, color,
 					shape, size);
-			String toolTipText = getAlterInfo(i);
-			nodeProperty.setToolTipText(toolTipText);
+			nodeProperty.setToolTipText(getAlterInfo(i, false));
+			nodeProperty.setDetailedToolTipText(getAlterInfo(i, true));
 			nodeSettingsMap.put(renderer.getvertexArray()[i], nodeProperty);
 		}
 		// initialize edges with default settings
@@ -362,6 +372,8 @@ public class GraphSettings {
 
 	public String getNodeToolTipText(ArchetypeVertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
+		if(isDetailedTooltips())
+			return nodeProperty.getDetailedToolTipText();
 		return nodeProperty.getToolTipText();
 	}
 
@@ -453,7 +465,7 @@ public class GraphSettings {
 		return QAsettings.iterator();
 	}
 
-	private String getAlterInfo(int alterIndex) {
+	private String getAlterInfo(int alterIndex, boolean detail) {
 		String[] alterToolTip = new String[egoClient.getInterview().getNumAlters()];
 		for (int i = 0; i < alterToolTip.length; i++) {
 			alterToolTip[i] = "<html>" + egoClient.getInterview().getAlterList()[i]
@@ -466,7 +478,7 @@ public class GraphSettings {
 			Question question = egoClient.getStudy().getQuestion(answer.questionId);
 			if (question.questionType == Shared.QuestionType.ALTER) {
 				questionTitle = question.title;
-				answerString = answer.string + " (index="+answer.getIndex()+",value="+answer.getValue()+")";
+				answerString = answer.string + " " + (detail ? "(index="+answer.getIndex()+",value="+answer.getValue()+")" : "");
 				for (int alter : answer.getAlters()) {
 					alterToolTip[alter] += questionTitle + " : " + answerString
 							+ "<br>";

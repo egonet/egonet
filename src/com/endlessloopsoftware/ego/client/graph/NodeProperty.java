@@ -46,6 +46,16 @@ public class NodeProperty extends GraphProperty {
 	
 	private String toolTipText = "";
 	
+	private String detailedToolTipText = "";
+	
+	public String getDetailedToolTipText() {
+		return detailedToolTipText;
+	}
+
+	public void setDetailedToolTipText(String detailedToolTipText) {
+		this.detailedToolTipText = detailedToolTipText;
+	}
+
 	public String getToolTipText() {
 		return toolTipText;
 	}
