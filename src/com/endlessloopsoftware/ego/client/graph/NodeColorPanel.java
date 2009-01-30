@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
+
 import org.jdesktop.layout.GroupLayout;
 
 import org.egonet.util.listbuilder.Selection;
@@ -143,13 +144,10 @@ public class NodeColorPanel extends JPanel {
 				rowData[i][0] = selectionList.get(i);
 			}
 			int noOfColors = question.getSelections().length;
-			Random rand = new Random();
+			List<Color> colors = pick(noOfColors);
+			
 			for (int i = 0; i < noOfColors; i++) {
-				int red = rand.nextInt(255);
-				int green = rand.nextInt(255);
-				int blue = rand.nextInt(255);
-				Color color = new Color(red, green, blue);
-				rowData[i][1] = color;
+				rowData[i][1] = colors.get(i);
 			}
 			return rowData;
 
@@ -180,17 +178,61 @@ public class NodeColorPanel extends JPanel {
 				rowData[i][0] = selectionList.get(i);
 			}
 			int noOfColors = selectionList.size();
-			Random rand = new Random();
+			List<Color> colors = pick(noOfColors);
+			
 			for (int i = 0; i < noOfColors; i++) {
-				int red = rand.nextInt(255);
-				int green = rand.nextInt(255);
-				int blue = rand.nextInt(255);
-				Color color = new Color(red, green, blue);
-				rowData[i][1] = color;
+				rowData[i][1] = colors.get(i);
 			}
 			return rowData;
 		}
 	}
+	
+	public static List<Color> pick(int num) {
+        List<Color> colors = new ArrayList<Color>();
+        if (num < 2)
+                return colors;
+        float dx = 1.0f / (float) (num - 1);
+        for (int i = 0; i < num; i++) {
+                colors.add(get(i * dx));
+        }
+        return colors;
+}
+
+public static Color get(float x) {
+        float r = 0.0f;
+        float g = 0.0f;
+        float b = 1.0f;
+        if (x >= 0.0f && x < 0.2f) {
+                x = x / 0.2f;
+                r = 0.0f;
+                g = x;
+                b = 1.0f;
+        } else if (x >= 0.2f && x < 0.4f) {
+                x = (x - 0.2f) / 0.2f;
+                r = 0.0f;
+                g = 1.0f;
+                b = 1.0f - x;
+        } else if (x >= 0.4f && x < 0.6f) {
+                x = (x - 0.4f) / 0.2f;
+                r = x;
+                g = 1.0f;
+                b = 0.0f;
+        } else if (x >= 0.6f && x < 0.8f) {
+                x = (x - 0.6f) / 0.2f;
+                r = 1.0f;
+                g = 1.0f - x;
+                b = 0.0f;
+        } else if (x >= 0.8f && x <= 1.0f) {
+                x = (x - 0.8f) / 0.2f;
+                r = 1.0f;
+                g = 0.0f;
+                b = x;
+        }
+        return new Color(r, g, b);
+}
+
+
+
 
 	private boolean isPresentInSelectionList(String str) {
 		for (int i = 0; i < selectionList.size(); i++) {

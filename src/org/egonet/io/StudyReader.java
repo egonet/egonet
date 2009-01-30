@@ -93,16 +93,9 @@ public class StudyReader {
 		
 		return study;
 	}
-
-	public List<Question> getQuestions() throws MalformedQuestionException, DuplicateQuestionException, EgonetException
+	
+	private static List<Question> getQuestions(Element root) throws MalformedQuestionException, DuplicateQuestionException, EgonetException
 	{
-		Document document;
-		try {
-			document = new Document(studyFile);
-		} catch (ParseException e) {
-			throw new EgonetException(e);
-		}
-		 Element root = document.getRoot();
 		root = root.getElement("QuestionList");
 		Elements questions = root.getElements("Question");
 	
@@ -114,6 +107,29 @@ public class StudyReader {
 		}
 		
 		return questionList;
+	}
+	
+	public static List<Question> getQuestions(File questionFile) throws MalformedQuestionException, DuplicateQuestionException, EgonetException
+	{
+		try {
+			Document document = new Document(questionFile);
+			 Element root = document.getRoot();
+			 return getQuestions(root);
+		} catch (ParseException e) {
+			throw new EgonetException(e);
+		}
+	}
+
+	public List<Question> getQuestions() throws MalformedQuestionException, DuplicateQuestionException, EgonetException
+	{
+		Document document;
+		try {
+			document = new Document(studyFile);
+		} catch (ParseException e) {
+			throw new EgonetException(e);
+		}
+		Element root = document.getRoot();
+		return getQuestions(root);
 	}
 
 
@@ -130,7 +146,7 @@ public class StudyReader {
         return ((inUse != null) && inUse.equals("Y"));
     }
 	
-	public Question readQuestion(Element question) throws MalformedQuestionException
+	public static Question readQuestion(Element question) throws MalformedQuestionException
 	{
 		Question q = new Question();
 		

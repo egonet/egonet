@@ -323,7 +323,7 @@ public class Study extends Observable
 	public void addQuestion(Question q) throws DuplicateQuestionException
 	{
 		if (_questions.contains(q.UniqueId))
-			throw new DuplicateQuestionException("Question already added to study");
+			throw new DuplicateQuestionException("Question with uniqueId "+q.UniqueId+" already added to study: " + _questions.toString());
 		
 		_questions.addQuestion(q);
 		setModified(true);

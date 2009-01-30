@@ -26,6 +26,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.exceptions.EgonetException;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.util.DirList;
@@ -276,7 +278,7 @@ public class EgoStore
    /************************************************************************************************************************************************************
     * Select a question file to use for custom questions
     */
-   public void importQuestions()
+   public void importQuestions() throws Exception
    {
       JFileChooser jNewStudyChooser = new JFileChooser();
       File 				newFile;
@@ -296,8 +298,7 @@ public class EgoStore
                throw (new IOException("Cannot read file " + newFile));
             }
 
-	      	StudyReader sr = new StudyReader(studyFile);
-	    		List<Question> questions = sr.getQuestions();
+    		List<Question> questions = StudyReader.getQuestions(newFile);
 	  		for(Question q : questions)
 	  			egoNet.getStudy().addQuestion(q);
          }
@@ -308,6 +309,7 @@ public class EgoStore
                "Unable to read question file.",
                "File Error",
                JOptionPane.ERROR_MESSAGE);
+            throw e;
          }
       }
    }

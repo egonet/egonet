@@ -318,7 +318,7 @@ public class EgoFrame extends JFrame implements Observer {
 		}
 	}
 
-	private void jMenuFileImport_actionPerformed(ActionEvent e) throws IOException {
+	private void jMenuFileImport_actionPerformed(ActionEvent e) throws Exception {
 		egoNet.getStorage().importQuestions();
 		fillCurrentPanel();
 	}
