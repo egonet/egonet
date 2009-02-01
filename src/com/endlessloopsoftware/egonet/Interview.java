@@ -620,6 +620,7 @@ public class Interview {
 			}
 		} catch (Exception ex) {
 			s = oldS;
+			ex.printStackTrace();
 		}
 
 		return s;

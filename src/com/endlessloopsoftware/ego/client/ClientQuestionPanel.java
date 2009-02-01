@@ -687,7 +687,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				} else {
 					// minus 1 because there's a "Please select an answer" option for 
 					int selectionIndex = answerMenu.getSelectedIndex() - 1;
-					answer.answered = (selectionIndex > 0) && (selectionIndex < question.getSelections().length+1);
+					
+					answer.answered = (selectionIndex >= 0) && (selectionIndex < question.getSelections().length+1);
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
