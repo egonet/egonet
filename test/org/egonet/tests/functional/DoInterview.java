@@ -29,10 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
-
-import com.endlessloopsoftware.ego.client.EgoClient;
 
 public class DoInterview {
 
@@ -48,7 +47,7 @@ public class DoInterview {
 	{
 		studyFile = new File(location);
 		
-		window = new FrameFixture(EgoClient.getInstance().getFrame());
+		window = new FrameFixture((JFrame)null); //EgoClient.getInstance().getFrame());
 		window.show(); // shows the frame to test
 	}
 

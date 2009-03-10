@@ -190,8 +190,8 @@ public class EgoStore extends Observable {
 	
 	public void selectStudy() throws IOException
 	{
-		Window parent = egoClient.getFrame();
-		setPackageFile(selectStudy(parent, getPackageFile()));
+		//Window parent = egoClient.getFrame();
+		setPackageFile(selectStudy(null, getPackageFile()));
 	}
 	
 	/**
@@ -400,6 +400,7 @@ public class EgoStore extends Observable {
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Unable to update study file.",
 					"File Error", JOptionPane.ERROR_MESSAGE);
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -643,7 +644,7 @@ public class EgoStore extends Observable {
 
 		try {
 			file = FileHelpers.newFile(filetype, defaultname, "Statistics", "."
-					+ suffix, startdir, egoClient.getFrame(), false);
+					+ suffix, startdir, null, false);
 
 			if (file == null) {
 				throw new IOException("empty file");

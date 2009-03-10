@@ -26,8 +26,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.egonet.exceptions.DuplicateQuestionException;
-import org.egonet.exceptions.EgonetException;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.util.DirList;

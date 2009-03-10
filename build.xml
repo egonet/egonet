@@ -13,8 +13,7 @@
 	<property name="dir.dist.Egonet" location="dist" />
 
 	<!--specifying the main classes to be executed -->
-	<property name="main.class.EgoClient" value="com.endlessloopsoftware.ego.client.EgoClient" />
-	<property name="main.class.EgoNet" value="com.endlessloopsoftware.ego.author.EgoNet" />
+	<property name="main.class.Egonet" value="org.egonet.gui.EgonetRunner" />
 
 	<!-- Class path ref -->
 	<path id="classpath.project.Egonet">
@@ -60,7 +59,7 @@
 
 	<target name="jar" depends="compile,lib-jar">
 		<!-- Creating jar file for the main class EgoClient.java -->
-		<jar destfile="${dir.dist.Egonet}/EgoClient.jar" duplicate="preserve">
+		<jar destfile="${dir.dist.Egonet}/Egonet.jar" duplicate="preserve">
 			<manifest>
 				<attribute name="Main-Class" value="${main.class.EgoClient}" />
 				<attribute name="Class-Path" value="Egonet-lib.jar" />
@@ -69,16 +68,6 @@
 			<zipfileset dir="${dir.src.Egonet}" />
 			<zipfileset src="${dir.dist.Egonet}/Egonet-lib.jar" />
 
-		</jar>
-		<!-- Creating jar file for the main class "EgoNet.java" -->
-		<jar destfile="${dir.dist.Egonet}/EgoAuthor.jar" duplicate="preserve">
-			<manifest>
-				<attribute name="Main-Class" value="${main.class.EgoNet}" />
-				<attribute name="Class-Path" value="Egonet-lib.jar" />
-			</manifest>
-			<zipfileset dir="${dir.build.Egonet}" />
-			<zipfileset dir="${dir.src.Egonet}" />
-			<zipfileset src="${dir.dist.Egonet}/Egonet-lib.jar" />
 		</jar>
 		<delete file="${dir.dist.Egonet}/Egonet-lib.jar"/>
 	</target>
@@ -91,14 +80,9 @@
 	<target name="dist" depends="clean,jar" description="Create Windows-compatible executables from the built Jar files">
 		<taskdef name="jsmoothgen" classname="net.charabia.jsmoothgen.ant.JSmoothGen" classpath="${dir.lib.Enet}/jsmooth/jsmoothgen-ant.jar" />
 
-
-		<jsmoothgen project="Egoauthor.jsmooth" skeletonroot="lib/jsmooth/" />
-		<move file="${dir.dist.Egonet}/EgoAuthor.jar" tofile="${dir.dist.Egonet}/EgoAuthor-${build.date}.jar"/>
-		<move file="${dir.dist.Egonet}/EgoAuthor.exe" tofile="${dir.dist.Egonet}/EgoAuthor-${build.date}.exe"/>
-
 		<jsmoothgen project="Egonet.jsmooth" skeletonroot="lib/jsmooth/" />
-		<move file="${dir.dist.Egonet}/EgoClient.jar" tofile="${dir.dist.Egonet}/EgoClient-${build.date}.jar"/>
-		<move file="${dir.dist.Egonet}/EgoClient.exe" tofile="${dir.dist.Egonet}/EgoClient-${build.date}.exe"/>
+		<move file="${dir.dist.Egonet}/Egonet.jar" tofile="${dir.dist.Egonet}/Egonet-${build.date}.jar"/>
+		<move file="${dir.dist.Egonet}/Egonet.exe" tofile="${dir.dist.Egonet}/Egonet-${build.date}.exe"/>
 
 		<zip destfile="${dir.dist.Egonet}/Ego-exe-${build.date}.zip" basedir="${dir.dist.Egonet}" includes="*.exe"/>
 		<zip destfile="${dir.dist.Egonet}/Ego-jar-${build.date}.zip" basedir="${dir.dist.Egonet}" includes="*.jar"/>

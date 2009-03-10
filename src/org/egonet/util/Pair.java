@@ -27,7 +27,7 @@ public class Pair<A extends Comparable<A>> extends Object {
 		if(!(o instanceof Pair))
 			return false;
 		
-		@SuppressWarnings("unchecked")
+		//@SuppressWarnings("unchecked")
 		Pair p = (Pair)o;
 		
 		return p.first().equals(first()) && p.second().equals(second());

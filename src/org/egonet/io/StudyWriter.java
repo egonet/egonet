@@ -56,7 +56,7 @@ public class StudyWriter {
 		Element root = packageDocument.getRoot();
 		root.setAttribute("InUse", "Y");
 		packageDocument.write(studyFile);
-		studyFile.setReadOnly();
+		//studyFile.setReadOnly();
 	}
 	
 	private void writeAllQuestionData(Element document, QuestionList questionList) throws IOException

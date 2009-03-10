@@ -38,13 +38,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
 
+import org.egonet.gui.MDIChildFrame;
+import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
 
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
-public class EgoFrame extends JFrame implements Observer {
+public class EgoFrame extends MDIChildFrame implements Observer {
     Shared.QuestionType lastTab = Shared.QuestionType.STUDY_CONFIG;
 	Shared.QuestionType curTab = Shared.QuestionType.STUDY_CONFIG;
 
@@ -65,8 +67,6 @@ public class EgoFrame extends JFrame implements Observer {
 	private final JMenuItem jMenuEditCut = new JMenuItem(new DefaultEditorKit.CutAction());
 	private final JMenuItem jMenuEditCopy = new JMenuItem(new DefaultEditorKit.CopyAction());
 	private final JMenuItem jMenuEditPaste = new JMenuItem(new DefaultEditorKit.PasteAction());
-	private final JMenu jMenuHelp = new JMenu("Help");
-	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
 	private final JTabbedPane jTabbedPane = new JTabbedPane();
 	private final BorderLayout borderLayout1 = new BorderLayout();
@@ -76,30 +76,38 @@ public class EgoFrame extends JFrame implements Observer {
 	private final Map<QuestionType,EgoQPanel> questionPanel;
 	
 	// Construct the frame
-	public EgoFrame(EgoNet egoNet) throws Exception
+	public EgoFrame(EgoNet egoNet)
 	{
-		this.egoNet = egoNet;
-		study_panel = new StudyPanel(egoNet);
+		try {
+			this.egoNet = egoNet;
+			study_panel = new StudyPanel(egoNet);
+			
+			questionPanel = new HashMap<QuestionType,EgoQPanel>();
+			questionPanel.put(QuestionType.EGO, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.EGO));
+			questionPanel.put(QuestionType.ALTER_PROMPT, new PromptPanel(egoNet, Shared.QuestionType.ALTER_PROMPT));
+			questionPanel.put(Shared.QuestionType.ALTER, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER));
+			questionPanel.put(Shared.QuestionType.ALTER_PAIR, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER_PAIR));
+			
+			enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+			jbInit();
+		}
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 		
-		questionPanel = new HashMap<QuestionType,EgoQPanel>();
-		questionPanel.put(QuestionType.EGO, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.EGO));
-		questionPanel.put(QuestionType.ALTER_PROMPT, new PromptPanel(egoNet, Shared.QuestionType.ALTER_PROMPT));
-		questionPanel.put(Shared.QuestionType.ALTER, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER));
-		questionPanel.put(Shared.QuestionType.ALTER_PAIR, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER_PAIR));
-		
-		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-		jbInit();
 	}
 
 	// Component initialization
 	private void jbInit() throws Exception {
 		// Listen for window closing
-		this.addWindowListener(new CloseListener());
+		//this.addWindowListener(new CloseListener());
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setResizable(true);
 
-		contentPane = (JPanel) this.getContentPane();
+		contentPane = new JPanel();
 		contentPane.setLayout(borderLayout1);
-		this.setTitle("Egocentric Network Study");
+		setContentPane(contentPane);
+		setTitle("Study Design Tool");
 
 		jMenuFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
 				KeyEvent.VK_Q, Toolkit.getDefaultToolkit()
@@ -142,10 +150,8 @@ public class EgoFrame extends JFrame implements Observer {
 		jMenuEdit.add(jMenuEditCut);
 		jMenuEdit.add(jMenuEditCopy);
 		jMenuEdit.add(jMenuEditPaste);
-		jMenuHelp.add(jMenuHelpAbout);
 		jEgonetMenuBar.add(jMenuFile);
 		jEgonetMenuBar.add(jMenuEdit);
-		jEgonetMenuBar.add(jMenuHelp);
 		this.setJMenuBar(jEgonetMenuBar);
 
 		jTabbedPane.setTabPlacement(JTabbedPane.TOP);
@@ -209,12 +215,6 @@ public class EgoFrame extends JFrame implements Observer {
 			}
 		});
 
-		jMenuHelpAbout.addActionListener(new CatchingAction("jMenuHelpAbout") {
-			public void safeActionPerformed(ActionEvent e) throws Exception {
-				jMenuHelpAbout_actionPerformed(e);
-			}
-		});
-
 		/***********************************************************************
 		 * Change Listener for tabs
 		 */
@@ -231,8 +231,15 @@ public class EgoFrame extends JFrame implements Observer {
 
 		/* Fill panel, initialize frame */
 		egoNet.setStudy(new Study());
-		pack();
 		fillCurrentPanel();
+		
+		pack();
+		setMinimumSize(getPreferredSize());
+		
+		setMaximizable(true);
+		setIconifiable(true);
+		setClosable(false);
+
 		egoNet.getStudy().setModified(false);
 		updateMenus();
 	}
@@ -266,6 +273,8 @@ public class EgoFrame extends JFrame implements Observer {
 		}
 	}
 
+	// split the file menu functionality out into a class of functionality
+	// and a class of the UI
 	/**
 	 * New Study menu handler
 	 * 
@@ -351,11 +360,6 @@ public class EgoFrame extends JFrame implements Observer {
 		if (exit) {
 			dispose();
 		}
-	}
-
-	// Help | About action performed
-	public void jMenuHelpAbout_actionPerformed(ActionEvent e) {
-	    Shared.displayAboutBox(this);
 	}
 
 	/**
@@ -467,5 +471,23 @@ public class EgoFrame extends JFrame implements Observer {
 	 */
 	public void update(Observable o, Object arg) {
 		updateMenus();
+	}
+	
+	public void focusActivated() {
+		System.out.println(this.getTitle() + " activated");
+		
+	}
+
+	public void focusDeactivated() {
+		System.out.println(this.getTitle() + " deactivated");
+		
+	}
+
+	public JInternalFrame getInternalFrame() {
+		return this;
+	}
+
+	public void setMdiContext(MDIContext context) {
+		// TODO Auto-generated method stub
 	}
 }

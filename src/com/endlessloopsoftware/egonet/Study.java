@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
@@ -283,6 +284,11 @@ public class Study extends Observable
    public String getUIType()
    {
       return _uiType;
+   }
+   
+   public boolean confirmIncompatibleChange(JInternalFrame frame)
+   {
+	   return confirmIncompatibleChange((JFrame)null);
    }
    
 	/**

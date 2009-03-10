@@ -75,7 +75,7 @@ public class InterviewWriter {
         Element answerElement = new Element("Answer");
 
         
-        answerElement.addComment("Answer element: " + toString());
+        answerElement.addComment("Answer element: " + answer.getString());
         if(question != null)
             answerElement.addComment("Corresp question: " + question.getString());
         

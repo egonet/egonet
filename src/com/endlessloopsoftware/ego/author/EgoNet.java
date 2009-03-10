@@ -27,7 +27,7 @@ public class EgoNet
 	private final EgoFrame	frame;
 	
 	private static EgoNet en = null;
-	public static synchronized EgoNet getInstance() throws Exception
+	public static synchronized EgoNet getInstance()
 	{
 		if(en == null)
 		{
@@ -36,7 +36,7 @@ public class EgoNet
 		return en;
 	}
 	
-	private EgoNet() throws Exception
+	private EgoNet()
 	{
 		storage	= new EgoStore(this);
 		study = new Study();

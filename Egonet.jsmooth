@@ -8,10 +8,10 @@
 <JVMSearchPath>jview</JVMSearchPath>
 <arguments></arguments>
 <embeddedJar>true</embeddedJar>
-<executableName>dist/EgoClient.exe</executableName>
+<executableName>dist/Egonet.exe</executableName>
 <initialMemoryHeap>-1</initialMemoryHeap>
-<jarLocation>dist/EgoClient.jar</jarLocation>
-<mainClassName>com.endlessloopsoftware.ego.client.EgoClient</mainClassName>
+<jarLocation>dist/Egonet.jar</jarLocation>
+<mainClassName>org.egonet.gui.EgonetRunner</mainClassName>
 <classPath></classPath>
 <maximumMemoryHeap>-1</maximumMemoryHeap>
 <maximumVersion></maximumVersion>

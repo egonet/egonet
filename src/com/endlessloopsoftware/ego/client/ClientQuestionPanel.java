@@ -236,7 +236,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		answerMenu.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("answerMenu.addActionListener: " + e);
+				//System.out.println("answerMenu.addActionListener: " + e);
 				questionAnsweredEventHandler(e);
 			}
 		});
@@ -551,11 +551,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				
 				for (int i = 0; i < question.getSelections().length; i++) {
 					answerMenu.addItem(question.getSelections()[i]);
+					if(	i > 0 && 
+						question.answer.getIndex() >= 0 &&
+						question.answer.getIndex()+1 == i
+						)
+						answerMenu.setSelectedIndex(i);	
 				}
 
-				if (question.answer.getIndex() > 0) {
-					answerMenu.setSelectedIndex(question.answer.getIndex()-1);
-				}
 				answerMenu.setActionCommand("User Input"); // reactive the answer listener since we're done
 				answerMenu.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			
@@ -587,7 +589,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 		// return;
 		
-		System.out.println("fillAnswer called for " + answer.getString());
+		//System.out.println("fillAnswer called for " + answer.getString());
 		Study study = egoClient.getStudy();
 
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
@@ -666,6 +668,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answer.setValue((answer.string.length()));
 				answer.answered = (answer.getValue() != 0);
 			} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
+				
+				// option items
 				if (question.getSelections().length <= answerButtons.length) {
 					int buttonIndex = selectedButtonIndex(answerButtons);
 					answer.answered = (buttonIndex != -1);
@@ -685,7 +689,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
-					// minus 1 because there's a "Please select an answer" option for 
+					// minus 1 because there's a "Please select an answer" option for
+					// combo boxes
 					int selectionIndex = answerMenu.getSelectedIndex() - 1;
 					
 					answer.answered = (selectionIndex >= 0) && (selectionIndex < question.getSelections().length+1);
@@ -694,19 +699,18 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.timestamp = generateTimeStamp();
 						//System.out.println("Timestamp: " + answer.timestamp);
 
-						answer.setValue((question.getSelections()[selectionIndex]
-						                                          .getValue()));
+						Selection sel = question.getSelections()[selectionIndex];
+						answer.setValue(sel.getValue());
 
 						// added 11/27/2007
-						answer.setIndex(question.getSelections()[selectionIndex]
-						                                         .getIndex());
+						answer.setIndex(sel.getIndex());
 
 						answer.adjacent = question.getSelections()[selectionIndex]
 						                                           .isAdjacent();
 						answer.string = question.getSelections()[selectionIndex]
 						                                         .getString();
-						// answer.timestamp =
-						// DateFormat.getDateInstance().format(new Date());
+						
+						System.out.println("Answered: " + answer.getString());
 					}
 				}
 			}
@@ -841,7 +845,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void questionAnsweredEventHandler(ActionEvent e) {
-		System.out.println("questionAnsweredEventHandler");
+		//System.out.println("questionAnsweredEventHandler");
 		if (e.getActionCommand() != "Initialization") {
 			fillAnswer(question.answer);
 			setButtonNextState();

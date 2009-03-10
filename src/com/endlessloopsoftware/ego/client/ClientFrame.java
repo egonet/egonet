@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -42,6 +42,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
+import org.egonet.gui.MDIChildFrame;
+import org.egonet.mdi.MDIContext;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
@@ -55,7 +57,8 @@ import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 
-public class ClientFrame extends JFrame {
+// implement MdiChildFrame and molest the public menu!
+public class ClientFrame extends MDIChildFrame {
 	
 	/**
 	 * Used to create drop down menus of different "modes"
@@ -69,8 +72,6 @@ public class ClientFrame extends JFrame {
 
 	private final JMenu jMenuFile = new JMenu("File");
 
-	private final JMenu jMenuHelp = new JMenu("Help");
-
 	private final JMenu jMenuGraph = new JMenu("Graph");
 
 	private final JMenuItem graphProperties = new JMenuItem("Graph Properties");
@@ -78,8 +79,6 @@ public class ClientFrame extends JFrame {
 	private final JMenuItem nodeProperties = new JMenuItem("Node Properties");
 
 	private final JMenuItem edgeProperties = new JMenuItem("Edge Properties");
-
-	private final JMenuItem jMenuHelpAbout = new JMenuItem("About");
 
 	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
 
@@ -122,18 +121,18 @@ public class ClientFrame extends JFrame {
 
 	// Component initialization
 	private void jbInit() {
-		this.setSize(new Dimension(700, 600));
-		this.setTitle("Egocentric Networks Study Tool");
+		setSize(new Dimension(700, 600));
+		setTitle("Interviewing and Analysis Tool");
 
 		createMenuBar(ClientFrame.SELECT);
 
-		this.setContentPane(new JPanel());
-
-		jMenuHelpAbout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jMenuHelpAbout_actionPerformed(e);
-			}
-		});
+		setContentPane(new JPanel());
+		
+		pack();
+		setMinimumSize(getPreferredSize());
+		setMaximizable(true);
+		setIconifiable(true);
+		setResizable(true);
 
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -223,10 +222,11 @@ public class ClientFrame extends JFrame {
 	}
 
 	public void flood() {
-		Dimension size = this.getSize();
-		this.pack();
-		this.setSize(size);
-		this.validate();
+		validate();
+		pack();
+		setMinimumSize(getPreferredSize());
+		setSize(getPreferredSize());
+		System.out.println("flood");
 	}
 
 	// File | Exit action performed
@@ -238,14 +238,9 @@ public class ClientFrame extends JFrame {
 		System.exit(0);
 	}
 
-	// Help | About action performed
-	public void jMenuHelpAbout_actionPerformed(ActionEvent e) {
-	    Shared.displayAboutBox(this);
-	}
-
 	// Overridden so we can exit when window is closed
 	protected void processWindowEvent(WindowEvent e) {
-		super.processWindowEvent(e);
+		//TODO super.processWindowEvent(e);
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			try { jMenuFileExit_actionPerformed(null); } catch (Exception ex) { throw new RuntimeException(ex); }
 		}
@@ -254,7 +249,6 @@ public class ClientFrame extends JFrame {
 	public void createMenuBar(int mode) {
 		jMenuBar1.removeAll();
 		jMenuFile.removeAll();
-		jMenuHelp.removeAll();
 		jMenuGraph.removeAll();
 
 		// File Menu
@@ -295,8 +289,6 @@ public class ClientFrame extends JFrame {
 			jMenuFile.add(exit);
 		}
 		jMenuBar1.add(jMenuFile);
-		jMenuHelp.add(jMenuHelpAbout);
-		jMenuBar1.add(jMenuHelp);
 
 		this.setJMenuBar(jMenuBar1);
 	}
@@ -510,7 +502,7 @@ public class ClientFrame extends JFrame {
 	    
 	      egoClient.getFrame().setContentPane(tabbedPane);
 	      egoClient.getFrame().createMenuBar(ClientFrame.SELECT);
-	      egoClient.getFrame().pack();
+	      flood();
 	      //egoClient.getFrame().setSize(600, 500);
 	      
 	      if (center)
@@ -542,7 +534,7 @@ public class ClientFrame extends JFrame {
 	            {
 	                // Build Screen
 	                egoClient.getFrame().setVisible(false);
-	                com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
+	                //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
 	                progressMonitor.setProgress(5);
 	                egoClient.getFrame().setContentPane(new ViewInterviewPanel(egoClient, progressMonitor));
 	                progressMonitor.setProgress(95);
@@ -555,7 +547,7 @@ public class ClientFrame extends JFrame {
 	          
 	          public void finished()
 	            {
-	            com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
+	            //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
 	             progressMonitor.close();
 	                egoClient.getFrame().setVisible(true);
 	          }
@@ -584,12 +576,12 @@ public class ClientFrame extends JFrame {
     {
        // Build Screen
        egoClient.getFrame().setVisible(false);
-       com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
+       //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
        egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, stats));
        egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
        egoClient.getFrame().pack();
-      // egoClient.getFrame().setSize(640, 530);
-       com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
+      // 
+       //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
        egoClient.getFrame().setVisible(true);
     }
     
@@ -623,17 +615,16 @@ public class ClientFrame extends JFrame {
           {
              // Build Screen
              egoClient.getFrame().setVisible(false);
-             com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
+             //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
              egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, progressMonitor));
              egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
              egoClient.getFrame().pack();
-             //egoClient.getFrame().setSize(640, 530);
              return egoClient.getFrame();
           }
 
           public void finished()
           {
-             com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
+             //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
              egoClient.getFrame().setVisible(true);
 
              if (progressMonitor.isCanceled())
@@ -650,4 +641,22 @@ public class ClientFrame extends JFrame {
 
        worker.start();
     }
+
+	public void focusActivated() {
+		System.out.println(this.getTitle() + " activated");
+		
+	}
+
+	public void focusDeactivated() {
+		System.out.println(this.getTitle() + " deactivated");
+		
+	}
+
+	public JInternalFrame getInternalFrame() {
+		return this;
+	}
+
+	public void setMdiContext(MDIContext context) {
+		// TODO Auto-generated method stub
+	}
 }

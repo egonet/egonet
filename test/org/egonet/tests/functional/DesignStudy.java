@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
-import com.endlessloopsoftware.ego.author.EgoNet;
 import com.endlessloopsoftware.ego.author.PromptPanel;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
@@ -45,7 +44,7 @@ public class DesignStudy {
 	@Before
 	public void setUp() throws Exception
 	{
-		window = new FrameFixture(EgoNet.getInstance().getFrame());
+		//window = new FrameFixture(EgoNet.getInstance().getFrame());
 		window.show(); // shows the frame to test
 	}
 
