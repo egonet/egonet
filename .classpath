@@ -18,5 +18,8 @@
 	<classpathentry kind="lib" path="lib/fest-swing-1.0b1/lib/MRJToolkitStubs-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-3.7-swing.jar"/>
+	<classpathentry kind="lib" path="lib/opencsv-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/functionalj.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

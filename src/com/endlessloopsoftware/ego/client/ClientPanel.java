@@ -19,8 +19,8 @@
 package com.endlessloopsoftware.ego.client;
 
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,13 +28,18 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.JFileChooser;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.ExtensionFileFilter;
 
-import com.cim.dlgedit.loader.DialogResource;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
+
+import org.egonet.io.RawDataCSVWriter;;
 
 public class ClientPanel 
 	extends JPanel
@@ -42,103 +47,101 @@ public class ClientPanel
  	private JLabel 			titleLabel;
 	private JButton 		selectStudyButton;
 	private JButton 		statisticsButton;
+	private JButton 		rawDataButton;
 	private JButton 		viewInterviewButton;
 	private JButton 		startInterviewButton;
-
-	private JLabel studyNameLabel = new JLabel();
 
 	private final EgoClient egoClient;
 	public ClientPanel(EgoClient egoClient)
 	{
 		this.egoClient = egoClient;
-//			 Load up the dialog contents.
-			java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream("com/endlessloopsoftware/ego/client/localSelect.gui_xml");
-			JPanel panel = DialogResource.load(is);
-			//JPanel panel = DialogResource.load("com/endlessloopsoftware/ego/client/localSelect.gui_xml");
-
-//			 Attach beans to fields.
-			selectStudyButton    = (JButton) DialogResource.getComponentByName(panel, "SelectStudy");
-			viewInterviewButton 	= (JButton) DialogResource.getComponentByName(panel, "ViewInterview");
-			statisticsButton 		= (JButton) DialogResource.getComponentByName(panel, "SummaryStatistics");
-			startInterviewButton = (JButton) DialogResource.getComponentByName(panel, "StartInterview");
-			titleLabel 				= (JLabel) DialogResource.getComponentByName(panel, "Title");
-			studyNameLabel       = (JLabel) DialogResource.getComponentByName(panel, "StudyName");
-			
-			jbInit();
-			
-			this.setLayout(new GridLayout(1, 1));
-			this.add(panel);
+		initComponents();
 	}
-
-	//Component initialization
-	private void jbInit() 
-	{
+	
+	private void initComponents() {
+			
+		// Create components
+		
+		titleLabel = new JLabel("Egocentric Network Study");
 		titleLabel.setBackground(Color.lightGray);
 		titleLabel.setBorder(BorderFactory.createRaisedBevelBorder());
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-		studyNameLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-		studyNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		studyNameLabel.setText(" ");
-
+		
+		selectStudyButton = new JButton("Select Study");
 		selectStudyButton.addActionListener(new CatchingAction("doSelectStudy") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				doSelectStudy(e);
 			}
 		});
-
+		
+		viewInterviewButton = new JButton("View Interview");
 		viewInterviewButton.addActionListener(new CatchingAction("doViewInterview") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				doViewInterview(e);
 				}
 			});
-
+		
+		rawDataButton = new JButton("Raw Data");
+		rawDataButton.addActionListener(new CatchingAction("saveRawDataAsCSV") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				saveRawDataAsCSV();
+			}
+		});
+		
+		statisticsButton = new JButton("Summary Statistics");
 		statisticsButton.addActionListener(new CatchingAction("doSummaryStatistics") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				doSummaryStatistics(e);
 				}
 			});
-
+		
+		startInterviewButton = new JButton("Start Interview");
 		startInterviewButton.addActionListener(new CatchingAction("doStartInterview") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				doStartInterview(e);
 				}
 			});
-
-		fillPanel();
+		
+		// Layout components
+		this.setLayout(
+				new MigLayout(
+						"gapx 10, gapy 15",
+						"[grow]", "[grow]"));
+		this.add(this.titleLabel, "gaptop 10, span, growx");
+		this.add(this.selectStudyButton, "span, growx");
+		this.add(this.viewInterviewButton, "sg 1");
+		this.add(this.rawDataButton, "sg 1");
+		this.add(this.statisticsButton, "sg 1, wrap");
+		this.add(this.startInterviewButton, "span, growx");
+		
+		// Part of building is a set of adjustments that need to be repeated when a study is selected.
+		adjustControlState();
 	}
 
-	void fillPanel()
+	void adjustControlState()
 	{
-		startInterviewButton.setEnabled(egoClient.getStorage().getStudyLoaded());
-		viewInterviewButton.setEnabled(egoClient.getStorage().getStudyLoaded());
-		statisticsButton.setEnabled(egoClient.getStorage().getStudyLoaded());
-
-		studyNameLabel.setText(egoClient.getStudy().getStudyName());
-		if (studyNameLabel.getText() == null)
-		{
-			studyNameLabel.setText(" ");
-		}
-
-		if (egoClient.getStorage().getStudyLoaded())
-		{
-
-		}
+		Boolean loaded = egoClient.getStorage().getStudyLoaded();
+		this.viewInterviewButton.setEnabled(loaded);
+		this.rawDataButton.setEnabled(loaded);
+		this.statisticsButton.setEnabled(loaded);
+		this.startInterviewButton.setEnabled(loaded);
+		this.selectStudyButton.setText(
+				loaded ? "Study: "+egoClient.getStudy().getStudyName() : "Select Study");
 	}
 
 	private void doSelectStudy(ActionEvent e) throws Exception
 	{
 		/* Clear out old data */
-      egoClient.setStudy(new Study());
-      egoClient.setStorage(new EgoStore(egoClient));
-      egoClient.setInterview(null);
+		egoClient.setStudy(new Study());
+		egoClient.setStorage(new EgoStore(egoClient));
+		egoClient.setInterview(null);
 
 		/* Read new study */
-      egoClient.getStorage().selectStudy();
-      egoClient.getStorage().readPackage();
-		studyNameLabel.setText(egoClient.getStudy().getStudyName());
-
-		fillPanel();
+		egoClient.getStorage().selectStudy();
+		egoClient.getStorage().readPackage();
+		
+		/* Selecting a study enables some controls and changes the appearance of others. */
+		adjustControlState();
 	}
 
 	private void doStartInterview(ActionEvent e)
@@ -182,6 +185,23 @@ public class ClientPanel
 		egoClient.getStorage().setInterviewFile(null);
 		egoClient.setInterview(null);
 		egoClient.getStorage().selectInterview();
+	}
+	
+	private void saveRawDataAsCSV() throws Exception {
+		File studyDirectory = 
+			new File(egoClient.getStorage().getPackageFile().getParent());
+		JFileChooser fc = new JFileChooser(studyDirectory);
+		fc.addChoosableFileFilter(new ExtensionFileFilter("CSV Files","csv"));
+		fc.setDialogTitle("Save raw data as CSV file");
+		if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File interviewDirectory = 
+				new File(egoClient.getStorage().getPackageFile().getParent(), 
+						"/Interviews/");
+			File outputCSV = fc.getSelectedFile();
+			new RawDataCSVWriter(egoClient.getStudy())
+			.writeFromInterviewDirectoryToFile(
+					interviewDirectory, outputCSV);
+		}
 	}
 
 	private void doSummaryStatistics(ActionEvent e)

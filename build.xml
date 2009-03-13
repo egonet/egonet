@@ -53,7 +53,9 @@
 			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
 			<zipfileset src="${dir.lib.Enet}/colt.jar" />
-
+			<zipfileset src="${dir.lib.Enet}/miglayout-3.7-swing.jar" />
+			<zipfileset src="${dir.lib.Enet}/opencsv-1.8.jar" />
+			<zipfileset src="${dir.lib.Enet}/functionalj.jar" />
 		</jar>
 	</target>
 

@@ -99,15 +99,7 @@ public class Answer implements Cloneable {
     }
 
     public String toString() {
-        String str = null;
-        if (string == null) {
-            Integer val = getValue();
-            str = val.toString();
-            ;
-        } else {
-            str = string;
-        }
-        return str;
+    	return string == null ? getValue()+"" : string;
     }
 
     public String getString() {
