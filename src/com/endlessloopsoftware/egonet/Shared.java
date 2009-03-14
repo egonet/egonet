@@ -90,7 +90,6 @@ public class Shared
 	public static final int MAX_ANSWER_TYPE 			= 2;
 	
 	public static final int 		   NO_ALTER				= -1;
-	public static final AlterPair NO_ALTERS				= new AlterPair();
    
    /* UI Types */
    public final static String    TRADITIONAL_QUESTIONS  = "Traditional";
