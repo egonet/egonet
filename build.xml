@@ -63,7 +63,7 @@
 		<!-- Creating jar file for the main class EgoClient.java -->
 		<jar destfile="${dir.dist.Egonet}/Egonet.jar" duplicate="preserve">
 			<manifest>
-				<attribute name="Main-Class" value="${main.class.EgoClient}" />
+				<attribute name="Main-Class" value="${main.class.Egonet}" />
 				<attribute name="Class-Path" value="Egonet-lib.jar" />
 			</manifest>
 			<zipfileset dir="${dir.build.Egonet}" includes="**/*.class" />
