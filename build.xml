@@ -59,12 +59,11 @@
 		</jar>
 	</target>
 
-	<target name="jar" depends="compile,lib-jar">
+	<target name="jar" depends="clean,compile,lib-jar">
 		<!-- Creating jar file for the main class EgoClient.java -->
 		<jar destfile="${dir.dist.Egonet}/Egonet.jar" duplicate="preserve">
 			<manifest>
 				<attribute name="Main-Class" value="${main.class.Egonet}" />
-				<attribute name="Class-Path" value="Egonet-lib.jar" />
 			</manifest>
 			<zipfileset dir="${dir.build.Egonet}" includes="**/*.class" />
 			<zipfileset dir="${dir.src.Egonet}" />
@@ -90,17 +89,5 @@
 		<zip destfile="${dir.dist.Egonet}/Ego-jar-${build.date}.zip" basedir="${dir.dist.Egonet}" includes="*.jar"/>
 	</target>
 
-	<!-- appears to be broken currently -->
-	<target name="copy-to-sourceforge">
-		<input message="Please enter SourceForge username:" addproperty="sf.user" />
-		<input message="Please enter SourceForge password:" addproperty="sf.pass" />
-		<scp 
-			verbose="true" failonerror="true"
-			remoteTodir="${sf.user}@frs.sourceforge.net:uploads/"
-			password="${sf.pass}">
-			<fileset file="${dir.dist.Egonet}/Ego-exe-${build.date}.zip"/>
-			<fileset file="${dir.dist.Egonet}/Ego-jar-${build.date}.zip"/>
-		</scp>
-	</target>
 </project>
 
