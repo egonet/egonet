@@ -131,17 +131,39 @@ public class PDFWriter {
 		document.add(selections);
 		document.add(new Paragraph());
 		
-		Answer answer = question.answer;
-		
-		document.add(new Paragraph("Answered: " + answer.answered));
-		if(answer.answered) {
-			document.add(new Paragraph("Answer Index: " + answer.getIndex()));
-			document.add(new Paragraph("Answer Value: " + answer.getValue()));
+		if(includeResponses) {
+			java.util.List<Answer> answers = interview.getAnswersByUniqueId(question.UniqueId);
 
-			if(answer.getAlters() != null && answer.getAlters().size() > 0) {
-				document.add(new Paragraph("Answer Alters: " + answer.getAlters()));
+			List answeredQuestions = new List();
+			
+			for(Answer answer : answers) {
+
+				writeLine(document);
+				
+				document.add(new Paragraph("Answered: " + answer.answered));
+				document.add(new Paragraph("Answer Index: " + answer.getIndex()));
+				document.add(new Paragraph("Answer Value: " + answer.getValue()));
+
+				if(answer.getAlters() != null && answer.getAlters().size() > 0) {
+					
+					String names = "";
+					java.util.List<Integer> alters = answer.getAlters();
+					for(int i = 0; i < alters.size() ;i++) {
+						int num = alters.get(i);
+						names += interview.getAlterList()[num] + " ("+num+")";
+						
+						if(i < alters.size()-1)
+							names += ", ";
+					}
+					
+					document.add(new Paragraph("Answer Alters: " + names));
+				}
+				document.add(new Paragraph("String answer: " + answer.string));
+				
+				
 			}
-			document.add(new Paragraph("String answer: " + answer.string));
+			
+			document.add(answeredQuestions);
 		}
 		document.add(new Paragraph());
 		

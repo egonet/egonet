@@ -571,6 +571,16 @@ public class Interview implements Comparable<Interview> {
 	public Question getQuestion(int index) {
 		return _study.getQuestion(_answers[index].questionId);
 	}
+	
+	public List<Answer> getAnswersByUniqueId(long id) {
+		List<Answer> list = new ArrayList<Answer>();
+		for(Answer answer : _answers) {
+			if(answer.questionId == id)
+				list.add(answer);
+		}
+		
+		return list;
+	}
 
 	private String completeText(String s, List<Integer> alters) {
 	    int [] aa = new int[alters.size()];

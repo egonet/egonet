@@ -43,7 +43,7 @@ public class EgoStore {
 	private Window parent;
 
 	// represents all loaded interviews and their study
-	private Tuple<File, Study> loadedStudy;
+	private Tuple<File, Study> currentStudy;
 
 	// represents an interview in progress
 	private Tuple<File, Interview> currentInterview;
@@ -66,7 +66,7 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
-		InterviewWriter iw = new InterviewWriter(loadedStudy.second(),
+		InterviewWriter iw = new InterviewWriter(currentStudy.second(),
 				currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
@@ -95,7 +95,7 @@ public class EgoStore {
 
 		try {
 			String[] name = currentInterview.second().getName();
-			File path = new File(loadedStudy.first().getParent(),
+			File path = new File(currentStudy.first().getParent(),
 			"/Interviews/");
 			File f = new File(path, name[0].toLowerCase() + "_"
 					+ name[1].toLowerCase() + ".int");
@@ -108,7 +108,7 @@ public class EgoStore {
 				exists = true;
 
 				try {
-					InterviewReader ir = new InterviewReader(loadedStudy
+					InterviewReader ir = new InterviewReader(currentStudy
 							.second(), f);
 					complete = ir.getInterview().isComplete();
 				} catch (Exception ex) {
@@ -213,7 +213,7 @@ public class EgoStore {
 	 */
 	public Interview readInterview(File interviewFile) throws CorruptedInterviewException {
 		try {
-			InterviewReader ir = new InterviewReader(loadedStudy.second(), interviewFile);
+			InterviewReader ir = new InterviewReader(currentStudy.second(), interviewFile);
 			Interview interview = ir.getInterview();
 			
 			currentInterview = new Tuple<File, Interview>(interviewFile, interview);
@@ -234,8 +234,8 @@ public class EgoStore {
 		File exportFile;
 		boolean complete = false;
 
-		if (loadedStudy.first() != null)
-			exportFileChooser.setCurrentDirectory(loadedStudy.first()
+		if (currentStudy.first() != null)
+			exportFileChooser.setCurrentDirectory(currentStudy.first()
 					.getParentFile());
 
 		exportFileChooser.addChoosableFileFilter(new ExtensionFileFilter(
@@ -291,16 +291,16 @@ public class EgoStore {
 						if (exportFile.getName().toLowerCase().endsWith("pdf")) {
 
 							PDFWriter pw = includeInterview ? new PDFWriter(
-									loadedStudy.second(), currentInterview
+									currentStudy.second(), currentInterview
 									.second()) : new PDFWriter(
-											loadedStudy.second());
+											currentStudy.second());
 									pw.write(exportFile);
 						} else if (exportFile.getName().toLowerCase().endsWith(
 						"rtf")) {
 							RTFWriter pw = includeInterview ? new RTFWriter(
-									loadedStudy.second(), currentInterview
+									currentStudy.second(), currentInterview
 									.second()) : new RTFWriter(
-											loadedStudy.second());
+											currentStudy.second());
 									pw.write(exportFile);
 
 						}
@@ -318,11 +318,11 @@ public class EgoStore {
 	}
 
 	public File getStudyFile() {
-		return loadedStudy.first();
+		return currentStudy.first();
 	}
 
 	public Study getStudy() {
-		return loadedStudy.second();
+		return currentStudy.second();
 	}
 
 	public File getInterviewFile() {
@@ -334,10 +334,10 @@ public class EgoStore {
 	}
 
 	public void chooseStudy() throws IOException, EgonetException {
-		File studyFile = selectStudy(loadedStudy != null ? loadedStudy.first() : null);
+		File studyFile = selectStudy(currentStudy != null ? currentStudy.first() : null);
 		StudyReader sr = new StudyReader(studyFile);
 		Study study = sr.getStudy();
-		loadedStudy = new Tuple<File, Study>(studyFile, study);
+		currentStudy = new Tuple<File, Study>(studyFile, study);
 	}
 
 	/**
@@ -421,7 +421,7 @@ public class EgoStore {
 
 
 				Study study = sr.getStudy();
-				loadedStudy = new Tuple<File, Study>(file, study);
+				currentStudy = new Tuple<File, Study>(file, study);
 			}
 			catch (Exception e)
 			{
@@ -431,7 +431,7 @@ public class EgoStore {
 						"Study Reading Error",
 						JOptionPane.ERROR_MESSAGE);
 
-				loadedStudy = null;
+				currentStudy = null;
 			}
 		}
 	}
@@ -520,7 +520,7 @@ public class EgoStore {
 					Study study = new Study();
 					study.setStudyId(System.currentTimeMillis());
 
-					loadedStudy = new Tuple<File, Study>(newStudyFile, study);
+					currentStudy = new Tuple<File, Study>(newStudyFile, study);
 					getStudy().setStudyName(projectName);
 
 					/* Write out default info */
@@ -774,7 +774,7 @@ public class EgoStore {
 						sw.setStudy(getStudy());
 
 
-						loadedStudy = new Tuple<File, Study>(newStudyFile, getStudy());
+						currentStudy = new Tuple<File, Study>(newStudyFile, getStudy());
 						complete 		= true;
 
 						// Store location in prefs file
@@ -804,11 +804,11 @@ public class EgoStore {
 	}
 
 	public void createNewStudy() {
-		loadedStudy = new Tuple<File, Study>(null, new Study());
+		currentStudy = new Tuple<File, Study>(null, new Study());
 	}
 
 	public boolean isStudyLoaded() {
-		return loadedStudy != null && loadedStudy.second() != null;
+		return currentStudy != null && currentStudy.second() != null;
 	}
 
 	/***************************************************************************
