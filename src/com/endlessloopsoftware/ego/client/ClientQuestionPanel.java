@@ -767,7 +767,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
 			{
-			    egoClient.getStorage().writeInterviewFile();
+			    egoClient.getStorage().writeCurrentInterview();
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
@@ -783,7 +783,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 		} else {
 			try {
-				egoClient.getInterview().completeInterview(egoClient);
+				egoClient.getInterview().completeInterview(egoClient.getStorage());
 			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(egoClient.getFrame(),
 						"Unable to create interview statistics summary file.",

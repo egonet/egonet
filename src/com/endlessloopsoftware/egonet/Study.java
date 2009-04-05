@@ -32,7 +32,7 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 /*******************************************************************************
  * Stores basic configuration data for the study including question order lists
  */
-public class Study extends Observable
+public class Study extends Observable implements Comparable<Study>
 {
 	private long              _uniqueId       = -1L;
    private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
@@ -741,5 +741,9 @@ public class Study extends Observable
         else
             return getNetworkSize();
     }
+
+	public int compareTo(Study o) {
+		return (int)(getStudyId() - o.getStudyId());
+	}
 	
 }

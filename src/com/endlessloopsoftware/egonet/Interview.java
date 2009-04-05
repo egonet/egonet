@@ -28,13 +28,13 @@ import java.util.Set;
 import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.gui.EgoStore;
 import org.egonet.util.ELSMath;
-import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
 
-public class Interview {
+public class Interview implements Comparable<Interview> {
 
 	private final Answer[] _answers;
 
@@ -645,18 +645,18 @@ public class Interview {
 	 * @throws IOException
 	 * @throws IOException 
 	 */
-	public void completeInterview(EgoClient egoClient) throws IOException {
+	public void completeInterview(EgoStore storage) throws IOException {
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
 		Question q = _study.getFirstStatableQuestion();
-
 		_complete = true;
-		egoClient.getStorage().writeInterviewFile();
+		
+		storage.writeCurrentInterview();
 
 		if (q != null) {
-			Statistics stats = egoClient.getInterview().generateStatistics(q);
-			egoClient.getStorage().writeStatisticsFiles(stats, _egoName);
+			Statistics stats = storage.getInterview().generateStatistics(q);
+			storage.writeStatisticsFiles(stats, _egoName);
 		}
 	}
 
@@ -813,6 +813,10 @@ public class Interview {
 
 	public int get_numAnswers() {
 		return _numAnswers;
+	}
+
+	public int compareTo(Interview o) {
+		return _egoName.hashCode() - o._egoName.hashCode();
 	}
 
 }

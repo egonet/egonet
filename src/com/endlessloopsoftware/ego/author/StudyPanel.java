@@ -236,7 +236,7 @@ public class StudyPanel extends JPanel
 			study_name_field.			setEnabled(hasStudy);
 			study_name_label.			setEnabled(hasStudy);
 			study_num_alters_label.	setEnabled(hasStudy);
-			study_num_alters_field.	setEnabled(hasStudy && !egoNet.getStorage().getStudyInUse());
+			study_num_alters_field.	setEnabled(hasStudy);
 			study_path_label.			setEnabled(hasStudy);
 			study_path_field.			setEnabled(hasStudy);
 

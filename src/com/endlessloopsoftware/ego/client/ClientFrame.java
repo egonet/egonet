@@ -42,8 +42,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
+import org.egonet.gui.EgoStore;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
+import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
@@ -82,6 +84,8 @@ public class ClientFrame extends MDIChildFrame {
 
 	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
 
+	private final JMenuItem exportInterview = new JMenuItem("Export interview as...");
+	
 	private final JMenuItem exit = new JMenuItem("Exit");
 
 	public final JMenuItem saveAlterSummary = new JMenuItem("Save Alter Summary");
@@ -176,7 +180,18 @@ public class ClientFrame extends MDIChildFrame {
 		saveInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					egoClient.getInterview().completeInterview(egoClient);
+					egoClient.getInterview().completeInterview(egoClient.getStorage());
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+		
+		exportInterview.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					egoClient.getStorage().exportStudy(true);
+					egoClient.getInterview();
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
@@ -205,11 +220,12 @@ public class ClientFrame extends MDIChildFrame {
 		});
 		
 		
-		recalculateStatistics
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						egoClient.setInterview(egoClient.getStorage().readInterview());
-						if (egoClient.getInterview() != null)
+		recalculateStatistics.addActionListener(new CatchingAction("recalculateStatistics") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+						EgoStore storage = egoClient.getStorage();
+						Interview interview = storage.readInterview(storage.getInterviewFile());
+						
+						if (interview != null)
 						    gotoViewInterviewPanel();
 					}
 				});
@@ -232,7 +248,7 @@ public class ClientFrame extends MDIChildFrame {
 	// File | Exit action performed
 	public void jMenuFileExit_actionPerformed(ActionEvent e) throws Exception{
 		if (egoClient.getInterview() != null && !egoClient.getInterview().isComplete()) {
-			egoClient.getStorage().writeInterviewFile();
+			egoClient.getStorage().writeCurrentInterview();
 		}
 
 		System.exit(0);
@@ -276,6 +292,7 @@ public class ClientFrame extends MDIChildFrame {
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraph);
 			jMenuFile.add(saveInterview);
+			jMenuFile.add(exportInterview);
 			jMenuFile.add(recalculateStatistics);
 			
 			jMenuFile.addSeparator();
@@ -312,7 +329,7 @@ public class ClientFrame extends MDIChildFrame {
 	void saveGraph_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = egoClient.getInterview().getName() + "_graph";
-		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
+		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
 				.getParent()
 				+ "/Graphs");
 		currentDirectory.mkdir();
@@ -348,7 +365,7 @@ public class ClientFrame extends MDIChildFrame {
 	void saveEdgeList_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = egoClient.getInterview().getName() + "_edgelist";
-		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
+		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
 				.getParent()
 				+ "/Graphs");
 		currentDirectory.mkdir();
@@ -411,7 +428,7 @@ public class ClientFrame extends MDIChildFrame {
 	void saveGraphCoordinates_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = egoClient.getInterview().getName() + "_graph_coordinates";
-		File currentDirectory = new File(egoClient.getStorage().getPackageFile()
+		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
 				.getParent()
 				+ "/Graphs");
 		currentDirectory.mkdir();
@@ -440,7 +457,7 @@ public class ClientFrame extends MDIChildFrame {
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
 		final File currentDirectory = new File(egoClient.getStorage()
-				.getPackageFile().getParent(), "Graphs");
+				.getStudyFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
 		File file = new File(currentDirectory.getAbsolutePath() + fileName);
 
@@ -466,7 +483,7 @@ public class ClientFrame extends MDIChildFrame {
 		String[] name = egoClient.getInterview().getName();
 		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
 
-		final File currentDirectory = new File(egoClient.getStorage().getPackageFile().getParent(), "Graphs");
+		final File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
 		File file = new File(currentDirectory.getAbsolutePath() + fileName);
 

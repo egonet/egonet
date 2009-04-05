@@ -35,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StatisticsFileReader;
 import org.egonet.util.DirList;
@@ -120,8 +121,8 @@ public class SummaryPanel extends JPanel
 
 	private void loadInterviewArray(ProgressMonitor progress)
 	{
-		File intPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Interviews/");
-		File istPath = new File(egoClient.getStorage().getPackageFile().getParent(), "/Statistics/");
+		File intPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Interviews/");
+		File istPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Statistics/");
 		String[] intFiles = DirList.getDirList(intPath, "int");
 		Set<File> istFileSet = new HashSet<File>();
 		int i = 0, p = 0;

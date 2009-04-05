@@ -14,14 +14,14 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.egonet.gui.EgoStore;
+import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
 import org.egonet.util.Pair;
 
 import samples.graph.BasicRenderer;
 
-import com.endlessloopsoftware.ego.client.EgoStore;
-import com.endlessloopsoftware.ego.client.EgoStore.InterviewFileFilter;
 import com.endlessloopsoftware.ego.client.graph.ELSFRLayout;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
@@ -40,7 +40,8 @@ public class CombineInterviews
 	public void doCombineInterviews() throws Exception
 	{
 		/* Read new study */
-		File studyFile = EgoStore.selectStudy(null, new File("."));
+		EgoStore store = new EgoStore(null);
+		File studyFile = store.selectStudy(new File("."));
 		
 		StudyReader sr = new StudyReader(studyFile);
 		Study study = sr.getStudy();

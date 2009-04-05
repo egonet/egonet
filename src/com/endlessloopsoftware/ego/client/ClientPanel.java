@@ -21,7 +21,6 @@ package com.endlessloopsoftware.ego.client;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,13 +30,15 @@ import javax.swing.SwingConstants;
 import javax.swing.JFileChooser;
 
 import net.miginfocom.swing.MigLayout;
+import net.sf.functionalj.Function0;
+import net.sf.functionalj.FunctionException;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.gui.EgoStore;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
 
 import org.egonet.io.RawDataCSVWriter;;
 
@@ -120,7 +121,7 @@ public class ClientPanel
 
 	void adjustControlState()
 	{
-		Boolean loaded = egoClient.getStorage().getStudyLoaded();
+		Boolean loaded = egoClient.getStorage().isStudyLoaded();
 		this.viewInterviewButton.setEnabled(loaded);
 		this.rawDataButton.setEnabled(loaded);
 		this.statisticsButton.setEnabled(loaded);
@@ -132,13 +133,11 @@ public class ClientPanel
 	private void doSelectStudy(ActionEvent e) throws Exception
 	{
 		/* Clear out old data */
-		egoClient.setStudy(new Study());
-		egoClient.setStorage(new EgoStore(egoClient));
-		egoClient.setInterview(null);
+		egoClient.setStorage(new EgoStore(null));
+		egoClient.getStorage().unsetCurrentInterview();
 
 		/* Read new study */
-		egoClient.getStorage().selectStudy();
-		egoClient.getStorage().readPackage();
+		egoClient.getStorage().chooseStudy();
 		
 		/* Selecting a study enables some controls and changes the appearance of others. */
 		adjustControlState();
@@ -150,7 +149,11 @@ public class ClientPanel
       egoClient.getStorage().setPackageInUse();
 		try
 		{
-         egoClient.setInterview(new Interview(egoClient.getStudy()));
+         egoClient.getStorage().setCurrentInterview(new Interview(egoClient.getStudy()), null);
+         
+         
+         
+         
 			if (!egoClient.getInterview()._statisticsAvailable)
 			{
 				/* No Structural question for this study, warn user */
@@ -161,7 +164,7 @@ public class ClientPanel
 
 				if (option == JOptionPane.NO_OPTION)
 				{
-					egoClient.setInterview(null);
+					egoClient.getStorage().unsetCurrentInterview();
 				}
 			}
 		}
@@ -169,7 +172,7 @@ public class ClientPanel
 			/* No Structural question for this study, warn user */
 			JOptionPane.showMessageDialog(egoClient.getFrame(), "Unable to create an interview from this file",
 					"No Statistics Available", JOptionPane.ERROR_MESSAGE);
-			egoClient.setInterview(null);
+			egoClient.getStorage().unsetCurrentInterview();
 		}
 
 		if (egoClient.getInterview() != null)
@@ -182,20 +185,31 @@ public class ClientPanel
 	{
 		egoClient.setUiPath(ClientFrame.VIEW_INTERVIEW);
 
-		egoClient.getStorage().setInterviewFile(null);
-		egoClient.setInterview(null);
-		egoClient.getStorage().selectInterview();
+		EgoStore storage = egoClient.getStorage();
+
+		Function0<Void> openWhenDone = new Function0<Void>() {
+			public Void call() throws FunctionException {
+				if (egoClient.getInterview() != null)
+				    egoClient.getFrame().gotoViewInterviewPanel();
+				return null;
+			}
+		};
+
+		
+		storage.unsetCurrentInterview();
+		storage.selectInterview(openWhenDone);
+		
 	}
 	
 	private void saveRawDataAsCSV() throws Exception {
 		File studyDirectory = 
-			new File(egoClient.getStorage().getPackageFile().getParent());
+			new File(egoClient.getStorage().getStudyFile().getParent());
 		JFileChooser fc = new JFileChooser(studyDirectory);
 		fc.addChoosableFileFilter(new ExtensionFileFilter("CSV Files","csv"));
 		fc.setDialogTitle("Save raw data as CSV file");
 		if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File interviewDirectory = 
-				new File(egoClient.getStorage().getPackageFile().getParent(), 
+				new File(egoClient.getStorage().getStudyFile().getParent(), 
 						"/Interviews/");
 			File outputCSV = fc.getSelectedFile();
 			new RawDataCSVWriter(egoClient.getStudy())

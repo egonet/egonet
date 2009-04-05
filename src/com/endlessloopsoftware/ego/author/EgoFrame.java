@@ -43,7 +43,6 @@ import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
 
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class EgoFrame extends MDIChildFrame implements Observer {
@@ -60,8 +59,13 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 	private final JMenuItem jMenuFileClose = new JMenuItem("Close Study");
 	private final JMenuItem jMenuFileImport = new JMenuItem("Import Questions...");
 	private final JMenuItem jMenuFileExport = new JMenuItem("Export Questions...");
+	private final JMenuItem jMenuFileExportStudy = new JMenuItem("Export Study As...");
+	
 	private final JMenuItem jMenuFileSaveAs = new JMenuItem("Save Study As...");
 	private final JMenuItem jMenuFileSave = new JMenuItem("Save Study");
+	
+	
+	
 	private final JMenuItem jMenuFileExit = new JMenuItem("Quit");
 	private final JMenu jMenuEdit = new JMenu("Edit");
 	private final JMenuItem jMenuEditCut = new JMenuItem(new DefaultEditorKit.CutAction());
@@ -141,6 +145,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		jMenuFile.addSeparator();
 		jMenuFile.add(jMenuFileImport);
 		jMenuFile.add(jMenuFileExport);
+		jMenuFile.add(jMenuFileExportStudy);
 		jMenuFile.addSeparator();
 		jMenuFile.add(jMenuFileSave);
 		jMenuFile.add(jMenuFileSaveAs);
@@ -190,6 +195,12 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 				jMenuFileSave_actionPerformed(e);
 			}
 		});
+		
+		jMenuFileExportStudy.addActionListener(new CatchingAction("jMenuFileExportStudy") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				jMenuFileExportStudy_actionPerformed(e);
+			}
+		});
 
 		jMenuFileSaveAs.addActionListener(new CatchingAction("jMenuFileSaveAs") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
@@ -230,7 +241,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		});
 
 		/* Fill panel, initialize frame */
-		egoNet.setStudy(new Study());
+		egoNet.getStorage().createNewStudy();
 		fillCurrentPanel();
 		
 		pack();
@@ -252,6 +263,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 			jMenuFileImport.setEnabled(false);
 			jMenuFileClose.setEnabled(false);
 			jMenuFileSave.setEnabled(false);
+			jMenuFileExportStudy.setEnabled(false);
 			jMenuFileSaveAs.setEnabled(false);
 			jMenuFileExport.setEnabled(false);
 			jTabbedPane.setEnabledAt(1, false);
@@ -265,6 +277,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 			jMenuFileSave.setEnabled(egoNet.getStudy().isCompatible()
 					&& egoNet.getStudy().isModified());
 			jMenuFileSaveAs.setEnabled(true);
+			jMenuFileExportStudy.setEnabled(true);
 			jMenuFileExport.setEnabled(true);
 			jTabbedPane.setEnabledAt(1, true);
 			jTabbedPane.setEnabledAt(2, true);
@@ -319,8 +332,8 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		boolean ok = closeStudyFile();
 
 		if (ok) {
-			egoNet.getStorage().setStudyFile(null);
-			egoNet.setStudy(new Study());
+			egoNet.getStorage().createNewStudy();
+			
 			fillCurrentPanel();
 			egoNet.getStudy().addObserver(this);
 			egoNet.getStudy().setModified(false);
@@ -344,7 +357,11 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 			egoNet.getStudy().setModified(false);
 		}
 	}
-
+	
+	private void jMenuFileExportStudy_actionPerformed(ActionEvent e) throws IOException {
+		egoNet.getStorage().exportStudy(false);
+	}
+	
 	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) throws IOException {
 		egoNet.getStorage().saveAsStudyFile();
 		fillStudyPanel();

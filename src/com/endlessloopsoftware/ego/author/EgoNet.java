@@ -18,28 +18,26 @@
  */
 package com.endlessloopsoftware.ego.author;
 
+import org.egonet.gui.EgoStore;
+
 import com.endlessloopsoftware.egonet.Study;
 
 public class EgoNet
 {
-	private Study study;
-	private final EgoStore	storage;
+	private final EgoStore storage;
 	private final EgoFrame	frame;
 	
 	private static EgoNet en = null;
-	public static synchronized EgoNet getInstance()
-	{
-		if(en == null)
-		{
+	public static synchronized EgoNet getInstance()	{
+		if(en == null) {
 			en = new EgoNet();
 		}
 		return en;
 	}
 	
-	private EgoNet()
-	{
-		storage	= new EgoStore(this);
-		study = new Study();
+	private EgoNet() {
+		storage	= new EgoStore(null);
+		storage.createNewStudy();
 		
 		frame = new EgoFrame(this);
 		frame.validate();
@@ -51,14 +49,6 @@ public class EgoNet
 		getInstance().frame.setVisible(true);
 	}
 
-	public Study getStudy() {
-		return study;
-	}
-
-	public void setStudy(Study study) {
-		this.study = study;
-	}
-
 	public EgoStore getStorage() {
 		return storage;
 	}
@@ -66,4 +56,10 @@ public class EgoNet
 	public EgoFrame getFrame() {
 		return frame;
 	}
+	
+	public Study getStudy() {
+		return storage.getStudy();
+	}
+	
+	
 }

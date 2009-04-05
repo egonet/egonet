@@ -18,6 +18,8 @@
  */
 package com.endlessloopsoftware.ego.client;
 
+import org.egonet.gui.EgoStore;
+
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -29,19 +31,15 @@ import com.endlessloopsoftware.egonet.Study;
  */
 public class EgoClient
 {
-	private Study			study;
 	private EgoStore		storage;
 	private ClientFrame	frame;
-	private Interview		interview;
 	private int			uiPath;
 
 	//Construct the application
 	private EgoClient()
 	{
-		study = new Study();
-		storage = new EgoStore(this);
+		storage = new EgoStore(null);
 		frame = new ClientFrame(this);
-		interview = null;
 
 		
 		frame.gotoSourceSelectPanel(true);
@@ -67,12 +65,10 @@ public class EgoClient
 	}
 
 	public Study getStudy() {
-		return study;
+		return storage.getStudy();
 	}
 
-	public void setStudy(Study study) {
-		this.study = study;
-	}
+
 
 	public EgoStore getStorage() {
 		return storage;
@@ -91,11 +87,7 @@ public class EgoClient
 	}
 
 	public Interview getInterview() {
-		return interview;
-	}
-
-	public void setInterview(Interview interview) {
-		this.interview = interview;
+		return storage.getInterview();
 	}
 
 	public int getUiPath() {
