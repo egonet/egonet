@@ -33,6 +33,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.egonet.util.AlphaDocument;
+import org.egonet.util.CatchingAction;
+
+import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
+
 import java.io.IOException;
 
 
@@ -44,7 +48,9 @@ public class StartPanel extends JPanel
 	private final JLabel firstNameLabel = new JLabel("First: ");
 	private final JTextField firstNameField = new JTextField();
 	
-	private final JLabel lastNameLabel = new JLabel("Last: ");
+	private final JLabel lastNameLabel;
+	
+	
 	private final JTextField lastNameField = new JTextField();
 	private final JButton startInterviewButton = new JButton("Start Interview");
 	private final AlphaDocument firstNameDocument = new AlphaDocument();
@@ -52,16 +58,24 @@ public class StartPanel extends JPanel
 	
 	private final EgoClient egoClient;
 
-	public StartPanel(EgoClient egoClient)
+	public StartPanel(EgoClient egoClient) throws Exception
 	{
 		this.egoClient = egoClient;
+		System.out.println("Create of start panel using " + egoClient + " - " + egoClient.getStudy().getAlterNameModel());
 		
-		firstNameField.setName("firstNameField");
+		
+		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
+			firstNameField.setName("firstNameField");
+			lastNameLabel = new JLabel("Last: ");
+		} 
+		else {
+			lastNameLabel = new JLabel("Name: ");
+		}
 		lastNameField.setName("lastNameField");
-			jbInit();
+		jbInit();
 	}
 
-	private void jbInit()
+	private void jbInit() throws Exception
 	{
 		this.setLayout(gridBagLayout1);
 
@@ -87,34 +101,39 @@ public class StartPanel extends JPanel
 				new Insets(0, 0, 0, 0),
 				0,
 				0));
-		this.add(
-			firstNameLabel,
-			new GridBagConstraints(
-				0,
-				1,
-				1,
-				1,
-				0.3,
-				0.1,
-				GridBagConstraints.CENTER,
-				GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0),
-				0,
-				0));
-		this.add(
-			firstNameField,
-			new GridBagConstraints(
-				1,
-				1,
-				1,
-				1,
-				0.7,
-				0.0,
-				GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(10, 10, 10, 10),
-				0,
-				6));
+		
+		System.out.println(EgoClient.getInstance().getStudy().getAlterNameModel());
+		System.out.println(EgoClient.getInstance().getStudy().getStudyName());
+		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
+			this.add(
+				firstNameLabel,
+				new GridBagConstraints(
+					0,
+					1,
+					1,
+					1,
+					0.3,
+					0.1,
+					GridBagConstraints.CENTER,
+					GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0),
+					0,
+					0));
+			this.add(
+				firstNameField,
+				new GridBagConstraints(
+					1,
+					1,
+					1,
+					1,
+					0.7,
+					0.0,
+					GridBagConstraints.CENTER,
+					GridBagConstraints.HORIZONTAL,
+					new Insets(10, 10, 10, 10),
+					0,
+					6));
+		}
 		this.add(
 			lastNameLabel,
 			new GridBagConstraints(
@@ -174,9 +193,9 @@ public class StartPanel extends JPanel
 			}
 		});
 
-		lastNameField.addActionListener(new java.awt.event.ActionListener()
+		lastNameField.addActionListener(new CatchingAction("lastNameField")
 		{
-			public void actionPerformed(ActionEvent e)
+			public void safeActionPerformed(ActionEvent e) throws Exception
 			{
 				lastNameField_actionPerformed(e);
 			}
@@ -244,9 +263,9 @@ public class StartPanel extends JPanel
 		}
 	}
 
-	protected void lastNameField_actionPerformed(ActionEvent e)
+	protected void lastNameField_actionPerformed(ActionEvent e) throws Exception
 	{
-		if (firstNameField.getText().length() == 0)
+		if (EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST) && firstNameField.getText().length() == 0)
 		{
 			firstNameField.requestFocus();
 		}
@@ -268,9 +287,13 @@ public class StartPanel extends JPanel
 		}
 	}
 
-	protected void textEvent(DocumentEvent e)
+	protected void textEvent(DocumentEvent e) 
 	{
+		try {
 		startInterviewButton.setEnabled(
-			(firstNameField.getText().length() > 0) && (lastNameField.getText().length() > 0));
+			(firstNameField.getText().length() > 0 || !EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) && (lastNameField.getText().length() > 0));
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }

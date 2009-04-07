@@ -24,7 +24,10 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 /**
+ * ONLY USE THIS CLASS IN INTERVIEWING PART OF THE TOOL
  * Session object representing the session of the user and the EgoNet software
+ * 
+ *  
  * @author peters
  * @author martins
  *

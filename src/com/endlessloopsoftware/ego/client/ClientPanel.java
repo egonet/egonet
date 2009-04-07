@@ -143,7 +143,7 @@ public class ClientPanel
 		adjustControlState();
 	}
 
-	private void doStartInterview(ActionEvent e)
+	private void doStartInterview(ActionEvent e) throws Exception
 	{
       egoClient.setUiPath(ClientFrame.DO_INTERVIEW);
       egoClient.getStorage().setPackageInUse();
@@ -154,16 +154,14 @@ public class ClientPanel
          
          
          
-			if (!egoClient.getInterview()._statisticsAvailable)
-			{
+			if (!egoClient.getInterview()._statisticsAvailable) {
 				/* No Structural question for this study, warn user */
 				int option = JOptionPane.showConfirmDialog(egoClient.getFrame(), "<html><p>This study has no questions with specified adjacency selections.</p>" +
 															 "<p>You will be unable to generate any structural statistics for it.</p>" +
 															 "<p>Continue anyway?</p>",
 															 "No Statistics Available", JOptionPane.YES_NO_OPTION);
 
-				if (option == JOptionPane.NO_OPTION)
-				{
+				if (option == JOptionPane.NO_OPTION) {
 					egoClient.getStorage().unsetCurrentInterview();
 				}
 			}
@@ -175,8 +173,7 @@ public class ClientPanel
 			egoClient.getStorage().unsetCurrentInterview();
 		}
 
-		if (egoClient.getInterview() != null)
-		{
+		if (egoClient.getInterview() != null) {
 		    egoClient.getFrame().gotoStartPanel();
 		}
 	}

@@ -1,5 +1,6 @@
 package org.egonet.io;
 
+import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
@@ -62,13 +63,17 @@ public class StudyReader {
 			study.setNetworkSize(root.getInt("numalters"));
 		}
 	
-		if(root.getElement("altersamplingmodel") != null)
-		{
+		if(root.getElement("altersamplingmodel") != null) {
 			study.setAlterSamplingModel(AlterSamplingModel.values()[root.getInt("altersamplingmodel")]);
 		}
+		
+		if(root.getElement("alternamemodel") != null) {
+			int mod = root.getInt("alternamemodel");
+			study.setAlterNameModel(AlterNameModel.values()[mod]);
+			//System.out.println(mod + " : " + study.getAlterNameModel());
+		}
 	
-		if(root.getElement("altersamplingparameter") != null)
-		{
+		if(root.getElement("altersamplingparameter") != null) {
 			study.setAlterSamplingParameter(root.getInt("altersamplingparameter"));
 		}
 	
@@ -179,8 +184,7 @@ public class StudyReader {
 
 			if (centrality
 					&& (q.questionType != Shared.QuestionType.ALTER_PAIR)) {
-				System.out.println("ID:" + q.UniqueId + " title:"
-						+ q.title);
+				//System.out.println("ID:" + q.UniqueId + " title:"+ q.title);
 				throw (new MalformedQuestionException());
 			}
 		}
@@ -234,7 +238,7 @@ public class StudyReader {
 						q.getSelections()[index].setIndex(index);
 
 					} catch (NumberFormatException ex) {
-						System.out.println("Throwing exception");
+						//System.out.println("Throwing exception");
 						q.getSelections()[index].setValue(selections.size()
 								- (index + 1));
 						q.getSelections()[index].setAdjacent(false);

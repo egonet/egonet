@@ -445,7 +445,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			alterList.setDescription(qs);
 			alterList.setElementName("Name: ");
 			alterList.setPresetListsActive(false);
-			alterList.setNameList(true);
+			alterList.setNameModel(egoClient.getStudy().getAlterNameModel());
 			alterList.setTitle("Your Acquaintances");
 
 			// set alter Strings IF they exist yet

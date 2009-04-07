@@ -68,6 +68,14 @@ public class Shared
 		   RANDOM_SUBSET,
 		   NTH_ALTER;
 	   }
+
+	   public enum AlterNameModel
+	   {
+		   FIRST_LAST,
+		   SINGLE;
+		   
+	   }
+
 	
 	/* Constants */
 	public static final int MIN_QUESTION_TYPE			= 1;

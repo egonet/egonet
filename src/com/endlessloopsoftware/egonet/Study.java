@@ -26,6 +26,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+
+import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
@@ -49,6 +51,7 @@ public class Study extends Observable implements Comparable<Study>
 
    /* Added for UNC */
    private AlterSamplingModel alterSamplingModel = AlterSamplingModel.ALL;
+   private AlterNameModel alterNameModel = AlterNameModel.FIRST_LAST;
    private Integer alterSamplingParameter = null; 
    
    
@@ -745,5 +748,17 @@ public class Study extends Observable implements Comparable<Study>
 	public int compareTo(Study o) {
 		return (int)(getStudyId() - o.getStudyId());
 	}
+
+	public AlterNameModel getAlterNameModel() {
+		return alterNameModel;
+	}
+
+	public void setAlterNameModel(AlterNameModel alterNameModel) {
+		this.alterNameModel = alterNameModel;
+	}
 	
+
+	public String toString() {
+		return getStudyName() + " (" + getStudyId() + ")";
+	}
 }

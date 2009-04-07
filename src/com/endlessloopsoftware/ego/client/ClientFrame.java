@@ -242,7 +242,7 @@ public class ClientFrame extends MDIChildFrame {
 		pack();
 		setMinimumSize(getPreferredSize());
 		setSize(getPreferredSize());
-		System.out.println("flood");
+		//System.out.println("flood");
 	}
 
 	// File | Exit action performed
@@ -602,7 +602,7 @@ public class ClientFrame extends MDIChildFrame {
        egoClient.getFrame().setVisible(true);
     }
     
-    public void gotoStartPanel()
+    public void gotoStartPanel() throws Exception
     {
         /* Return to first screen */
         egoClient.getFrame().setVisible(false);

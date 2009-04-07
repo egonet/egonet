@@ -22,6 +22,7 @@ import org.egonet.gui.EgoStore;
 
 import com.endlessloopsoftware.egonet.Study;
 
+/** ONLY USE THIS CLASS IN AUTHOR PART OF THE TOOL */
 public class EgoNet
 {
 	private final EgoStore storage;

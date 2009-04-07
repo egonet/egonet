@@ -168,7 +168,7 @@ public class CategoryInputPane extends JDialog {
 	}
 
 	void activate() {
-		System.out.println("before activate lb.pref=" + disp());
+		//System.out.println("before activate lb.pref=" + disp());
 		Question q = (Question) parentList.getSelectedValue();
 
 		if (q != null) {
@@ -184,7 +184,8 @@ public class CategoryInputPane extends JDialog {
 		listBuilder
 				.setDescription("Enter possible answers to this question below. Press Return to add the option "
 						+ "to the options list. Press OK to set options or Cancel to undo changes.");
-		listBuilder.setNameList(q.questionType == Shared.QuestionType.ALTER_PROMPT);
+		if(q.questionType == Shared.QuestionType.ALTER_PROMPT)
+			listBuilder.setNameModel(egoNet.getStudy().getAlterNameModel());
 		listBuilder.setLetUserPickValues(true);
 		listBuilder.setPresetListsActive(q.answerType == Shared.AnswerType.CATEGORICAL);
 		
@@ -203,17 +204,17 @@ public class CategoryInputPane extends JDialog {
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
 
-		System.out.println("initial lb.pref=" + disp());
+		//System.out.println("initial lb.pref=" + disp());
 		
 		/* Pack since we've modified the GUI elements */
 		validate();
 		pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack();
 		
-		System.out.println("after invalidate and pack lb.pref " + disp());
+		//System.out.println("after invalidate and pack lb.pref " + disp());
 		
 		this.setVisible(true);
 		
-		System.out.println("after it was visible lb.pref " + disp());
+		//System.out.println("after it was visible lb.pref " + disp());
 	}
 	
 	private String disp()

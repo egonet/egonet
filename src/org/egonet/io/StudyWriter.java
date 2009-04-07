@@ -94,7 +94,8 @@ public class StudyWriter {
 			study.addElement("numalters").setInt(studyObject.getNetworkSize());
 			study.addElement("altersamplingmodel").setInt(studyObject.getAlterSamplingModel().ordinal());
 			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? studyObject.getNetworkSize() : studyObject.getAlterSamplingParameter());
-
+			study.addElement("alternamemodel").setInt(studyObject.getAlterNameModel().ordinal());
+			
 			for (QuestionType type : QuestionType.values())
 			{
 			    

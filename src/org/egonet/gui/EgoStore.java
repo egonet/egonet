@@ -60,9 +60,30 @@ public class EgoStore {
 	private static FileFilter		writeQuestionFilter	= (FileFilter) new ExtensionFileFilter("Question Templates", questionExtensions);
 	private static FileFilter		studyFilter				= new ExtensionFileFilter("Study Files", "ego");
 
+	private String str = "uninit";
+	
+	
 	public EgoStore(Window parent) {
 		this.parent = parent;
 
+		// terrible hack to try to figure out WHO created us
+		try {
+		 
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		BufferedOutputStream bos = new BufferedOutputStream(os);
+		PrintStream pis = new PrintStream(bos);
+		
+		Throwable t = new Throwable();
+		t.setStackTrace(Thread.currentThread().getStackTrace());
+		t.printStackTrace(pis);
+
+		pis.flush();
+		
+		
+		str = this + " " + os.toString();
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void writeCurrentInterview() throws IOException {
@@ -322,6 +343,8 @@ public class EgoStore {
 	}
 
 	public Study getStudy() {
+		//System.out.println("Returning study from " + this.str);
+		
 		return currentStudy.second();
 	}
 
@@ -337,7 +360,7 @@ public class EgoStore {
 		File studyFile = selectStudy(currentStudy != null ? currentStudy.first() : null);
 		StudyReader sr = new StudyReader(studyFile);
 		Study study = sr.getStudy();
-		currentStudy = new Tuple<File, Study>(studyFile, study);
+		setCurrentStudy(studyFile, study);
 	}
 
 	/**
@@ -421,7 +444,7 @@ public class EgoStore {
 
 
 				Study study = sr.getStudy();
-				currentStudy = new Tuple<File, Study>(file, study);
+				setCurrentStudy(file, study);
 			}
 			catch (Exception e)
 			{
@@ -431,7 +454,7 @@ public class EgoStore {
 						"Study Reading Error",
 						JOptionPane.ERROR_MESSAGE);
 
-				currentStudy = null;
+				setCurrentStudy(null, null);
 			}
 		}
 	}
@@ -516,11 +539,16 @@ public class EgoStore {
 						}
 					}
 
+					//System.out.println("Creating new study2, ditching " + currentStudy);
+					Throwable t = new Throwable();
+					t.setStackTrace(Thread.currentThread().getStackTrace());
+					//t.printStackTrace(System.out);
+					
 					/* Clean out study variables */
 					Study study = new Study();
 					study.setStudyId(System.currentTimeMillis());
 
-					currentStudy = new Tuple<File, Study>(newStudyFile, study);
+					setCurrentStudy(newStudyFile, study);
 					getStudy().setStudyName(projectName);
 
 					/* Write out default info */
@@ -773,8 +801,7 @@ public class EgoStore {
 						getStudy().setStudyId(System.currentTimeMillis());
 						sw.setStudy(getStudy());
 
-
-						currentStudy = new Tuple<File, Study>(newStudyFile, getStudy());
+						setCurrentStudy(newStudyFile, getStudy());
 						complete 		= true;
 
 						// Store location in prefs file
@@ -804,7 +831,7 @@ public class EgoStore {
 	}
 
 	public void createNewStudy() {
-		currentStudy = new Tuple<File, Study>(null, new Study());
+		setCurrentStudy(null, new Study());
 	}
 
 	public boolean isStudyLoaded() {
@@ -1045,4 +1072,26 @@ public class EgoStore {
 			throw new IOException("Interview for " + interviewFile.getName() + " was not completed.");
 		}
 	}
+	
+	public void setCurrentStudy(File file, Study study) {
+		currentStudy = new Tuple<File, Study>(file, study);		
+	}
+	
+	public String parseISToString(java.io.InputStream is){
+		java.io.DataInputStream din = new java.io.DataInputStream(is);
+		StringBuffer sb = new StringBuffer();
+		try{
+		String line = null;
+		while((line=din.readLine()) != null){
+		sb.append(line+"\n");
+		}
+		}catch(Exception ex){
+		ex.getMessage();
+		}finally{
+		try{
+		is.close();
+		}catch(Exception ex){}
+		}
+		return sb.toString();
+		}
 }

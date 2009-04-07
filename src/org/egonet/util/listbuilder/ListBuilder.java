@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.event.*;
 
 import com.endlessloopsoftware.ego.author.CategoryInputPane;
+import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
 
@@ -46,12 +47,6 @@ public class ListBuilder extends JPanel implements Observer {
 	 * deleted. When false, only the list of options is displayed.
 	 */
 	private boolean editable = true;
-
-	/**
-	 * When namelist is set to true, you get a "First Name" and a "Last Name"
-	 * field to fill in. Normally, you just get a "Name" field.
-	 */
-	private boolean nameList = false;
 
 	/**
 	 * If adjacent is active, the selected item of the list may be toggled to be
@@ -112,6 +107,8 @@ public class ListBuilder extends JPanel implements Observer {
 	private JTextField firstName, lastName, itemName, value;
 
 	private CellConstraints constraints = new CellConstraints();
+
+	private AlterNameModel alterNameModel = null;
 
 	private static final Map<String, Selection[]> presets = ListBuilderPresets
 			.getPresets();
@@ -371,11 +368,12 @@ public class ListBuilder extends JPanel implements Observer {
 		});
 
 		// couple different configurations here
-		if (nameList) {
+		if (alterNameModel != null && alterNameModel.equals(AlterNameModel.FIRST_LAST)) {
 			formBuilder.append("First Name: ", firstName, false);
 			formBuilder.append("Last Name: ", lastName, true);
 		} else {
-			formBuilder.append("Item Name: ", itemName, false);
+			String itm = (alterNameModel != null) ? "" : "Item ";
+			formBuilder.append(itm + "Name: ", itemName, false);
 		}
 
 		if (letUserPickValues)
@@ -558,7 +556,6 @@ public class ListBuilder extends JPanel implements Observer {
 
 		listBuilder.setEditable(true);
 		listBuilder.setLetUserPickValues(true);
-		listBuilder.setNameList(false);
 		listBuilder.setAdjacencyActive(true);
 
 		
@@ -661,12 +658,7 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	public boolean isNameList() {
-		return nameList;
-	}
-
-	public void setNameList(boolean nameList) {
-		this.nameList = nameList;
-		build();
+		return alterNameModel != null && alterNameModel.equals(AlterNameModel.FIRST_LAST);
 	}
 
 	public boolean isAdjacencyActive() {
@@ -721,6 +713,15 @@ public class ListBuilder extends JPanel implements Observer {
 			itemName.requestFocusInWindow();
 		else
 			firstName.requestFocusInWindow();
+	}
+
+	public void setNameModel(AlterNameModel alterNameModel) {
+		this.alterNameModel = alterNameModel;
+		build();
+	}
+
+	public AlterNameModel getAlterNameModel() {
+		return alterNameModel;
 	}
 
 }
