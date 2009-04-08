@@ -122,50 +122,52 @@ public class RawDataCSVWriter {
 		
 		Integer egoID = 0;
 		for(Interview interview : interviews) {
-			egoID++;
-			String egoName = 
-				interview.getName()[0]+" "+interview.getName()[1];
+			if(interview.isComplete()) {
+				egoID++;
+				String egoName = 
+					interview.getName()[0]+" "+interview.getName()[1];
 			
-			TreeMap<Long,String> egoQuestionToAnswer =
-				new TreeMap<Long,String>();
-			TreeMap<Pair<Long,Integer>,String> alterQuestionToAnswer =
-				new TreeMap<Pair<Long,Integer>,String>();
-			for(Answer answer : interview.get_answers()) {
-				Long qId = answer.questionId;
-				if(null != egoQuestions.get(answer.questionId)) { // answer to ego question
-					egoQuestionToAnswer.put(
-							qId, 
-							answerValue(
-									egoQuestions.get(qId),
-									answer));
-				} else if(null != alterQuestions.get(answer.questionId)) { // answer to alter question
-					alterQuestionToAnswer.put(
-							new Pair<Long,Integer>(
-									qId,
-									answer.firstAlter()), 
-							answerValue(
-									alterQuestions.get(qId),
-									answer));
+				TreeMap<Long,String> egoQuestionToAnswer =
+					new TreeMap<Long,String>();
+				TreeMap<Pair<Long,Integer>,String> alterQuestionToAnswer =
+					new TreeMap<Pair<Long,Integer>,String>();
+				for(Answer answer : interview.get_answers()) {
+					Long qId = answer.questionId;
+					if(null != egoQuestions.get(answer.questionId)) { // answer to ego question
+						egoQuestionToAnswer.put(
+								qId, 
+								answerValue(
+										egoQuestions.get(qId),
+										answer));
+					} else if(null != alterQuestions.get(answer.questionId)) { // answer to alter question
+						alterQuestionToAnswer.put(
+								new Pair<Long,Integer>(
+										qId,
+										answer.firstAlter()), 
+								answerValue(
+										alterQuestions.get(qId),
+										answer));
+					}
 				}
-			}
 			
-			for(Integer alterID = 0; alterID < interview.getNumAlters(); alterID++) {
-				ArrayList<String> rowData = new ArrayList<String>();
-				rowData.add(egoID.toString());
-				rowData.add(egoName);
-				rowData.add(alterID.toString());
-				rowData.add(interview.getAlterList()[alterID]); // alterName
+				for(Integer alterID = 0; alterID < interview.getNumAlters(); alterID++) {
+					ArrayList<String> rowData = new ArrayList<String>();
+					rowData.add(egoID.toString());
+					rowData.add(egoName);
+					rowData.add(alterID.toString());
+					rowData.add(interview.getAlterList()[alterID]); // alterName
 
-				for(Long qId : egoQuestions.keySet()) {
-					rowData.add(egoQuestionToAnswer.get(qId));
-				}
-				for(Long qId : alterQuestions.keySet()) {
-					rowData.add(alterQuestionToAnswer.get(
-							new Pair<Long,Integer>(
-									qId,alterID)));
-				}
+					for(Long qId : egoQuestions.keySet()) {
+						rowData.add(egoQuestionToAnswer.get(qId));
+					}
+					for(Long qId : alterQuestions.keySet()) {
+						rowData.add(alterQuestionToAnswer.get(
+								new Pair<Long,Integer>(
+										qId,alterID)));
+					}
 
-				csv.writeNext(rowData.toArray(new String[]{}));
+					csv.writeNext(rowData.toArray(new String[]{}));
+				}
 			}
 		}
 	}
@@ -194,16 +196,17 @@ public class RawDataCSVWriter {
 		
 		Integer egoId = 0;
 		for(Interview interview : interviews) {
-			egoId++;
-			String egoName = 
-				interview.getName()[0]+" "+interview.getName()[1];
-
-			TreeMap<Triple<Long,Integer,Integer>,String> linkQuestionToAnswer =
-				new TreeMap<Triple<Long,Integer,Integer>,String>();
-			for(Answer answer : interview.get_answers()) {
-				if(null != linkQuestions.get(answer.questionId)) { // answer to link question
-					Long qId = answer.questionId;
-					linkQuestionToAnswer.put(
+			if(interview.isComplete()) {
+				egoId++;
+				String egoName = 
+					interview.getName()[0]+" "+interview.getName()[1];
+			
+				TreeMap<Triple<Long,Integer,Integer>,String> linkQuestionToAnswer =
+					new TreeMap<Triple<Long,Integer,Integer>,String>();
+				for(Answer answer : interview.get_answers()) {
+					if(null != linkQuestions.get(answer.questionId)) { // answer to link question
+						Long qId = answer.questionId;
+						linkQuestionToAnswer.put(
 							new Triple<Long,Integer,Integer>(
 									qId,
 									answer.firstAlter(),
@@ -211,28 +214,29 @@ public class RawDataCSVWriter {
 							answerValue(
 									linkQuestions.get(qId),
 									answer));
-				}
-			}
-			
-			for(Integer alterId1 = 0; alterId1 < interview.getNumAlters(); alterId1++) {
-				String alterName1 = interview.getAlterList()[alterId1];
-				for(Integer alterId2 = alterId1 + 1; alterId2 < interview.getNumAlters(); alterId2++) {
-					String alterName2 = interview.getAlterList()[alterId2];
-					ArrayList<String> rowData = new ArrayList<String>();
-					rowData.add(egoId.toString());
-					rowData.add(egoName);
-					rowData.add(alterId1.toString());
-					rowData.add(alterName1);
-					rowData.add(alterId2.toString());
-					rowData.add(alterName2);
-					
-					for(Long qId : linkQuestions.keySet()) {
-						rowData.add(linkQuestionToAnswer.get(
-								new Triple<Long,Integer,Integer>(
-										qId,alterId1,alterId2)));
 					}
+				}
+			
+				for(Integer alterId1 = 0; alterId1 < interview.getNumAlters(); alterId1++) {
+					String alterName1 = interview.getAlterList()[alterId1];
+					for(Integer alterId2 = alterId1 + 1; alterId2 < interview.getNumAlters(); alterId2++) {
+						String alterName2 = interview.getAlterList()[alterId2];
+						ArrayList<String> rowData = new ArrayList<String>();
+						rowData.add(egoId.toString());
+						rowData.add(egoName);
+						rowData.add(alterId1.toString());
+						rowData.add(alterName1);
+						rowData.add(alterId2.toString());
+						rowData.add(alterName2);
 					
-					csv.writeNext(rowData.toArray(new String[]{}));
+						for(Long qId : linkQuestions.keySet()) {
+							rowData.add(linkQuestionToAnswer.get(
+									new Triple<Long,Integer,Integer>(
+											qId,alterId1,alterId2)));
+						}
+					
+						csv.writeNext(rowData.toArray(new String[]{}));
+					}
 				}
 			}
 		}

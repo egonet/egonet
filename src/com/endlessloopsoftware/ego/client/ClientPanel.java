@@ -71,7 +71,12 @@ public class ClientPanel
 		selectStudyButton = new JButton("Select Study");
 		selectStudyButton.addActionListener(new CatchingAction("doSelectStudy") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				doSelectStudy(e);
+				try {
+					doSelectStudy(e);
+				} catch(Exception ex) {
+					System.out.println("Problem while selecting study: "+ex);
+					ex.printStackTrace(System.out);
+				}
 			}
 		});
 		
