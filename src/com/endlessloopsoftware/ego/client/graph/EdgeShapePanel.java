@@ -64,7 +64,7 @@ public class EdgeShapePanel extends JPanel {
 	private EgoClient egoClient;
 
 	public EdgeShapePanel(EgoClient egoClient, GraphRenderer renderer) {
-		this.egoClient=egoClient;
+		this.egoClient = egoClient;
 		this.graphRenderer = renderer;
 		layout = new GroupLayout(this);
 		this.setLayout(layout);
@@ -81,7 +81,7 @@ public class EdgeShapePanel extends JPanel {
 		// create questionCombo
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		
+
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
 			QuestionType questionType = currentQuestion.questionType;
@@ -125,12 +125,12 @@ public class EdgeShapePanel extends JPanel {
 
 		Question question = (Question) questionCombo.getSelectedItem();
 		edgesSelected = new boolean[qList.size()][question.getSelections().length];
-		for(int i = 0; i<qList.size(); i++) {
-			for (int j =0; j<question.getSelections().length;j++) {
+		for (int i = 0; i < qList.size(); i++) {
+			for (int j = 0; j < question.getSelections().length; j++) {
 				edgesSelected[i][j] = false;
 			}
 		}
-		
+
 		createTable();
 		drawPanel();
 
@@ -188,31 +188,34 @@ public class EdgeShapePanel extends JPanel {
 
 	private void updateEdgeShape() {
 
-Question question = (Question) questionCombo.getSelectedItem();
-		
-		
+		Question question = (Question) questionCombo.getSelectedItem();
+
 		int selectedQuestionIndex = qList.indexOf(question);
-		System.out.println("ShapePanel:SelectedQuestionIndex:" + selectedQuestionIndex + " " + question.toString());
+		System.out.println("ShapePanel:SelectedQuestionIndex:"
+				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.getSelections().length; i++) {
 			Selection selection = question.getSelections()[i];
-			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection, Shared.QuestionType.ALTER_PAIR);
-			if(((Boolean)table.getValueAt(i,0)) == true) {
-				
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(
+					question, selection, Shared.QuestionType.ALTER_PAIR);
+			if (((Boolean) table.getValueAt(i, 0)) == true) {
+
 				EdgeProperty edgeProperty = new EdgeProperty();
 				edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Shape);
-				edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i, 2));
+				edgeProperty.setShape((EdgeProperty.EdgeShape) table
+						.getValueAt(i, 2));
 				edgeProperty.setVisible(true);
 				edgesSelected[selectedQuestionIndex][i] = true;
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
-			} 
-			else {
+			} else {
 				edgesSelected[selectedQuestionIndex][i] = false;
-				if(EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false 
-						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] ==false) {
+				if (EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false
+						&& EdgeSizePanel.edgesSelected[selectedQuestionIndex][i] == false) {
 					EdgeProperty edgeProperty = new EdgeProperty();
-					edgeProperty.setProperty(EdgeProperty.EdgePropertyType.Shape);
-				//	edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i, 2));
+					edgeProperty
+							.setProperty(EdgeProperty.EdgePropertyType.Shape);
+					// edgeProperty.setShape((EdgeProperty.EdgeShape)table.getValueAt(i,
+					// 2));
 					edgeProperty.setVisible(false);
 					graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 					graphRenderer.updateGraphSettings();

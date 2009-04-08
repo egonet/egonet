@@ -216,9 +216,4 @@ public class CategoryInputPane extends JDialog {
 		
 		//System.out.println("after it was visible lb.pref " + disp());
 	}
-	
-	private String disp()
-	{
-		return "[pref="+listBuilder.getPreferredSize()+",min="+listBuilder.getMinimumSize()+",max="+listBuilder.getMaximumSize()+"]";
-	}
 }

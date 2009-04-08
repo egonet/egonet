@@ -28,7 +28,7 @@ import com.endlessloopsoftware.ego.client.graph.GraphTabPanel;
 public class GraphPanel extends javax.swing.JPanel {
 	private JSplitPane mainSplitPane;
 
-	private JSplitPane rightSplitPane;
+	//private JSplitPane rightSplitPane;
 
 	// private JPanel mainPanel;
 
@@ -111,20 +111,6 @@ public class GraphPanel extends javax.swing.JPanel {
 		// display
 		JScrollPane topRightScrollPanel = new JScrollPane(topRightPanel);
 
-		JComponent satellitePane = graphRenderer.createSatellitePane();
-		satellitePane.setMinimumSize(satellitePane.getPreferredSize());
-
-		rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				topRightScrollPanel, satellitePane);
-
-		rightSplitPane.setResizeWeight(0.75);
-		rightSplitPane.setContinuousLayout(true);
-
-		// with staellite pane
-		// mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
-		// rightSplitPane);
-
-		// without satellite pane
 		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, leftPanel,
 				topRightScrollPanel);
 

@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
+import org.apache.commons.collections15.Transformer;
 import org.egonet.util.listbuilder.Selection;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
@@ -32,29 +33,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.Font;
-import java.awt.Point;
-import java.util.Set;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.StringLabeller;
-import edu.uci.ics.jung.graph.decorators.VertexFontFunction;
+import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.*;
-import edu.uci.ics.jung.visualization.transform.MutableTransformer;
-
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import javax.imageio.ImageIO;
 
-import edu.uci.ics.jung.utils.Pair;
-
 public class GraphData {
-
-	private static final double OFFSET = 25.0d;
 
 	private String[] completeAlterNameList;
 
@@ -95,13 +82,12 @@ public class GraphData {
 	 * @param graphQuestion
 	 * @return Pair AlterPairList
 	 */
-	public List<Pair> getAlterPairs(GraphQuestionSelectionPair graphQuestion) {
-		List<Pair> alterPairList = new ArrayList<Pair>();
+	public List<Pair<Integer>> getAlterPairs(GraphQuestionSelectionPair graphQuestion) {
+		List<Pair<Integer>> alterPairList = new ArrayList<Pair<Integer>>();
 		List<Integer> alterNumbers = new ArrayList<Integer>();
 		alterNumbers = getAlterNumbers(graphQuestion);
 		for (int i = 0; i < alterNumbers.size(); i = i + 2) {
-			Pair alterPair = new Pair(alterNumbers.get(i), alterNumbers
-					.get(i + 1));
+			Pair<Integer> alterPair = new Pair<Integer>(alterNumbers.get(i), alterNumbers.get(i + 1));
 			alterPairList.add(alterPair);
 			// System.out.println(alterPair);
 		}
@@ -292,19 +278,20 @@ public class GraphData {
 	
 	
 	public static void writeCoordinates(File dataFile) throws IOException {
-		VisualizationViewer vv = GraphRenderer.getVv();
-		Layout layout = vv.getGraphLayout();
+		VisualizationViewer<Vertex,Edge> vv = GraphRenderer.getVv();
+		Layout<Vertex,Edge> layout = vv.getGraphLayout();
 		Graph g = layout.getGraph();
 
 		FileWriter fw = new FileWriter(dataFile);
 		
 		@SuppressWarnings("unchecked")
-		Set<Vertex> verts = g.getVertices();
+		Collection<Vertex> verts = g.getVertices();
 		for(Vertex v : verts)
 		{
 			
 			String nodeLabel = GraphRenderer.getGraphSettings().getNodeLabel(v);
-			Point2D pt = layout.getLocation(v);
+			
+			Point2D pt = layout.transform(v);
 			String line = ("\""+nodeLabel + "\"," + pt.getX() + "," + pt.getY() + "\n");
 			System.out.print(line);
 			fw.write(line);
@@ -313,11 +300,11 @@ public class GraphData {
 		fw.close();
 	}
 
-	public static StringLabeller getStringLabeller(Graph graph) {
-		return StringLabeller.getLabeller(graph);
+	public static Transformer<Vertex,String> getStringLabeller(Graph graph) {
+		return new ToStringLabeller<Vertex>();
 	}
 
-	public static Rectangle calculateGraphRect() {
+	/*public static Rectangle calculateGraphRect() {
 		double x;
 		double y;
 		double minX = Double.MAX_VALUE;
@@ -384,7 +371,7 @@ public class GraphData {
 		final Dimension actual = new Dimension((int) (maxX - minX)
 				+ (int) labeloffset, (int) (maxY - minY) + (int) OFFSET * 2);
 		return new Rectangle(new Point((int) minX, (int) minY), actual);
-	}
+	}*/
 
 	public String[] getCompleteAlterNameList() {
 		return completeAlterNameList;

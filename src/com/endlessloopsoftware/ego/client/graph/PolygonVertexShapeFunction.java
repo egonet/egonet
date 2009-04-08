@@ -19,26 +19,30 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.Shape;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.*;
 
-public class PolygonVertexShapeFunction extends AbstractVertexShapeFunction
+import org.apache.commons.collections15.functors.ConstantTransformer;
+
+import edu.uci.ics.jung.visualization.util.VertexShapeFactory;
+
+@SuppressWarnings("unchecked")
+public class PolygonVertexShapeFunction extends VertexShapeFactory<Vertex>
 {
-	private int numberOfEdges;
-    public PolygonVertexShapeFunction() 
+	public PolygonVertexShapeFunction()
     {
-    	this.setSizeFunction(new ConstantVertexSizeFunction(15));
+        super(new ConstantTransformer(15), new ConstantTransformer(1.0f));
     }
+	
+	private int numberOfEdges;
  
     public Shape getShape(Vertex v, int size, int numberOfEdges)
     {
     	this.numberOfEdges= numberOfEdges;
-    	this.setSizeFunction(new ConstantVertexSizeFunction(size));
+    	vsf = new ConstantTransformer(size);
     	return getShape(v);
     }
     
     public Shape getShape(Vertex v)
     {
-    	return factory.getRegularPolygon(v,numberOfEdges);
+    	return getRegularPolygon(v,numberOfEdges);
     }
 }

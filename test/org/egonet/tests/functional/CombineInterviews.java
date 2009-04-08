@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -18,21 +16,16 @@ import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
-import org.egonet.util.Pair;
-
-import samples.graph.BasicRenderer;
-
-import com.endlessloopsoftware.ego.client.graph.ELSFRLayout;
+import com.endlessloopsoftware.ego.client.graph.ELSFRLayout2;
+import com.endlessloopsoftware.ego.client.graph.Edge;
+import com.endlessloopsoftware.ego.client.graph.Vertex;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.impl.SparseGraph;
-import edu.uci.ics.jung.graph.impl.SparseVertex;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-import edu.uci.ics.jung.visualization.Layout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class CombineInterviews
@@ -64,8 +57,8 @@ public class CombineInterviews
 		ArrayList<String> alterList = new ArrayList<String>();
 		int[][] adj = null;
 
-		Set<Pair<String>> allPairs = new HashSet<Pair<String>>();
-		Set<String> pairedAlters = new HashSet<String>();
+		Set<Edge> allPairs = new HashSet<Edge>();
+		Set<Vertex> pairedAlters = new HashSet<Vertex>();
 		
 		
 		
@@ -108,11 +101,10 @@ public class CombineInterviews
 							String alter1 = thisInterviewAlterlist[i];
 							String alter2 = thisInterviewAlterlist[j];
 							
-							Pair<String> p = new Pair<String>(alter1, alter2);
-							allPairs.add(p);
+							allPairs.add(new Edge(alter1, alter2));
 							
-							pairedAlters.add(alter1);
-							pairedAlters.add(alter2);
+							pairedAlters.add(new Vertex(alter1));
+							pairedAlters.add(new Vertex(alter2));
 							
 							// mark those as adjacent in the new big matrix
 							//System.out.println(p +  " are adjacent");
@@ -123,43 +115,44 @@ public class CombineInterviews
 
 		}
 
-		Map<String,Vertex> vertices = new HashMap<String,Vertex>();
-		for(Pair<String> pair : allPairs)
+		Set<Vertex> vertices = new HashSet<Vertex>();
+		for(Edge pair : allPairs)
 		{
-			if(!vertices.containsKey(pair.first()))
-					vertices.put(pair.first(), new SparseVertex());
-			if(!vertices.containsKey(pair.second()))
-				vertices.put(pair.second(), new SparseVertex());
+			Vertex v1 = new Vertex(pair.pair.getFirst());
+			Vertex v2 = new Vertex(pair.pair.getSecond());
+			vertices.add(v1);
+			vertices.add(v2);
 		}
 		
 		for(String isolate : alterList)
 		{
-			if(!vertices.containsKey(isolate))
-			{
-				vertices.put(isolate, new SparseVertex());
-			}
+			Vertex v = new Vertex(isolate);
+			vertices.add(v);
 		}
 		
-		SparseGraph graph = new SparseGraph();
-		for(Pair<String> pair : allPairs)
+		SparseGraph<Vertex,Edge> graph = new SparseGraph<Vertex,Edge>();
+		for(Edge pair : allPairs)
 		{
-			if(!graph.getVertices().contains(vertices.get(pair.first())))
-				graph.addVertex(vertices.get(pair.first()));
-			if(!graph.getVertices().contains(vertices.get(pair.second())))
-				graph.addVertex(vertices.get(pair.second()));
+			Vertex v1 = new Vertex(pair.pair.getFirst());
+			Vertex v2 = new Vertex(pair.pair.getSecond());
 			
-			graph.addEdge(new UndirectedSparseEdge(vertices.get(pair.first()), vertices.get(pair.second())));
+			if(!graph.getVertices().contains(v1))
+				graph.addVertex(v1);
+			if(!graph.getVertices().contains(v2))
+				graph.addVertex(v2);
+			
+			graph.addEdge(pair, Arrays.asList(v1,v2));
 		}
 		
 		for(String isolate : alterList)
 		{
-				Vertex v = vertices.get(isolate);
-				if(!graph.getVertices().contains(v))
-					graph.addVertex(v);
+			Vertex v = new Vertex(isolate);
+			if(!graph.getVertices().contains(v))
+				graph.addVertex(v);
 		}
 		
-        Layout layout = new ELSFRLayout(graph);
-        VisualizationViewer vv = new VisualizationViewer(layout, new BasicRenderer());
+        Layout<Vertex,Edge> layout = new ELSFRLayout2(graph);
+        VisualizationViewer<Vertex,Edge> vv = new VisualizationViewer<Vertex,Edge>(layout);
         
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

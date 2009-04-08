@@ -19,45 +19,77 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
+import java.util.Date;
+import java.util.Random;
 
+import org.apache.commons.collections15.Transformer;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.visualization.Coordinates;
-import edu.uci.ics.jung.visualization.FRLayout;
 
-public class ELSFRLayout2 extends FRLayout {
-    public ELSFRLayout2(Graph g) {
+
+public class ELSFRLayout2 extends FRLayout<Vertex,Edge> {
+    public ELSFRLayout2(Graph<Vertex,Edge> g) {
         super(g);
     }
     
-    private int xIsolate=25,yIsolate=0;
-	protected void initializeLocation(Vertex v, Coordinates coord, Dimension d) {
-		super.initializeLocation(v, coord, d);
-		if (v.getIncidentEdges().size() == 0) {
-			//System.out.println("BEFORE: v="+v+",coord="+coord+",d="+d+",x="+xIsolate+",y="+yIsolate);
-			lockVertex(v);
-		    
-			// can expand to the right
-		    if(yIsolate+25 > d.height && xIsolate+25 <= d.width)
-		    {
-		    	// hit bottom, new column
-		    	yIsolate=0;
-		    	xIsolate+=25;
-		    }
-		    // can't expand down or to the right
-		    else if(yIsolate+25 > d.height && xIsolate+25 > d.width)
-		    {
-		    	// reset entire thing
-		    	yIsolate=0;
-		    	xIsolate=0;
-		    }
-		    // just go downward first
-		    else
-		    {
-		    	yIsolate+=25;
-		    }
-		    
-		    coord.setLocation(xIsolate,yIsolate);
+	public class RandomLocationTransformer implements Transformer<Vertex,Point2D> {
+
+		Dimension d;
+		Random random;
+		Graph<Vertex,?> graph; 
+	    
+	    public RandomLocationTransformer(final Graph<Vertex,?> graph, final Dimension d) {
+	    	this(graph,d, new Date().getTime());
+	    }
+	    
+	    public RandomLocationTransformer(final Graph<Vertex,?> graph, final Dimension d, long seed) {
+	    	this.d = d;
+	    	this.random = new Random(seed);
+	    	this.graph=graph;
+	    }
+	    
+	    private int xIsolate=25,yIsolate=0;
+	    public Point2D transform(Vertex v) {
+			if (graph.getIncidentEdges(v).size() == 0) {
+			    lock(v,true);
+				
+				// can expand to the right
+			    if(yIsolate+25 > d.height && xIsolate+25 <= d.width)
+			    {
+			    	// hit bottom, new column
+			    	yIsolate=0;
+			    	xIsolate+=25;
+			    }
+			    // can't expand down or to the right
+			    else if(yIsolate+25 > d.height && xIsolate+25 > d.width)
+			    {
+			    	// reset entire thing
+			    	yIsolate=0;
+			    	xIsolate=0;
+			    }
+			    // just go downward first
+			    else
+			    {
+			    	yIsolate+=25;
+			    }
+			    
+			    return new Point2D.Double(xIsolate, yIsolate);
+			}
+			else {
+				return new Point2D.Double(random.nextDouble() * d.width, random.nextDouble() * d.height);	
+			}
+	    }
+	}
+	
+	@Override
+	public void setSize(Dimension size) {
+		if(initialized == false) {
+			super.setSize(size);
+			setInitializer(new RandomLocationTransformer(super.getGraph(), size));
+		} 
+		else {
+			super.setSize(size);
 		}
 	}
 }

@@ -19,11 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
-import edu.uci.ics.jung.graph.ArchetypeVertex;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-
+import edu.uci.ics.jung.graph.Graph;
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import java.io.*;
 
@@ -51,8 +49,8 @@ import javax.xml.transform.stream.*;
 //test comment
 public class GraphSettings {
 
-	private Map<ArchetypeVertex, NodeProperty> nodeSettingsMap = Collections
-			.synchronizedMap(new HashMap<ArchetypeVertex, NodeProperty>());
+	private Map<Vertex, NodeProperty> nodeSettingsMap = Collections
+			.synchronizedMap(new HashMap<Vertex, NodeProperty>());
 
 	private Map<Edge, EdgeProperty> edgeSettingsMap = Collections
 			.synchronizedMap(new HashMap<Edge, EdgeProperty>());
@@ -91,19 +89,29 @@ public class GraphSettings {
 					shape, size);
 			nodeProperty.setToolTipText(getAlterInfo(i, false));
 			nodeProperty.setDetailedToolTipText(getAlterInfo(i, true));
-			nodeSettingsMap.put(renderer.getvertexArray()[i], nodeProperty);
+			nodeSettingsMap.put(new Vertex(renderer.getAlterList()[i]), nodeProperty);
 		}
 		// initialize edges with default settings
-		GraphRenderer.getGraph().removeAllEdges();
+		Graph<Vertex, Edge> g = GraphRenderer.getGraph();
+		
+		while(g.getEdgeCount() > 0) {
+			Collection<Edge> oldEdges = g.getEdges();
+			for(Edge ed : oldEdges)
+				g.removeEdge(ed);
+		}
+		
+		
 		GraphData graphData = new GraphData(egoClient);
 		int[][] adjacencyMatrix = graphData.getAdjacencyMatrix();
 		for (int i = 0; i < adjacencyMatrix.length; ++i) {
 			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
 				if (adjacencyMatrix[i][j] > 0) {
-					UndirectedSparseEdge edge = new UndirectedSparseEdge(
-							renderer.getvertexArray()[i], renderer
-									.getvertexArray()[j]);
-					GraphRenderer.getGraph().addEdge(edge);
+					
+					String[] list = renderer.getAlterList();
+					Edge edge = new Edge(list[i], list[j]);
+					List<Vertex> verts = Arrays.asList(new Vertex(list[i]), new Vertex(list[j]));
+					
+					GraphRenderer.getGraph().addEdge(edge, verts);
 					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j])
 							.toString();
 					EdgeProperty edgeProperty = new EdgeProperty(label,
@@ -114,7 +122,7 @@ public class GraphSettings {
 			}
 		}
 	}
-
+	
 	public void saveSettingsFile(File file) {
 		try {
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -334,43 +342,43 @@ public class GraphSettings {
 
 	}
 
-	public int getNodeSize(ArchetypeVertex node) {
+	public int getNodeSize(Vertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getSize();
 	}
 
-	public void setNodeSize(ArchetypeVertex node, int nodeSize) {
+	public void setNodeSize(Vertex node, int nodeSize) {
 		nodeSettingsMap.get(node).setSize(nodeSize);
 	}
 
-	public NodeShape getNodeShape(ArchetypeVertex node) {
+	public NodeShape getNodeShape(Vertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getShape();
 	}
 
-	public void setNodeShape(ArchetypeVertex node, NodeShape nodeShape) {
+	public void setNodeShape(Vertex node, NodeShape nodeShape) {
 		nodeSettingsMap.get(node).setShape(nodeShape);
 	}
 
-	public Color getNodeColor(ArchetypeVertex node) {
+	public Color getNodeColor(Vertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getColor();
 	}
 
-	public void setNodeColor(ArchetypeVertex node, Color nodeColor) {
+	public void setNodeColor(Vertex node, Color nodeColor) {
 		nodeSettingsMap.get(node).setColor(nodeColor);
 	}
 
-	public String getNodeLabel(ArchetypeVertex node) {
+	public String getNodeLabel(Vertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		return nodeProperty.getLabel();
 	}
 
-	public void setNodeLabel(ArchetypeVertex node, String nodeLabel) {
+	public void setNodeLabel(Vertex node, String nodeLabel) {
 		nodeSettingsMap.get(node).setLabel(nodeLabel);
 	}
 
-	public String getNodeToolTipText(ArchetypeVertex node) {
+	public String getNodeToolTipText(Vertex node) {
 		NodeProperty nodeProperty = nodeSettingsMap.get(node);
 		if(isDetailedTooltips())
 			return nodeProperty.getDetailedToolTipText();
@@ -518,12 +526,12 @@ public class GraphSettings {
 		this.edgeSettingsMap = edgeSettingsMap;
 	}
 
-	public Map<ArchetypeVertex, NodeProperty> getNodeSettingsMap() {
+	public Map<Vertex, NodeProperty> getNodeSettingsMap() {
 		return nodeSettingsMap;
 	}
 
 	public void setNodeSettingsMap(
-			Map<ArchetypeVertex, NodeProperty> nodeSettingsMap) {
+			Map<Vertex, NodeProperty> nodeSettingsMap) {
 		this.nodeSettingsMap = nodeSettingsMap;
 	}
 

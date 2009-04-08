@@ -19,35 +19,34 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import java.awt.Shape;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.*;
 
-public class EllipseVertexShapeFunction extends AbstractVertexShapeFunction
+import org.apache.commons.collections15.functors.ConstantTransformer;
+
+import edu.uci.ics.jung.visualization.util.VertexShapeFactory;
+
+@SuppressWarnings("unchecked")
+public class EllipseVertexShapeFunction extends VertexShapeFactory<Vertex>
 {
 	public EllipseVertexShapeFunction() 
     {
-    	this.setSizeFunction(new ConstantVertexSizeFunction(15));
-    }
-    public EllipseVertexShapeFunction(VertexSizeFunction vsf, VertexAspectRatioFunction varf)
-    {
-        super(vsf, varf);
+    	super(new ConstantTransformer(15), new ConstantTransformer(1.0f));
     }
     public Shape getShape(Vertex v, int size)
     {
-    	this.setSizeFunction(new ConstantVertexSizeFunction(size));
+    	vsf = new ConstantTransformer(size);
     	return getShape(v);
     }
     public Shape getShape(Vertex v)
     {
-        return factory.getEllipse(v);
+        return getEllipse(v);
     }
     public Shape getShape(Vertex v, NodeProperty.NodeShape type, int size){
-    	this.setSizeFunction(new ConstantVertexSizeFunction(size));
+    	vsf = new ConstantTransformer(size);
     	if(type == NodeProperty.NodeShape.Star) {
-    		return factory.getRegularStar(v, 5);
+    		return getRegularStar(v, 5);
     	}
     	else {
-    		return factory.getRoundRectangle(v);
+    		return getRoundRectangle(v);
     	}
     }
 }

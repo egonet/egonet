@@ -18,13 +18,10 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
-import edu.uci.ics.jung.graph.decorators.ToolTipFunctionAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
 
-public class VertexToolTipFunction extends ToolTipFunctionAdapter {
+public class VertexToolTipFunction { //extends ToolTipFunctionAdapter {
 	/**
 	 * @param v
 	 *            the Vertex

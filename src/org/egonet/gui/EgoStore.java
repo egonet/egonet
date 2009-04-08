@@ -60,7 +60,7 @@ public class EgoStore {
 	private static FileFilter		writeQuestionFilter	= (FileFilter) new ExtensionFileFilter("Question Templates", questionExtensions);
 	private static FileFilter		studyFilter				= new ExtensionFileFilter("Study Files", "ego");
 
-	private String str = "uninit";
+	public String str = "uninit";
 	
 	
 	public EgoStore(Window parent) {
