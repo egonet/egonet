@@ -812,6 +812,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 		}
 
+		// Pressing <enter> during an interview should always advance to next question, 
+		// even if most recent action was going back to previous question.
+		questionButtonNext.requestFocusInWindow();
+		
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 	}
 
