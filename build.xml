@@ -19,6 +19,7 @@
 	<path id="classpath.project.Egonet">
 		<pathelement location="${dir.build.Egonet}" />
 		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
+		<fileset dir="${dir.lib.Enet}/jung" includes="*.jar" />
 	</path>
 
 
@@ -44,18 +45,25 @@
 	<target name="lib-jar" depends="compile">
 		<!-- Creating jar for Enet libraries -->
 		<jar jarfile="${dir.dist.Egonet}/Egonet-lib.jar">
-			<zipfileset src="${dir.lib.Enet}/commons-collections-3.2.jar" />
 			<zipfileset src="${dir.lib.Enet}/EXML.jar" />
 			<zipfileset src="${dir.lib.Enet}/FoamRuntime.jar" />
 			<zipfileset src="${dir.lib.Enet}/forms-1.1.0.jar" />
-			<zipfileset src="${dir.lib.Enet}/jung-1.7.6.jar" />
 			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
 			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
-			<zipfileset src="${dir.lib.Enet}/colt.jar" />
 			<zipfileset src="${dir.lib.Enet}/miglayout-3.7-swing.jar" />
 			<zipfileset src="${dir.lib.Enet}/opencsv-1.8.jar" />
 			<zipfileset src="${dir.lib.Enet}/functionalj.jar" />
+
+			<zipfileset src="${dir.lib.Enet}/jung/collections-generic-4.01.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/colt-1.2.0.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/concurrent-1.3.4.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/jung-algorithms-2.0-beta1.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/jung-api-2.0-beta1.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/jung-graph-impl-2.0-beta1.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/jung-io-2.0-beta1.jar" />
+			<zipfileset src="${dir.lib.Enet}/jung/jung-visualization-2.0-beta1.jar" />
+			
 		</jar>
 	</target>
 
