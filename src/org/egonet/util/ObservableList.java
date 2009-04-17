@@ -35,6 +35,10 @@ public class ObservableList<T>
         setChanged();
         super.notifyObservers(this);
     }
+    
+    public T get(int index) {
+    	return list.get(index);
+    }
 
     /**
      *
@@ -97,5 +101,15 @@ public class ObservableList<T>
     public Object[] toArray(Object[] a)
     {
         return (list.toArray(a));
+    }
+    
+    protected void addAll(java.util.List<T> elements) {
+    	for(T element : elements)
+    		list.add(element);
+    	notifyObservers();
+    }
+    
+    public boolean contains(T element) {
+    	return list.contains(element);
     }
 }

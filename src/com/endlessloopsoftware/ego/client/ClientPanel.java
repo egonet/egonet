@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,6 +38,7 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
+import org.egonet.wholenet.gui.InterviewFileSelectionFrame;
 
 import com.endlessloopsoftware.egonet.Interview;
 
@@ -47,6 +49,7 @@ public class ClientPanel
 {
  	private JLabel 			titleLabel;
 	private JButton 		selectStudyButton;
+	private JButton 		wholeNetworkButton;
 	private JButton 		statisticsButton;
 	private JButton 		rawDataButton;
 	private JButton 		viewInterviewButton;
@@ -71,19 +74,21 @@ public class ClientPanel
 		selectStudyButton = new JButton("Select Study");
 		selectStudyButton.addActionListener(new CatchingAction("doSelectStudy") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				try {
 					doSelectStudy(e);
-				} catch(Exception ex) {
-					System.out.println("Problem while selecting study: "+ex);
-					ex.printStackTrace(System.out);
-				}
+			}
+		});
+		
+		wholeNetworkButton = new JButton("Whole Network Analysis");
+		wholeNetworkButton.addActionListener(new CatchingAction("wholeNetworkButton") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+					doWholeNetworkAnalysis(e);
 			}
 		});
 		
 		viewInterviewButton = new JButton("View Interview");
 		viewInterviewButton.addActionListener(new CatchingAction("doViewInterview") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				doViewInterview(e);
+					doViewInterview(e);
 				}
 			});
 		
@@ -115,6 +120,7 @@ public class ClientPanel
 						"[grow]", "[grow]"));
 		this.add(this.titleLabel, "gaptop 10, span, growx");
 		this.add(this.selectStudyButton, "span, growx");
+		this.add(this.wholeNetworkButton, "span, growx");
 		this.add(this.viewInterviewButton, "sg 1");
 		this.add(this.rawDataButton, "sg 1");
 		this.add(this.statisticsButton, "sg 1, wrap");
@@ -131,8 +137,8 @@ public class ClientPanel
 		this.rawDataButton.setEnabled(loaded);
 		this.statisticsButton.setEnabled(loaded);
 		this.startInterviewButton.setEnabled(loaded);
-		this.selectStudyButton.setText(
-				loaded ? "Study: "+egoClient.getStudy().getStudyName() : "Select Study");
+		this.selectStudyButton.setText(loaded ? "Study: "+egoClient.getStudy().getStudyName() : "Select Study");
+		this.wholeNetworkButton.setEnabled(loaded);
 	}
 
 	private void doSelectStudy(ActionEvent e) throws Exception
@@ -147,6 +153,22 @@ public class ClientPanel
 		/* Selecting a study enables some controls and changes the appearance of others. */
 		adjustControlState();
 	}
+	
+	private void doWholeNetworkAnalysis(ActionEvent e) throws Exception
+	{
+		if(true) {
+			JOptionPane.showMessageDialog(egoClient.getFrame(), "This feature is coming soon.",
+					"Coming soon", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		EgoStore storage = egoClient.getStorage();
+		if(storage.isStudyLoaded()) {
+			JFrame frame = new InterviewFileSelectionFrame(storage.getStudyFile(), storage.getStudy());
+			frame.setVisible(true);
+		}
+	}
+
 
 	private void doStartInterview(ActionEvent e) throws Exception
 	{
