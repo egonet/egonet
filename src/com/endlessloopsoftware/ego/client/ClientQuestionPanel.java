@@ -520,7 +520,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				
 				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
 					answerButtons[i].setActionCommand("Initialization");
-					answerButtons[i].setText("(" + question.getSelections()[i].getValue() + ") " + question.getSelections()[i].getString());
+					answerButtons[i].setText(question.getSelections()[i].getString() + " (" + question.getSelections()[i].getValue() + ")" );
 					answerButtons[i].setVisible(true);
 					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 					answerButtons[i].setActionCommand("User Input");
