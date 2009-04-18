@@ -22,9 +22,15 @@ public class CreatePdf {
 		InterviewReader ir = new InterviewReader(study, new File("C:/Documents and Settings/Martin/My Documents/EgoNet/EgoNet Study/Interviews/martin_smith.int"));
 		Interview interview = ir.getInterview();
 		
-		File outputFile = new File("C:/Documents and Settings/Martin/Desktop/output.pdf");
-		PDFWriter pdfWriter = new PDFWriter(study, interview);
-		pdfWriter.write(outputFile);
+		String path = "C:/Documents and Settings/Martin/Desktop/";
+		
+		File completeFile = new File(path+"complete.pdf");
+		PDFWriter pdfWriter1 = new PDFWriter(study, interview);
+		pdfWriter1.write(completeFile);
+		
+		File incompleteFile = new File(path+"incomplete.pdf");
+		PDFWriter pdfWriter2 = new PDFWriter(study);
+		pdfWriter2.write(incompleteFile);
 	}
 
 }
