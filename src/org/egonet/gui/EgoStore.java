@@ -250,7 +250,7 @@ public class EgoStore {
 		}
 	}
 
-	public void exportStudy(boolean includeInterview) {
+	public void exportStudy(boolean includeInterview) throws CorruptedInterviewException {
 		JFileChooser exportFileChooser = new JFileChooser("Export Study...");
 		File exportFile;
 		boolean complete = false;

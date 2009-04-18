@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import org.egonet.exceptions.CorruptedInterviewException;
+
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 import com.lowagie.text.Document;
@@ -13,11 +15,11 @@ import com.lowagie.text.rtf.RtfWriter2;
 
 public class RTFWriter extends PDFWriter {
 
-	public RTFWriter(Study study) {
+	public RTFWriter(Study study) throws CorruptedInterviewException {
 		super(study);
 	}
 
-	public RTFWriter(Study study, Interview interview) {
+	public RTFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super(study, interview);
 	}
 

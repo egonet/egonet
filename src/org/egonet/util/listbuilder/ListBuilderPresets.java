@@ -21,15 +21,17 @@ package org.egonet.util.listbuilder;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.fest.swing.util.Arrays;
+
 public class ListBuilderPresets
 {
 	public static Map<String,Selection[]> getPresets()
 	{
 		Map<String,Selection[]> ret = new HashMap<String,Selection[]>();
-		ret.put("Yes/No", YES_NO);
-		ret.put("Gender", GENDER);
-		ret.put("States", STATES);
-		
+		ret.put("Yes/No", Arrays.copyOf(YES_NO));
+		ret.put("Gender", Arrays.copyOf(GENDER));
+		ret.put("States", Arrays.copyOf(STATES));
+
 		return ret;
 	}
 	

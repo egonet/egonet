@@ -156,7 +156,7 @@ public class ClientPanel
 	
 	private void doWholeNetworkAnalysis(ActionEvent e) throws Exception
 	{
-		if(true) {
+		if(false) {
 			JOptionPane.showMessageDialog(egoClient.getFrame(), "This feature is coming soon.",
 					"Coming soon", JOptionPane.INFORMATION_MESSAGE);
 			return;

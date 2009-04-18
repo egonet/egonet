@@ -38,6 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
 
+import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
@@ -358,7 +359,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		}
 	}
 	
-	private void jMenuFileExportStudy_actionPerformed(ActionEvent e) throws IOException {
+	private void jMenuFileExportStudy_actionPerformed(ActionEvent e) throws IOException, CorruptedInterviewException {
 		egoNet.getStorage().exportStudy(false);
 	}
 	

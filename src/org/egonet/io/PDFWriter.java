@@ -13,30 +13,21 @@ import java.awt.Color;
 import java.io.*;
 import java.util.*;
 
+import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.listbuilder.Selection;
 
 public class PDFWriter {
-
-	private boolean includeResponses;
 	private Study study;
 	private Interview interview;
 	
-	public PDFWriter(Study study, Interview interview) {
+	public PDFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super();
 		this.study = study;
 		this.interview = interview;
-		this.includeResponses = (interview != null);
 	}
 	
-	public PDFWriter(Study study) {
-		this(study, null);
-	}
-	
-	public boolean isIncludeResponses() {
-		return includeResponses;
-	}
-	public void setIncludeResponses(boolean includeResponses) {
-		this.includeResponses = includeResponses;
+	public PDFWriter(Study study) throws CorruptedInterviewException {
+		this(study, new Interview(study));
 	}
 	public Study getStudy() {
 		return study;
@@ -131,37 +122,36 @@ public class PDFWriter {
 		document.add(selections);
 		document.add(new Paragraph());
 		
-		if(includeResponses) {
-			java.util.List<Answer> answers = interview.getAnswersByUniqueId(question.UniqueId);
+		java.util.List<Answer> answers = interview.getAnswersByUniqueId(question.UniqueId);
 
-			List answeredQuestions = new List();
+		List answeredQuestions = new List();
 			
-			for(Answer answer : answers) {
+		for(Answer answer : answers) {
 
-				writeLine(document);
+			writeLine(document);
+			
+			document.add(new Paragraph("Answered: " + answer.answered));
+			document.add(new Paragraph("Answer Index: " + answer.getIndex()));
+			document.add(new Paragraph("Answer Value: " + answer.getValue()));
+
+			if(answer.getAlters() != null && answer.getAlters().size() > 0) {
 				
-				document.add(new Paragraph("Answered: " + answer.answered));
-				document.add(new Paragraph("Answer Index: " + answer.getIndex()));
-				document.add(new Paragraph("Answer Value: " + answer.getValue()));
-
-				if(answer.getAlters() != null && answer.getAlters().size() > 0) {
+				String names = "";
+				java.util.List<Integer> alters = answer.getAlters();
+				for(int i = 0; i < alters.size() ;i++) {
+					int num = alters.get(i);
+					names += interview.getAlterList()[num] + " ("+num+")";
 					
-					String names = "";
-					java.util.List<Integer> alters = answer.getAlters();
-					for(int i = 0; i < alters.size() ;i++) {
-						int num = alters.get(i);
-						names += interview.getAlterList()[num] + " ("+num+")";
-						
-						if(i < alters.size()-1)
-							names += ", ";
-					}
-					
-					document.add(new Paragraph("Answer Alters: " + names));
+					if(i < alters.size()-1)
+						names += ", ";
 				}
-				document.add(new Paragraph("String answer: " + answer.string));
 				
-				
+				document.add(new Paragraph("Answer Alters: " + names));
 			}
+			document.add(new Paragraph("String answer: " + answer.string));
+			
+			
+		
 			
 			document.add(answeredQuestions);
 		}
