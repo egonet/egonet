@@ -53,6 +53,8 @@
 			<zipfileset src="${dir.lib.Enet}/miglayout-3.7-swing.jar" />
 			<zipfileset src="${dir.lib.Enet}/opencsv-1.8.jar" />
 			<zipfileset src="${dir.lib.Enet}/functionalj.jar" />
+			<zipfileset src="${dir.lib.Enet}/iText-2.1.5.jar" />
+			<zipfileset src="${dir.lib.Enet}/iText-rtf-2.1.5.jar" />
 
 			<zipfileset src="${dir.lib.Enet}/jung/collections-generic-4.01.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/colt-1.2.0.jar" />
