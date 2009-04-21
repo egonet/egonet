@@ -692,6 +692,7 @@ public class ListBuilder
         bob.setEditable(true);
 
         //Center the window
+        /*
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = fred.getSize();
 
@@ -706,6 +707,7 @@ public class ListBuilder
         }
 
         fred.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        */
         fred.setVisible(true);
     }
 

@@ -379,7 +379,7 @@ public class EgoStore {
 		try {
 			prefs = Preferences.userNodeForPackage(getClass());
 		} catch (Throwable t) {
-			// eat this exception
+			t.printStackTrace();
 		}
 
 		jNewStudyChooser.addChoosableFileFilter(packageFilter);
@@ -391,9 +391,12 @@ public class EgoStore {
 			String userHome = ".";
 			try { 
 				userHome = System.getProperty("user.home",".");
-			} catch (Throwable t) {	}
-			//if (prefs != null) directory = new File(prefs.get(FILE_PREF, "."));
+			} catch (Throwable t) {	
+				t.printStackTrace();
+			}
 			File directory = new File(userHome);
+			if (prefs != null && !prefs.get(FILE_PREF, ".").equals(".")) directory = new File(prefs.get(FILE_PREF, "."));
+			
 			jNewStudyChooser.setCurrentDirectory(directory);
 		}
 

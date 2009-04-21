@@ -38,12 +38,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
-import com.cim.dlgedit.loader.DialogResource;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.egonet.util.CardPanel;
 import org.egonet.util.CatchingAction;
@@ -161,6 +162,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private final EgoClient egoClient;
 
+	private JScrollPane questionTextScrollPane;
+
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * 
@@ -174,18 +177,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						178, 178, 178)), "Questions"), BorderFactory
 						.createEmptyBorder(10, 10, 10, 10));
 
-		questionPanelLeft = getLeftPanel();
-		questionPanelRight = getRightPanel();
-
-		jbInit();
-	}
-
-	/**
-	 * Component initialization
-	 * 
-	 * @throws Exception
-	 */
-	private void jbInit() {
+		
 		// Question vars
 		question = egoClient.getInterview().setInterviewIndex(egoClient.getInterview()
 				.getFirstUnansweredQuestion(), false);
@@ -193,6 +185,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		this.setMinimumSize(new Dimension(330, 330));
 		this.setLayout(new GridLayout());
 
+		questionPanelLeft = getLeftPanel();
+		questionPanelRight = getRightPanel();
+		
 		// Configure Split Frame
 		questionSplit.add(questionPanelLeft, JSplitPane.LEFT);
 		questionSplit.add(questionPanelRight, JSplitPane.RIGHT);
@@ -204,6 +199,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		Dimension minimumSize = new Dimension(100, 100);
 		questionPanelLeft.setMinimumSize(minimumSize);
 		questionPanelRight.setMinimumSize(minimumSize);
+		
+
+		if(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
+			add(questionSplit, null);
+		else
+			add(questionPanelRight);
+
+		/* Differences in UI in conducting interview vs. viewing it */
+		questionPanelLeft.setVisible(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW);
+
 
 		/* Install event Handlers */
 		questionList.getSelectionModel().addListSelectionListener(
@@ -309,12 +314,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 			questionList.setSelectedIndex(0);
 
-		this.add(questionSplit, null);
-
-		/* Differences in UI in conducting interview vs. viewing it */
-		questionPanelLeft
-		.setVisible(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW);
-
 		fillPanel();
 	}
 
@@ -342,23 +341,30 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private JPanel getRightPanel() {
 		// Load up the dialog contents.
-		JPanel panel = DialogResource
-		.load("com/endlessloopsoftware/ego/client/QuestionPanel.gui_xml");
+		JPanel panel = new JPanel();
+		
 
 		// Attach beans to fields.
-		questionButtonPrevious = (JButton) DialogResource.getComponentByName(panel, "questionButtonPrevious");
-		questionButtonNext = (JButton) DialogResource.getComponentByName(panel,	"questionButtonNext");
-		titleText = (JLabel) DialogResource.getComponentByName(panel, "titleText");
-		answerPanel = (CardPanel) DialogResource.getComponentByName(panel, "answerPanel");
-		questionProgress = (JProgressBar) DialogResource.getComponentByName( panel, "questionProgress");
-		questionText = (JTextArea) DialogResource.getComponentByName(panel, "questionText");
-
-		/* Set up answer panel cards */
-		answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
-		answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
-		answerPanel.add(new JScrollPane(numericalPanel), NUMERICAL_CARD);
-		answerPanel.add(new JScrollPane(radioPanel), RADIO_CARD);
-		answerPanel.add(new JScrollPane(menuPanel), MENU_CARD);
+		questionButtonPrevious = new JButton("Previous Question");
+		questionButtonPrevious.setName("questionButtonPrevious");
+		
+		questionButtonNext = new JButton("Next Question");
+		questionButtonNext.setName("questionButtonNext");
+		questionButtonNext.setFocusCycleRoot(true);
+		
+		titleText = new JLabel("title");
+		titleText.setName("titleText");
+		
+		answerPanel = new CardPanel();
+		answerPanel.setName("answerPanel");
+		
+		questionProgress = new JProgressBar();
+		questionProgress.setName("questionProgress");
+		
+		questionText = new JTextArea();
+		questionText.setName("questionText");
+		questionText.setLineWrap(true);
+		questionText.setWrapStyleWord(true);
 
 		titleText.setFont(new java.awt.Font("Lucida Grande Bold", 0, 15));
 
@@ -370,7 +376,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionText.setEditable(false);
 		questionText.setMargin(new Insets(4, 4, 4, 4));
 		questionText.setBorder(BorderFactory.createLoweredBevelBorder());
+		
+		questionTextScrollPane = new JScrollPane(questionText);
 
+		/* Set up answer panel cards */
+		answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
+		answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
+		answerPanel.add(new JScrollPane(numericalPanel), NUMERICAL_CARD);
+		answerPanel.add(new JScrollPane(radioPanel), RADIO_CARD);
+		answerPanel.add(new JScrollPane(menuPanel), MENU_CARD);
+		
 		answerMenu.setOpaque(true);
 
 		answerTextField.setFont(new java.awt.Font("SansSerif", 0, 14));
@@ -385,6 +400,20 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		numericalTextField.setTabSize(4);
 		numericalTextField.setWrapStyleWord(false);
 
+		MigLayout layout = new MigLayout("", "[grow]");
+		panel.setLayout(layout);
+		
+		panel.add(titleText, "growx, wrap");
+		
+		panel.add(questionTextScrollPane, "grow, wrap");
+		panel.add(answerPanel, "grow, wrap");
+
+		panel.add(questionProgress, "growx, wrap");
+		
+		panel.add(questionButtonPrevious, "split, growx");
+		panel.add(questionButtonNext, "growx");
+
+		
 		return panel;
 	}
 
@@ -439,6 +468,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			questionText.setText(question.text);
+			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(ALTER_CARD);
 			alterList.setMaxListSize(egoClient.getStudy().getNetworkSize());
@@ -457,6 +487,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			alterList.requestFocusOnFirstVisibleComponent();
 		} else if (question.answerType == Shared.AnswerType.TEXT) {
 			questionText.setText(question.text);
+			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(TEXT_CARD);
 			answerPanel.validate();
@@ -476,6 +507,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerTextField.requestFocusInWindow();
 		} else if (question.answerType == Shared.AnswerType.NUMERICAL) {
 			questionText.setText(question.text);
+			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(NUMERICAL_CARD);
 			numericalTextField.setDocument(wholeNumberDocument);
@@ -505,6 +537,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			System.out.println("Displaying CATEGORICAL question: " + question.text);
 			questionText.setText(question.text);
+			questionText.setCaretPosition(0);
 			
 			// can we do radio buttons or do we need the dropdown?
 			if (question.getSelections().length <= answerButtons.length) { // radio buttons!
@@ -543,6 +576,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			} else { // drop downs!
 				System.out.println(" -- doing drop downs!");
 				questionText.setText(question.text);
+				questionText.setCaretPosition(0);
 				answerPanel.showCard(MENU_CARD);
 
 				answerMenu.setActionCommand("Initialization"); // suspend the answer listener while we mess w/ the box

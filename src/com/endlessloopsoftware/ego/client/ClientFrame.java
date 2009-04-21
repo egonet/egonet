@@ -21,7 +21,6 @@ package com.endlessloopsoftware.ego.client;
 import javax.swing.JCheckBoxMenuItem;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -525,7 +524,7 @@ public class ClientFrame extends MDIChildFrame {
 	      if (center)
 	      {
 	        //Center the window
-	        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	        /* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	        Dimension frameSize = egoClient.getFrame().getSize();
 	        if (frameSize.height > screenSize.height)
 	        {
@@ -536,7 +535,7 @@ public class ClientFrame extends MDIChildFrame {
 	            frameSize.width = screenSize.width;
 	        }
 	        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-	        
+	        */
 	      }
 	     
 	     egoClient.getFrame().setVisible(true);
@@ -609,7 +608,7 @@ public class ClientFrame extends MDIChildFrame {
         egoClient.getFrame().setContentPane(new StartPanel(egoClient));
         egoClient.getFrame().pack();
         egoClient.getFrame().setSize(350, 350);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        /* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = egoClient.getFrame().getSize();
         if (frameSize.height > screenSize.height)
         {
@@ -619,7 +618,7 @@ public class ClientFrame extends MDIChildFrame {
         {
             frameSize.width = screenSize.width;
         }
-        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
         egoClient.getFrame().setVisible(true);
     }
 

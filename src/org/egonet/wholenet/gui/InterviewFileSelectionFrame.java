@@ -122,7 +122,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 					mappableFiles.add((File)f);
 				
 				
-				NameMapperFrame frame = new NameMapperFrame(mappableFiles);
+				NameMapperFrame frame = new NameMapperFrame(study, mappableFiles);
 				dispose();
 				frame.setVisible(true);
 			}
@@ -130,7 +130,6 @@ public class InterviewFileSelectionFrame extends JFrame {
 		cancelNextButtonPanel.add(new JButton(nextAction));
 		
 		add(cancelNextButtonPanel, BorderLayout.SOUTH);
-
 		
 		pack();
 	}

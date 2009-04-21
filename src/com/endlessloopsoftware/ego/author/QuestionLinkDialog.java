@@ -309,7 +309,7 @@ public class QuestionLinkDialog extends JDialog
 		this.setSize(550, 500);
 
 		//Center the window
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		/* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = this.getSize();
 		if (frameSize.height > screenSize.height)
 		{
@@ -319,7 +319,7 @@ public class QuestionLinkDialog extends JDialog
 		{
 			frameSize.width = screenSize.width;
 		}
-		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
 
 		this.show();
 	}
