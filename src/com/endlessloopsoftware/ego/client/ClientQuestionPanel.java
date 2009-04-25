@@ -485,6 +485,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
 			alterList.requestFocusOnFirstVisibleComponent();
+		} else if (question.answerType == Shared.AnswerType.INFORMATIONAL) {
+			questionText.setText(question.text);
+			questionText.setCaretPosition(0);
 		} else if (question.answerType == Shared.AnswerType.TEXT) {
 			questionText.setText(question.text);
 			questionText.setCaretPosition(0);
@@ -695,6 +698,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.setValue((Answer.NO_ANSWER));
 					answer.answered = false;
 				}
+			} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
+				answer.setValue(1);
+				answer.answered = true;
 			} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
 				//System.out.println("Timestamp: " + answer.timestamp);
@@ -879,6 +885,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				questionButtonNext.setText("Next Question");
 				questionButtonNext.setEnabled(question.answer.answered);
 			}
+		}
+		if(question.answerType == Shared.AnswerType.INFORMATIONAL) {
+			questionButtonNext.setEnabled(true);
 		}
 	}
 

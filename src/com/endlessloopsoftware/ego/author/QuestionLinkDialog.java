@@ -512,6 +512,10 @@ public class QuestionLinkDialog extends JDialog
 			linkAnswer.string   		= answerTextField.getText();
 			linkAnswer.setValue(linkAnswer.string.length());
 			linkAnswer.answered     	= (linkAnswer.getValue() != 0);
+		} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
+			linkAnswer.string = "informational";
+			linkAnswer.setValue(1);
+			linkAnswer.answered = true;
 		} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 			if (question.getSelections().length <= 5)
 			{

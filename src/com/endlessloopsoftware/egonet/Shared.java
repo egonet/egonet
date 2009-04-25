@@ -43,7 +43,8 @@ public class Shared
 	{
 	    CATEGORICAL,
 	    NUMERICAL,
-	    TEXT
+	    TEXT,
+	    INFORMATIONAL,
 	}
 
 	/* Constants */
@@ -95,7 +96,8 @@ public class Shared
 	public static final int CATEGORICAL 					   = 0;
 	public static final int NUMERICAL						   = 1;
 	public static final int TEXT								= 2;
-	public static final int MAX_ANSWER_TYPE 			= 2;
+	public static final int INFORMATIONAL						= 3;
+	public static final int MAX_ANSWER_TYPE 			= 3;
 	
 	public static final int 		   NO_ALTER				= -1;
    
