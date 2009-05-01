@@ -32,14 +32,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
-
 import org.egonet.util.CatchingAction;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 
+import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
+
 public class CategoryInputPane extends JDialog {
+	
 	private final JList parentList;
 
 	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -168,7 +169,6 @@ public class CategoryInputPane extends JDialog {
 	}
 
 	void activate() {
-		//System.out.println("before activate lb.pref=" + disp());
 		Question q = (Question) parentList.getSelectedValue();
 
 		if (q != null) {
@@ -190,7 +190,7 @@ public class CategoryInputPane extends JDialog {
 		listBuilder.setPresetListsActive(q.answerType == Shared.AnswerType.CATEGORICAL);
 		
 //		boolean preset = (q.answerType == Shared.AnswerType.CATEGORICAL) ? true : false;
-//		System.out.println("Is question categorical? " + preset);
+//		logger.info("Is question categorical? " + preset);
 //		
 		listBuilder.setAdjacencyActive(q.questionType == Shared.QuestionType.ALTER_PAIR);
 
@@ -204,16 +204,16 @@ public class CategoryInputPane extends JDialog {
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
 
-		//System.out.println("initial lb.pref=" + disp());
+		//logger.info("initial lb.pref=" + disp());
 		
 		/* Pack since we've modified the GUI elements */
 		validate();
 		pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack();
 		
-		//System.out.println("after invalidate and pack lb.pref " + disp());
+		//logger.info("after invalidate and pack lb.pref " + disp());
 		
 		this.setVisible(true);
 		
-		//System.out.println("after it was visible lb.pref " + disp());
+		//logger.info("after it was visible lb.pref " + disp());
 	}
 }

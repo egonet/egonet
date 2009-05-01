@@ -1,18 +1,28 @@
 package org.egonet.wholenet.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-
 import org.egonet.io.InterviewReader;
+import org.egonet.util.CatchingAction;
+import org.jdesktop.swingx.JXTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
+
+import net.miginfocom.swing.MigLayout;
 import net.sf.functionalj.tuple.Pair;
 
 import com.endlessloopsoftware.egonet.Interview;
@@ -20,6 +30,8 @@ import com.endlessloopsoftware.egonet.Study;
 
 public class NameMapperFrame extends JFrame {
 
+	final private static Logger logger = LoggerFactory.getLogger(NameMapperFrame.class);
+	
 	private final Study study;
 	private final List<Pair<File, Interview>> interviewMap;
 	public NameMapperFrame(Study study, List<File> mappableFiles) {
@@ -36,16 +48,13 @@ public class NameMapperFrame extends JFrame {
 				interviewMap.add(p);
 			} 
 			catch (Exception ex ) {
-				System.out.println("Couldn't map " + intFile.getName());
-				ex.printStackTrace();
+				logger.info("Couldn't map " + intFile.getName());
+				logger.error(ex.toString());
 			}
 		}
 		
 		build();
 	}
-
-	
-	enum MappingStyle { NONE, PRIMARY, OTHER_NAME };
 
 	/**
 	 * This class is a data member which will keep track of exactly what should
@@ -56,57 +65,60 @@ public class NameMapperFrame extends JFrame {
 	public class NameMapping {
 		final Study study;
 		final Interview interview;
-		final String alter;
+		final Integer alterNumber;
+		final String alterName;
 		
-		private Pair<Interview,Integer> destination;
-		private MappingStyle style;
+		private Integer group;
 		
-		public NameMapping(Study study, Interview interview, String alter) {
+		public NameMapping(Study study, Interview interview, Integer alterNumber) {
 			super();
 			this.interview = interview;
 			this.study = study;
-			this.style = MappingStyle.NONE;
-			this.alter = alter;
+			this.alterNumber = alterNumber;
+			this.alterName = interview.getAlterList()[alterNumber];
+			this.group = 0;
+		}
+		
+		// ego constructor
+		public NameMapping(Study study, Interview interview) {
+			super();
+			this.interview = interview;
+			this.study = study;
+			this.alterNumber = -1;
+			this.alterName = interview.getName()[0] + " " + interview.getName()[1];
+			this.group = 0;
 		}
 
-		public Pair<Interview, Integer> getDestination() {
-			return destination;
+		public Integer getGroup() {
+			return group;
 		}
 
-		public void setDestination(Pair<Interview, Integer> destination) {
-			this.destination = destination;
-		}
-
-		public MappingStyle getStyle() {
-			return style;
-		}
-
-		public void setStyle(MappingStyle style) {
-			this.style = style;
+		public void setGroup(Integer group) {
+			this.group = group;
 		}
 	}
 	
 	public class MapperTableModel extends AbstractTableModel {
 
-		public final String [] columns = {"Ego", "Alter Name", "Mapping Type", "Destination"};
+		public final String [] columns = {"Alter Name (Source Ego)", "Mapping Group"};
 		private final List<NameMapping> mappings;
 		
 		public MapperTableModel() {
 			mappings = new ArrayList<NameMapping>();
+			
 			for(Pair<File, Interview> entry : interviewMap) {
 				Interview interview = entry.getSecond();
 
-				NameMapping egoMapping = new NameMapping(study, interview, interview.getName()[0] + " " + interview.getName()[1]);
+				NameMapping egoMapping = new NameMapping(study, interview);
 				mappings.add(egoMapping);
 				
-				for(String alter : interview.getAlterList()) {
-					NameMapping mapping = new NameMapping(study, interview, alter);
+				String [] alterList = interview.getAlterList();
+				for(int i = 0; i < alterList.length; i++) {
+					NameMapping mapping = new NameMapping(study, interview, i);
 					mappings.add(mapping);
 					
 				}
 			}
-			
-			// destinations will probably be a list of all available mappings that are set to primary
 		}
 		
 		public int getColumnCount() {
@@ -124,16 +136,10 @@ public class NameMapperFrame extends JFrame {
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			NameMapping row = mappings.get(rowIndex);
 			if(columnIndex == 0) {
-				return row.interview;
+				return row;
 			}
 			else if(columnIndex == 1) {
-				return row.alter;
-			}
-			else if(columnIndex == 2) {
-				return row.style;
-			}
-			else if(columnIndex == 3) {
-				return row.destination;
+				return row.group;
 			}
 			else {
 				return row;
@@ -142,86 +148,168 @@ public class NameMapperFrame extends JFrame {
 		
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if(columnIndex == 2)
+			if(columnIndex == 1)
 				return true;
-			
-			if(columnIndex == 3 && mappings.get(rowIndex).style.equals(MappingStyle.OTHER_NAME))
-				return true;
-			
 			return false;
 		}
 		
 		@Override
 	    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			NameMapping row = mappings.get(rowIndex);
-			if(columnIndex == 2 && aValue instanceof MappingStyle) {
-				row.setStyle((MappingStyle)aValue);
-			}
-			else if(columnIndex == 3) {
-				//row.setDestination(destination);
+			if(columnIndex == 1 && aValue instanceof String) {
+				
+				Integer i = null;
+				try {
+					i = Integer.parseInt(aValue.toString());
+				} 
+				catch(NumberFormatException ex) {
+					return;
+				}
+				
+				NameMapping row = mappings.get(rowIndex);
+				row.setGroup(i);
 			}
 	    }
+
+		public List<NameMapping> getMappings() {
+			return mappings;
+		}
+
 	}
 	
-	class InterviewRenderer extends DefaultTableCellRenderer {
+	class MappingRenderer implements ListCellRenderer, TableCellRenderer, Serializable {
+		
+		private final DefaultTableCellRenderer tableDelegate = new DefaultTableCellRenderer();
+		private final DefaultListCellRenderer listDelegate = new DefaultListCellRenderer();
+		
 		public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
 			
-			if(value instanceof Interview) {
-				Interview intv = (Interview)value;
-				value = intv.getName()[0] + " " + intv.getName()[1];
+			if(value instanceof NameMapping) {
+				value = convert((NameMapping)value);
 			}
 			
-			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			return tableDelegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		}
+
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			
+			if(value instanceof NameMapping) {
+				value = convert((NameMapping)value);
+			}
+			
+			return listDelegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		}
+		
+		private String convert(NameMapping mapping) {
+			Interview intv = mapping.interview;
+			String ego = intv.getName()[0] + " " + intv.getName()[1];
+			String alter = mapping.alterName;
+			
+			return alter + " (" + ego + ")";
 		}
 	}
 	
-    public class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
-        public MyComboBoxRenderer(Object [] items) {
-            super(items);
-        }
-    
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                super.setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                setBackground(table.getBackground());
-            }
-    
-            // Select the current value
-            setSelectedItem(value);
-            return this;
-        }
-    }
-    
-    public class MyComboBoxEditor extends DefaultCellEditor {
-        public MyComboBoxEditor(Object[] items) {
-            super(new JComboBox(items));
-        }
-    }
-
-	
-	private void build() {
-		BorderLayout layout = new BorderLayout();
+    private void build() {
+		final MapperTableModel model = new MapperTableModel();
+		final JXTable table = new JXTable(model);
+		table.setSortable(true);
+		
+		// column 0 - source ego/alter
+		table.getColumnModel().getColumn(0).setCellRenderer(new MappingRenderer());
+		
+		// column 1 - mapping group
+		; // no changes
+		
+    	MigLayout layout = new MigLayout("fill", "[grow]");
 		setLayout(layout);
 		
-		MapperTableModel model = new MapperTableModel();
+		JScrollPane scrollPane = new JScrollPane(table);		
+		add(new JLabel("Please perform alter/ego name mappings"),  "growx, wrap");
+		add(scrollPane, "grow, span, wrap");
+
+		Action cancelAction = new CatchingAction("Cancel") {
+			@Override
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				dispose();
+			}
+		};
+		JButton cancelButton = new JButton(cancelAction);
+		add(cancelButton,  "split, growx");
 		
-		JTable table = new JTable();
-		table.setModel(model);
-		table.getColumnModel().getColumn(0).setCellRenderer(new InterviewRenderer());
+		Action automatchAction = new CatchingAction("Automatch") {
+			@Override
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				doDefaultSimilarity(model, 0.8f);
+				table.repaint();
+			}
+		};
+		JButton automatchButton = new JButton(automatchAction);
+		add(automatchButton,  "split, growx");
 		
-		MyComboBoxRenderer mappingRenderer = new MyComboBoxRenderer(MappingStyle.values());
-		MyComboBoxEditor mappingEditor = new MyComboBoxEditor(MappingStyle.values());
-		table.getColumnModel().getColumn(2).setCellEditor(mappingEditor);
-		table.getColumnModel().getColumn(2).setCellRenderer(mappingRenderer);
+		Action continueAction = new CatchingAction("Continue") {
+			@Override
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				model.getMappings();
+				// do the whole network combination, and export/show it!
+			}
+		};
+		JButton continueButton = new JButton(continueAction);
+		add(continueButton,  "growx");
 		
-		JScrollPane scrollPane = new JScrollPane(table);
-		add(scrollPane, BorderLayout.CENTER);
+		
 		
 		pack();
 	}
+    
+    private void doDefaultSimilarity(MapperTableModel model, float cutoff) {
+    	AbstractStringMetric metric = new Levenshtein();
+    	
+    	Map<Integer,List<NameMapping>> groupings = new HashMap<Integer,List<NameMapping>>();
+    	int groupCounter = 1;
+    	
+    	ArrayList<NameMapping> names = new ArrayList<NameMapping>(model.getMappings());
+    	while(names.size() > 0) {
+    		NameMapping current = names.remove(0);
+    		
+    		float highest = 0.0f; Integer highestGroup = null;
+    		for(Map.Entry<Integer,List<NameMapping>> entry : groupings.entrySet()) {
+    			float averageScore = 0; int elementCount = 0;
+    			for(NameMapping entryMapping : entry.getValue()) {
+    				float thisScore = metric.getSimilarity(current.alterName, entryMapping.alterName);
+    				if(thisScore >= cutoff)
+    					logger.info(current.alterName + " + " + entryMapping.alterName + " = " + thisScore);
+    				
+    				averageScore += thisScore;
+    				elementCount++;
+    			}
+    			averageScore /= elementCount;
+    			if(averageScore >= cutoff && averageScore > highest) {
+    				highest = averageScore;
+    				highestGroup = entry.getKey();
+    			}
+    		}
+
+    		// pick an existing group
+    		if(highestGroup != null) {
+    			List<NameMapping> destGroup = groupings.get(highestGroup);
+    			destGroup.add(current);
+    		}
+    		// create a new group
+    		else {
+    			List<NameMapping> destGroup = new ArrayList<NameMapping>();
+    			destGroup.add(current);
+    			groupings.put(groupCounter++, destGroup);
+    		}
+    	}
+    	
+    	for(NameMapping map : model.getMappings()) {
+    		for(Integer group : groupings.keySet()) {
+    			if(groupings.get(group).contains(map)) {
+    				map.setGroup(group);
+    				break;
+    			}
+    		}
+    	}
+    }
 }

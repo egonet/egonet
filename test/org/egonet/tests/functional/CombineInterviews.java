@@ -16,6 +16,9 @@ import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.endlessloopsoftware.ego.client.graph.ELSFRLayout2;
 import com.endlessloopsoftware.ego.client.graph.Edge;
 import com.endlessloopsoftware.ego.client.graph.Vertex;
@@ -30,6 +33,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class CombineInterviews
 {
+	final private static Logger logger = LoggerFactory.getLogger(CombineInterviews.class);
+	
 	public void doCombineInterviews() throws Exception
 	{
 		/* Read new study */
@@ -72,11 +77,11 @@ public class CombineInterviews
 			Interview interview = interviewReader.getInterview();
 			if(!interview.isComplete())
 			{
-				System.out.println("*** SKIPPED because interview isn't complete: " + f.getName());
+				logger.info("*** SKIPPED because interview isn't complete: " + f.getName());
 				continue;
 			}
 			
-			System.out.println("** Reading next file " + f.getName());
+			logger.info("** Reading next file " + f.getName());
 			
 			
 
@@ -107,7 +112,7 @@ public class CombineInterviews
 							pairedAlters.add(new Vertex(alter2));
 							
 							// mark those as adjacent in the new big matrix
-							//System.out.println(p +  " are adjacent");
+							//logger.info(p +  " are adjacent");
 						}
 					}
 				}
@@ -166,9 +171,9 @@ public class CombineInterviews
         frame.setVisible(true);
 
 		// TODO: how do isolates exist from combining personal networks into a whole network?
-		System.out.println("Pairs: " + allPairs);
+		logger.info("Pairs: " + allPairs);
 		alterList.removeAll(pairedAlters);
-		System.out.println("Single alters: " + alterList);
+		logger.info("Single alters: " + alterList);
 		
 		// TODO: write to file using save dialog
 	}

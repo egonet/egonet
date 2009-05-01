@@ -52,6 +52,9 @@ import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -63,6 +66,9 @@ import java.util.Date;
  * Generic Panel creation and handling routines for question editing
  */
 public class ClientQuestionPanel extends JPanel implements Observer {
+	
+	final private static Logger logger = LoggerFactory.getLogger(ClientQuestionPanel.class);
+	
 	/* Lists */
 	private final JRadioButton[] answerButtons = { 
 			new JRadioButton(), // 1
@@ -234,14 +240,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		answerButtonListener = new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("answerButtonListener: " + e);
+				logger.info("answerButtonListener: " + e);
 				questionAnsweredEventHandler(e);
 			}
 		};
 
 		answerMenu.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//System.out.println("answerMenu.addActionListener: " + e);
+				//logger.info("answerMenu.addActionListener: " + e);
 				questionAnsweredEventHandler(e);
 			}
 		});
@@ -538,13 +544,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			numericalTextField.requestFocusInWindow();
 		} else if(question.answerType == Shared.AnswerType.CATEGORICAL) {
 
-			System.out.println("Displaying CATEGORICAL question: " + question.text);
+			logger.info("Displaying CATEGORICAL question: " + question.text);
 			questionText.setText(question.text);
 			questionText.setCaretPosition(0);
 			
 			// can we do radio buttons or do we need the dropdown?
 			if (question.getSelections().length <= answerButtons.length) { // radio buttons!
-				System.out.println(" -- doing radio buttons since there's room!");
+				logger.info(" -- doing radio buttons since there's room!");
 				
 				for(int i = 0; i < answerButtons.length; i++)
 				{
@@ -561,23 +567,23 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 					answerButtons[i].setActionCommand("User Input");
 					
-					System.out.println("Creating radio button " + i + ": " + answerButtons[i].getText());
+					logger.info("Creating radio button " + i + ": " + answerButtons[i].getText());
 				}
 				
-				System.out.println("-- answer: " + question.answer.answered + ", answer index: " + question.answer.getIndex());
+				logger.info("-- answer: " + question.answer.answered + ", answer index: " + question.answer.getIndex());
 				if (question.answer.answered && (question.answer.getIndex() >= -1)) {
-					System.out.println(" -- was it actually answered with index >= -1 (not unselected)");
+					logger.info(" -- was it actually answered with index >= -1 (not unselected)");
 					//int idx = question.selections.length - (question.answer.getValue() + 1);
 					if (answerButtons != null && answerButtons.length != 0) {
 						answerButtons[question.answer.getIndex()].setSelected(true);
-						System.out.println("-- YES -- setting a selection for the new loaded question's answer!");
+						logger.info("-- YES -- setting a selection for the new loaded question's answer!");
 					}
 				}
 				
                 answerPanel.showCard(RADIO_CARD);
 				answerPanel.setVisible(true);
 			} else { // drop downs!
-				System.out.println(" -- doing drop downs!");
+				logger.info(" -- doing drop downs!");
 				questionText.setText(question.text);
 				questionText.setCaretPosition(0);
 				answerPanel.showCard(MENU_CARD);
@@ -626,17 +632,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 		// return;
 		
-		//System.out.println("fillAnswer called for " + answer.getString());
+		//logger.info("fillAnswer called for " + answer.getString());
 		Study study = egoClient.getStudy();
 
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
-			System.out.println("More prompts? " + morePrompts);
+			logger.info("More prompts? " + morePrompts);
 			
 			// value starts at zero, so add one to compare to # alters needed
 			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
-			System.out.println("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
+			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
 			answer.answered = morePrompts || maxAlters;
 			
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
@@ -684,7 +690,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
-					//System.out.println("Timestamp: " + answer.timestamp);
+					//logger.info("Timestamp: " + answer.timestamp);
 					if (noAnswerBox.isSelected()) {
 						answer.answered = true;
 						answer.setValue((Answer.NO_ANSWER));
@@ -703,7 +709,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answer.answered = true;
 			} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
-				//System.out.println("Timestamp: " + answer.timestamp);
+				//logger.info("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.answered = (answer.getValue() != 0);
@@ -718,14 +724,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.timestamp = generateTimeStamp();
 						
 						int selectionIndex = buttonIndex;
-						System.out.println("Selected button (index: " + buttonIndex + ") with selections ("+Arrays.asList(question.getSelections())+") of size " + question.getSelections().length);
+						logger.info("Selected button (index: " + buttonIndex + ") with selections ("+Arrays.asList(question.getSelections())+") of size " + question.getSelections().length);
 						answer.setValue((question.getSelections()[selectionIndex].getValue()));
 						// added 11/27/2007
 						answer.setIndex(question.getSelections()[selectionIndex].getIndex());
 						// answer.index = question.selections.length - question.selections[button].getIndex();
 						answer.adjacent = question.getSelections()[selectionIndex].isAdjacent();
 						answer.string = question.getSelections()[selectionIndex].getString();
-						//System.out.println("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
+						//logger.info("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
 				} else {
@@ -737,7 +743,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 					if (answer.answered) {
 						answer.timestamp = generateTimeStamp();
-						//System.out.println("Timestamp: " + answer.timestamp);
+						//logger.info("Timestamp: " + answer.timestamp);
 
 						Selection sel = question.getSelections()[selectionIndex];
 						answer.setValue(sel.getValue());
@@ -750,7 +756,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.string = question.getSelections()[selectionIndex]
 						                                         .getString();
 						
-						System.out.println("Answered: " + answer.getString());
+						logger.info("Answered: " + answer.getString());
 					}
 				}
 			}
@@ -780,19 +786,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void numberKey_actionPerformed(ActionEvent e) throws IOException {
 		int key = Integer.parseInt(e.getActionCommand()) - 1;
-		System.out.println("Key pressed " + key);
+		logger.info("Key pressed " + key);
 		if (key == -1 && questionButtonNext.isEnabled())
 			questionButtonNext_actionPerformed(e);
 
 		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
-				// System.out.println("Selection value :" +sel.getValue());
+				// logger.info("Selection value :" +sel.getValue());
 				if (key == sel.getValue()) {
 					// answerButtons[key - 1].setSelected(true);
 
 					answerButtons[sel.getIndex()].setSelected(true);
-					System.out.println("Number pressed w/ categorical question: numberKey_actionPerformed");
+					logger.info("Number pressed w/ categorical question: numberKey_actionPerformed");
 					questionAnsweredEventHandler(e);
 					break;
 				}
@@ -892,7 +898,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void questionAnsweredEventHandler(ActionEvent e) {
-		//System.out.println("questionAnsweredEventHandler");
+		//logger.info("questionAnsweredEventHandler");
 		if (e.getActionCommand() != "Initialization") {
 			fillAnswer(question.answer);
 			setButtonNextState();
@@ -900,19 +906,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void answerTextEvent(DocumentEvent e) {
-		System.out.println("answerTextEvent");
+		logger.info("answerTextEvent");
 		fillAnswer(question.answer);
 		setButtonNextState();
 	}
 
 	public void update(Observable o, Object arg) {
-		System.out.println("update");
+		logger.info("update");
 		fillAnswer(question.answer);
 		setButtonNextState();
 	}
 
 	private void noAnswerBox_actionPerformed(ActionEvent e) {
-		System.out.println("noAnswerBox_actionPerformed");
+		logger.info("noAnswerBox_actionPerformed");
 		if (noAnswerBox.isSelected()) {
 			numericalTextField.setText("");
 		}

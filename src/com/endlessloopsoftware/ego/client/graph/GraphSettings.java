@@ -39,6 +39,8 @@ import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -49,6 +51,8 @@ import javax.xml.transform.stream.*;
 //test comment
 public class GraphSettings {
 
+	final private static Logger logger = LoggerFactory.getLogger(GraphSettings.class);
+	
 	private Map<Vertex, NodeProperty> nodeSettingsMap = Collections
 			.synchronizedMap(new HashMap<Vertex, NodeProperty>());
 
@@ -217,9 +221,9 @@ public class GraphSettings {
 				try {
 					renderer.changeLayout(Class.forName(layoutElement
 							.getAttribute("layout")));
-				} catch (ClassNotFoundException e) {
-					System.out.println("Specified class is not a Layout class");
-					e.printStackTrace();
+				} catch (ClassNotFoundException ex) {
+					logger.info("Specified class is not a Layout class");
+					logger.error(ex.toString());
 				}
 
 				GraphRenderer.getVv().setBackground(
@@ -265,7 +269,7 @@ public class GraphSettings {
 
 						if (propertyElement.getAttribute("type").equals("Edge")) {
 
-							System.out.println(propertyElement
+							logger.info(propertyElement
 									.getAttribute("color"));
 							if (!propertyElement.getAttribute("color").equals(
 									"")) {
@@ -462,10 +466,10 @@ public class GraphSettings {
 			return;
 		
 		int size = QAsettings.size();
-		System.out.println("Graph settings (" + size + " entries):");
+		logger.info("Graph settings (" + size + " entries):");
 		for (int i = 0; i < size; i++) {
 			GraphSettingsEntry entry = QAsettings.get(i);
-			System.out.println("Entry " + i + ": " + entry.toString());
+			logger.info("Entry " + i + ": " + entry.toString());
 		}
 	}
 

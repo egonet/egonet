@@ -11,11 +11,17 @@ import javax.swing.JMenuItem;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Menu component that handles the functionality expected of a standard
  * "Windows" menu for MDI applications.
  */
 public class WindowMenu extends JMenu {
+	
+	final private static Logger logger = LoggerFactory.getLogger(WindowMenu.class);
+	
 	private MDIDesktopPane desktop;
 
 	private JMenuItem cascade = new JMenuItem("Cascade");
@@ -72,8 +78,8 @@ public class WindowMenu extends JMenu {
 					frame.moveToFront();
 					try {
 						frame.setSelected(true);
-					} catch (PropertyVetoException e) {
-						e.printStackTrace();
+					} catch (PropertyVetoException ex) {
+						logger.error(ex.toString());
 					}
 				}
 			});

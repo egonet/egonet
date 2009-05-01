@@ -33,12 +33,17 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author admin
  *
  */
 public class Shared
 {
+	final private static Logger logger = LoggerFactory.getLogger(Shared.class);
+	
 	public enum AnswerType
 	{
 	    CATEGORICAL,
@@ -166,30 +171,30 @@ public class Shared
    public static AlterPromptType getNextPromptType(AlterPromptType type, String UIType)
    {
       AlterPromptType rval = Shared.NOT_ALTER_PROMPT;
-      System.out.println("getNextPromptType: " + type);
+      logger.info("getNextPromptType: " + type);
       
       if (type.equals(Shared.LINK_TO_NEXT))
       {
-         System.out.println("equals " + Shared.LINK_TO_NEXT);
+         logger.info("equals " + Shared.LINK_TO_NEXT);
          rval = Shared.LINK_TO_PRIOR;
       }
       else if (type.equals(Shared.LINK_TO_PRIOR))
       {
-         System.out.println("equals " + Shared.LINK_TO_PRIOR);
+         logger.info("equals " + Shared.LINK_TO_PRIOR);
          rval = Shared.LINK_TO_NEXT;
       }
       else if (type.equals(Shared.NOT_ALTER_PROMPT))
       {
-         System.out.println("equals " + Shared.NOT_ALTER_PROMPT);
+         logger.info("equals " + Shared.NOT_ALTER_PROMPT);
          rval = UIType.equals(Shared.PAIR_ELICITATION) ? Shared.LINK_PAIR : Shared.LINK_TO_NEXT;
       }
       else
       {
-         System.out.println("Fell through with " + type);
+         logger.info("Fell through with " + type);
          rval = Shared.LINK_TO_NONE;
       }
       
-      System.out.println("Returning: " + rval);
+      logger.info("Returning: " + rval);
       
       return rval;
    }

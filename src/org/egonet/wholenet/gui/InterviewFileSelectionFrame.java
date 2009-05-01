@@ -15,12 +15,16 @@ import net.miginfocom.swing.MigLayout;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 public class InterviewFileSelectionFrame extends JFrame {
 
+	final private static Logger logger = LoggerFactory.getLogger(InterviewFileSelectionFrame.class);
+	
 	private final Study study;
 	private final File studyFile;
 	
@@ -78,7 +82,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				addFileAction();
 			}
 		};
-		fileButtonPanel.add(new JButton(addFileAction));
+		fileButtonPanel.add(new JButton(addFileAction), "growx, sg 1");
 		
 		Action addDirectoryAction = new CatchingAction("Add directory") {
 			@Override
@@ -86,7 +90,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				addDirectoryAction();
 			}
 		};
-		fileButtonPanel.add(new JButton(addDirectoryAction));
+		fileButtonPanel.add(new JButton(addDirectoryAction), "growx, sg 1");
 		
 		Action removeFileAction = new CatchingAction("Remove selected") {
 			@Override
@@ -94,7 +98,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				removeFileAction();
 			}
 		};
-		fileButtonPanel.add(new JButton(removeFileAction));
+		fileButtonPanel.add(new JButton(removeFileAction), "growx, sg 1");
 		
 		add(fileButtonPanel, BorderLayout.WEST);
 
@@ -111,7 +115,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				dispose();
 			}
 		};
-		cancelNextButtonPanel.add(new JButton(cancelAction));
+		cancelNextButtonPanel.add(new JButton(cancelAction), "growx, sg 2");
 		
 		Action nextAction = new CatchingAction("Continue") {
 			@Override
@@ -127,7 +131,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				frame.setVisible(true);
 			}
 		};
-		cancelNextButtonPanel.add(new JButton(nextAction));
+		cancelNextButtonPanel.add(new JButton(nextAction), "growx, sg 2");
 		
 		add(cancelNextButtonPanel, BorderLayout.SOUTH);
 		
@@ -174,7 +178,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 		if(selected != null && selected.isDirectory()) {
 			List<File> results = getInitialFiles(selected);
 			for(File result : results) {
-				System.out.println("Possible new file " + result.getName());
+				logger.info("Possible new file " + result.getName());
 				
 				if(!model.contains(result))
 					model.addElement(result);
@@ -206,7 +210,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 		boolean shouldRead = candidate.isFile() && candidate.canRead() && filter.accept(candidate);
 		if(!shouldRead) {
 			// it didn't match for some reason
-			//System.out.println("Couldn't read or wasn't accepted by filter: " + candidate.getName());
+			//logger.info("Couldn't read or wasn't accepted by filter: " + candidate.getName());
 			return false;
 		}
 	
@@ -215,12 +219,12 @@ public class InterviewFileSelectionFrame extends JFrame {
 			Interview interview = reader.getInterview();
 
 			if(!interview.isComplete()) {
-				//System.out.println("Interview wasn't completed: " + candidate.getName());
+				//logger.info("Interview wasn't completed: " + candidate.getName());
 				return false;
 			}
 		
 		} catch (Exception ex) {
-			//System.out.println("Exception reading: " + candidate.getName());
+			//logger.info("Exception reading: " + candidate.getName());
 			return false;
 		}
 
@@ -249,7 +253,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 
 			if(validFile(candidate)) {
 				output.add(candidate);
-			    //System.out.println("I'd use " + candidate.getName());
+			    //logger.info("I'd use " + candidate.getName());
 			}
 		}
 

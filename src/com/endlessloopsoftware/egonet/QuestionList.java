@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A map of question id (long) to question object
  * @author martins
@@ -29,9 +32,11 @@ import java.util.Set;
  */
 public class QuestionList extends HashMap<Long,Question>
 {
+	final private static Logger logger = LoggerFactory.getLogger(QuestionList.class);
+	
 	public void addQuestion(Question q)
 	{
-	    System.out.println("Question added: " + q.getString());
+	    logger.info("Question added: " + q.getString());
 		put(q.UniqueId, q);
 	}
 

@@ -23,6 +23,8 @@ import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
@@ -38,6 +40,8 @@ import javax.swing.*;
  * 
  */
 public class EgoStore {
+	
+	final private static Logger logger = LoggerFactory.getLogger(EgoStore.class);
 
 	// a window for dialogs to parent
 	private Window parent;
@@ -82,7 +86,7 @@ public class EgoStore {
 		
 		str = this + " " + os.toString();
 		} catch (Throwable ex) {
-			ex.printStackTrace();
+			logger.error(ex.toString());
 		}
 	}
 
@@ -343,7 +347,7 @@ public class EgoStore {
 	}
 
 	public Study getStudy() {
-		//System.out.println("Returning study from " + this.str);
+		//logger.info("Returning study from " + this.str);
 		
 		return currentStudy.second();
 	}
@@ -412,7 +416,7 @@ public class EgoStore {
 					if (prefs != null)
 						prefs.put(FILE_PREF, f.getParent());
 					return f;
-				} catch (Exception e) {
+				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null,
 							"Unable to read study file.", "File Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -449,7 +453,7 @@ public class EgoStore {
 				Study study = sr.getStudy();
 				setCurrentStudy(file, study);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				JOptionPane.showMessageDialog(
 						parent,
@@ -542,7 +546,7 @@ public class EgoStore {
 						}
 					}
 
-					//System.out.println("Creating new study2, ditching " + currentStudy);
+					//logger.info("Creating new study2, ditching " + currentStudy);
 					Throwable t = new Throwable();
 					t.setStackTrace(Thread.currentThread().getStackTrace());
 					//t.printStackTrace(System.out);
@@ -632,7 +636,7 @@ public class EgoStore {
 					prefs.put(FILE_PREF, f.getParent());
 				}
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				JOptionPane.showMessageDialog(null, "Unable to read study file.", "File Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -666,14 +670,14 @@ public class EgoStore {
 				for(Question q : questions)
 					getStudy().addQuestion(q);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				JOptionPane.showMessageDialog(
 						null,
 						"Unable to read question file.",
 						"File Error",
 						JOptionPane.ERROR_MESSAGE);
-				throw e;
+				throw ex;
 			}
 		}
 	}
@@ -744,7 +748,7 @@ public class EgoStore {
 
 				writeAllQuestions(newQuestionFile);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				JOptionPane.showMessageDialog(
 						parent,

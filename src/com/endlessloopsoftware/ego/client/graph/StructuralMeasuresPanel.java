@@ -19,6 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.jdesktop.layout.GroupLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -31,6 +34,8 @@ import java.awt.*;
 
 public class StructuralMeasuresPanel extends JPanel {
 
+	final private static Logger logger = LoggerFactory.getLogger(StructuralMeasuresPanel.class);
+	
 	private JButton applySizeButton;
 
 	private JButton applyColorButton;
@@ -75,7 +80,7 @@ public class StructuralMeasuresPanel extends JPanel {
 				StructuralMeasures measure = (StructuralMeasures) structuralCombo_1
 						.getSelectedItem();
 				NodeProperty.NodePropertyType param = NodeProperty.NodePropertyType.Size;
-				System.out.println("Size by : " + measure.toString());
+				logger.info("Size by : " + measure.toString());
 				addStructuralElement(measure, param);
 				graphRenderer.updateGraphSettings();
 			}
@@ -87,7 +92,7 @@ public class StructuralMeasuresPanel extends JPanel {
 				NodeProperty.NodePropertyType param = NodeProperty.NodePropertyType.Color;
 				addStructuralElement(measure, param);
 				graphRenderer.updateGraphSettings();
-				System.out.println("Color by : " + measure.toString());
+				logger.info("Color by : " + measure.toString());
 				
 			}
 		});

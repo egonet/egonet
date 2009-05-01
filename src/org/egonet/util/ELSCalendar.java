@@ -23,6 +23,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class ELSCalendar
@@ -33,6 +36,8 @@ public class ELSCalendar
 	final private static byte[] QUARTER_STARTS = {Calendar.JANUARY, Calendar.APRIL, Calendar.JULY, Calendar.OCTOBER};
 	final private static byte[] QUARTER_ENDS = {Calendar.MARCH, Calendar.JUNE, Calendar.SEPTEMBER, Calendar.DECEMBER};
 
+	final private static Logger logger = LoggerFactory.getLogger(ELSCalendar.class);
+	
 	/**
 	 * <p>Instantiates an ELSCalendar representing the current date</p>
 	 * @return ELSCalendar for current date
@@ -421,35 +426,35 @@ public class ELSCalendar
 
 	public static void main(String[] args)
 	{
-		System.out.println(new ELSCalendar());
-		System.out.println(new ELSCalendar(Calendar.getInstance()));
-		System.out.println(new ELSCalendar(Calendar.getInstance().getTime()));
+		logger.info(new ELSCalendar().toString());
+		logger.info(new ELSCalendar(Calendar.getInstance()).toString());
+		logger.info(new ELSCalendar(Calendar.getInstance().getTime()).toString());
 
 		ELSCalendar lastSunday = new ELSCalendar().getPriorWeekdayInstance(Calendar.SUNDAY, false);
 		ELSCalendar lastMonday = new ELSCalendar().getPriorWeekdayInstance(Calendar.MONDAY, false);
 		ELSCalendar nextSunday = new ELSCalendar().getNextWeekdayInstance(Calendar.SUNDAY, true);
 		ELSCalendar nextMonday = new ELSCalendar().getNextWeekdayInstance(Calendar.MONDAY, true);
-		System.out.println(lastSunday);
-		System.out.println(lastMonday);
-		System.out.println(lastSunday.isWeekdayInstance(Calendar.SUNDAY) + " --> Expects true");
-		System.out.println(lastSunday.isWeekdayInstance(Calendar.MONDAY) + " --> Expects false");
-		System.out.println(ELSCalendar.getInterval(lastSunday, nextSunday));
-		System.out.println(ELSCalendar.getInterval(nextMonday, lastMonday));
+		logger.info(lastSunday.toString());
+		logger.info(lastMonday.toString());
+		logger.info(lastSunday.isWeekdayInstance(Calendar.SUNDAY) + " --> Expects true");
+		logger.info(lastSunday.isWeekdayInstance(Calendar.MONDAY) + " --> Expects false");
+		logger.info(ELSCalendar.getInterval(lastSunday, nextSunday).toString());
+		logger.info(ELSCalendar.getInterval(nextMonday, lastMonday).toString());
 
-		System.out.println(lastMonday.isInPeriod(lastSunday, nextSunday) + " --> Expects true");
-		System.out.println(lastMonday.isInPeriod(lastMonday, nextMonday) + " --> Expects true");
-		System.out.println(nextMonday.isInPeriod(lastSunday, nextSunday) + " --> Expects false");
+		logger.info(lastMonday.isInPeriod(lastSunday, nextSunday) + " --> Expects true");
+		logger.info(lastMonday.isInPeriod(lastMonday, nextMonday) + " --> Expects true");
+		logger.info(nextMonday.isInPeriod(lastSunday, nextSunday) + " --> Expects false");
 
-		System.out.println("Year/Quarter Calculations");
+		logger.info("Year/Quarter Calculations");
 		ELSCalendar now = ELSCalendar.now();
-		System.out.println(now.getPriorYearStart());
-		System.out.println(now.getPriorYearEnd());
-		System.out.println(now.getPriorQuarterStart());
-		System.out.println(now.getPriorQuarterEnd());
-		System.out.println(now.getYearStart());
-		System.out.println(now.getQuarterStart());
-		System.out.println(now.getQuarterEnd());
-		System.out.println(now.getYearEnd());
+		logger.info(now.getPriorYearStart().toString());
+		logger.info(now.getPriorYearEnd().toString().toString());
+		logger.info(now.getPriorQuarterStart().toString());
+		logger.info(now.getPriorQuarterEnd().toString());
+		logger.info(now.getYearStart().toString());
+		logger.info(now.getQuarterStart().toString());
+		logger.info(now.getQuarterEnd().toString());
+		logger.info(now.getYearEnd().toString());
 	}
 }
 

@@ -4,7 +4,13 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Console extends JFrame {
+	
+	final private static Logger logger = LoggerFactory.getLogger(Console.class);
+	
     PipedInputStream piOut;
     PipedInputStream piErr;
     PipedOutputStream poOut;
@@ -65,7 +71,7 @@ public class Console extends JFrame {
                             int excess = textArea.getDocument().getLength() - idealSize;
                             if (excess >= maxExcess) {
                                 textArea.replaceRange("", 0, excess);
-                                System.out.println("BROKEN BROKEN BROKEN");
+                                logger.info("BROKEN BROKEN BROKEN");
                             }
                         }
                     });

@@ -19,23 +19,23 @@
 package org.egonet.util;
 
 import java.awt.*;
-import java.awt.AWTEvent;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
 import javax.swing.*;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class AboutBox extends JDialog implements ActionListener
 {
+	final private static Logger logger = LoggerFactory.getLogger(AboutBox.class);
+	
 	private final JButton		button1		= new JButton("OK");
 	private final JLabel		imageLabel	= new JLabel();
 	private final JFrame		parent;
@@ -54,9 +54,9 @@ public class AboutBox extends JDialog implements ActionListener
 		try
 		{
 			jbInit();
-		} catch (Exception e)
+		} catch (Exception ex)
 		{
-			e.printStackTrace();
+			logger.error(ex.toString());
 		}
 	}
 

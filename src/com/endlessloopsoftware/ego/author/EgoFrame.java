@@ -492,12 +492,12 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 	}
 	
 	public void focusActivated() {
-		//System.out.println(this.getTitle() + " activated");
+		//logger.info(this.getTitle() + " activated");
 		
 	}
 
 	public void focusDeactivated() {
-		//System.out.println(this.getTitle() + " deactivated");
+		//logger.info(this.getTitle() + " deactivated");
 		
 	}
 

@@ -19,6 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.jdesktop.layout.GroupLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 
@@ -41,6 +44,8 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class EdgeShapePanel extends JPanel {
 
+	final private static Logger logger = LoggerFactory.getLogger(EdgeShapePanel.class);
+	
 	private JLabel questionLabel;
 
 	private JComboBox questionCombo;
@@ -191,7 +196,7 @@ public class EdgeShapePanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 
 		int selectedQuestionIndex = qList.indexOf(question);
-		System.out.println("ShapePanel:SelectedQuestionIndex:"
+		logger.info("ShapePanel:SelectedQuestionIndex:"
 				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.getSelections().length; i++) {
 			Selection selection = question.getSelections()[i];

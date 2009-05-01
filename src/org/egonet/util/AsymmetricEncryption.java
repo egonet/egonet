@@ -26,6 +26,9 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author admin
  *
@@ -34,6 +37,8 @@ import java.util.StringTokenizer;
  */
 public class AsymmetricEncryption
 {
+	final private static Logger logger = LoggerFactory.getLogger(AsymmetricEncryption.class);
+	
    private PrivateKey privateKey;
    private PublicKey  publicKey;
 
@@ -46,12 +51,12 @@ public class AsymmetricEncryption
          KeyPair pair = keyGen.generateKeyPair();
          this.privateKey = pair.getPrivate();
          this.publicKey = pair.getPublic();
-         System.out.println("Public key: " + getString(publicKey.getEncoded()));
-         System.out.println("Private key: " + getString(privateKey.getEncoded()));
+         logger.info("Public key: " + getString(publicKey.getEncoded()));
+         logger.info("Private key: " + getString(privateKey.getEncoded()));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
    }
 
@@ -65,9 +70,9 @@ public class AsymmetricEncryption
          byte[] signature = dsa.sign();
          return getString(signature);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
       return null;
    }
@@ -81,12 +86,12 @@ public class AsymmetricEncryption
 
          dsa.update(plaintext.getBytes());
          boolean verifies = dsa.verify(getBytes(signature));
-         System.out.println("signature verifies: " + verifies);
+         logger.info("signature verifies: " + verifies);
          return verifies;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
       return false;
    }
@@ -99,7 +104,7 @@ public class AsymmetricEncryption
       // If the string does not have any separators then it is not
       // encrypted
       if (text.indexOf('-') == -1) {
-      ///System.out.println( "text is not encrypted: no dashes" );
+      ///logger.info( "text is not encrypted: no dashes" );
       return false; }
 
       StringTokenizer st = new StringTokenizer(text, "-", false);
@@ -112,7 +117,7 @@ public class AsymmetricEncryption
             if (!Character.isDigit(token.charAt(i))) { return false; }
          }
       }
-      //System.out.println( "text is encrypted" );
+      //logger.info( "text is encrypted" );
       return true;
    }
 
@@ -155,12 +160,12 @@ public class AsymmetricEncryption
       boolean verifiesBad = pki.verifySignature(data, badSignature);
       boolean verifiesBad2 = pki.verifySignature(baddata, signature);
 
-      System.out.println("Data: " + data);
-      System.out.println("Signature: " + signature);
-      System.out.println("Verifies (good): " + verifies);
-      System.out.println("Bad Signature: " + badSignature);
-      System.out.println("Verifies (bad): " + verifiesBad);
-      System.out.println("Verifies (bad2): " + verifiesBad2);
+      logger.info("Data: " + data);
+      logger.info("Signature: " + signature);
+      logger.info("Verifies (good): " + verifies);
+      logger.info("Bad Signature: " + badSignature);
+      logger.info("Verifies (bad): " + verifiesBad);
+      logger.info("Verifies (bad2): " + verifiesBad2);
    }
 }
 

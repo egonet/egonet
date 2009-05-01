@@ -22,9 +22,14 @@ import java.awt.Frame;
 
 import javax.swing.UIManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 class TestProgress extends ELSProgressBar
 {
+	final private static Logger logger = LoggerFactory.getLogger(ELSProgressBar.class);
+	
 	public TestProgress(Frame frame, String title)
 	{
 		super(frame, title, null);
@@ -62,9 +67,9 @@ class TestProgress extends ELSProgressBar
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			e.printStackTrace();
+			logger.error(ex.toString());
 		}
 
 		fred.open();

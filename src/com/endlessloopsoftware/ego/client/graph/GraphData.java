@@ -20,6 +20,9 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import org.apache.commons.collections15.Transformer;
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
@@ -43,6 +46,8 @@ import javax.imageio.ImageIO;
 
 public class GraphData {
 
+	final private static Logger logger = LoggerFactory.getLogger(GraphData.class);
+	
 	private String[] completeAlterNameList;
 
 	private Interview interview;
@@ -89,7 +94,7 @@ public class GraphData {
 		for (int i = 0; i < alterNumbers.size(); i = i + 2) {
 			Pair<Integer> alterPair = new Pair<Integer>(alterNumbers.get(i), alterNumbers.get(i + 1));
 			alterPairList.add(alterPair);
-			// System.out.println(alterPair);
+			// logger.info(alterPair);
 		}
 		return alterPairList;
 	}
@@ -143,7 +148,7 @@ public class GraphData {
 
 			interviewQuestion = (Question) questionIterator.next();
 			if (interviewQuestion.answer.answered == false) {
-				System.out.println(interviewQuestion.UniqueId + " | "
+				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
@@ -167,7 +172,7 @@ public class GraphData {
 		while (questionIterator.hasNext()) {
 			interviewQuestion = (Question) questionIterator.next();
 			if (interviewQuestion.answer.answered == false) {
-				System.out.println(interviewQuestion.UniqueId + " | "
+				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
@@ -207,7 +212,7 @@ public class GraphData {
 
 			interviewQuestion = (Question) questionIterator.next();
 			if (interviewQuestion.answer.answered == false) {
-				System.out.println(interviewQuestion.UniqueId + " | "
+				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
@@ -241,7 +246,7 @@ public class GraphData {
 						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? selection
 								.getValue()
 								: 0;
-						//System.out.println("Updating weighted adjacency matrix");
+						//logger.info("Updating weighted adjacency matrix");
 					}
 				} else {
 					if ((adjacencyMatrix[a.firstAlter()][a.secondAlter()] == 0)
@@ -251,7 +256,7 @@ public class GraphData {
 								: 0;
 						adjacencyMatrix[a.secondAlter()][a.firstAlter()] = (a.adjacent) ? 1
 								: 0;
-						System.out.println("Updating weighted adjacency matrix");
+						logger.info("Updating weighted adjacency matrix");
 					}
 
 				}
@@ -271,8 +276,8 @@ public class GraphData {
 
 		try {
 			ImageIO.write(bi, format, imageFile);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			logger.error(ex.toString());
 		}
 	}
 	

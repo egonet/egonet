@@ -49,6 +49,8 @@ import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
 import org.egonet.util.SwingWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
@@ -60,6 +62,8 @@ import com.endlessloopsoftware.egonet.Study;
 
 // implement MdiChildFrame and molest the public menu!
 public class ClientFrame extends MDIChildFrame {
+
+	final private static Logger logger = LoggerFactory.getLogger(ClientFrame.class);
 	
 	/**
 	 * Used to create drop down menus of different "modes"
@@ -241,7 +245,7 @@ public class ClientFrame extends MDIChildFrame {
 		pack();
 		setMinimumSize(getPreferredSize());
 		setSize(getPreferredSize());
-		//System.out.println("flood");
+		//logger.info("flood");
 	}
 
 	// File | Exit action performed
@@ -349,7 +353,7 @@ public class ClientFrame extends MDIChildFrame {
 
 			String fmt = ImageFilter.getExtension(imageFile);
 			if (fmt != null && imageFilter.accept(imageFile)) {
-				System.out.println(imageFile.getName());
+				logger.info(imageFile.getName());
 				GraphData.writeImage(imageFile, fmt);
 				break;
 			} else {
@@ -502,8 +506,8 @@ public class ClientFrame extends MDIChildFrame {
 
 			try {
 				GraphRenderer.getGraphSettings().loadSettingsFile(settingsFile);
-			} catch (Throwable cause) {
-				cause.printStackTrace();
+			} catch (Throwable ex) {
+				logger.error(ex.toString());
 			}
 		}
 	}
@@ -659,12 +663,12 @@ public class ClientFrame extends MDIChildFrame {
     }
 
 	public void focusActivated() {
-		System.out.println(this.getTitle() + " activated");
+		logger.info(this.getTitle() + " activated");
 		
 	}
 
 	public void focusDeactivated() {
-		System.out.println(this.getTitle() + " deactivated");
+		logger.info(this.getTitle() + " deactivated");
 		
 	}
 

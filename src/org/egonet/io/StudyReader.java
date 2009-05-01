@@ -70,7 +70,7 @@ public class StudyReader {
 		if(root.getElement("alternamemodel") != null) {
 			int mod = root.getInt("alternamemodel");
 			study.setAlterNameModel(AlterNameModel.values()[mod]);
-			//System.out.println(mod + " : " + study.getAlterNameModel());
+			//logger.info(mod + " : " + study.getAlterNameModel());
 		}
 	
 		if(root.getElement("altersamplingparameter") != null) {
@@ -184,7 +184,7 @@ public class StudyReader {
 
 			if (centrality
 					&& (q.questionType != Shared.QuestionType.ALTER_PAIR)) {
-				//System.out.println("ID:" + q.UniqueId + " title:"+ q.title);
+				//logger.info("ID:" + q.UniqueId + " title:"+ q.title);
 				throw (new MalformedQuestionException());
 			}
 		}
@@ -238,7 +238,7 @@ public class StudyReader {
 						q.getSelections()[index].setIndex(index);
 
 					} catch (NumberFormatException ex) {
-						//System.out.println("Throwing exception");
+						//logger.info("Throwing exception");
 						q.getSelections()[index].setValue(selections.size()
 								- (index + 1));
 						q.getSelections()[index].setAdjacent(false);

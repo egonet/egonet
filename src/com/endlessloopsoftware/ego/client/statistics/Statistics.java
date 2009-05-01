@@ -28,6 +28,8 @@ import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.FileHelpers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
@@ -37,6 +39,8 @@ import com.endlessloopsoftware.egonet.Study;
 
 public class Statistics
 {
+	final private static Logger logger = LoggerFactory.getLogger(Statistics.class);
+	
     private final Study     _study;
     private final Interview _interview;
 
@@ -97,7 +101,7 @@ public class Statistics
         float    sizefloat;
 
         boolean noneYet = stats.getInterview().getAnswerSubset(q.UniqueId).size() == 0;
-        System.out.println("CREATING STATISTICS: Study " + (noneYet ? "has none yet": "already had some"));
+        logger.info("CREATING STATISTICS: Study " + (noneYet ? "has none yet": "already had some"));
         
         try
         {
@@ -169,7 +173,7 @@ public class Statistics
 
                 stats.betweenNC = (float)(Math.rint(1000*((2*meanfloat*100)/((numAlters-1)*(numAlters-1)*(numAlters-2)))))/1000;
 
-                //System.out.println("Mean betweenness value is "+ stats.meanCentralBetweenAlterValue);
+                //logger.info("Mean betweenness value is "+ stats.meanCentralBetweenAlterValue);
                 /* find most central degree alter */
                 maxint = -1;
                 for (int i = 0; i < numAlters; ++i)
@@ -187,10 +191,10 @@ public class Statistics
                     meanfloat = meanfloat + stats.degreeArray[i];
                 }
 
-                //System.out.println("Mean degree centrality is "+ meanint/size);
+                //logger.info("Mean degree centrality is "+ meanint/size);
                 stats.mostCentralDegreeAlterValue 	= maxint;
 
-                //System.out.println("Most central degree value is "+ maxint);
+                //logger.info("Most central degree value is "+ maxint);
                 stats.mostCentralDegreeAlterIndex  = alterindex;
                 stats.mostCentralDegreeAlterName   = stats.alterList[alterindex];
                 stats.meanCentralDegreeValue       = (float)(Math.rint(1000*meanfloat/numAlters))/1000;
@@ -201,7 +205,7 @@ public class Statistics
                     meanfloat = meanfloat + (maxint-stats.degreeArray[i]);
                 }
                 stats.degreeNC = (float)(Math.rint(1000*((meanfloat*100)/((numAlters*numAlters)-(3*numAlters)+2))))/1000;
-                //System.out.println("summation is " + meanfloat + "NC is " + stats.degreeNC);
+                //logger.info("summation is " + meanfloat + "NC is " + stats.degreeNC);
 
                 /* find most central closeness alter */
                 stats.closenessArray = new float[stats.alterList.length];
@@ -260,7 +264,7 @@ public class Statistics
                 {
                     meanfloat = meanfloat + stats.closenessArray[i];
                 }
-                //System.out.println("Mean closeness centrality is "+ meanfloat/size);
+                //logger.info("Mean closeness centrality is "+ meanfloat/size);
 
                 stats.mostCentralClosenessAlterValue 	= maxfloat;
                 stats.mostCentralClosenessAlterIndex 	= alterindex;
@@ -280,7 +284,7 @@ public class Statistics
                 }
                 else
                 {
-                    //System.out.println("Unconnected nw");
+                    //logger.info("Unconnected nw");
                     stats.closenessNC = -1;
                 }
             }
@@ -818,7 +822,7 @@ public class Statistics
      * @throws IOException
      */
     public void writeAdjacencyFile(PrintWriter adjacencyWriter, String[] name, boolean weighted) throws IOException {
-        System.out.println("Writing "+(weighted ? "" : "non-")+"weighted adjacency file for " + name[0] + " " + name[1]);
+        logger.info("Writing "+(weighted ? "" : "non-")+"weighted adjacency file for " + name[0] + " " + name[1]);
         writeAdjacencyArray(name[0] + " " + name[1], adjacencyWriter, weighted);
         adjacencyWriter.close();
     }

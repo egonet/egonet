@@ -20,6 +20,9 @@ package org.egonet.util;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* GPW - Generate pronounceable passwords
  * This program uses statistics on the frequency of three-letter sequences
  * in English to generate passwords.
@@ -27,6 +30,8 @@ import java.util.Random;
 
 public class PronouncablePassword
 {
+	final private static Logger logger = LoggerFactory.getLogger(PronouncablePassword.class);
+	
 	static GpwData data = new GpwData();
 
 	final static String alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -35,7 +40,7 @@ public class PronouncablePassword
    {
       for (int i = 0; i < 10; ++i)
       {
-         System.out.println(generate(10));
+         logger.info(generate(10));
       }
    }
 

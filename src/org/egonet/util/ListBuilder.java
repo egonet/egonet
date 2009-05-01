@@ -27,6 +27,9 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * <p>Title: ListBuilder</p>
@@ -40,6 +43,8 @@ public class ListBuilder
     extends JPanel
     implements Observer
 {
+	final private static Logger logger = LoggerFactory.getLogger(ListBuilder.class);
+	
     private static final int CUSTOM_LIST_INDEX = 0;
     private String[][]       presetLists =
                                            {
@@ -91,9 +96,9 @@ public class ListBuilder
         {
             jbInit();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            e.printStackTrace();
+            logger.error(ex.toString());
         }
     }
 
@@ -671,9 +676,9 @@ public class ListBuilder
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            e.printStackTrace();
+            logger.error(ex.toString());
         }
 
         fred.getContentPane().add(bob);

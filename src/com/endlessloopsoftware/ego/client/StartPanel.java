@@ -34,6 +34,8 @@ import javax.swing.event.DocumentListener;
 
 import org.egonet.util.AlphaDocument;
 import org.egonet.util.CatchingAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 
@@ -43,6 +45,8 @@ import java.io.IOException;
 
 public class StartPanel extends JPanel
 {
+	final private static Logger logger = LoggerFactory.getLogger(StartPanel.class);
+	
 	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
 	private final JLabel titleLabel = new JLabel("What is your name?");
 	private final JLabel firstNameLabel = new JLabel("First: ");
@@ -61,7 +65,7 @@ public class StartPanel extends JPanel
 	public StartPanel(EgoClient egoClient) throws Exception
 	{
 		this.egoClient = egoClient;
-		System.out.println("Create of start panel using " + egoClient + " - " + egoClient.getStudy().getAlterNameModel());
+		logger.info("Create of start panel using " + egoClient + " - " + egoClient.getStudy().getAlterNameModel());
 		
 		
 		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
@@ -102,8 +106,8 @@ public class StartPanel extends JPanel
 				0,
 				0));
 		
-		System.out.println(EgoClient.getInstance().getStudy().getAlterNameModel());
-		System.out.println(EgoClient.getInstance().getStudy().getStudyName());
+		logger.info(EgoClient.getInstance().getStudy().getAlterNameModel().toString());
+		logger.info(EgoClient.getInstance().getStudy().getStudyName());
 		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
 			this.add(
 				firstNameLabel,

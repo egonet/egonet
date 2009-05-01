@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
 import org.jdesktop.layout.GroupLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
@@ -41,6 +43,8 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class EdgeColorPanel extends JPanel {
 
+	final private static Logger logger = LoggerFactory.getLogger(EdgeColorPanel.class);
+	
 	private JLabel questionLabel;
 
 	private JComboBox questionCombo;
@@ -185,7 +189,7 @@ public class EdgeColorPanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 
 		int selectedQuestionIndex = qList.indexOf(question);
-		System.out.println("ColorePanel:SelectedQuestionIndex:"
+		logger.info("ColorePanel:SelectedQuestionIndex:"
 				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.getSelections().length; i++) {
 			Selection selection = question.getSelections()[i];

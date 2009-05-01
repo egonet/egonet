@@ -31,6 +31,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author admin
  * 
@@ -39,6 +42,8 @@ import javax.crypto.spec.DESKeySpec;
  */
 public class SymmetricKeyEncryption
 {
+	final private static Logger logger = LoggerFactory.getLogger(SymmetricKeyEncryption.class);
+	
    private static final String KEY_STRING = "137-140-82-19-194-84-73-173";
 
    public static String encrypt(String source)
@@ -65,9 +70,9 @@ public class SymmetricKeyEncryption
          // Return a String representation of the cipher text
          return getString(ciphertext);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
       return null;
    }
@@ -81,9 +86,9 @@ public class SymmetricKeyEncryption
          byte[] bytes = desKey.getEncoded();
          return getString(bytes);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
          return null;
       }
    }
@@ -110,9 +115,9 @@ public class SymmetricKeyEncryption
          // Return the clear text
          return new String(cleartext);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
       return null;
    }
@@ -127,9 +132,9 @@ public class SymmetricKeyEncryption
          SecretKey s = skf.generateSecret(pass);
          return s;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
       return null;
    }
@@ -142,7 +147,7 @@ public class SymmetricKeyEncryption
       // If the string does not have any separators then it is not
       // encrypted
       if (text.indexOf('-') == -1) {
-      ///System.out.println( "text is not encrypted: no dashes" );
+      ///logger.info( "text is not encrypted: no dashes" );
       return false; }
 
       StringTokenizer st = new StringTokenizer(text, "-", false);
@@ -150,16 +155,16 @@ public class SymmetricKeyEncryption
       {
          String token = st.nextToken();
          if (token.length() > 3) {
-         //System.out.println( "text is not encrypted: length of token greater than 3: " + token );
+         //logger.info( "text is not encrypted: length of token greater than 3: " + token );
          return false; }
          for (int i = 0; i < token.length(); i++)
          {
             if (!Character.isDigit(token.charAt(i))) {
-            //System.out.println( "text is not encrypted: token is not a digit" );
+            //logger.info( "text is not encrypted: token is not a digit" );
             return false; }
          }
       }
-      //System.out.println( "text is encrypted" );
+      //logger.info( "text is encrypted" );
       return true;
    }
 
@@ -194,24 +199,24 @@ public class SymmetricKeyEncryption
    {
       if (args.length < 1)
       {
-         System.out.println("Usage: EncryptionUtils <command> <args>");
-         System.out.println("\t<command>: encrypt, decrypt, generate-key");
+         logger.info("Usage: EncryptionUtils <command> <args>");
+         logger.info("\t<command>: encrypt, decrypt, generate-key");
          System.exit(0);
       }
       String command = args[0];
       if (command.equalsIgnoreCase("generate-key"))
       {
-         System.out.println("New key: " + SymmetricKeyEncryption.generateKey());
+         logger.info("New key: " + SymmetricKeyEncryption.generateKey());
       }
       else if (command.equalsIgnoreCase("encrypt"))
       {
          String plaintext = args[1];
-         System.out.println(plaintext + " = " + SymmetricKeyEncryption.encrypt(plaintext));
+         logger.info(plaintext + " = " + SymmetricKeyEncryption.encrypt(plaintext));
       }
       else if (command.equalsIgnoreCase("decrypt"))
       {
          String ciphertext = args[1];
-         System.out.println(ciphertext + " = " + SymmetricKeyEncryption.decrypt(ciphertext));
+         logger.info(ciphertext + " = " + SymmetricKeyEncryption.decrypt(ciphertext));
       }
    }
 
@@ -222,19 +227,19 @@ public class SymmetricKeyEncryption
          Provider[] providers = Security.getProviders();
          for (int i = 0; i < providers.length; i++)
          {
-            System.out.println("Provider: " + providers[i].getName() + ", " + providers[i].getInfo());
+            logger.info("Provider: " + providers[i].getName() + ", " + providers[i].getInfo());
             for (Iterator itr = providers[i].keySet().iterator(); itr.hasNext();)
             {
                String key = (String) itr.next();
                String value = (String) providers[i].get(key);
-               System.out.println("\t" + key + " = " + value);
+               logger.info("\t" + key + " = " + value);
             }
 
          }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
    }
 }

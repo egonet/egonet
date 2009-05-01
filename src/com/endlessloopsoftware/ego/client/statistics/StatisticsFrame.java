@@ -269,7 +269,7 @@ public class StatisticsFrame extends JPanel {
 	}
 
 	void close_actionPerformed(ActionEvent e) {
-		//System.out.println("Return");
+		//logger.info("Return");
 		egoClient.getFrame().gotoSourceSelectPanel(false);
 	}
 

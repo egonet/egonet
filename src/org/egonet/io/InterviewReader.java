@@ -138,7 +138,7 @@ public class InterviewReader
             r.string = null;
         }
 
-        //System.out.println("Read answer: " + r.getString());
+        //logger.info("Read answer: " + r.getString());
         return r;
     }
 }

@@ -26,10 +26,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
 
 public class StatisticsArrayPanel extends JPanel
 {
+	final private static Logger logger = LoggerFactory.getLogger(StatisticsArrayPanel.class);
+	
    StatTableModel data;
    private JTable dataTable;
    private JScrollPane dataScroll = new JScrollPane();
@@ -43,9 +48,9 @@ public class StatisticsArrayPanel extends JPanel
       {
          jbInit();
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
+         logger.error(ex.toString());
       }
    }
 

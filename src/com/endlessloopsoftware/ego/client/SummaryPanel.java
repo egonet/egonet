@@ -40,6 +40,8 @@ import org.egonet.io.InterviewReader;
 import org.egonet.io.StatisticsFileReader;
 import org.egonet.util.DirList;
 import org.egonet.util.FileHelpers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
@@ -47,6 +49,9 @@ import com.endlessloopsoftware.ego.client.statistics.models.StatTableModel;
 
 public class SummaryPanel extends JPanel
 {
+	
+	final private static Logger logger = LoggerFactory.getLogger(SummaryPanel.class);
+	
 	private final    JButton 		_finishedButton = new JButton("Finished");
 	private          JPanel 			_summaryPanel;
 
@@ -132,14 +137,14 @@ public class SummaryPanel extends JPanel
 		progress.setMinimum(0);
 		progress.setMaximum(intFiles.length * 2);
 
-		System.out.println("Files available for loading in "+intPath.getAbsolutePath()+": " + intFiles.length);
+		logger.info("Files available for loading in "+intPath.getAbsolutePath()+": " + intFiles.length);
 		for (i = 0; (i < intFiles.length) && !progress.isCanceled(); i++)
 		{
 			
 			progress.setProgress(++p);
 
 			String thisIntFileName = intFiles[i];
-			System.out.println("Loading file " + thisIntFileName);
+			logger.info("Loading file " + thisIntFileName);
 			
 			File intFile = new File(intPath, thisIntFileName);
 

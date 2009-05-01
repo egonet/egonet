@@ -44,6 +44,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PagePreview extends JDialog implements ActionListener
 {
 	private final static 	double 		DEFAULT_ZOOM_FACTOR_STEP 	= 0.5;
@@ -197,6 +200,8 @@ public class PagePreview extends JDialog implements ActionListener
 
 class Preview extends JComponent
 {
+	final private static Logger logger = LoggerFactory.getLogger(Preview.class);
+	
 	protected Pageable 	pageable;
 	protected int 		index = 0;
 	protected double 	zoom = 0.0;
@@ -247,13 +252,13 @@ class Preview extends JComponent
 			paintPaper(g, format);
 			printable.print(g, format, index);
 		}
-		catch (PrinterException e)
+		catch (PrinterException ex)
 		{
-			e.printStackTrace();
+			logger.error(ex.toString());
 		}
-		catch (IndexOutOfBoundsException e)
+		catch (IndexOutOfBoundsException ex)
 		{
-			e.printStackTrace();
+			logger.error(ex.toString());
 		}
 	}
 

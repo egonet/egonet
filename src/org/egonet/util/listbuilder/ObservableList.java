@@ -25,9 +25,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ObservableList<T> extends Observable
 {
-
+	final private static Logger logger = LoggerFactory.getLogger(ObservableList.class);
+	
 	private List<T> list;
 	
 	public ObservableList()
@@ -65,7 +69,7 @@ public class ObservableList<T> extends Observable
 	
 	public T remove(int i)
 	{
-		System.out.println("Removing element " + i);
+		logger.info("Removing element " + i);
 		T obj = list.remove(i);
 		super.setChanged(); super.notifyObservers(this);
 		

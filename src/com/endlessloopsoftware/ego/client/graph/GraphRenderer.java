@@ -32,6 +32,9 @@ import javax.swing.*;
 
 import org.apache.commons.collections15.Transformer;
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Interview;
@@ -63,6 +66,8 @@ public class GraphRenderer /*implements
 		Transformer<Edge,Paint>, Transformer<Edge,String>, Transformer<Vertex,String>, Transformer<Edge,Stroke>,
 		ToolTipFunction */ {
 
+	final private static Logger logger = LoggerFactory.getLogger(GraphRenderer.class);
+	
 	public static GraphSettings graphSettings;
 
 	private static VisualizationViewer<Vertex,Edge> visualizationViewer;
@@ -147,7 +152,7 @@ public class GraphRenderer /*implements
 				JOptionPane.showMessageDialog(null, 
 						new String("Layout Size Out of Bounds"), "Error", 
 						JOptionPane.ERROR_MESSAGE);
-				System.out.println("Less than 5");
+				logger.info("Less than 5");
 			}
 			else{
 				Dimension d = new Dimension(dim.width + x, dim.height + y);
@@ -156,7 +161,7 @@ public class GraphRenderer /*implements
 				//visualizationViewer.restart();
 			}					
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.toString());
 		}
 
 	}
@@ -573,11 +578,11 @@ public class GraphRenderer /*implements
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();
-				//System.out.println("prop value is " +prop.toString());
+				//logger.info("prop value is " +prop.toString());
 				
 				GraphData graphData = new GraphData(egoClient);
 				List<Pair<Integer>> vPair = graphData.getAlterPairs(graphQuestion);
-				//System.out.println("Property to be updated:" + prop
+				//logger.info("Property to be updated:" + prop
 				//		+ " GraphQuestion:" + graphQuestion.toString());
 				switch (prop) {
 				case Color:
@@ -586,7 +591,7 @@ public class GraphRenderer /*implements
 						boolean edgeUpdated = false;
 						while (edgeIterator.hasNext()) {
 							Edge edge = (Edge) edgeIterator.next();
-							 //System.out.println("Edge:" + edge.toString());
+							 //logger.info("Edge:" + edge.toString());
 							if ((edge.getEndpoints().getFirst()
 									.equals(alterList[(Integer) pair
 											.getFirst()]))
@@ -594,7 +599,7 @@ public class GraphRenderer /*implements
 											.equals(alterList[(Integer) pair
 													.getSecond()]))) {
 							
-								 //System.out.println("EDGE color is " +edgeProperty.getColor());
+								 //logger.info("EDGE color is " +edgeProperty.getColor());
 								graphSettings.setEdgeColor(edge, edgeProperty
 										.getColor());
 								graphSettings.setEdgeVisible(edge, edgeProperty.isVisible());
@@ -606,7 +611,7 @@ public class GraphRenderer /*implements
 							Edge newEdge = new Edge(
 									new Vertex(alterList[(Integer) pair.getFirst()]),
 									new Vertex(alterList[(Integer) pair.getSecond()]));
-							// System.out.println(newEdge.toString()
+							// logger.info(newEdge.toString()
 							// + " created with chosen color");
 							graphSettings.setEdgeColor(newEdge, edgeProperty
 									.getColor());
@@ -781,7 +786,7 @@ public class GraphRenderer /*implements
 	class VertexTooltipTransformer implements Transformer<Vertex,String> {
 		public String transform(Vertex v) {
 			String text = graphSettings.getNodeToolTipText(v);
-			// System.out.println(text);
+			// logger.info(text);
 			return text;
 		}
 	}

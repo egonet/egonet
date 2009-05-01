@@ -19,6 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.jdesktop.layout.GroupLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 
@@ -42,6 +45,8 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class NodeSizePanel extends JPanel {
 
+	final private static Logger logger = LoggerFactory.getLogger(NodeSizePanel.class);
+	
 	private JLabel questionLabel;
 
 	private JComboBox questionCombo;
@@ -135,7 +140,7 @@ public class NodeSizePanel extends JPanel {
 		
 		Question question = (Question) questionCombo.getSelectedItem();;
 
-		// System.out.println("Question examining:" + question.UniqueId);
+		// logger.info("Question examining:" + question.UniqueId);
 
 		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
 			int noOfRows = question.getSelections().length;
@@ -164,13 +169,13 @@ public class NodeSizePanel extends JPanel {
 			return rowData;
 
 		} else {
-			// System.out.println("Populating text answers!!!");
+			// logger.info("Populating text answers!!!");
 			if (!selectionList.isEmpty()) {
 				selectionList.removeAll(selectionList);
 			}
 			Answer[] answers = egoClient.getInterview().get_answers();
 			for (int i = 0; i < answers.length; i++) {
-				// System.out.println("Question examining:"
+				// logger.info("Question examining:"
 				// + answers[i].questionId + "," + question.UniqueId);
 				if (answers[i].questionId.equals(question.UniqueId)) {
 
@@ -180,7 +185,7 @@ public class NodeSizePanel extends JPanel {
 					}
 					Selection selection = new Selection();
 					selection.setString(answers[i].string);
-					// System.out.println("Selection:" + selection);
+					// logger.info("Selection:" + selection);
 					selectionList.add(selection);
 				}
 
@@ -253,7 +258,7 @@ public class NodeSizePanel extends JPanel {
 			}
 		}
 		else if (question.answerType == Shared.AnswerType.TEXT) {
-			System.out.println("Applying labels for text questions");
+			logger.info("Applying labels for text questions");
 			for (int i =0;i < selectionList.size() ; i++) {
 				Selection selection = selectionList.get(i);
 				NodeProperty nodeProperty = new NodeProperty();

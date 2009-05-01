@@ -57,7 +57,7 @@ public class Answer implements Cloneable {
     }
 
     public Answer(Long Id, int[] alters) {
-        //System.out.println("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
+        //logger.info("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
         questionId = Id;
         answered = false;
         adjacent = false;

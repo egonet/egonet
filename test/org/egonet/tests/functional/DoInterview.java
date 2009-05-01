@@ -20,6 +20,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -35,6 +37,8 @@ import javax.swing.text.JTextComponent;
 
 public class DoInterview {
 
+	final private static Logger logger = LoggerFactory.getLogger(DoInterview.class);
+	
 	private File studyFile;
 	
 	private FrameFixture window;
@@ -77,7 +81,7 @@ public class DoInterview {
 		while(true)
 		{
 			handleQuestion();
-			System.out.println("*** Clicking next question!");
+			logger.info("*** Clicking next question!");
 			
 			if(window.button("questionButtonNext").component().getText().equals("Next Question"))
 			{
@@ -116,7 +120,7 @@ public class DoInterview {
 		
 		window.robot.waitForIdle();
 		String card = cp.getVisibleCard();
-		System.out.println("*** New visible card " + card + ", attempting to handle it!");
+		logger.info("*** New visible card " + card + ", attempting to handle it!");
 		
 		if("".equals(card)) {
 			throw new IllegalStateException("No question card is displayed");

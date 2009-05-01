@@ -30,12 +30,17 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.ELSMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
 
 public class Interview implements Comparable<Interview> {
 
+	final private static Logger logger = LoggerFactory.getLogger(Interview.class);
+	
 	private final Answer[] _answers;
 
 	private final Study _study;
@@ -630,7 +635,7 @@ public class Interview implements Comparable<Interview> {
 			}
 		} catch (Exception ex) {
 			s = oldS;
-			ex.printStackTrace();
+			logger.error(ex.toString());
 		}
 
 		return s;
@@ -750,7 +755,7 @@ public class Interview implements Comparable<Interview> {
 	 */
 	public int[][] generateAdjacencyMatrix(Question q, boolean weighted) throws MissingPairException {
 	    
-	    //System.out.println("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
+	    //logger.info("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
 	    
 		if (_study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
 			int[][] m = new int[_numAlters][_numAlters];
@@ -779,7 +784,7 @@ public class Interview implements Comparable<Interview> {
 				int nonweightedValue = a.adjacent ? 1 : 0;
 
 				int value = weighted ? weightedValue : nonweightedValue;
-				//System.out.println("Working on answer (adj="+a.adjacent+",v="+value+",nw="+nonweightedValue+",w="+weightedValue+") for adj: " + a.getString());
+				//logger.info("Working on answer (adj="+a.adjacent+",v="+value+",nw="+nonweightedValue+",w="+weightedValue+") for adj: " + a.getString());
 				
 				m[a.firstAlter()][a.secondAlter()] = value;
 				m[a.secondAlter()][a.firstAlter()] = value;
@@ -794,7 +799,7 @@ public class Interview implements Comparable<Interview> {
 		    {
 		        //System.out.print(_matrix[x][y] + "\t");
 		    }
-		    //System.out.println();
+		    //logger.info();
 		}
 		
 		return (_matrix);

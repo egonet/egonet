@@ -55,6 +55,10 @@
 			<zipfileset src="${dir.lib.Enet}/functionalj.jar" />
 			<zipfileset src="${dir.lib.Enet}/iText-2.1.5.jar" />
 			<zipfileset src="${dir.lib.Enet}/iText-rtf-2.1.5.jar" />
+			<zipfileset src="${dir.lib.Enet}/swingx-0.9.7.jar" />
+			<zipfileset src="${dir.lib.Enet}/simmetrics_jar_v1_6_2_d07_02_07.jar" />
+			<zipfileset src="${dir.lib.Enet}/slf4j-api-1.5.6.jar" />
+			<zipfileset src="${dir.lib.Enet}/slf4j-jdk14-1.5.6.jar" />
 
 			<zipfileset src="${dir.lib.Enet}/jung/collections-generic-4.01.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/colt-1.2.0.jar" />

@@ -272,7 +272,7 @@ public class PromptPanel extends EgoQPanel
      */
     public void fillPanel()
     {
-        //System.out.println("fillPanel() called in PromptPanel but questionType was " + questionType + " and curTab was " + egoNet.getFrame().curTab);
+        //logger.info("fillPanel() called in PromptPanel but questionType was " + questionType + " and curTab was " + egoNet.getFrame().curTab);
         if (questionType == egoNet.getFrame().curTab)
         {
             storageUpdate();

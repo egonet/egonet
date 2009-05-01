@@ -24,6 +24,8 @@ import javax.swing.JFrame;
 import org.egonet.util.ListBuilder;
 import org.egonet.util.ObservableList;
 import org.egonet.util.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -31,15 +33,16 @@ import java.util.Iterator;
 
 public class OldListTester implements Observer
 {
+	final private static Logger logger = LoggerFactory.getLogger(OldListTester.class);
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args)
 	{
-		System.out.println("Before");
+		logger.info("Before");
 		new OldListTester();
-		System.out.println("After");
+		logger.info("After");
 	}
 	
 	private ListBuilder listBuilder;
@@ -70,21 +73,21 @@ public class OldListTester implements Observer
 		if(arg.getClass().equals(ObservableList.class))
 		{
 			ObservableList lb = (ObservableList)arg;
-			System.out.println("o=" + o +", arg=" + arg );
+			logger.info("o=" + o +", arg=" + arg );
 			for(Iterator iterator = lb.iterator();iterator.hasNext();)
 			{
 				Object nextObject = iterator.next();
 				if(nextObject.getClass().equals(Selection.class))
 				{
 					Selection selection = (Selection)nextObject;
-					//System.out.println("Selection: string=\"" + selection.string +"\", adjacent = " + selection.adjacent + ", index = " + selection.index + ", value = " + selection.value);
-					System.out.println("new Selection(\""+selection.string+"\", "+selection.value+", "+selection.index+", " + selection.adjacent + "),");
+					//logger.info("Selection: string=\"" + selection.string +"\", adjacent = " + selection.adjacent + ", index = " + selection.index + ", value = " + selection.value);
+					logger.info("new Selection(\""+selection.string+"\", "+selection.value+", "+selection.index+", " + selection.adjacent + "),");
 				} else {
-					System.out.println("Class = "+nextObject.getClass()+", value = " + nextObject);
+					logger.info("Class = "+nextObject.getClass()+", value = " + nextObject);
 				}
 			}
 		} else {
-			System.out.println("o=" + o +", arg=" + arg);
+			logger.info("o=" + o +", arg=" + arg);
 		}
 	}
 

@@ -41,8 +41,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.border.MatteBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PrintPreview extends JFrame
 {
+	final private static Logger logger = LoggerFactory.getLogger(PrintPreview.class);
+	
 	protected int m_wPage;
 	protected int m_hPage;
 	protected int m_orientation;
@@ -198,10 +203,10 @@ public class PrintPreview extends JFrame
 				pageIndex++;
 			}
 		}
-		catch (PrinterException e)
+		catch (PrinterException ex)
 		{
-			e.printStackTrace();
-			System.err.println("Printing error: " + e.toString());
+			logger.error(ex.toString());
+			System.err.println("Printing error: " + ex.toString());
 		}
 
 		JScrollPane ps = new JScrollPane(m_preview);

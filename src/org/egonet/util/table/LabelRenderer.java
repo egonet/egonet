@@ -39,7 +39,7 @@ public class LabelRenderer extends DefaultTableCellRenderer {
 			Selection s = (Selection) value;
 			value = s.getString();
 		//} else {
-		//	System.out.println("Asked to render a non-selection of type "+value.getClass()+": " + value);
+		//	logger.info("Asked to render a non-selection of type "+value.getClass()+": " + value);
 		}
 		
 		setHorizontalAlignment(CENTER);

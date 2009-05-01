@@ -155,7 +155,7 @@ public class ListBuilder extends JPanel implements Observer {
 		// purge anything old
 		removeAll();
 
-		// System.out.println("Building List builder...");
+		// logger.info("Building List builder...");
 		jList = new JList();
 		jList.setCellRenderer(new SelectionListCellRenderer());
 		jList.setListData(elementList.toArray());
@@ -219,7 +219,7 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	private JComponent buildTop() {
-		// System.out.println("Building Top....");
+		// logger.info("Building Top....");
 		// top half panel
 		panelTopHalf = new JPanel();
 		FormLayout topHalfLayout = new FormLayout(
@@ -238,7 +238,7 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	private JComponent buildTopRight() {
-		// System.out.println("Building Top Right....:"+ isPresetListsActive());
+		// logger.info("Building Top Right....:"+ isPresetListsActive());
 		panelTopRight = new JPanel();
 		FormLayout panelTopRightLayout = new FormLayout(
 				"2dlu, fill:75dlu:grow, 2dlu",
@@ -258,7 +258,7 @@ public class ListBuilder extends JPanel implements Observer {
 		panelTopRight.add(sp, constraints.xy(2, 4));
 
 		if (isPresetListsActive()) {
-			// System.out.println("Presets are supposed to be active");
+			// logger.info("Presets are supposed to be active");
 			final JComboBox comboPresets = new JComboBox();
 			comboPresets.addItem(CHOOSE_PRESET_INSTRUCTION);
 			for (String presetName : presets.keySet())
@@ -354,7 +354,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 			public void keyReleased(KeyEvent keyEvent) {
 				saveDataForSelectionOfList(keyEvent);
-//				System.out.println("source=" + keyEvent.getSource() + " id=" + keyEvent.getID() + 
+//				logger.info("source=" + keyEvent.getSource() + " id=" + keyEvent.getID() + 
 //						" when=" + keyEvent.getWhen() + " modifiers=" + keyEvent.getModifiers() +
 //						" keyCode=" + keyEvent.getKeyCode() + " keyChar=" + keyEvent.getKeyChar());
 				// if you typed on value, blank the selection

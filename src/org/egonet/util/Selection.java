@@ -52,7 +52,7 @@ public class Selection
 		{
 			return string.equals(((Selection) o).string);
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
 			return false;
 		}
