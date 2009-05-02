@@ -28,29 +28,29 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.Graph;
 
 
-public class ELSFRLayout2 extends FRLayout<Vertex,Edge> {
-    public ELSFRLayout2(Graph<Vertex,Edge> g) {
+public class ELSFRLayout2<V,E> extends FRLayout<V,E> {
+    public ELSFRLayout2(Graph<V,E> g) {
         super(g);
     }
     
-	public class RandomLocationTransformer implements Transformer<Vertex,Point2D> {
+	public class RandomLocationTransformer implements Transformer<V,Point2D> {
 
 		Dimension d;
 		Random random;
-		Graph<Vertex,?> graph; 
+		Graph<V,E> graph; 
 	    
-	    public RandomLocationTransformer(final Graph<Vertex,?> graph, final Dimension d) {
+	    public RandomLocationTransformer(final Graph<V,E> graph, final Dimension d) {
 	    	this(graph,d, new Date().getTime());
 	    }
 	    
-	    public RandomLocationTransformer(final Graph<Vertex,?> graph, final Dimension d, long seed) {
+	    public RandomLocationTransformer(final Graph<V,E> graph, final Dimension d, long seed) {
 	    	this.d = d;
 	    	this.random = new Random(seed);
 	    	this.graph=graph;
 	    }
 	    
 	    private int xIsolate=25,yIsolate=0;
-	    public Point2D transform(Vertex v) {
+	    public Point2D transform(V v) {
 			if (graph.getIncidentEdges(v).size() == 0) {
 			    lock(v,true);
 				

@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.egonet.wholenet.graph.WholeNetwork;
 import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class NameMapperFrame extends JFrame {
 	 * another alter that should be treated as the same thing, or it may be set
 	 * to never map to anything.
 	 */
-	public class NameMapping {
+	public class NameMapping implements Comparable<NameMapping> {
 		final Study study;
 		final Interview interview;
 		final Integer alterNumber;
@@ -70,23 +71,23 @@ public class NameMapperFrame extends JFrame {
 		
 		private Integer group;
 		
-		public NameMapping(Study study, Interview interview, Integer alterNumber) {
+		public NameMapping(Study study, Interview interview, Integer alterNumber, Integer group) {
 			super();
 			this.interview = interview;
 			this.study = study;
 			this.alterNumber = alterNumber;
 			this.alterName = interview.getAlterList()[alterNumber];
-			this.group = 0;
+			this.group = group;
 		}
 		
 		// ego constructor
-		public NameMapping(Study study, Interview interview) {
+		public NameMapping(Study study, Interview interview, Integer group) {
 			super();
 			this.interview = interview;
 			this.study = study;
 			this.alterNumber = -1;
 			this.alterName = interview.getName()[0] + " " + interview.getName()[1];
-			this.group = 0;
+			this.group = group;
 		}
 
 		public Integer getGroup() {
@@ -95,6 +96,72 @@ public class NameMapperFrame extends JFrame {
 
 		public void setGroup(Integer group) {
 			this.group = group;
+		}
+
+		public Study getStudy() {
+			return study;
+		}
+
+		public Interview getInterview() {
+			return interview;
+		}
+
+		public Integer getAlterNumber() {
+			return alterNumber;
+		}
+		
+		public String toString() {
+			return alterName;
+		}
+
+		public int compareTo(NameMapping o) {
+			return alterNumber.compareTo(o.alterNumber);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ ((alterNumber == null) ? 0 : alterNumber.hashCode());
+			result = prime * result
+					+ ((interview == null) ? 0 : interview.hashCode());
+			result = prime * result + ((study == null) ? 0 : study.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (!(obj instanceof NameMapping))
+				return false;
+			NameMapping other = (NameMapping) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (alterNumber == null) {
+				if (other.alterNumber != null)
+					return false;
+			} else if (!alterNumber.equals(other.alterNumber))
+				return false;
+			if (interview == null) {
+				if (other.interview != null)
+					return false;
+			} else if (!interview.equals(other.interview))
+				return false;
+			if (study == null) {
+				if (other.study != null)
+					return false;
+			} else if (!study.equals(other.study))
+				return false;
+			return true;
+		}
+
+		private NameMapperFrame getOuterType() {
+			return NameMapperFrame.this;
 		}
 	}
 	
@@ -106,15 +173,17 @@ public class NameMapperFrame extends JFrame {
 		public MapperTableModel() {
 			mappings = new ArrayList<NameMapping>();
 			
+			int group = 1;
+			
 			for(Pair<File, Interview> entry : interviewMap) {
 				Interview interview = entry.getSecond();
 
-				NameMapping egoMapping = new NameMapping(study, interview);
+				NameMapping egoMapping = new NameMapping(study, interview, group++);
 				mappings.add(egoMapping);
 				
 				String [] alterList = interview.getAlterList();
 				for(int i = 0; i < alterList.length; i++) {
-					NameMapping mapping = new NameMapping(study, interview, i);
+					NameMapping mapping = new NameMapping(study, interview, i, group++);
 					mappings.add(mapping);
 					
 				}
@@ -250,8 +319,15 @@ public class NameMapperFrame extends JFrame {
 		Action continueAction = new CatchingAction("Continue") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				model.getMappings();
+				List<NameMapping> mappings = model.getMappings();
+				
 				// do the whole network combination, and export/show it!
+				WholeNetwork net = new WholeNetwork(study, interviewMap, mappings);
+				net.recompile();
+				
+				WholeNetworkViewer viewer = new WholeNetworkViewer(net);
+				dispose();
+				viewer.setVisible(true);
 			}
 		};
 		JButton continueButton = new JButton(continueAction);

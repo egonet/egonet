@@ -22,11 +22,11 @@ public class Tuple<A extends Comparable<A>, B extends Comparable<B>> extends Obj
 		// we don't really need generics in this implementation, since we delegate to A#equals which
 		// always exists because the type A is always somehow a subtype of Object which has #equals.
 		
-		if(!(o instanceof Pair))
+		if(!(o instanceof Tuple))
 			return false;
 		
 		//@SuppressWarnings("unchecked")
-		Pair p = (Pair)o;
+		Tuple p = (Tuple)o;
 		
 		return p.first().equals(first()) && p.second().equals(second());
 	}

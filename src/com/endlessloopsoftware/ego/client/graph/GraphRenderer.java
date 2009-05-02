@@ -195,7 +195,7 @@ public class GraphRenderer /*implements
 		graphMouse = new DefaultModalGraphMouse();
 
 		// create the model that drives layouts and view updates
-		visualizationModel = new DefaultVisualizationModel<Vertex,Edge>(new ELSFRLayout2(graph));
+		visualizationModel = new DefaultVisualizationModel<Vertex,Edge>(new ELSFRLayout2<Vertex,Edge>(graph));
 
 		// create the regular viewer and scroller
 		visualizationViewer = new VisualizationViewer<Vertex,Edge>(visualizationModel);

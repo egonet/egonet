@@ -156,7 +156,7 @@ public class CombineInterviews
 				graph.addVertex(v);
 		}
 		
-        Layout<Vertex,Edge> layout = new ELSFRLayout2(graph);
+        Layout<Vertex,Edge> layout = new ELSFRLayout2<Vertex,Edge>(graph);
         VisualizationViewer<Vertex,Edge> vv = new VisualizationViewer<Vertex,Edge>(layout);
         
         JFrame frame = new JFrame();
