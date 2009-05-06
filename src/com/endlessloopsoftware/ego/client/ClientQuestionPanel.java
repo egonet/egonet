@@ -353,6 +353,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// Attach beans to fields.
 		questionButtonPrevious = new JButton("Previous Question");
 		questionButtonPrevious.setName("questionButtonPrevious");
+		questionButtonPrevious.setFocusable(false); // Better for <enter> to advance to next than accidentally back up
 		
 		questionButtonNext = new JButton("Next Question");
 		questionButtonNext.setName("questionButtonNext");
