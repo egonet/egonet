@@ -78,4 +78,8 @@ public class WholeNetworkTie {
 	public WholeNetworkAlter getB() {
 		return b;
 	}
+	
+	public int numberOfTies() {
+		return ties.size();
+	}
 }

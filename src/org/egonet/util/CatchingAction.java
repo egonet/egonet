@@ -1,6 +1,7 @@
 package org.egonet.util;
 
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -17,7 +18,8 @@ import javax.swing.Action;
  */
 public abstract class CatchingAction extends AbstractAction implements Action
 {
-	protected String location;
+	protected final String location;
+	protected Window parent;
 
 	/**
 	 * @param name as it appears on any button or menu item
@@ -51,5 +53,20 @@ public abstract class CatchingAction extends AbstractAction implements Action
 	}
 	
 	public abstract void safeActionPerformed(ActionEvent e) throws Exception;
+
+
+	public Window getParent() {
+		return parent;
+	}
+
+
+	public void setParent(Window parent) {
+		this.parent = parent;
+	}
+
+
+	public String getLocation() {
+		return location;
+	}
 }
 

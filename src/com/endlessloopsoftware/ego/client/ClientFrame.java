@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
@@ -43,6 +42,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.egonet.gui.EgoStore;
 import org.egonet.gui.MDIChildFrame;
+import org.egonet.io.EdgeListWriter;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
@@ -385,7 +385,7 @@ public class ClientFrame extends MDIChildFrame {
 			File dataFile = fileChooser.getSelectedFile();
 			try {
 				
-				FileWriter fw = new FileWriter(dataFile);
+				EdgeListWriter fw = new EdgeListWriter(dataFile);
 				
 				Interview interview = egoClient.getInterview();
 				Study study = egoClient.getStudy();
@@ -400,24 +400,7 @@ public class ClientFrame extends MDIChildFrame {
 					// loop through adj
 					// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
 
-					for(int i = 0; i < adj.length; i++)
-					{
-						for(int j = i+1; j < adj[i].length; j++)
-						{
-							// adj[i][j] != 0 && 
-							if(i != j)
-							{
-								
-								String alter1 = thisInterviewAlterlist[i];
-								String alter2 = thisInterviewAlterlist[j];
-								
-								// mark those as adjacent in the new big matrix
-								String line = ("\"" + alter1 + "\",\"" + alter2 + "\","+adj[i][j] +"\n");
-								System.out.print(line);
-								fw.write(line);
-							}
-						}
-					}
+					fw.writeEdgelist(thisInterviewAlterlist, adj);
 				}
 				
 				fw.close();

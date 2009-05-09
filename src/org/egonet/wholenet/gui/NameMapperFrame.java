@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.graph.WholeNetwork;
 import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
@@ -34,10 +35,13 @@ public class NameMapperFrame extends JFrame {
 	final private static Logger logger = LoggerFactory.getLogger(NameMapperFrame.class);
 	
 	private final Study study;
+	private final File studyFile;
+	
 	private final List<Pair<File, Interview>> interviewMap;
-	public NameMapperFrame(Study study, List<File> mappableFiles) {
+	public NameMapperFrame(Study study, File studyFile, List<File> mappableFiles) {
 		super("Whole Network - Alter Name Mapping Editor");
 		this.study = study;
+		this.studyFile = studyFile;
 		this.interviewMap = new ArrayList<Pair<File, Interview>>(mappableFiles.size());
 		this.study.toString();
 		
@@ -319,15 +323,33 @@ public class NameMapperFrame extends JFrame {
 		Action continueAction = new CatchingAction("Continue") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				List<NameMapping> mappings = model.getMappings();
 				
-				// do the whole network combination, and export/show it!
-				WholeNetwork net = new WholeNetwork(study, interviewMap, mappings);
-				net.recompile();
+				SwingWorker sw = new SwingWorker() {
+
+					WholeNetworkViewer viewer;
+					
+					@Override
+					public Object construct() {
+						
+						List<NameMapping> mappings = model.getMappings();
+						
+						// do the whole network combination, and export/show it!
+						WholeNetwork net = new WholeNetwork(study, interviewMap, mappings);
+						net.recompile();
+						
+						viewer = new WholeNetworkViewer(study, studyFile, net);
+						return viewer;
+					}
+					
+					public void finished() { 
+						viewer.setVisible(true);
+					}
+					
+				};
 				
-				WholeNetworkViewer viewer = new WholeNetworkViewer(net);
+				sw.start();
 				dispose();
-				viewer.setVisible(true);
+				
 			}
 		};
 		JButton continueButton = new JButton(continueAction);

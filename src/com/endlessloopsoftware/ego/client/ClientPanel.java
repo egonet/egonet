@@ -38,6 +38,7 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
+import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.gui.InterviewFileSelectionFrame;
 
 import com.endlessloopsoftware.egonet.Interview;
@@ -81,7 +82,7 @@ public class ClientPanel
 		wholeNetworkButton = new JButton("Whole Network Analysis");
 		wholeNetworkButton.addActionListener(new CatchingAction("wholeNetworkButton") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-					doWholeNetworkAnalysis(e);
+				doWholeNetworkAnalysis(e);
 			}
 		});
 		
@@ -156,16 +157,26 @@ public class ClientPanel
 	
 	private void doWholeNetworkAnalysis(ActionEvent e) throws Exception
 	{
-		if(false) {
-			JOptionPane.showMessageDialog(egoClient.getFrame(), "This feature is coming soon.",
-					"Coming soon", JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-		
-		EgoStore storage = egoClient.getStorage();
+		final EgoStore storage = egoClient.getStorage();
 		if(storage.isStudyLoaded()) {
-			JFrame frame = new InterviewFileSelectionFrame(storage.getStudyFile(), storage.getStudy());
-			frame.setVisible(true);
+			
+			SwingWorker sw = new SwingWorker() {
+
+				JFrame frame;
+				
+				@Override
+				public Object construct() {
+					frame = new InterviewFileSelectionFrame(storage.getStudyFile(), storage.getStudy());
+					return frame;
+				}
+				
+				public void finished() {
+					frame.setVisible(true);		
+				}
+				
+			};
+			
+			sw.start();
 		}
 	}
 

@@ -58,6 +58,6 @@ public class WholeNetworkAlter implements Comparable<WholeNetworkAlter> {
 	public String toString() {
 		if(occurences.size() <= 0)
 			return id.toString();
-		return occurences.get(0).toString() + "(" + id + ")";
+		return occurences.get(0).toString() + " (" + id + ")";
 	}
 }

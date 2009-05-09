@@ -1,6 +1,7 @@
 package org.egonet.wholenet.graph;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -155,5 +156,45 @@ public class WholeNetwork {
 		
 		WholeNetworkTie tieEntry = wholeNetworkTies.get(tieKey);
 		tieEntry.addTie(wholeAlter1.getSecond(), wholeAlter1.getSecond(), q);
+	}
+	
+	public Pair<String[],int[][]> getAdjacencyMatrix() {
+		
+		List<WholeNetworkAlter> alterList = 
+			new ArrayList<WholeNetworkAlter>(wholeNetworkAlters.values());
+		
+		
+		int size = alterList.size();
+		
+		String [] names = new String[size];
+		for(int i = 0; i < names.length; i++) {
+			names[i] = alterList.get(i).toString();
+		}
+		
+		int [][] adj = new int[size][size];
+		for(int x = 0; x < size; x++) {
+			for(int y = 0; y < size; y++) {
+				WholeNetworkAlter wholeAlter1 = alterList.get(x);
+				WholeNetworkAlter wholeAlter2 = alterList.get(y);
+				
+				if(wholeAlter1.compareTo(wholeAlter2) > 0) {
+					WholeNetworkAlter swap = wholeAlter1;
+					wholeAlter1 = wholeAlter2;
+					wholeAlter2 = swap;
+				}
+				
+				Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1, wholeAlter2);
+				if(wholeNetworkTies.containsKey(tieKey)) {
+					WholeNetworkTie tie = wholeNetworkTies.get(tieKey);
+					adj[x][y] = tie.numberOfTies();
+				}
+				else {
+					adj[x][y] = 0;
+				}
+			}
+		}
+		
+		
+		return new Pair<String[],int[][]>(names,adj);
 	}
 }

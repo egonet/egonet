@@ -5,8 +5,8 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 
-import javax.swing.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -15,6 +15,7 @@ import net.miginfocom.swing.MigLayout;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,15 +121,32 @@ public class InterviewFileSelectionFrame extends JFrame {
 		Action nextAction = new CatchingAction("Continue") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				InterviewFileListModel model = (InterviewFileListModel)interviewList.getModel();
-				List<File> mappableFiles = new ArrayList<File>();
-				for(Object f : model.toArray())
-					mappableFiles.add((File)f);
+				final InterviewFileListModel model = (InterviewFileListModel)interviewList.getModel();
 				
+
+				SwingWorker sw = new SwingWorker() {
+					
+					NameMapperFrame frame;
+					
+					@Override
+					public Object construct() {
+						List<File> mappableFiles = new ArrayList<File>();
+						for(Object f : model.toArray())
+							mappableFiles.add((File)f);
+						
+						frame = new NameMapperFrame(study, studyFile, mappableFiles);
+						return frame;
+					}
+
+					@Override
+					public void finished() {
+						frame.setVisible(true);
+					}
+					
+				};
 				
-				NameMapperFrame frame = new NameMapperFrame(study, mappableFiles);
+				sw.start();
 				dispose();
-				frame.setVisible(true);
 			}
 		};
 		cancelNextButtonPanel.add(new JButton(nextAction), "growx, sg 2");
