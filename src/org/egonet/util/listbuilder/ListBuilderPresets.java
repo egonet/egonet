@@ -21,6 +21,7 @@ package org.egonet.util.listbuilder;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class ListBuilderPresets
 {
@@ -30,6 +31,7 @@ public class ListBuilderPresets
 		ret.put("Yes/No", Arrays.copyOf(YES_NO, YES_NO.length));
 		ret.put("Gender", Arrays.copyOf(GENDER, GENDER.length));
 		ret.put("States", Arrays.copyOf(STATES, STATES.length));
+		ret.put("Kin", Arrays.copyOf(KIN, KIN.length));
 
 		return ret;
 	}
@@ -68,4 +70,21 @@ public class ListBuilderPresets
 			new Selection("Vermont", 5, 44, false), new Selection("Virginia", 4, 45, false),
 			new Selection("Washington", 3, 46, false), new Selection("West Virginia", 2, 47, false),
 			new Selection("Wisconsin", 1, 48, false), new Selection("Wyoming", 0, 49, false), };
+	
+	public static final Selection[] KIN = getKinTerms();
+	
+	private static Selection[] getKinTerms() {
+		ArrayList<Selection> kinTerms = new ArrayList<Selection>();
+		String[] kinStrings = { // This list also appears in org.egonet.util.ListBuilder.presetLists.
+     	   "Grand Mother", "Grand Father", "Mother", "Father", "Grand Son",
+     	   "Grand Daughter", "Son", "Daughter", "Sister", "Brother", "Aunt",
+     	   "Uncle", "Niece", "Nephew", "Cousing", "Mother-in-Law",
+     	   "Father-in-Law", "Sister-in-Law", "Brother-in-Law",
+     	   "Step Son", "Step Daughter", "Half-Brother", "Half-Sister"
+        };
+		for(Integer i = 0; i < kinStrings.length; i++) {
+			kinTerms.add(new Selection(kinStrings[i],kinStrings.length-1-i,i,false)); // Following states example
+		}
+		return kinTerms.toArray(new Selection[]{});
+	}
 }

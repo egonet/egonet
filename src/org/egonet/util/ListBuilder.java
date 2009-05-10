@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>Title: ListBuilder</p>
- * <p>Description: Creates a dialog containing a list creationg interface</p>
+ * <p>Description: Creates a dialog containing a list creation interface</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: Endless Loop Software</p>
  * @author Peter Schoaff
@@ -51,8 +51,8 @@ public class ListBuilder
                                                {"Custom"},
                                                {"Yes/No", "Yes", "No"},
                                                {"Gender", "Male", "Female"},
-                                               {
-                                                   "States", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+                                               { "States", 
+                                            	   "Alabama", "Alaska", "Arizona", "Arkansas", "California",
                                                    "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii",
                                                    "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
                                                    "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
@@ -63,6 +63,13 @@ public class ListBuilder
                                                    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
                                                    "West Virginia", "Wisconsin", "Wyoming"
                                                },
+                                               { "Kin",
+                                            	   "Grand Mother", "Grand Father", "Mother", "Father", "Grand Son",
+                                            	   "Grand Daughter", "Son", "Daughter", "Sister", "Brother", "Aunt",
+                                            	   "Uncle", "Niece", "Nephew", "Cousing", "Mother-in-Law",
+                                            	   "Father-in-Law", "Sister-in-Law", "Brother-in-Law",
+                                            	   "Step Son", "Step Daughter", "Half-Brother", "Half-Sister"
+                                               }
                                            };
     private final GridBagLayout  listBuilderLayout = new GridBagLayout();
     private final JList          jList             = new JList();
