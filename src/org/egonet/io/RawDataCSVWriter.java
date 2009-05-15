@@ -280,10 +280,11 @@ public class RawDataCSVWriter {
 						try {
 							return intReader.getInterview();
 						} catch(CorruptedInterviewException ex) {
-							throw new RuntimeException(
-									"Unable to read interview file: "
-										+ intFile.getName(),
-									ex);
+							String err = "Unable to read interview file "+ intFile.getName();
+							if(ex.getMessage() != null)
+								err += ": " + ex.getMessage();
+
+							throw new RuntimeException(err,ex);
 						}
 					}
 					throw new java.util.NoSuchElementException();

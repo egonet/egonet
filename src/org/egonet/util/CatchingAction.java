@@ -48,6 +48,10 @@ public abstract class CatchingAction extends AbstractAction implements Action
 		{
 			String failMsg = "Error that did not include a detailed explanation.";
 			String err = (ex != null && ex.getMessage() != null ? ex.getMessage() : failMsg);
+			
+			// the EDT may catch its own exceptions,
+			// so be ready to do the right thing here in the future
+			// (get the current thread and call the uncaught handler directly)
 			throw new RuntimeException(err, ex);
 		}
 	}
