@@ -36,9 +36,12 @@ public class ViewInterviewPanel
 		progress.setProgress(10);
 		this.addTab("Interview", new ClientQuestionPanel(egoClient));
 		progress.setProgress(15);
-		this.addTab("Statistics", new StatisticsFrame(egoClient));
-		graphPanel = new GraphPanel(egoClient);
-		this.addTab("Graph", graphPanel);
+		
+		if(egoClient.getInterview().isComplete()) {
+			this.addTab("Statistics", new StatisticsFrame(egoClient));
+			graphPanel = new GraphPanel(egoClient);
+			this.addTab("Graph", graphPanel);
+		}
 		progress.setProgress(70);
 	}
 	

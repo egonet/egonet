@@ -37,6 +37,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
@@ -66,6 +67,9 @@ import java.util.Date;
  * Generic Panel creation and handling routines for question editing
  */
 public class ClientQuestionPanel extends JPanel implements Observer {
+	
+	private final Object keycountLock = new Object();
+	private int noteKeyEvents;
 	
 	final private static Logger logger = LoggerFactory.getLogger(ClientQuestionPanel.class);
 	
@@ -118,7 +122,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private JLabel titleText = new JLabel();
 
-	private JTextArea questionText = new JTextArea();
+	private final HTMLEditorKit htmlEditor = new HTMLEditorKit();
+	private JEditorPane questionText = new JEditorPane();
+	public void setQuestionText(String str) {
+		questionText.setEditorKit(htmlEditor);
+		questionText.setText(str);
+	}
 
 	private final JTextArea answerTextField = new NoTabTextArea("answerTextField");
 
@@ -151,9 +160,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private final JPanel numericalPanel = new NumericalAnswerPanel();
 
-	private final JPanel questionPanelLeft;
+	private final JComponent questionPanelLeft;
 
-	private final JPanel questionPanelRight;
+	private final JTabbedPane tabbedPanel;
+	
+	private final JComponent questionPanelRight;
 
 	private final ButtonGroup answerButtonGroup = new ButtonGroup();
 
@@ -162,6 +173,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private final WholeNumberDocument wholeNumberDocument = new WholeNumberDocument();
 
 	private final PlainDocument plainDocument = new PlainDocument();
+	
+	private final JTextArea notesTextArea = new JTextArea();
+	
+	private final PlainDocument notesDocument = new PlainDocument();
 
 	/* Question Iteration Variables */
 	private Question question;
@@ -178,6 +193,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	 */
 	public ClientQuestionPanel(EgoClient egoClient) {
 		this.egoClient = egoClient;
+		noteKeyEvents = 0;
 		listBorder = BorderFactory.createCompoundBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.RAISED, Color.white, new Color(
 						178, 178, 178)), "Questions"), BorderFactory
@@ -191,6 +207,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		this.setMinimumSize(new Dimension(330, 330));
 		this.setLayout(new GridLayout());
 
+		tabbedPanel = new JTabbedPane();
 		questionPanelLeft = getLeftPanel();
 		questionPanelRight = getRightPanel();
 		
@@ -205,7 +222,6 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		Dimension minimumSize = new Dimension(100, 100);
 		questionPanelLeft.setMinimumSize(minimumSize);
 		questionPanelRight.setMinimumSize(minimumSize);
-		
 
 		if(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 			add(questionSplit, null);
@@ -323,7 +339,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		fillPanel();
 	}
 
-	private JPanel getLeftPanel() {
+	private JComponent getLeftPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
@@ -342,10 +358,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(0, 0, 0, 0), 29, 302));
 
+		
 		return panel;
 	}
 
-	private JPanel getRightPanel() {
+	private JComponent getRightPanel() {
 		// Load up the dialog contents.
 		JPanel panel = new JPanel();
 		
@@ -361,6 +378,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		titleText = new JLabel("title");
 		titleText.setName("titleText");
+		titleText.setFont(new java.awt.Font("Lucida Grande Bold", 0, 15));
 		
 		answerPanel = new CardPanel();
 		answerPanel.setName("answerPanel");
@@ -368,18 +386,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress = new JProgressBar();
 		questionProgress.setName("questionProgress");
 		
-		questionText = new JTextArea();
+		questionText = new JEditorPane();
 		questionText.setName("questionText");
-		questionText.setLineWrap(true);
-		questionText.setWrapStyleWord(true);
 
-		titleText.setFont(new java.awt.Font("Lucida Grande Bold", 0, 15));
+		/*questionText.setLineWrap(true);
+		questionText.setWrapStyleWord(true);
+		questionText.setLineWrap(true);
+		questionText.setTabSize(4);
+		questionText.setWrapStyleWord(true);*/
 
 		questionText.setBackground(SystemColor.window);
 		questionText.setFont(new java.awt.Font("Serif", 0, 16));
-		questionText.setLineWrap(true);
-		questionText.setTabSize(4);
-		questionText.setWrapStyleWord(true);
 		questionText.setEditable(false);
 		questionText.setMargin(new Insets(4, 4, 4, 4));
 		questionText.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -420,8 +437,33 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		panel.add(questionButtonPrevious, "split, growx");
 		panel.add(questionButtonNext, "growx");
 
+		// build notes
+		notesDocument.addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				try { notesTextEvent(e); } catch (Exception ex) { throw new RuntimeException(ex); }
+			}
+
+			public void changedUpdate(DocumentEvent e) {
+				try { notesTextEvent(e); } catch (Exception ex) { throw new RuntimeException(ex); }
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				try { notesTextEvent(e); } catch (Exception ex) { throw new RuntimeException(ex); }
+			}
+		});
+		notesTextArea.setDocument(notesDocument);
 		
-		return panel;
+		notesTextArea.setLineWrap(true);
+		notesTextArea.setWrapStyleWord(true);
+		notesTextArea.setLineWrap(true);
+		notesTextArea.setTabSize(4);
+		notesTextArea.setWrapStyleWord(true);
+		
+		tabbedPanel.add(panel, "Interview Questions");
+		tabbedPanel.add(new JScrollPane(notesTextArea), "Interview Notes");
+		
+		
+		return tabbedPanel;
 	}
 
 	/**
@@ -448,6 +490,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// we may need some string substitutions for $$1 and $$2
 		String[] alterNames = egoClient.getInterview().getAlterStrings(question);
 
+		String notes = egoClient.getInterview().getNotes();
+		notesTextArea.setText(notes);
+		
 		// prepare the buttons
 		setButtonNextState();
 		questionButtonPrevious.setEnabled(egoClient.getInterview().hasPrevious());
@@ -474,7 +519,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				qs += "";
 			}
 
-			questionText.setText(question.text);
+			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(ALTER_CARD);
@@ -493,10 +538,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerPanel.setVisible(true);
 			alterList.requestFocusOnFirstVisibleComponent();
 		} else if (question.answerType == Shared.AnswerType.INFORMATIONAL) {
-			questionText.setText(question.text);
+			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 		} else if (question.answerType == Shared.AnswerType.TEXT) {
-			questionText.setText(question.text);
+			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(TEXT_CARD);
@@ -516,7 +561,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerPanel.setVisible(true);
 			answerTextField.requestFocusInWindow();
 		} else if (question.answerType == Shared.AnswerType.NUMERICAL) {
-			questionText.setText(question.text);
+			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(NUMERICAL_CARD);
@@ -546,7 +591,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		} else if(question.answerType == Shared.AnswerType.CATEGORICAL) {
 
 			logger.info("Displaying CATEGORICAL question: " + question.text);
-			questionText.setText(question.text);
+			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 			
 			// can we do radio buttons or do we need the dropdown?
@@ -585,7 +630,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answerPanel.setVisible(true);
 			} else { // drop downs!
 				logger.info(" -- doing drop downs!");
-				questionText.setText(question.text);
+				setQuestionText(question.text);
 				questionText.setCaretPosition(0);
 				answerPanel.showCard(MENU_CARD);
 
@@ -877,8 +922,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void setButtonNextState() {
+		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
+		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			questionButtonNext.setEnabled(question.answer.answered);
+			questionButtonNext.setEnabled(skip || question.answer.answered);
 			questionButtonNext.setText("Next Question");
 		} else {
 			boolean next = egoClient.getInterview().hasNext();
@@ -887,10 +934,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				questionButtonNext.setText("Study Complete");
 				questionButtonNext
 				.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-						&& question.answer.answered);
+						&& (skip || question.answer.answered));
 			} else {
 				questionButtonNext.setText("Next Question");
-				questionButtonNext.setEnabled(question.answer.answered);
+				questionButtonNext.setEnabled(skip || question.answer.answered);
 			}
 		}
 		if(question.answerType == Shared.AnswerType.INFORMATIONAL) {
@@ -912,6 +959,24 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		setButtonNextState();
 	}
 
+	private void notesTextEvent(DocumentEvent e) throws Exception {
+		logger.info("notesTextEvent");
+		egoClient.getInterview().setNotes(notesTextArea.getText());
+		
+		synchronized (keycountLock) {
+			noteKeyEvents++;
+			logger.info("notesTextEvent -- count at " + noteKeyEvents);
+			
+			if(noteKeyEvents >= 5) {
+				egoClient.getStorage().writeCurrentInterview();
+				noteKeyEvents = 0;
+				logger.info("Wrote notes to file");
+			}
+		}
+		
+		
+	}
+	
 	public void update(Observable o, Object arg) {
 		logger.info("update");
 		fillAnswer(question.answer);

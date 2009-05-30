@@ -69,6 +69,8 @@ public class InterviewWriter {
 		for (int i = 0; i < _answers.length; i++) {
 			writeAnswer(answerListElem, interview.getQuestion(i), interview, _answers[i]);
 		}
+		
+		e.addElement("notes").setString(interview.getNotes());
 	}
 	
 	public void writeAnswer(Element e, Question question, Interview interview, Answer answer) {

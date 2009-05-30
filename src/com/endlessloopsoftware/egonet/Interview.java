@@ -51,6 +51,8 @@ public class Interview implements Comparable<Interview> {
 
 	private String[] _egoName = { "", "" };
 
+	private String notes = "";
+	
 	private boolean _complete;
 
 	private String[] _alterList = new String[0];
@@ -635,7 +637,7 @@ public class Interview implements Comparable<Interview> {
 			}
 		} catch (Exception ex) {
 			s = oldS;
-			logger.error(ex.toString());
+			logger.error("Could not resolve dollar-dollars", ex.toString());
 		}
 
 		return s;
@@ -661,15 +663,24 @@ public class Interview implements Comparable<Interview> {
 	 * @throws IOException 
 	 */
 	public void completeInterview(EgoStore storage) throws IOException {
+		
+		boolean answeredAll = true;
+		for(Answer a : _answers) {
+			logger.info("TEST COMPLETENESS " + a.answered + " / " + a);
+			if(!a.answered)
+				answeredAll = false;
+		}
+		
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
 		Question q = _study.getFirstStatableQuestion();
-		_complete = true;
+		if(answeredAll)
+			_complete = true;
 		
 		storage.writeCurrentInterview();
 
-		if (q != null) {
+		if (answeredAll && q != null) {
 			Statistics stats = storage.getInterview().generateStatistics(q);
 			storage.writeStatisticsFiles(stats, _egoName);
 		}
@@ -834,4 +845,11 @@ public class Interview implements Comparable<Interview> {
 		return _egoName.hashCode() - o._egoName.hashCode();
 	}
 
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
 }

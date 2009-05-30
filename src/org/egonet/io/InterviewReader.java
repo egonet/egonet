@@ -66,7 +66,13 @@ public class InterviewReader
 			if (egoNameElem != null) {
 				interview.setName(egoNameElem.getString("First"), egoNameElem.getString("Last"));
 			}
+			
 			readAnswers(study, interview, answerListElem);
+
+			Element notes = e.getElement("notes");
+			if(notes != null) {
+				interview.setNotes(notes.getString());
+			}
 			
 			return (interview);
 	}

@@ -166,11 +166,11 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
         question_panel_right.add(question_question_label, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-        question_panel_right.add(question_question_field, new GridBagConstraints(1, 1, 2, 3, 0.0, 0.4,
+        question_panel_right.add(new JScrollPane(question_question_field), new GridBagConstraints(1, 1, 2, 3, 0.0, 0.4,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_citation_label, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-        question_panel_right.add(question_citation_field, new GridBagConstraints(1, 4, 2, 3, 0.0, 0.3,
+        question_panel_right.add(new JScrollPane(question_citation_field), new GridBagConstraints(1, 4, 2, 3, 0.0, 0.3,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_type_label, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));

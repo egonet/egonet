@@ -53,13 +53,11 @@ public class StudyReader {
 	
 		root = root.getElement("Study");
 	
-		if (root.getElement("name") != null)
-		{
+		if (root.getElement("name") != null) {
 			study.setStudyName(root.getTextString("name"));
 		}
 	
-		if (root.getElement("numalters") != null)
-		{
+		if (root.getElement("numalters") != null) {
 			study.setNetworkSize(root.getInt("numalters"));
 		}
 	
@@ -76,7 +74,12 @@ public class StudyReader {
 		if(root.getElement("altersamplingparameter") != null) {
 			study.setAlterSamplingParameter(root.getInt("altersamplingparameter"));
 		}
-	
+
+		if(root.getElement("allowskipquestions") != null) {
+			System.out.println("FOUND ALLOW SKIPS");
+			study.setAllowSkipQuestions(root.getBoolean("allowskipquestions"));
+		}
+		
 		Elements elements = root.getElements("questionorder");
 		while (elements.hasMoreElements())
 		{

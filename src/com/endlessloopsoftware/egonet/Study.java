@@ -43,6 +43,7 @@ public class Study extends Observable implements Comparable<Study>
    private boolean           _compatible     = true;
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
+   private boolean			skipQuestions = false;
    
    private Map<QuestionType,List<Long>> _questionOrder  = new HashMap<QuestionType,List<Long>>();
    
@@ -760,5 +761,14 @@ public class Study extends Observable implements Comparable<Study>
 
 	public String toString() {
 		return getStudyName() + " (" + getStudyId() + ")";
+	}
+
+	public void setAllowSkipQuestions(boolean selected) {
+		this.skipQuestions = selected;
+		
+	}
+	
+	public boolean getAllowSkipQuestions() {
+		return skipQuestions;
 	}
 }

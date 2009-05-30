@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -70,12 +71,13 @@ public class StudyPanel extends JPanel
 	private JRadioButton btnAlterModelNth = new JRadioButton("Select every Nth alter");
 	private JTextField txtAlterModelNth = new JTextField("0");
 	
-
 	private JLabel lblAlterNames = new JLabel("Alter names prompt");
 	private ButtonGroup alternamesGroup = new ButtonGroup();
 	
 	private JRadioButton btnAlterNamesFirstLast = new JRadioButton("Ask for separate first and last names");
 	private JRadioButton btnAlterNamesSingle = new JRadioButton("Ask for name as a single field");
+
+	private JCheckBox btnAllowQuestionSkip = new JCheckBox("Always allow 'Next' button for skipping questions");
 	
 	private final JLabel				titleLabel					= new JLabel("EgoCentric Network Study Configuration");
 	private final JTextPane			instructionPane			= new JTextPane();
@@ -89,6 +91,7 @@ public class StudyPanel extends JPanel
 	private final EgoNet egoNet;
 	private ActionListener alterModelGroupActionListener;
 	private ActionListener alterNameActionListener;
+	private ActionListener allowSkipListener;
 	
 	/**
 	 * Generates Panel for study configuration info
@@ -123,6 +126,16 @@ public class StudyPanel extends JPanel
 				else if(alternamesGroup.isSelected(btnAlterNamesSingle.getModel())) {
 					study.setAlterNameModel(AlterNameModel.SINGLE);	
 				}
+			}
+		};
+		
+		allowSkipListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) {
+				Study study = egoNet.getStudy();
+                if(study != null) {
+                	study.setAllowSkipQuestions(btnAllowQuestionSkip.isSelected());
+                }
 			}
 		};
 		
@@ -176,6 +189,7 @@ public class StudyPanel extends JPanel
 		alternamesGroup.add(btnAlterNamesFirstLast); btnAlterNamesFirstLast.addActionListener(alterNameActionListener);
 		alternamesGroup.add(btnAlterNamesSingle);btnAlterNamesSingle.addActionListener(alterNameActionListener);
 
+		btnAllowQuestionSkip.addActionListener(allowSkipListener);
 
 		/* Question Layout */
 		titleLabel.setBorder(BorderFactory.createEtchedBorder());
@@ -208,8 +222,9 @@ public class StudyPanel extends JPanel
 		add(btnAlterModelNth, 			new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		add(txtAlterModelNth, 			new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
+		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 13, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(instructionPane, new GridBagConstraints(0, 14, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
+		add(instructionPane,            new GridBagConstraints(0, 15, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
 
 		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
@@ -273,6 +288,8 @@ public class StudyPanel extends JPanel
 					.getStudy()
 					.getStudyName());
 			
+			btnAllowQuestionSkip.setSelected(hasStudy && study.getAllowSkipQuestions());
+			
 			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
 			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNetworkSize()));
 			
@@ -286,6 +303,8 @@ public class StudyPanel extends JPanel
 			txtAlterModelRandomSubset.setEnabled(hasStudy);
 			btnAlterModelNth.setEnabled(hasStudy);
 			txtAlterModelNth.setEnabled(hasStudy);
+			
+			btnAllowQuestionSkip.setEnabled(hasStudy);
 			
 			if(hasStudy && study.getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
 				alterSampleGroup.setSelected(btnAlterNamesFirstLast.getModel(), true);
