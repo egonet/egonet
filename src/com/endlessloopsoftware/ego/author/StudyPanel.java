@@ -199,13 +199,14 @@ public class StudyPanel extends JPanel
 		instructionPane.setEditable(false);
 		instructionPane.setText(instructionStrings[0]);
 		
+		                                                 //    x  y  w  h  weightx/y                    anchor                     fill        insets                     padx/y
 		add(titleLabel, 				new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		add(study_name_label, 			new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_name_field, 			new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
 		add(study_path_label, 			new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_path_field, 			new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_num_alters_label, 	new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_num_alters_field, 	new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+		add(study_num_alters_field, 	new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
 
 		
 		add(lblAlterNames, 				new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
