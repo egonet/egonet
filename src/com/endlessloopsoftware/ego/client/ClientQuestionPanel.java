@@ -85,6 +85,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			new JRadioButton(), // 8
 			new JRadioButton(), // 9
 	};
+	private final JRadioButton noAnswerButton = new JRadioButton();
 
 	private final KeyStroke enter = KeyStroke
 	.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -306,6 +307,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerButtonGroup.add(answerButtons[i]);
 			answerButtons[i].addActionListener(answerButtonListener);
 		}
+		answerButtonGroup.add(noAnswerButton); // I can select this one in order to clear the others.
 
 		// register all number buttons instead of till MAX_BUTTONS alone
 		// for (int i = 0; i <= MAX_BUTTONS; i++)
@@ -624,6 +626,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answerButtons[question.answer.getIndex()].setSelected(true);
 						logger.info("-- YES -- setting a selection for the new loaded question's answer!");
 					}
+				} else {
+					// Unselect visible buttons by selecting invisible button in same group
+					// Workaround because ButtonGroup doesn't allow total selections to drop from 1 to 0
+					noAnswerButton.setSelected(true); 
 				}
 				
                 answerPanel.showCard(RADIO_CARD);
@@ -640,12 +646,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				
 				for (int i = 0; i < question.getSelections().length; i++) {
 					answerMenu.addItem(question.getSelections()[i]);
+					// If question already answered, then select that answer
 					if(	i > 0 && 
 						question.answer.getIndex() >= 0 &&
 						question.answer.getIndex()+1 == i
 						)
 						answerMenu.setSelectedIndex(i);	
 				}
+				
+				// Question not answered yet, so should start on "Select an answer"
+				if(( ! question.answer.answered) || question.answer.getIndex() < 0) {
+					answerMenu.setSelectedIndex(0);
+				}
+				
 
 				answerMenu.setActionCommand("User Input"); // reactive the answer listener since we're done
 				answerMenu.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
