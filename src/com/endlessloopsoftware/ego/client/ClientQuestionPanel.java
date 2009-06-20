@@ -44,6 +44,8 @@ import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
+import com.endlessloopsoftware.egonet.Shared.AnswerType;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -1127,6 +1129,64 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
+	public static void showPreview(String questionTitle, String questionText, 
+			Shared.QuestionType questionType, Shared.AnswerType answerType, Selection[] selections) 
+	{
+		
+		JDialog dialog = new JDialog(null,"Preview of "+questionTitle,Dialog.ModalityType.APPLICATION_MODAL);
+		MigLayout layout = new MigLayout("", "[grow]");
+		JPanel panel = new JPanel();
+		panel.setLayout(layout);
+		panel.add(new JLabel(questionType.title.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
+		panel.add(new JLabel(questionText.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
+		panel.add(new JLabel(""), "growx, wrap");
+		
+		if(questionType.equals(QuestionType.ALTER_PROMPT)) {
+			panel.add(new JLabel(""), "growx, wrap");
+			panel.add(new JLabel("(Alter entry not yet implemented in alter prompt preview)"), "growx, wrap");
+		} else if(answerType.equals(AnswerType.TEXT)) {
+			panel.add(new JLabel("Textual Answer:"),"growx,wrap");
+			JTextArea textArea = new JTextArea();
+			textArea.setRows(5);
+			panel.add(textArea,"growx,wrap"); 
+		} else if(answerType.equals(AnswerType.NUMERICAL)) {
+			panel.add(new JLabel("Numerical Answer:"),"growx,wrap");
+			JTextField numberField = new JTextField();
+			numberField.setFont(new java.awt.Font("SansSerif", 0, 14));
+			panel.add(numberField,"growx,wrap"); // TODO: needs to be like numericalTextField 
+			                                     // I wonder how it prevents typing letters
+		} else if(answerType.equals(AnswerType.CATEGORICAL)) {
+			if(selections != null) {
+				if(selections.length < 10) {
+					panel.add(new JLabel("List-item Answer:"),"growx,wrap");
+					ButtonGroup group = new ButtonGroup();
+					for(Selection selection : selections) {
+						JRadioButton button = new JRadioButton(selection.getString());
+						group.add(button);
+						panel.add(button,"growx,wrap");
+					}
+				} else {
+					panel.add(new JLabel("Menu Answer:"),"growx,wrap");
+					JComboBox box = new JComboBox();
+					box.addItem("Select an answer");
+					for(Selection selection : selections) {
+						box.addItem(selection.getString());
+					}
+					panel.add(box,"growx,wrap");
+				}
+			}
+		} else {
+			panel.add(new JLabel("Preview not yet implemented for AnswerType: "+answerType), "growx, wrap");
+		}
+		// TODO: Formatting
+		// TODO: noAnswerBox if that option is enabled in study
+		// TODO: answerComponent.requestFocusInWindow() so answer can be entered/selected easily via keyboard
+		dialog.setContentPane(panel);
+		dialog.pack();
+		dialog.setVisible(true);
+		
+	}
+	
 }
 
 /**

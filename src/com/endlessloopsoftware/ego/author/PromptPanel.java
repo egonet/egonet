@@ -37,7 +37,9 @@ import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
 
+import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 /**
@@ -59,6 +61,7 @@ public class PromptPanel extends EgoQPanel
     private final JTextArea question_citation_field = new NoTabTextArea();
     private final JTextField question_title_field = new JTextField();
     private final JButton question_new_button = new JButton("New");
+    private final JButton question_preview_button = new JButton("Preview");
     private final JComboBox question_follows_menu = new JComboBox();
     private final JButton question_delete_button = new JButton("Delete");
     private final Border listBorder;
@@ -151,6 +154,8 @@ public class PromptPanel extends EgoQPanel
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_new_button, new GridBagConstraints(0, 7, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        question_panel_right.add(question_preview_button, new GridBagConstraints(1, 7, 1, 1, 0.33, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_delete_button, new GridBagConstraints(2, 7, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_follows_label, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
@@ -175,6 +180,16 @@ public class PromptPanel extends EgoQPanel
             public void actionPerformed(ActionEvent e)
             {
                 question_new_button_actionPerformed(e);
+            }
+        });
+        
+        question_preview_button.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+            	ClientQuestionPanel.showPreview(
+            			question_title_field.getText(),question_question_field.getText(),
+            			Shared.QuestionType.ALTER_PROMPT,null,null);
             }
         });
 

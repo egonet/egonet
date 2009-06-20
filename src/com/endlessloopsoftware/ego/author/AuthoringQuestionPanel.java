@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
 
+import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
@@ -65,6 +66,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JTextArea question_citation_field = new NoTabTextArea();
     private final JTextField question_title_field = new JTextField();
     private final JButton question_new_button = new JButton("New");
+    private final JButton question_preview_button = new JButton("Preview");
     private final JButton question_duplicate_button = new JButton("Duplicate");
     private final JButton question_link_button = new JButton("Set Link");
     private final JButton question_delete_button = new JButton("Delete");
@@ -112,6 +114,10 @@ public class AuthoringQuestionPanel extends EgoQPanel
         jbInit();
     }
 
+    private Question getSelectedQuestion() {
+    	return (Question) question_list.getSelectedValue();
+    }
+    
     /**
      * Component initialization
      * 
@@ -194,11 +200,14 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_new_button, new GridBagConstraints(0, 11, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-        question_panel_right.add(question_link_button, new GridBagConstraints(1, 11, 1, 1, 0.33, 0.0,
+        question_panel_right.add(question_preview_button, new GridBagConstraints(1, 11, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_delete_button, new GridBagConstraints(2, 11, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-        question_panel_right.add(question_duplicate_button, new GridBagConstraints(3, 11, 1, 1, 0.33, 0.0,
+        
+        question_panel_right.add(question_link_button, new GridBagConstraints(0, 12, 1, 1, 0.33, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        question_panel_right.add(question_duplicate_button, new GridBagConstraints(1, 12, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 
         question_list.setModel(new DefaultListModel());
@@ -217,6 +226,19 @@ public class AuthoringQuestionPanel extends EgoQPanel
             public void actionPerformed(ActionEvent e)
             {
                 question_new_button_actionPerformed(e);
+            }
+        });
+
+        question_preview_button.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+            	AnswerType answerType = 
+            		(AnswerType)question_answer_type_menu.getSelectedItem(); 
+            	Question question = getSelectedQuestion(); 
+            	ClientQuestionPanel.showPreview(
+            			question_title_field.getText(),question_question_field.getText(),
+            			questionType,answerType,question.getSelections());
             }
         });
 
