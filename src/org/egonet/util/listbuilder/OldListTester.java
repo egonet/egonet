@@ -21,7 +21,6 @@ package org.egonet.util.listbuilder;
 
 import javax.swing.JFrame;
 
-import org.egonet.util.ListBuilder;
 import org.egonet.util.ObservableList;
 import org.egonet.util.Selection;
 import org.slf4j.Logger;
