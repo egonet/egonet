@@ -122,20 +122,6 @@ public class ListBuilder extends JPanel implements Observer {
 		addListObserver(this);
 	}
 
-	public ListBuilder(boolean isPresetValuesActive) {
-		super();
-		elementList = new ObservableList<Selection>();
-		build();
-		addListObserver(this);
-	}
-
-	public ListBuilder(Selection[] selections) {
-		super();
-		elementList = new ObservableList<Selection>(selections);
-		build();
-		addListObserver(this);
-	}
-
 	public void addListObserver(Observer ob) {
 		elementList.addObserver(ob);
 	}
@@ -596,15 +582,6 @@ public class ListBuilder extends JPanel implements Observer {
 	}
 
 	public void setMaxListSize(int maxSize) {
-		setMaxSize(maxSize);
-		build();
-	}
-
-	public int getMaxSize() {
-		return maxSize;
-	}
-
-	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
 		build();
 	}
