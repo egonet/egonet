@@ -22,6 +22,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.HashSet;
@@ -29,7 +30,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
@@ -148,30 +148,25 @@ public class SummaryPanel extends JPanel
 			
 			File intFile = new File(intPath, thisIntFileName);
 
-			// Check that this has the correct Study Id
-			try
-			{
+			try {
+				// Check that this has the correct Study Id
 				String istPathString = istPath.getCanonicalPath();
-
+	
 				File thisIstFile = EgoStore.interviewStatisticsFile(istPathString, intFiles[i]);
 				
-					InterviewReader ir = new InterviewReader(egoClient.getStudy(), intFile);
-
-					try {
-						ir.getInterview();
-						egoClient.getStorage().generateStatisticsFile(intFile);
-						istFileSet.add(thisIstFile);
-					} catch (CorruptedInterviewException ex)
-					{
-						// no match, eat silently
-					}
-					
-			}
-			catch (Exception ignored)
+				InterviewReader ir = new InterviewReader(egoClient.getStudy(), intFile);
+				ir.getInterview();
+				egoClient.getStorage().generateStatisticsFile(intFile);
+				istFileSet.add(thisIstFile);
+			} catch (CorruptedInterviewException ex)
 			{
-				JOptionPane.showMessageDialog(null, ignored.getMessage());
-				ignored.printStackTrace();
+				// no match, eat silently
+			} catch (IOException ex)
+			{
+				logger.info("Failed to read " + thisIntFileName,ex);
 			}
+		
+			
 		}
 
 		_stats = new StatRecord[istFileSet.size()];

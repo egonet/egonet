@@ -19,7 +19,12 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
+
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.LayoutDecorator;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.VisualizationModel;
+
 import java.util.*;
 import java.util.List;
 import java.awt.*;
@@ -142,14 +147,15 @@ public class GraphSettings {
 
 			// layoutElement
 			Element layoutElement = doc.createElement("Layout");
-			layoutElement.setAttribute("layout", renderer
-					.getVisualizationModel().getGraphLayout().getClass()
-					.getName());
-			System.out
-					.println("renderer.getVv().getLayout().getClass().getName() "
-							+ renderer.getVisualizationModel().getGraphLayout()
-									.getClass().getName());
-
+			VisualizationModel model = renderer.getVisualizationModel();
+			Layout graphLayout = model.getGraphLayout();
+			if(graphLayout instanceof LayoutDecorator) {
+				LayoutDecorator decor = (LayoutDecorator)graphLayout;
+				graphLayout = decor.getDelegate();
+			}
+			
+			layoutElement.setAttribute("layout", graphLayout.getClass().getName());
+			
 			// zoomElement
 			Element zoomElement = doc.createElement("Zoom");
 			zoomElement.setAttribute("zoom", GraphRenderer.getVv().getLayout()

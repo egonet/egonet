@@ -18,7 +18,6 @@
  */
 package org.egonet.util;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public abstract class SwingWorker
@@ -141,7 +140,6 @@ public abstract class SwingWorker
 					setValue(construct());
 				}
 				catch(Throwable cause) {
-					JOptionPane.showMessageDialog(null, cause.toString());
 					throw new RuntimeException(cause);
 				}
 				finally

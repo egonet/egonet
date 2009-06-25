@@ -353,11 +353,11 @@ public class EgoStore {
 	}
 
 	public File getInterviewFile() {
-		return currentInterview.first();
+		return currentInterview != null ? currentInterview.first() : null;
 	}
 	
 	public Interview getInterview() {
-		return currentInterview.second();
+		return currentInterview != null ? currentInterview.second() : null;
 	}
 
 	public void chooseStudy() throws IOException, EgonetException {
@@ -1067,7 +1067,7 @@ public class EgoStore {
 	public void generateStatisticsFile(File interviewFile)
 			throws IOException, CorruptedInterviewException {
 		
-		if (getInterviewFile() != null) {
+		if (interviewFile != null) {
 			readInterview(interviewFile);
 		}
 
