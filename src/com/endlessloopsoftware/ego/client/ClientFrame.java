@@ -491,6 +491,7 @@ public class ClientFrame extends MDIChildFrame {
 				GraphRenderer.getGraphSettings().loadSettingsFile(settingsFile);
 			} catch (Throwable ex) {
 				logger.error(ex.toString());
+				ex.printStackTrace();
 			}
 		}
 	}

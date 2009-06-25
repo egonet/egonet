@@ -224,6 +224,10 @@ public class GraphSettings {
 				} catch (ClassNotFoundException ex) {
 					logger.info("Specified class is not a Layout class");
 					logger.error(ex.toString());
+				} catch (Exception ex) {
+					logger.info("Unable to change layout");
+					logger.error(ex.toString());
+					ex.printStackTrace();
 				}
 
 				GraphRenderer.getVv().setBackground(
