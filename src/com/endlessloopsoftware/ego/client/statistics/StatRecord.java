@@ -25,7 +25,7 @@ import java.util.List;
 
 public class StatRecord
 {
-	public String  name           = "";
+	private String  name           = "";
 	public String  degreeName     = "";
 	public Integer degreeValue    = new Integer(0);
 	public Float   degreeMean     = new Float(0);
@@ -65,7 +65,12 @@ public class StatRecord
    
    public StatRecord(Statistics stats)
    {
-      name = stats.getInterview().getName()[0] + " " + stats.getInterview().getName()[1];
+	   String name0 = stats.getInterview().getName()[0];
+	   String name1 = stats.getInterview().getName()[1];
+	   
+      setName((name0 != null ? name0 : "")
+    	  + (name0 != null && name1 != null ? " " : "")
+    	  + (name1 != null ? name1 : ""));
       
       degreeName  = stats.mostCentralDegreeAlterName;
       degreeValue = new Integer(stats.mostCentralDegreeAlterValue);
@@ -95,7 +100,15 @@ public class StatRecord
       }
    }
 
-   public static class EgoAnswer
+   public void setName(String name) {
+	this.name = name;
+}
+
+public String getName() {
+	return name;
+}
+
+public static class EgoAnswer
    {
       public final String title;
       public final String answer;

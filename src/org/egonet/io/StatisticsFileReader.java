@@ -29,7 +29,12 @@ public class StatisticsFileReader {
 		Element nameElem = e.getElement("EgoName");
 		if (nameElem != null)
 		{
-			sr.name = nameElem.getString("First") + " " + nameElem.getString("Last");
+			String first_name = nameElem.getString("First");
+			String last_name = nameElem.getString("Last");
+			
+			sr.setName((first_name != null ? first_name : "") 
+					+ (first_name == null || last_name == null ? "" : " ") 
+					+ (last_name != null ? last_name : ""));
 		}
 
 		sr.degreeName     = e.getString("DegreeName");

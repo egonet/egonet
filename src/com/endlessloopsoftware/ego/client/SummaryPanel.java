@@ -262,7 +262,7 @@ public class SummaryPanel extends JPanel
 		{
 			stat = _stats[i];
 
-			w.print(FileHelpers.formatForCSV(stat.name));
+			w.print(FileHelpers.formatForCSV(stat.getName()));
 
 			it = stat.egoAnswers.iterator();
 			while (it.hasNext())
@@ -369,7 +369,7 @@ public class SummaryPanel extends JPanel
    				switch (columnIndex)
    				{
    					case 0 :
-   						return (summaryPanel._stats[rowIndex].name); /* Name */
+   						return (summaryPanel._stats[rowIndex].getName()); /* Name */
    					case 1 :
    						return (summaryPanel._stats[rowIndex].degreeName); /* Max Degree Name */
    					case 2 :
