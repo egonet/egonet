@@ -440,7 +440,7 @@ public class ClientFrame extends MDIChildFrame {
 	
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 		String[] name = egoClient.getInterview().getName();
-		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+		String fileName = "/" + (name[0] != null ? name[0] : "") + "_" + (name[1] != null ? name[1] : "") + ".xml";
 
 		final File currentDirectory = new File(egoClient.getStorage()
 				.getStudyFile().getParent(), "Graphs");
