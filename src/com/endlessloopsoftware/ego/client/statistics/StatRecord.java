@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.egonet.util.Name;
+
 
 public class StatRecord
 {
@@ -65,12 +67,7 @@ public class StatRecord
    
    public StatRecord(Statistics stats)
    {
-	   String name0 = stats.getInterview().getName()[0];
-	   String name1 = stats.getInterview().getName()[1];
-	   
-      setName((name0 != null ? name0 : "")
-    	  + (name0 != null && name1 != null ? " " : "")
-    	  + (name1 != null ? name1 : ""));
+	   setName(new Name(stats.getInterview().getName()[0],stats.getInterview().getName()[1]).toString());
       
       degreeName  = stats.mostCentralDegreeAlterName;
       degreeValue = new Integer(stats.mostCentralDegreeAlterValue);

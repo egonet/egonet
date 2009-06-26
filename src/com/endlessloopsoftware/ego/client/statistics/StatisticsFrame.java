@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.egonet.util.CatchingAction;
+import org.egonet.util.Name;
 
 import java.io.IOException;
 
@@ -261,7 +262,7 @@ public class StatisticsFrame extends JPanel {
 	
 	void saveAdjacencyMatrix_actionPerformed(ActionEvent e, boolean weighted) throws IOException {
 	    String[] name = egoClient.getInterview().getName();
-	    String filename = name[0] + "_" + name[1] + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
+	    String filename = new Name(name[0],name[1]).toString("_") + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
 	    
 	    PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
 	    

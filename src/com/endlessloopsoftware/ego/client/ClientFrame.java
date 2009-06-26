@@ -48,6 +48,7 @@ import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
+import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -440,7 +441,7 @@ public class ClientFrame extends MDIChildFrame {
 	
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 		String[] name = egoClient.getInterview().getName();
-		String fileName = "/" + (name[0] != null ? name[0] : "") + "_" + (name[1] != null ? name[1] : "") + ".xml";
+		String fileName = "/" + new Name(name[0],name[1]).toString("_") + ".xml";
 
 		final File currentDirectory = new File(egoClient.getStorage()
 				.getStudyFile().getParent(), "Graphs");

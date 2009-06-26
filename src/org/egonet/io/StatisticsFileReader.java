@@ -2,6 +2,8 @@ package org.egonet.io;
 
 import java.io.File;
 
+import org.egonet.util.Name;
+
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.AlterAnswer;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
@@ -29,12 +31,7 @@ public class StatisticsFileReader {
 		Element nameElem = e.getElement("EgoName");
 		if (nameElem != null)
 		{
-			String first_name = nameElem.getString("First");
-			String last_name = nameElem.getString("Last");
-			
-			sr.setName((first_name != null ? first_name : "") 
-					+ (first_name == null || last_name == null ? "" : " ") 
-					+ (last_name != null ? last_name : ""));
+			sr.setName(new Name(nameElem.getString("First"),nameElem.getString("Last")).toString());
 		}
 
 		sr.degreeName     = e.getString("DegreeName");
