@@ -879,7 +879,8 @@ public class EgoStore {
 	
 		progressMonitor.setMaximum(numFiles);
 	
-		SwingWorker<Integer, Integer> filterWorker = new SwingWorker<Integer, Integer>() {
+		org.jdesktop.swingworker.SwingWorker<Integer, Integer> filterWorker = 
+			new org.jdesktop.swingworker.SwingWorker<Integer, Integer>() {
 			public Integer doInBackground() {
 				filter.cacheList(currentDirectory, progressMonitor);
 				return 0;

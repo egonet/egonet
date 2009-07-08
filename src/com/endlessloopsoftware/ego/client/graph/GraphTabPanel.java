@@ -234,7 +234,8 @@ public class GraphTabPanel extends JPanel {
 		increaseLayoutSize = new JButton("+");
 		increaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				SwingWorker worker = new SwingWorker(){
+				org.jdesktop.swingworker.SwingWorker worker = 
+					new org.jdesktop.swingworker.SwingWorker(){
 					@Override
 					protected Object doInBackground() throws Exception {
 						decreaseLayoutSize.paintImmediately(new Rectangle());
@@ -250,7 +251,7 @@ public class GraphTabPanel extends JPanel {
 		decreaseLayoutSize = new JButton("-");
 		decreaseLayoutSize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				SwingWorker worker = new SwingWorker(){
+				org.jdesktop.swingworker.SwingWorker worker = new org.jdesktop.swingworker.SwingWorker(){
 					@Override
 					protected Object doInBackground() throws Exception {
 						decreaseLayoutSize.paintImmediately(new Rectangle());
@@ -267,7 +268,7 @@ public class GraphTabPanel extends JPanel {
 		reiterate = new JButton("Reiterate");
 		reiterate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				SwingWorker worker = new SwingWorker(){
+				org.jdesktop.swingworker.SwingWorker worker = new org.jdesktop.swingworker.SwingWorker(){
 					@Override
 					protected Object doInBackground() throws Exception {
 						reiterate.paintImmediately(new Rectangle());
