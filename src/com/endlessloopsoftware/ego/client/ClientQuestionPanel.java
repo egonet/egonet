@@ -940,7 +940,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			questionButtonNext.setEnabled(skip || question.answer.answered);
+			// TODO: was skip || question.answer.answered
+			// but this conflicts with entering alters as single name
+			// Would be good to fix so that it is possible to enter
+			// only a few alters, but for now we at least need to be
+			// able to enter alters.
+			questionButtonNext.setEnabled(question.answer.answered); 
+			                                                         
 			questionButtonNext.setText("Next Question");
 		} else {
 			boolean next = egoClient.getInterview().hasNext();
