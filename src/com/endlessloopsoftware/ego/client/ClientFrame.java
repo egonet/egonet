@@ -610,7 +610,45 @@ public class ClientFrame extends MDIChildFrame {
         egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
         egoClient.getFrame().setVisible(true);
     }
+    		
+    public void quickSaveSummary() {
+        final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
+        final SwingWorker worker = new SwingWorker() 
+        {
+        	public Object construct()
+        	{
+                egoClient.getFrame().setVisible(false);
+        		SummaryPanel summaryPanel = new SummaryPanel(egoClient, progressMonitor);
+        		return summaryPanel;
+        	}
+           
+        	public void finished() {
+        		if (! progressMonitor.isCanceled()) {
+        			String name = FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
+        			String filename = name + "_Summary";
+        			PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
+        					"Study Summary", "csv", filename);
 
+        			if (w != null) {
+        				try {
+        					((SummaryPanel) this.getValue()).writeStudySummary(w);
+        				} finally {
+        					w.close();
+        				}
+        			}
+        		}
+        		progressMonitor.close();
+                egoClient.getFrame().setVisible(true);
+        	}
+        };
+
+        progressMonitor.setProgress(0);
+        progressMonitor.setMillisToDecideToPopup(0);
+        progressMonitor.setMillisToPopup(0);
+
+        worker.start();
+    }
+    
     public void gotoSummaryPanel()
     {
        final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);

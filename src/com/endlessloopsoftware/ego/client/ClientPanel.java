@@ -100,7 +100,7 @@ public class ClientPanel
 			}
 		});
 		
-		statisticsButton = new JButton("Summary Statistics");
+		statisticsButton = new JButton("Save Summary Statistics");
 		statisticsButton.addActionListener(new CatchingAction("doSummaryStatistics") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				doSummaryStatistics(e);
@@ -261,7 +261,10 @@ public class ClientPanel
 
 		if (ok == JOptionPane.OK_OPTION)
 		{
-		    egoClient.getFrame().gotoSummaryPanel();
+		    // TODO: as the commented-out method isn't called any more, lots of code could be deleted or cleaned up
+			// egoClient.getFrame().gotoSummaryPanel();
+			
+		    egoClient.getFrame().quickSaveSummary();
 		}
 	}
 }
