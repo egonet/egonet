@@ -1085,7 +1085,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			builder.addLabel("Textual Answer:", cc.xy(1, 1, "right, top"));
 			builder.nextColumn(2);
-			builder.add(answerTextField);
+			builder.add(new JScrollPane(answerTextField));
 
 			this.setLayout(new FormLayout("f:p", "t:p"));
 			this.add(builder.getPanel(), cc.xy(1, 1));
