@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.graph.WholeNetwork;
 import org.jdesktop.swingx.JXTable;
@@ -90,7 +91,7 @@ public class NameMapperFrame extends JFrame {
 			this.interview = interview;
 			this.study = study;
 			this.alterNumber = -1;
-			this.alterName = interview.getName()[0] + " " + interview.getName()[1];
+			this.alterName = new Name(interview.getName()[0],interview.getName()[1]).toString();
 			this.group = group;
 		}
 
@@ -276,7 +277,7 @@ public class NameMapperFrame extends JFrame {
 		
 		private String convert(NameMapping mapping) {
 			Interview intv = mapping.interview;
-			String ego = intv.getName()[0] + " " + intv.getName()[1];
+			String ego = new Name(intv.getName()[0],intv.getName()[1]).toString();
 			String alter = mapping.alterName;
 			
 			return alter + " (" + ego + ")";
