@@ -375,7 +375,9 @@ public class NameMapperFrame extends JFrame {
     		for(Map.Entry<Integer,List<NameMapping>> entry : groupings.entrySet()) {
     			float averageScore = 0; int elementCount = 0;
     			for(NameMapping entryMapping : entry.getValue()) {
-    				float thisScore = metric.getSimilarity(current.alterName, entryMapping.alterName);
+    				
+    				// when figuring a true score, make everything lowercase and trimmed
+    				float thisScore = metric.getSimilarity(current.alterName.toLowerCase().trim(), entryMapping.alterName.toLowerCase().trim());
     				if(thisScore >= cutoff)
     					logger.info(current.alterName + " + " + entryMapping.alterName + " = " + thisScore);
     				

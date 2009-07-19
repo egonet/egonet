@@ -44,6 +44,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 		
 		this.filter = new InterviewFileFilter(study, "Interview Files", "int");
 		
+		logger.info("Building interview file selection frame");
 		build();
 	}
 
@@ -252,8 +253,10 @@ public class InterviewFileSelectionFrame extends JFrame {
 	private List<File> getInitialFiles(File directory) {
 		
 		List<File> output = new ArrayList<File>();
-		if(!directory.isDirectory())
+		if(!directory.isDirectory()) {
+			logger.info("Asked to scan a directory for whole network files, but the argument wasn't a directory: " + directory);
 			return output;
+		}
 		
 		
 		List<File> files = new ArrayList<File>();
@@ -271,9 +274,15 @@ public class InterviewFileSelectionFrame extends JFrame {
 
 			if(validFile(candidate)) {
 				output.add(candidate);
-			    //logger.info("I'd use " + candidate.getName());
+			    logger.info("I'd try to use candidate file " + candidate.getName());
+			}
+			else {
+				logger.info("I'd skip file " + candidate.getName());
 			}
 		}
+		
+		if(output.size() <= 0)
+			logger.info("No files found for whole network analysis; you may have to add your own");
 
 		return output;
 		

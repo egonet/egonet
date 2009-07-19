@@ -43,7 +43,9 @@ import org.egonet.wholenet.gui.InterviewFileSelectionFrame;
 
 import com.endlessloopsoftware.egonet.Interview;
 
-import org.egonet.io.RawDataCSVWriter;;
+import org.egonet.io.RawDataCSVWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientPanel 
 	extends JPanel
@@ -55,6 +57,8 @@ public class ClientPanel
 	private JButton 		rawDataButton;
 	private JButton 		viewInterviewButton;
 	private JButton 		startInterviewButton;
+	
+	final private static Logger logger = LoggerFactory.getLogger(ClientPanel.class);
 
 	private final EgoClient egoClient;
 	public ClientPanel(EgoClient egoClient)
@@ -157,6 +161,7 @@ public class ClientPanel
 	
 	private void doWholeNetworkAnalysis(ActionEvent e) throws Exception
 	{
+		logger.info("Attempting whole network analysis");
 		final EgoStore storage = egoClient.getStorage();
 		if(storage.isStudyLoaded()) {
 			
@@ -177,6 +182,10 @@ public class ClientPanel
 			};
 			
 			sw.start();
+		}
+		else {
+			logger.info("Storage/study wasn't loaded");
+			JOptionPane.showMessageDialog(egoClient.getFrame(), "No study loaded");
 		}
 	}
 
