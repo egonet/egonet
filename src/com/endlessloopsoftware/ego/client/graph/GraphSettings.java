@@ -111,18 +111,42 @@ public class GraphSettings {
 		
 		
 		GraphData graphData = new GraphData(egoClient);
+		Graph<Vertex, Edge> graph = GraphRenderer.getGraph();
+		
 		int[][] adjacencyMatrix = graphData.getAdjacencyMatrix();
 		for (int i = 0; i < adjacencyMatrix.length; ++i) {
 			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
 				if (adjacencyMatrix[i][j] > 0) {
 					
 					String[] list = renderer.getAlterList();
-					Edge edge = new Edge(list[i], list[j]);
-					List<Vertex> verts = Arrays.asList(new Vertex(list[i]), new Vertex(list[j]));
 					
-					GraphRenderer.getGraph().addEdge(edge, verts);
-					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j])
-							.toString();
+					// create edge and note where it came from, so we can point out if it's a dupe
+					Edge edge = new Edge(list[i], list[j]);
+					edge.setNotes("i="+i+",j="+j);
+					
+					List<Vertex> verts = Arrays.asList(new Vertex(list[i]), new Vertex(list[j]));
+		
+					if(graph.containsEdge(edge)) {
+						Edge oldEdge = null;
+						for(Edge e : graph.getEdges()) {
+							if(e.equals(edge))
+								oldEdge = e;
+						}
+						
+						// help by printing out the problem
+						String oldEdgeStr = "unknown";
+						if(oldEdge != null) {
+							oldEdgeStr = edge.toString() + " from position " + edge.getNotes();
+						}
+						
+						String err = "Graph already contained connected vertices " + verts + " (adjacency matrix position [i="+i+",j="+j+"] was already in the adjacency matrix from "+oldEdgeStr+")";
+						logger.error(err);
+						throw new RuntimeException(err);
+						
+					}
+					graph.addEdge(edge, verts);
+					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j]).toString();
+					
 					EdgeProperty edgeProperty = new EdgeProperty(label,
 							Color.BLACK, EdgeShape.Line, 1);
 					edgeProperty.setVisible(true);

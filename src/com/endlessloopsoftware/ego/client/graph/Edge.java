@@ -5,15 +5,26 @@ import edu.uci.ics.jung.graph.util.Pair;
 public class Edge {
 
 	public final Pair<String> pair;
+	private String notes;
 
 	public Edge(String a, String b) {
 		super();
 		this.pair = buildEdge(a,b);
+		this.notes = "";
 	}
 	
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
+
 	public Edge(Vertex a, Vertex b) {
 		super();
 		this.pair = buildEdge(a.name,b.name);
+		this.notes = "";
 	}
 	
 	// keep them ordered for edge identity
@@ -50,4 +61,7 @@ public class Edge {
 		return pair;
 	}
 
+	public String toString() {
+		return "edge1="+pair.getFirst()+",edge2="+pair.getSecond();
+	}
 }

@@ -423,6 +423,10 @@ public class ListBuilder extends JPanel implements Observer {
 					JOptionPane.showMessageDialog(this,
 							"You cannot add any more alters!",
 							"Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
+				} else if(contains(elementList, selection)) {
+					JOptionPane.showMessageDialog(this,
+							"Name is already in the list!",
+							"Identical alter won't be added", JOptionPane.ERROR_MESSAGE);
 				} else {
 					elementList.add(selection);
 					// someone HAS pressed enter
@@ -699,6 +703,16 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public AlterNameModel getAlterNameModel() {
 		return alterNameModel;
+	}
+
+	public <ITEM> boolean contains(ObservableList<Selection> list, Selection o) {
+		for(int i = 0; i < list.size(); i++) {
+			Selection obj = list.get(i);
+			if(obj.getString().equals(o.getString()))
+				return true;
+		}
+		
+		return false;
 	}
 
 }

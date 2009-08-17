@@ -34,4 +34,7 @@ public class Vertex {
 		return true;
 	}
 	
+	public String toString() {
+		return "vertex="+name;
+	}
 }
