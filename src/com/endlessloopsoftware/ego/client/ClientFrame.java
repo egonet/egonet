@@ -38,6 +38,8 @@ import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.egonet.gui.EgoStore;
@@ -62,7 +64,7 @@ import com.endlessloopsoftware.egonet.Study;
 
 
 // implement MdiChildFrame and molest the public menu!
-public class ClientFrame extends MDIChildFrame {
+public class ClientFrame extends MDIChildFrame implements InternalFrameListener {
 
 	final private static Logger logger = LoggerFactory.getLogger(ClientFrame.class);
 	
@@ -137,10 +139,11 @@ public class ClientFrame extends MDIChildFrame {
 		setContentPane(new JPanel());
 		
 		pack();
-		setMinimumSize(getPreferredSize());
+		
 		setMaximizable(true);
 		setIconifiable(true);
 		setResizable(true);
+		setClosable(true);
 
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -239,23 +242,31 @@ public class ClientFrame extends MDIChildFrame {
 				gotoSourceSelectPanel(false);
 			}
 		});
+		
+		this.addInternalFrameListener(this);
 	}
 
 	public void flood() {
 		validate();
 		pack();
-		setMinimumSize(getPreferredSize());
+		setMinimumSize(new Dimension(640,480));
 		setSize(getPreferredSize());
 		//logger.info("flood");
 	}
 
 	// File | Exit action performed
-	public void jMenuFileExit_actionPerformed(ActionEvent e) throws Exception{
-		if (egoClient.getInterview() != null && !egoClient.getInterview().isComplete()) {
-			egoClient.getStorage().writeCurrentInterview();
+	public void jMenuFileExit_actionPerformed(ActionEvent e) {
+		if (egoClient.getInterview() != null) {
+			try {
+				egoClient.getStorage().writeCurrentInterview();
+				if(egoClient.getInterview().isComplete()) {
+					egoClient.getInterview().exit();
+				}
+			} catch (Exception e1) {
+				throw new RuntimeException(e1);
+			}
 		}
-
-		System.exit(0);
+		dispose();
 	}
 
 	// Overridden so we can exit when window is closed
@@ -701,5 +712,40 @@ public class ClientFrame extends MDIChildFrame {
 
 	public void setMdiContext(MDIContext context) {
 		// TODO Auto-generated method stub
+	}
+
+	public void internalFrameActivated(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameClosed(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameClosing(InternalFrameEvent e) {
+		jMenuFileExit_actionPerformed(null);
+		
+	}
+
+	public void internalFrameDeactivated(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameDeiconified(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameIconified(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameOpened(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -20,7 +21,10 @@ import javax.swing.JScrollPane;
 
 import org.egonet.mdi.*;
 import org.egonet.util.CatchingAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.endlessloopsoftware.ego.author.EgoFrame;
 import com.endlessloopsoftware.ego.author.EgoNet;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Shared;
@@ -28,6 +32,10 @@ import com.endlessloopsoftware.egonet.Shared;
 public class EgonetFrame extends JFrame  {
 	private final MDIDesktopPane desktop = new MDIDesktopPane();
 
+
+	final private static Logger logger = LoggerFactory.getLogger(EgonetFrame.class);
+
+	
 	// TODO: handle the initial registration in a better way
 	// TODO: establish the generic file menu of options
 
@@ -37,8 +45,10 @@ public class EgonetFrame extends JFrame  {
 	
 	private JMenu helpMenu = new JMenu("Help");
 
-	private JMenuItem newStudyMenu = new JMenuItem("New Study");
+	private JMenuItem newAuthoringTool = new JMenuItem("New Authoring Tool Window");
 
+	private JMenuItem newInterviewingTool = new JMenuItem("New Interviewing Tool Window");
+	
 	private JScrollPane scrollPane = new JScrollPane();
 
 	public EgonetFrame() throws Exception {
@@ -53,6 +63,8 @@ public class EgonetFrame extends JFrame  {
 	      }
 	    });
 
+		fileMenu.add(newAuthoringTool);
+		fileMenu.add(newInterviewingTool);
 		
 		menuBar.add(fileMenu);
 		menuBar.add(new WindowMenu(desktop));
@@ -78,18 +90,43 @@ public class EgonetFrame extends JFrame  {
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				logger.info("Main frame is closed, closing all MDI frames");
+				JInternalFrame[] frames = desktop.getAllFrames();
+				
+				for(JInternalFrame frame : frames) {
+					try { 
+						frame.setClosed(true);
+						
+						if(frame instanceof EgoFrame) {
+							EgoFrame f = (EgoFrame)frame;
+							f.jMenuFileExit_actionPerformed(null);
+						}
+					} 
+					catch (PropertyVetoException ex) {
+						logger.warn("Vetoed close on " + frame.toString(), ex);
+					}
+					finally {
+						frame.dispose();
+					}
+				}
 				System.exit(0);
 			}
 		});
-		newStudyMenu.addActionListener(new ActionListener() {
+		
+		newAuthoringTool.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				
-				//????
+				desktop.add(new EgoNet().getFrame());
 			}
 		});
 		
-		desktop.add(EgoNet.getInstance().getFrame());
-		desktop.add(EgoClient.getInstance().getFrame());
+		newInterviewingTool.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				desktop.add(new EgoClient().getFrame());
+			}
+		});
+		
+		desktop.add(new EgoNet().getFrame());
+		desktop.add(new EgoClient().getFrame());
 	}
 	
 	

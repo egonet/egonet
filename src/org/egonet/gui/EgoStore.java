@@ -943,19 +943,19 @@ public class EgoStore {
 		filterWorker.execute();
 	}
 
-	public static File interviewStatisticsFile(String istPath, String intFile) {
+	public File interviewStatisticsFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ ".ist"));
 	}
 
-	public static File interviewMatrixFile(String istPath, String intFile) {
+	public File interviewMatrixFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_matrix.csv"));
 	}
 
-	public static File interviewWeightedMatrixFile(String istPath, String intFile) {
+	public File interviewWeightedMatrixFile(String istPath, String intFile) {
 		return (new File(istPath, intFile
 				.substring(0, intFile.lastIndexOf("."))
 				+ "_weighted_matrix.csv"));

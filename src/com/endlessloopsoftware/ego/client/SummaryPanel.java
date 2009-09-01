@@ -152,11 +152,12 @@ public class SummaryPanel extends JPanel
 				// Check that this has the correct Study Id
 				String istPathString = istPath.getCanonicalPath();
 	
-				File thisIstFile = EgoStore.interviewStatisticsFile(istPathString, intFiles[i]);
+				EgoStore store = egoClient.getStorage();
+				File thisIstFile = store.interviewStatisticsFile(istPathString, intFiles[i]);
 				
 				InterviewReader ir = new InterviewReader(egoClient.getStudy(), intFile);
 				ir.getInterview();
-				egoClient.getStorage().generateStatisticsFile(intFile);
+				store.generateStatisticsFile(intFile);
 				istFileSet.add(thisIstFile);
 			} catch (CorruptedInterviewException ex)
 			{

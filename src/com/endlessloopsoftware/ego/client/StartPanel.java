@@ -68,7 +68,7 @@ public class StartPanel extends JPanel
 		logger.info("Create of start panel using " + egoClient + " - " + egoClient.getStudy().getAlterNameModel());
 		
 		
-		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
+		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
 			firstNameField.setName("firstNameField");
 			lastNameLabel = new JLabel("Last: ");
 		} 
@@ -106,9 +106,9 @@ public class StartPanel extends JPanel
 				0,
 				0));
 		
-		logger.info(EgoClient.getInstance().getStudy().getAlterNameModel().toString());
-		logger.info(EgoClient.getInstance().getStudy().getStudyName());
-		if(EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
+		logger.info(egoClient.getStudy().getAlterNameModel().toString());
+		logger.info(egoClient.getStudy().getStudyName());
+		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
 			this.add(
 				firstNameLabel,
 				new GridBagConstraints(
@@ -269,7 +269,7 @@ public class StartPanel extends JPanel
 
 	protected void lastNameField_actionPerformed(ActionEvent e) throws Exception
 	{
-		if (EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST) && firstNameField.getText().length() == 0)
+		if (egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST) && firstNameField.getText().length() == 0)
 		{
 			firstNameField.requestFocus();
 		}
@@ -295,7 +295,7 @@ public class StartPanel extends JPanel
 	{
 		try {
 		startInterviewButton.setEnabled(
-			(firstNameField.getText().length() > 0 || !EgoClient.getInstance().getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) && (lastNameField.getText().length() > 0));
+			(firstNameField.getText().length() > 0 || !egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) && (lastNameField.getText().length() > 0));
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

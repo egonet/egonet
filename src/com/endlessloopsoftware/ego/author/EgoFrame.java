@@ -36,17 +36,24 @@ import java.util.Observer;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import javax.swing.text.DefaultEditorKit;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
-public class EgoFrame extends MDIChildFrame implements Observer {
+public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameListener {
+	
+	final private static Logger logger = LoggerFactory.getLogger(EgoFrame.class);
+
     Shared.QuestionType lastTab = Shared.QuestionType.STUDY_CONFIG;
 	Shared.QuestionType curTab = Shared.QuestionType.STUDY_CONFIG;
 
@@ -106,6 +113,10 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 	private void jbInit() throws Exception {
 		// Listen for window closing
 		//this.addWindowListener(new CloseListener());
+		this.addInternalFrameListener(this);
+		
+		//fixme
+		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setResizable(true);
 
@@ -250,7 +261,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		
 		setMaximizable(true);
 		setIconifiable(true);
-		setClosable(false);
+		setClosable(true);
 
 		egoNet.getStudy().setModified(false);
 		updateMenus();
@@ -372,11 +383,15 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 	}
 
 	// File | Exit action performed
-	private void jMenuFileExit_actionPerformed(ActionEvent e) throws IOException {
+	public void jMenuFileExit_actionPerformed(ActionEvent e) {
+		try { 
 		boolean exit = closeStudyFile();
 
 		if (exit) {
 			dispose();
+		}
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -473,6 +488,7 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 		 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 		 */
 		public void windowClosing(WindowEvent arg0) {
+			logger.info("Window close event received");
 			try {
 				jMenuFileExit_actionPerformed(null);
 			} catch (Throwable cause)
@@ -507,5 +523,39 @@ public class EgoFrame extends MDIChildFrame implements Observer {
 
 	public void setMdiContext(MDIContext context) {
 		// TODO Auto-generated method stub
+	}
+
+	public void internalFrameActivated(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameClosed(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameClosing(InternalFrameEvent e) {
+		jMenuFileExit_actionPerformed(null);
+	}
+
+	public void internalFrameDeactivated(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameDeiconified(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameIconified(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void internalFrameOpened(InternalFrameEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

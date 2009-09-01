@@ -28,15 +28,7 @@ public class EgoNet
 	private final EgoStore storage;
 	private final EgoFrame	frame;
 	
-	private static EgoNet en = null;
-	public static synchronized EgoNet getInstance()	{
-		if(en == null) {
-			en = new EgoNet();
-		}
-		return en;
-	}
-	
-	private EgoNet() {
+	public EgoNet() {
 		storage	= new EgoStore(null);
 		storage.createNewStudy();
 		
@@ -47,7 +39,7 @@ public class EgoNet
 	public static void main(String[] args) throws Exception
 	{
 		//new Console();
-		getInstance().frame.setVisible(true);
+		new EgoNet().getFrame().setVisible(true);
 	}
 
 	public EgoStore getStorage() {

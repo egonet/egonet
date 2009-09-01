@@ -39,7 +39,7 @@ public class EgoClient
 	private int			uiPath;
 
 	//Construct the application
-	private EgoClient()
+	public EgoClient()
 	{
 		storage = new EgoStore(null);
 		frame = new ClientFrame(this);
@@ -50,21 +50,11 @@ public class EgoClient
 
 	}
 
-	private static EgoClient en = null;
-	public static synchronized EgoClient getInstance() throws Exception
-	{
-		if(en == null)
-		{
-			en = new EgoClient();
-		}
-		return en;
-	}
-
 	//Main method
 	public static void main(String[] args) throws Exception
 	{
 		//new Console();
-		getInstance().frame.setVisible(true);
+		new EgoClient().getFrame().setVisible(true);
 	}
 
 	public Study getStudy() {
