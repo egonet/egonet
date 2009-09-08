@@ -149,13 +149,15 @@ public class RawDataCSVWriter {
 										answer));
 					}
 				}
-			
-				for(Integer alterID = 0; alterID < interview.getNumAlters(); alterID++) {
+
+				String[] alterList = interview.getAlterList();
+				Integer numAlters = alterList.length;
+				for(Integer alterID = 0; alterID < numAlters; alterID++) {
 					ArrayList<String> rowData = new ArrayList<String>();
 					rowData.add(egoID.toString());
 					rowData.add(egoName);
 					rowData.add(alterID.toString());
-					rowData.add(interview.getAlterList()[alterID]); // alterName
+					rowData.add(alterList[alterID]); // alterName
 
 					for(Long qId : egoQuestions.keySet()) {
 						rowData.add(egoQuestionToAnswer.get(qId));
@@ -217,10 +219,12 @@ public class RawDataCSVWriter {
 					}
 				}
 			
-				for(Integer alterId1 = 0; alterId1 < interview.getNumAlters(); alterId1++) {
+				String[] alterList = interview.getAlterList();
+				Integer numAlters = alterList.length;
+				for(Integer alterId1 = 0; alterId1 < numAlters; alterId1++) {
 					String alterName1 = interview.getAlterList()[alterId1];
-					for(Integer alterId2 = alterId1 + 1; alterId2 < interview.getNumAlters(); alterId2++) {
-						String alterName2 = interview.getAlterList()[alterId2];
+					for(Integer alterId2 = alterId1 + 1; alterId2 < numAlters; alterId2++) {
+						String alterName2 = alterList[alterId2];
 						ArrayList<String> rowData = new ArrayList<String>();
 						rowData.add(egoId.toString());
 						rowData.add(egoName);
