@@ -92,7 +92,8 @@ public class WholeNetwork {
 					{
 						for(int j = 0; j < adj[i].length; j++)
 						{
-							if(adj[i][j] == 1 && i != j)
+							if(adj[i][j] == 1 && i != j && 
+									i < thisInterviewAlterlist.length && j < thisInterviewAlterlist.length)
 							{
 	
 								String alter1 = thisInterviewAlterlist[i];
