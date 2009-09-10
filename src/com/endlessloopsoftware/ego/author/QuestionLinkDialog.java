@@ -275,9 +275,9 @@ public class QuestionLinkDialog extends JDialog
 		egoNet.getStudy().fillList((DefaultListModel) questionList.getModel(), q.UniqueId);
 
 		// Set Selection
-		if (baseQuestion.link.active)
+		if (baseQuestion.link.isActive())
 		{
-			Question selected = egoNet.getStudy().getQuestions().getQuestion(baseQuestion.link.answer.questionId);
+			Question selected = egoNet.getStudy().getQuestions().getQuestion(baseQuestion.link.getAnswer().questionId);
 			questionList.setSelectedValue(selected, true);
 		}
 
@@ -293,10 +293,10 @@ public class QuestionLinkDialog extends JDialog
 		{
 			linkAnswer = new Answer(question.UniqueId);
 
-			if (baseQuestion.link.active && (question.UniqueId.equals(baseQuestion.link.answer.questionId)))
+			if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().questionId)))
 			{
-				linkAnswer.setValue(baseQuestion.link.answer.getValue());
-				linkAnswer.string  	= baseQuestion.link.answer.string;
+				linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
+				linkAnswer.string  	= baseQuestion.link.getAnswer().string;
 				linkAnswer.answered = true;
 			}
 		}
@@ -339,11 +339,11 @@ public class QuestionLinkDialog extends JDialog
 			{
 				linkAnswer          = new Answer(question.UniqueId);
 
-				if (baseQuestion.link.active && (question.UniqueId.equals(baseQuestion.link.answer.questionId)))
+				if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().questionId)))
 				{
-					linkAnswer.setValue(baseQuestion.link.answer.getValue());
-					linkAnswer.setIndex(baseQuestion.link.answer.getIndex());
-					linkAnswer.string  	= baseQuestion.link.answer.string;
+					linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
+					linkAnswer.setIndex(baseQuestion.link.getAnswer().getIndex());
+					linkAnswer.string  	= baseQuestion.link.getAnswer().string;
 					linkAnswer.answered = true;
 				}
 			}
@@ -580,8 +580,7 @@ public class QuestionLinkDialog extends JDialog
 	{
 		if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
-			baseQuestion.link.active = false;
-			baseQuestion.link.answer = null;
+			baseQuestion.link.setAnswer(null);
 			egoNet.getStudy().setModified(true);
 			egoNet.getStudy().setCompatible(false);
 		}
@@ -599,8 +598,7 @@ public class QuestionLinkDialog extends JDialog
 	{
 		if ((linkAnswer != null) && (linkAnswer.answered) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
-			baseQuestion.link.active = true;
-			baseQuestion.link.answer = linkAnswer;
+			baseQuestion.link.setAnswer(linkAnswer);
 			egoNet.getStudy().setModified(true);
 			egoNet.getStudy().setCompatible(false);
 		}

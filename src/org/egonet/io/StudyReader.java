@@ -194,12 +194,11 @@ public class StudyReader {
 
 		Element link = question.getElement("Link");
 		if (link != null) {
-			q.link.active = true;
-			q.link.answer = new Answer(new Long(link.getLong("Id")));
-			q.link.answer.setValue(link.getInt("value"));
+			q.link.setAnswer(new Answer(new Long(link.getLong("Id"))));
+			q.link.getAnswer().setValue(link.getInt("value"));
 
 			/* Only support questions with single answers for link */
-			q.link.answer.string = link.getTextString("string");
+			q.link.getAnswer().string = link.getTextString("string");
 		}
 
 		if (q.answerType == Shared.AnswerType.CATEGORICAL) {

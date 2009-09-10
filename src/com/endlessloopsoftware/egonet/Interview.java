@@ -422,17 +422,27 @@ public class Interview implements Comparable<Interview> {
 		boolean b = false;
 		Question q = getQuestion(index);
 
-		if (q.link.active) {
-			Answer a = getPriorQuestionInstance(index, q.link.answer.questionId);
+		if (q.link.isActive()) {
+			//logger.info("Link active!");
+			Answer a = getPriorQuestionInstance(index, q.link.getAnswer().questionId);
 
 			if (a != null) {
-				if (q.link.answer.getValue() == Answer.ALL_ADJACENT) {
+				//logger.info("\tLink is tied to an answer -- ");
+				if (q.link.getAnswer().getValue() == Answer.ALL_ADJACENT) {
+					//logger.info("\tAnswer.ALL_ADJACENT");
 					if (a.adjacent) {
+						//logger.info("\tif (a.adjacent) {b = true");
 						b = true;
+					} else {
+						//logger.info("\tif (a.adjacent) {b = false");
 					}
 				} else {
-					if (a.getValue() == q.link.answer.getValue()) {
+					//logger.info("\tNOT NOT Answer.ALL_ADJACENT");
+					if (a.getValue() == q.link.getAnswer().getValue()) {
+						//logger.info("\tif (a.getValue() "+a.getValue()+" == q.link.answer.getValue() "+q.link.answer.getValue()+") {b = true");
 						b = true;
+					} else {
+						//logger.info("\tif (a.getValue() "+a.getValue()+" == q.link.answer.getValue() "+q.link.answer.getValue()+") {b = false");
 					}
 				}
 			} else {
@@ -443,8 +453,10 @@ public class Interview implements Comparable<Interview> {
 				 * appears to be to always ask this question in this case
 				 */
 				b = true;
+				//logger.info("\tNO answer tied to link! BAD BAD");
 			}
 		} else {
+			//logger.info("Link inactive.");
 			/* No link to check */
 			b = true;
 		}
@@ -464,7 +476,7 @@ public class Interview implements Comparable<Interview> {
 	}
 
 	/***************************************************************************
-	 * Returns next question from an interview which passes all link checks
+	 * Returns next question from an interview which passes all link checks. Cannot be used while reading an interview, but can only be used while conducting one.
 	 * 
 	 * @param checkIndex
 	 *            answer at which to start
@@ -575,6 +587,11 @@ public class Interview implements Comparable<Interview> {
 		return s;
 	}
 
+	/**
+	 * Get a question from the study using the answer's question ID
+	 * @param index of an answer
+	 * @return
+	 */
 	public Question getQuestion(int index) {
 		return _study.getQuestion(_answers[index].questionId);
 	}
@@ -663,24 +680,17 @@ public class Interview implements Comparable<Interview> {
 	 * @throws IOException 
 	 */
 	public void completeInterview(EgoStore storage) throws IOException {
-		
-		boolean answeredAll = true;
-		for(Answer a : _answers) {
-			logger.info("TEST COMPLETENESS " + a.answered + " / " + a);
-			if(!a.answered)
-				answeredAll = false;
-		}
+		logger.info("Interview completion requested!");
 		
 		/***********************************************************************
 		 * Generate statistics for the first statable question
 		 */
 		Question q = _study.getFirstStatableQuestion();
-		if(answeredAll)
-			_complete = true;
+		_complete = true;
 		
 		storage.writeCurrentInterview();
 
-		if (answeredAll && q != null) {
+		if (q != null) {
 			Statistics stats = storage.getInterview().generateStatistics(q);
 			storage.writeStatisticsFiles(stats, _egoName);
 		}

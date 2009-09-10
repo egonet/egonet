@@ -49,7 +49,6 @@ public class Answer implements Cloneable {
     public String timestamp;
 
     public static final int NO_ANSWER = -1;
-
     public static final int ALL_ADJACENT = -2;
 
     public Answer(Long Id) {

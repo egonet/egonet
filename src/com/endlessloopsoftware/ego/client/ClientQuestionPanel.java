@@ -893,7 +893,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				egoClient.getInterview().completeInterview(egoClient.getStorage());
 			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(egoClient.getFrame(),
-						"Unable to create interview statistics summary file.",
+						"Unable to complete interview OR unable to generate statistics. It may not be saved.",
 						"Statistics Error", JOptionPane.WARNING_MESSAGE);
 			}
 

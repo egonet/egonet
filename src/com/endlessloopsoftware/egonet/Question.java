@@ -112,7 +112,7 @@ public class Question implements Cloneable {
 	}
 
 	/***************************************************************************
-	 * Implements Clone interface
+	 * Implements Clone interface for conducting an interview and cloning the study question. The clone is attached to the interview.
 	 * 
 	 * @return Clone of Question
 	 */
@@ -137,7 +137,7 @@ public class Question implements Cloneable {
 
 	public String getString() {
 		String str = "";
-		str = "ID : " + UniqueId + ", type="+questionType+", Title : " + title + " text : " + text
+		str = "ID : " + UniqueId + ", Qtype="+questionType+",Atype="+answerType+", Title : " + title + " text : " + text
 				+ "\nAnswer : " + answer.getString();
 		return str;
 	}

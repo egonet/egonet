@@ -161,7 +161,7 @@ public class Study extends Observable implements Comparable<Study>
 		{
 			Question q = (Question) _questions.getQuestion(questions.next());
 
-			if (q.statable && !q.link.active)
+			if (q.statable && !q.link.isActive())
 			{
 				statable = q;
 				break;
@@ -371,12 +371,11 @@ public class Study extends Observable implements Comparable<Study>
 				_questionOrder.get(q.questionType).add(followloc + 1, q.UniqueId);
 			}
 
-			if (q.link.active)
+			if (q.link.isActive())
 			{
-				if (!doesQuestionPreceed(q.link.answer.questionId, q.UniqueId))
+				if (!doesQuestionPreceed(q.link.getAnswer().questionId, q.UniqueId))
 				{
-					q.link.active = false;
-					q.link.answer = null;
+					q.link.setAnswer(null);
 				}
 			}
 
@@ -712,10 +711,9 @@ public class Study extends Observable implements Comparable<Study>
 		{
 			Question q = (Question) i.next();
 
-			if (q.link.active && (q.link.answer.questionId.equals(lq.UniqueId)))
+			if (q.link.isActive() && (q.link.getAnswer().questionId.equals(lq.UniqueId)))
 			{
-				q.link.active = false;
-				q.link.answer = null;
+				q.link.setAnswer(null);
 			}
 		}
 	}

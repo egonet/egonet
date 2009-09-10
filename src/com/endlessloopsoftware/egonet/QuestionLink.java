@@ -17,11 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
-public class QuestionLink
-		implements Cloneable
+public class QuestionLink implements Cloneable
 {
-	public boolean	active 		= false;
-	public Answer	answer		= null;
+	private Answer	answer		= null;
 
 	public Object clone()
 			throws CloneNotSupportedException
@@ -30,11 +28,23 @@ public class QuestionLink
 
 		q = (QuestionLink) super.clone();
 
-		if (active)
+		if (isActive())
 		{
-			q.answer = (Answer) this.answer.clone();
+			q.setAnswer((Answer) this.getAnswer().clone());
 		}
 
 		return(q);
+	}
+
+	public void setAnswer(Answer answer) {
+		this.answer = answer;
+	}
+
+	public Answer getAnswer() {
+		return answer;
+	}
+
+	public boolean isActive() {
+		return answer != null;
 	}
 }

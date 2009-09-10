@@ -160,8 +160,8 @@ public class ListBuilder extends JPanel implements Observer {
 
 		// is editable, so we start using subpanels for layouts
 		FormLayout mainLayout = new FormLayout(
-				"2dlu, fill:max(pref;300dlu):grow, 2dlu",
-				"2dlu, fill:pref:grow, 2dlu, fill:max(pref;2dlu):grow, 2dlu");
+				"2dlu, fill:min(pref;300dlu):grow, 2dlu",
+				"2dlu, fill:pref:grow, 2dlu, fill:min(pref;2dlu):grow, 2dlu");
 		setLayout(mainLayout);
 
 		// combine top and bottom panels

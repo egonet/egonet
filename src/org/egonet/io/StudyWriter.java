@@ -167,11 +167,11 @@ public class StudyWriter {
 			}
 		}
 
-		if (q.link.active) {
+		if (q.link.isActive()) {
 			Element link = e.addElement("Link");
-			link.addElement("Id").setLong(q.link.answer.questionId);
-			link.addElement("value").setInt(q.link.answer.getValue());
-			link.addElement("string").setText(q.link.answer.string);
+			link.addElement("Id").setLong(q.link.getAnswer().questionId);
+			link.addElement("value").setInt(q.link.getAnswer().getValue());
+			link.addElement("string").setText(q.link.getAnswer().string);
 		}
 	}
 }

@@ -91,8 +91,7 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
-		InterviewWriter iw = new InterviewWriter(currentStudy.second(),
-				currentInterview.first());
+		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
 
@@ -236,15 +235,32 @@ public class EgoStore {
 	 * 
 	 * @return interview structure derived from file
 	 */
-	public Interview readInterview(File interviewFile) throws CorruptedInterviewException {
+	public Interview readInterview(File interviewFile) throws CorruptedInterviewException, IOException {
 		try {
 			InterviewReader ir = new InterviewReader(currentStudy.second(), interviewFile);
 			Interview interview = ir.getInterview();
 			
+			if(!interview.isComplete() && InterviewReader.checkForCompleteness(interview)) {
+				String msg = interviewFile.getName() + " does not indicate a completed interview, but Egonet has determined that all questions have been answered. Would you like to mark it completed now and save it?";
+				int choice = JOptionPane.showConfirmDialog(parent, msg, "Read Interview Error", JOptionPane.YES_NO_OPTION);
+				if(choice == JOptionPane.YES_OPTION) {
+					interview.setComplete(true);
+					InterviewWriter iw = new InterviewWriter(currentStudy.second(), interviewFile);
+					iw.setInterview(interview);
+				}
+			}
+
 			currentInterview = new Tuple<File, Interview>(interviewFile, interview);
 			
 			return interview;
 		} catch (CorruptedInterviewException e) {
+			String msg = (e != null && !e.getMessage().equals("") ? " "
+					+ e.getMessage() : "");
+
+			JOptionPane.showMessageDialog(parent, "Unable to Read Interview."
+					+ msg, "Read Interview Error", JOptionPane.ERROR_MESSAGE);
+			throw e;
+		} catch (IOException e) {
 			String msg = (e != null && !e.getMessage().equals("") ? " "
 					+ e.getMessage() : "");
 

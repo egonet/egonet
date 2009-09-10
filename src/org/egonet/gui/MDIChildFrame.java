@@ -9,4 +9,5 @@ public abstract class MDIChildFrame extends JInternalFrame {
 	public abstract JInternalFrame getInternalFrame();
 	public abstract void focusActivated();
 	public abstract void focusDeactivated();
+	//public abstract MenuContext getMenuContext();
 }

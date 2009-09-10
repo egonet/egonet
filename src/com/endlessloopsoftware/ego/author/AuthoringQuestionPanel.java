@@ -32,6 +32,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
 import com.endlessloopsoftware.egonet.Question;
@@ -44,6 +46,8 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
  */
 public class AuthoringQuestionPanel extends EgoQPanel
 {
+	final private static Logger logger = LoggerFactory.getLogger(AuthoringQuestionPanel.class);
+	
     private boolean inUpdate;
 
     private final JSplitPane question_split = new JSplitPane();
@@ -395,10 +399,36 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
         if (questionType == egoNet.getFrame().curTab)
         {
+        	DefaultListModel listModel = ((DefaultListModel) question_list.getModel());
+        	
             Object o = question_list.getSelectedValue();
-            ((DefaultListModel) question_list.getModel()).removeAllElements();
+            int selectedIndex = question_list.getSelectedIndex();
+            
+            listModel.removeAllElements();
             egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
-            question_list.setSelectedValue(o, true);
+            
+            /* Goal below is to stay near the previously selected element, somehow */
+            // if the previously selected element is still in the model
+            if(listModel.contains(o)) {
+            	// select it
+            	question_list.setSelectedValue(o, true);
+            }
+            // if the index is still valid in the model 
+            else if(selectedIndex >= 0 && selectedIndex < listModel.getSize()){
+            	// select it
+            	question_list.setSelectedIndex(selectedIndex);
+            }
+            // if the index-11 is still valid in the model
+            else if(selectedIndex-1 >= 0 && selectedIndex-1 < listModel.getSize()){
+            	question_list.setSelectedIndex(selectedIndex-1);
+            }
+            // if the index+1 is still valid in the model
+            else if(selectedIndex+1 >= 0 && selectedIndex+1 < listModel.getSize()){
+            	question_list.setSelectedIndex(selectedIndex+1);
+            }
+            
+            logger.info("o is " + (o == null ? "": "NOT ") + "null, selectedIndex="+selectedIndex+", new selected index = "+question_list.getSelectedIndex());
+
         }
 
         inUpdate = false;
@@ -482,9 +512,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 }
 
                 /* Fill in link field */
-                if (q.link.active)
+                if (q.link.isActive())
                 {
-                    Question linkQuestion = egoNet.getStudy().getQuestions().getQuestion(q.link.answer.questionId);
+                    Question linkQuestion = egoNet.getStudy().getQuestions().getQuestion(q.link.getAnswer().questionId);
 
                     if (linkQuestion == null)
                     {
@@ -494,11 +524,11 @@ public class AuthoringQuestionPanel extends EgoQPanel
                     {
                         if (linkQuestion.title.length() > 32)
                         {
-                            question_link_field.setText(linkQuestion.title.substring(0, 32) + ": " + q.link.answer.string);
+                            question_link_field.setText(linkQuestion.title.substring(0, 32) + ": " + q.link.getAnswer().string);
                         }
                         else
                         {
-                            question_link_field.setText(linkQuestion.title + ": " + q.link.answer.string);
+                            question_link_field.setText(linkQuestion.title + ": " + q.link.getAnswer().string);
                         }
                     }
                 }
@@ -652,8 +682,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
         if (q != null)
         {
-            int confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(), "Permanently remove this questions?",
-                    "Delete Question", JOptionPane.OK_CANCEL_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(egoNet.getFrame(), "Permanently remove this questions?","Delete Question", JOptionPane.OK_CANCEL_OPTION);
 
             if ((confirm == JOptionPane.OK_OPTION) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
             {

@@ -184,7 +184,7 @@ public class NodeColorPanel extends JPanel {
 			int noOfColors = selectionList.size();
 			List<Color> colors = pick(noOfColors);
 			
-			for (int i = 0; i < noOfColors; i++) {
+			for (int i = 0; i < noOfColors && i < colors.size(); i++) {
 				rowData[i][1] = colors.get(i);
 			}
 			return rowData;
@@ -193,8 +193,12 @@ public class NodeColorPanel extends JPanel {
 	
 	public static List<Color> pick(int num) {
         List<Color> colors = new ArrayList<Color>();
+        
+        if(num == 1)
+        	colors.add(new Color(255, 0, 0));
         if (num < 2)
                 return colors;
+        
         float dx = 1.0f / (float) (num - 1);
         for (int i = 0; i < num; i++) {
                 colors.add(get(i * dx));

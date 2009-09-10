@@ -526,8 +526,7 @@ public class GraphSettings {
 				questionTitle = question.title;
 				answerString = answer.string + " " + (detail ? "(index="+answer.getIndex()+",value="+answer.getValue()+")" : "");
 				for (int alter : answer.getAlters()) {
-					alterToolTip[alter] += questionTitle + " : " + answerString
-							+ "<br>";
+					alterToolTip[alter] += questionTitle + " : " + answerString + "<br>";
 				}
 			}
 

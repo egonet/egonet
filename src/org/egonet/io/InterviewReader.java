@@ -3,6 +3,8 @@ package org.egonet.io;
 import java.io.File;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
@@ -14,8 +16,10 @@ import electric.xml.Element;
 import electric.xml.Elements;
 import electric.xml.ParseException;
 
-public class InterviewReader 
-{
+public class InterviewReader {
+
+	final private static Logger logger = LoggerFactory.getLogger(InterviewReader.class);
+	
 	private Study study;
 	private File interviewFile;
 	
@@ -77,6 +81,40 @@ public class InterviewReader
 			return (interview);
 	}
 
+	public static boolean checkForCompleteness(Interview interview) {
+
+		boolean all = true;
+		
+		Answer [] answers = interview.get_answers();
+		for(int i = 0 ; i < answers.length ; i++) {
+			//logger.info("\n---------------------------------------------------------------");
+			
+			Answer answer = answers[i];
+			//logger.info("Found answer " + answer.getString());
+
+			// can't correctly find the linked question???
+			Question question = interview.getStudy().getQuestion(answer.questionId);
+			//logger.info("\tFound question by answer " + question.getString());
+			
+			if(!answer.answered && question.link.isActive()) { // if there's a real possibility this is linked
+				Answer linkedAnswer = answers[question.link.getAnswer().getIndex()];
+				if(!linkedAnswer.answered) {
+					//logger.info("\t!answer.answered && question.link.isActive()");
+					all = false;
+				}
+			} 
+			else if(!answer.answered && !question.link.isActive()) {
+				//logger.info("\t!answer.answered && !question.link.isActive()");
+				all = false;
+			}
+			
+			//logger.info("---------------------------------------------------------------\n");
+		}
+		
+		
+		return all;
+	}
+
 	private static String[] readAlters(Element alterListElem) throws CorruptedInterviewException{
 		Elements alterIter = alterListElem.getElements("Name");
 		String[] lAlterList;
@@ -101,18 +139,16 @@ public class InterviewReader
 			throw (new CorruptedInterviewException(err));
 		}
 	
-		int index = 0;
-		while(answerIter.hasMoreElements()) {
+		for(int index = 0; answerIter.hasMoreElements(); ) {
 			    Element answerElement = answerIter.next();
 				Answer oldAnswer = interview.get_answerElement(index);
 				Answer newAnswer = readAnswer(study, answerElement);
-	
+				
 				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
 					interview.set_answerElement(index++, newAnswer);
 				} else {
 					throw (new CorruptedInterviewException("mismatch question and answer id in datafile"));
 				}
-				
 		}
 	}
 	
