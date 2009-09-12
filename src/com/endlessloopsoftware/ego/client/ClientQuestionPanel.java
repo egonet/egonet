@@ -332,7 +332,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress.setMaximum(egoClient.getInterview().getNumQuestions());
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 		questionProgress.setStringPainted(true);
-
+		
 		questionList.setModel(new DefaultListModel());
 		egoClient.getInterview()
 		.fillList((DefaultListModel) questionList.getModel());
@@ -393,11 +393,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionText = new JEditorPane();
 		questionText.setName("questionText");
 
-		/*questionText.setLineWrap(true);
-		questionText.setWrapStyleWord(true);
+		/* 
 		questionText.setLineWrap(true);
 		questionText.setTabSize(4);
-		questionText.setWrapStyleWord(true);*/
+		questionText.setWrapStyleWord(true); 
+		*/
 
 		questionText.setBackground(SystemColor.window);
 		questionText.setFont(new java.awt.Font("Serif", 0, 16));
@@ -406,6 +406,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionText.setBorder(BorderFactory.createLoweredBevelBorder());
 		
 		questionTextScrollPane = new JScrollPane(questionText);
+		
+		// we *must* constraint the big text here, it is the fixed piece
+		// upon which the size of everything else is constrained in this frame!
+		Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+		questionTextScrollPane.setMaximumSize(new Dimension((int)(ss.width*0.4),(int)(ss.height*0.4)));
 
 		/* Set up answer panel cards */
 		answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
@@ -902,7 +907,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					JOptionPane.INFORMATION_MESSAGE);
 
 			/* Return to first screen */
-			egoClient.getFrame().gotoSourceSelectPanel(false);
+			egoClient.getFrame().gotoSourceSelectPanel();
 		}
 
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());

@@ -24,44 +24,38 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
 /**
- * ONLY USE THIS CLASS IN INTERVIEWING PART OF THE TOOL
- * Session object representing the session of the user and the EgoNet software
+ * ONLY USE THIS CLASS IN INTERVIEWING PART OF THE TOOL Session object
+ * representing the session of the user and the EgoNet software
  * 
- *  
+ * 
  * @author peters
  * @author martins
- *
+ * 
  */
-public class EgoClient
-{
-	private EgoStore		storage;
-	private ClientFrame	frame;
-	private int			uiPath;
+public class EgoClient {
+	private EgoStore storage;
+	private ClientFrame frame;
+	private int uiPath;
 
-	//Construct the application
-	public EgoClient()
-	{
+	// Construct the application
+	public EgoClient() {
 		storage = new EgoStore(null);
 		frame = new ClientFrame(this);
 
-		
-		frame.gotoSourceSelectPanel(true);
+		frame.gotoSourceSelectPanel();
 		frame.setVisible(true);
 
 	}
 
-	//Main method
-	public static void main(String[] args) throws Exception
-	{
-		//new Console();
+	// Main method
+	public static void main(String[] args) throws Exception {
+		// new Console();
 		new EgoClient().getFrame().setVisible(true);
 	}
 
 	public Study getStudy() {
 		return storage.getStudy();
 	}
-
-
 
 	public EgoStore getStorage() {
 		return storage;

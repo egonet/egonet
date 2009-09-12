@@ -271,7 +271,7 @@ public class StatisticsFrame extends JPanel {
 
 	void close_actionPerformed(ActionEvent e) {
 		//logger.info("Return");
-		egoClient.getFrame().gotoSourceSelectPanel(false);
+		egoClient.getFrame().gotoSourceSelectPanel();
 	}
 
 	void saveInterviewStatistics_actionPerformed(ActionEvent e) throws IOException {

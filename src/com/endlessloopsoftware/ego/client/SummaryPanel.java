@@ -121,7 +121,7 @@ public class SummaryPanel extends JPanel
 
 	private void finishedButton_actionPerformed(ActionEvent e)
 	{
-	    egoClient.getFrame().gotoSourceSelectPanel(false);
+	    egoClient.getFrame().gotoSourceSelectPanel();
 	}
 
 	private void loadInterviewArray(ProgressMonitor progress)

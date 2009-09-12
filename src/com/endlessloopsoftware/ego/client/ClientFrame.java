@@ -20,7 +20,6 @@ package com.endlessloopsoftware.ego.client;
 
 import javax.swing.JCheckBoxMenuItem;
 import java.awt.AWTEvent;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -36,7 +35,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
-import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
@@ -131,7 +129,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	// Component initialization
 	private void jbInit() {
-		setSize(new Dimension(700, 600));
+		//setSize(new Dimension(700, 600));
 		setTitle("Interviewing and Analysis Tool");
 
 		createMenuBar(ClientFrame.SELECT);
@@ -239,7 +237,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 		close.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				gotoSourceSelectPanel(false);
+				gotoSourceSelectPanel();
 			}
 		});
 		
@@ -247,11 +245,9 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 
 	public void flood() {
-		validate();
+		invalidate();
 		pack();
-		setMinimumSize(new Dimension(640,480));
-		setSize(getPreferredSize());
-		//logger.info("flood");
+		setMinimumSize(getPreferredSize());
 	}
 
 	// File | Exit action performed
@@ -502,44 +498,22 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			try {
 				GraphRenderer.getGraphSettings().loadSettingsFile(settingsFile);
 			} catch (Throwable ex) {
-				logger.error(ex.toString());
-				ex.printStackTrace();
+				logger.error("Problem loading graph settings",ex);
 			}
 		}
 	}
 	
-	public void gotoSourceSelectPanel(boolean center)
-	   {
-	      /* Return to first screen */
-//	      egoClient.getFrame().setVisible(false);
-	    JTabbedPane tabbedPane = new JTabbedPane();
-	    tabbedPane.addTab("Local Files", new ClientPanel(egoClient));
-	    // this.addTab("Remote Server", new ServerInterviewChooser());
-	    
-	      egoClient.getFrame().setContentPane(tabbedPane);
-	      egoClient.getFrame().createMenuBar(ClientFrame.SELECT);
-	      flood();
-	      //egoClient.getFrame().setSize(600, 500);
-	      
-	      if (center)
-	      {
-	        //Center the window
-	        /* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	        Dimension frameSize = egoClient.getFrame().getSize();
-	        if (frameSize.height > screenSize.height)
-	        {
-	            frameSize.height = screenSize.height;
-	        }
-	        if (frameSize.width > screenSize.width)
-	        {
-	            frameSize.width = screenSize.width;
-	        }
-	        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-	        */
-	      }
-	     
-	     egoClient.getFrame().setVisible(true);
-	   }
+	public void gotoSourceSelectPanel() {
+		/* Return to first screen */
+		setVisible(false);
+		ClientPanel panel = new ClientPanel(egoClient);
+
+		setContentPane(panel);
+		createMenuBar(ClientFrame.SELECT);
+		flood();
+
+		setVisible(true);
+	}
 	
 	public void gotoViewInterviewPanel()
 	   {
@@ -549,23 +523,23 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	            public Object construct() 
 	            {
 	                // Build Screen
-	                egoClient.getFrame().setVisible(false);
+	                setVisible(false);
 	                //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
 	                progressMonitor.setProgress(5);
-	                egoClient.getFrame().setContentPane(new ViewInterviewPanel(egoClient, progressMonitor));
+	                setContentPane(new ViewInterviewPanel(egoClient, progressMonitor));
 	                progressMonitor.setProgress(95);
-	                egoClient.getFrame().createMenuBar(ClientFrame.VIEW_INTERVIEW);
-	                egoClient.getFrame().pack();
-	                // egoClient.getFrame().setSize(640, 530);
+	                createMenuBar(ClientFrame.VIEW_INTERVIEW);
+	                pack();
+	                // setSize(640, 530);
 
-	                return egoClient.getFrame();
+	                return this;
 	          }
 	          
 	          public void finished()
 	            {
 	            //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
 	             progressMonitor.close();
-	                egoClient.getFrame().setVisible(true);
+	             setVisible(true);
 	          }
 	      };
 	      
@@ -582,34 +556,35 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
      */
     public void gotoClientQuestionPanel() {
         /* Return to first screen */
-       	egoClient.getFrame().setVisible(false);
-        egoClient.getFrame().setContentPane(new ClientQuestionPanel(egoClient));
-        egoClient.getFrame().pack();
-        egoClient.getFrame().setVisible(true);
+       	setVisible(false);
+        setContentPane(new ClientQuestionPanel(egoClient));
+        pack();
+        setVisible(true);
     }
     
     public void gotoSummaryPanel(StatRecord[] stats)
     {
        // Build Screen
-       egoClient.getFrame().setVisible(false);
+       setVisible(false);
        //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
-       egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, stats));
-       egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
-       egoClient.getFrame().pack();
+       setContentPane(new SummaryPanel(egoClient, stats));
+       createMenuBar(ClientFrame.VIEW_SUMMARY);
+       pack();
       // 
        //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
-       egoClient.getFrame().setVisible(true);
+       setVisible(true);
     }
     
     public void gotoStartPanel() throws Exception
     {
         /* Return to first screen */
-        egoClient.getFrame().setVisible(false);
-        egoClient.getFrame().setContentPane(new StartPanel(egoClient));
-        egoClient.getFrame().pack();
-        egoClient.getFrame().setSize(350, 350);
+        setVisible(false);
+        StartPanel sp = new StartPanel(egoClient);
+        setContentPane(sp);
+        pack();
+        setSize(350, 350);
         /* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = egoClient.getFrame().getSize();
+        Dimension frameSize = getSize();
         if (frameSize.height > screenSize.height)
         {
             frameSize.height = screenSize.height;
@@ -618,8 +593,9 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         {
             frameSize.width = screenSize.width;
         }
-        egoClient.getFrame().setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
-        egoClient.getFrame().setVisible(true);
+        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
+        setVisible(true);
+        sp.doFocus();
     }
     		
     public void quickSaveSummary() {
@@ -628,7 +604,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         {
         	public Object construct()
         	{
-                egoClient.getFrame().setVisible(false);
+                setVisible(false);
         		SummaryPanel summaryPanel = new SummaryPanel(egoClient, progressMonitor);
         		return summaryPanel;
         	}
@@ -649,7 +625,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         			}
         		}
         		progressMonitor.close();
-                egoClient.getFrame().setVisible(true);
+                setVisible(true);
         	}
         };
 
@@ -668,22 +644,21 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
           public Object construct()
           {
              // Build Screen
-             egoClient.getFrame().setVisible(false);
+             setVisible(false);
              //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), true);
-             egoClient.getFrame().setContentPane(new SummaryPanel(egoClient, progressMonitor));
-             egoClient.getFrame().createMenuBar(ClientFrame.VIEW_SUMMARY);
-             egoClient.getFrame().pack();
+             setContentPane(new SummaryPanel(egoClient, progressMonitor));
+             createMenuBar(ClientFrame.VIEW_SUMMARY);
+             pack();
              return egoClient.getFrame();
           }
 
           public void finished()
           {
              //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
-             egoClient.getFrame().setVisible(true);
+             setVisible(true);
 
-             if (progressMonitor.isCanceled())
-             {
-                gotoSourceSelectPanel(false);
+             if (progressMonitor.isCanceled()) {
+                gotoSourceSelectPanel();
              }
              progressMonitor.close();
           }

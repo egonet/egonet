@@ -263,7 +263,7 @@ public class StartPanel extends JPanel
 		}
 		else
 		{
-		    egoClient.getFrame().gotoSourceSelectPanel(false);
+		    egoClient.getFrame().gotoSourceSelectPanel();
 		}
 	}
 
@@ -299,5 +299,15 @@ public class StartPanel extends JPanel
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	public void doFocus() {
+		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
+			firstNameField.requestFocusInWindow();
+		} 
+		else {
+			lastNameLabel.requestFocusInWindow();
+		}
+		
 	}
 }

@@ -23,8 +23,7 @@ public class InterviewReader {
 	private Study study;
 	private File interviewFile;
 	
-	public InterviewReader(Study study, File interviewFile)
-	{
+	public InterviewReader(Study study, File interviewFile)	{
 		this.study = study;
 		this.interviewFile = interviewFile;
 	}	
@@ -82,7 +81,6 @@ public class InterviewReader {
 	}
 
 	public static boolean checkForCompleteness(Interview interview) {
-
 		boolean all = true;
 		
 		Answer [] answers = interview.get_answers();
@@ -111,7 +109,7 @@ public class InterviewReader {
 			//logger.info("---------------------------------------------------------------\n");
 		}
 		
-		
+		logger.info("Checking interview for completeness bug - (" + all + ") "+ interview.toString());
 		return all;
 	}
 

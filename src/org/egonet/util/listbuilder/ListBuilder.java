@@ -201,7 +201,7 @@ public class ListBuilder extends JPanel implements Observer {
 						+ selection.getValue());
 			}
 		});
-		this.validate();
+		invalidate();
 	}
 
 	private JComponent buildTop() {
@@ -546,7 +546,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 		listBuilder.setEditable(true);
 		listBuilder.setLetUserPickValues(true);
-		listBuilder.setAdjacencyActive(true);
+		//listBuilder.setAdjacencyActive(true);
 
 		
 		CategoryInputPane frame = new CategoryInputPane(null, new JList());
