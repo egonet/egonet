@@ -937,9 +937,9 @@ public class EgoStore {
 												"Warning",
 												JOptionPane.WARNING_MESSAGE);
 							} 
-							else {
+							//else {
 								whenDone.call();
-							}
+							//}
 						}
 					} catch (Throwable e) {
 						JOptionPane.showMessageDialog(null,
