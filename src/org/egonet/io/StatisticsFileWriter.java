@@ -43,6 +43,9 @@ public class StatisticsFileWriter {
 		writeEgoAnswers(studyElement, interview);
 		writeCompositionalStatistics(studyElement, stats);
 
+		File parent = statisticsFile.getParentFile();
+		if(!parent.exists())
+			parent.mkdirs();
 		document.write(statisticsFile);
 	}
 	

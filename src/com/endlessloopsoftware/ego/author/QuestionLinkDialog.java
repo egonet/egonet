@@ -517,16 +517,15 @@ public class QuestionLinkDialog extends JDialog
 			linkAnswer.setValue(1);
 			linkAnswer.answered = true;
 		} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
-			if (question.getSelections().length <= 5)
-			{
-				if (allAdjacentCheck.isSelected())
-				{
+			
+			// option/radio buttons
+			if (question.getSelections().length <= 5) {
+				if (allAdjacentCheck.isSelected()) {
 					linkAnswer.setValue(Answer.ALL_ADJACENT);
 					linkAnswer.string   		= "All Adjacent";
 					linkAnswer.answered     = true;
 				}
-				else
-				{
+				else {
 					int button          		= selectedButtonIndex(answerButtons);
 					linkAnswer.answered 		= (button != MAX_BUTTONS);
 					
@@ -544,19 +543,21 @@ public class QuestionLinkDialog extends JDialog
 					}
 				}
 			}
-			else
-			{
+			
+			// drop down buttons
+			else {
 				if (allAdjacentCheck.isSelected())
 				{
 					linkAnswer.setValue(Answer.ALL_ADJACENT);
 					linkAnswer.string   		= "All Adjacent";
 					linkAnswer.answered     = true;
 				}
-				else if (answerMenu.getSelectedIndex() > 0)
+				else if (answerMenu.getSelectedIndex() > 0) // 0th option is "Select an answer"
 				{
-					linkAnswer.setValue(question.getSelections()[answerMenu.getSelectedIndex() - 1].getValue());
+					int selectionIndex = answerMenu.getSelectedIndex() - 1;
+					linkAnswer.setValue(question.getSelections()[selectionIndex].getValue());
 					linkAnswer.string   		= answerMenu.getSelectedItem().toString();
-					linkAnswer.answered     = (linkAnswer.getValue() < question.getSelections().length);
+					linkAnswer.answered     = (selectionIndex <= question.getSelections().length);
 				}
 				else
 				{

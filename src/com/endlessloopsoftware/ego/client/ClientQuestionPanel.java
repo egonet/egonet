@@ -897,8 +897,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			try {
 				egoClient.getInterview().completeInterview(egoClient.getStorage());
 			} catch (IOException ex) {
+				String msg = "Unable to complete interview OR unable to generate statistics. It may not be saved.";
+				logger.info(msg,ex);
 				JOptionPane.showMessageDialog(egoClient.getFrame(),
-						"Unable to complete interview OR unable to generate statistics. It may not be saved.",
+						msg,
 						"Statistics Error", JOptionPane.WARNING_MESSAGE);
 			}
 
