@@ -371,10 +371,16 @@ public class NameMapperFrame extends JFrame {
     	while(names.size() > 0) {
     		NameMapping current = names.remove(0);
     		
+    		if(current == null || current.alterName == null)
+    			continue;
+    		
     		float highest = 0.0f; Integer highestGroup = null;
     		for(Map.Entry<Integer,List<NameMapping>> entry : groupings.entrySet()) {
     			float averageScore = 0; int elementCount = 0;
     			for(NameMapping entryMapping : entry.getValue()) {
+    				
+    				if(entryMapping.alterName == null)
+    					continue;
     				
     				// when figuring a true score, make everything lowercase and trimmed
     				float thisScore = metric.getSimilarity(current.alterName.toLowerCase().trim(), entryMapping.alterName.toLowerCase().trim());

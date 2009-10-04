@@ -85,6 +85,35 @@ public class GraphSettings {
 		this.renderer = renderer;
 			init();
 	}
+	
+	public void reset() {
+		for(Map.Entry<Vertex,NodeProperty> entry : nodeSettingsMap.entrySet()) {
+			
+			NodeProperty nodeProperty = entry.getValue();
+			
+			
+			NodeShape shape = NodeShape.Circle;
+			Color color = Color.RED;
+			int size = 1;
+			
+			 nodeProperty.setColor(color);
+			 nodeProperty.setShape(shape);
+			 nodeProperty.setSize(size);
+		}
+		for(Map.Entry<Edge,EdgeProperty> entry : edgeSettingsMap.entrySet()) {
+			EdgeProperty edgeProperty = entry.getValue();
+			
+			
+			edgeProperty.setColor(Color.BLACK);
+			edgeProperty.setShape(EdgeShape.Line);
+			edgeProperty.setSize(1);
+			
+			edgeProperty.setVisible(true);
+			
+		}
+		QAsettings.clear();
+		renderer.updateGraphSettings();
+	}
 
 	private void init() {
 		int noOfAlters = egoClient.getInterview().getNumAlters();
@@ -94,8 +123,7 @@ public class GraphSettings {
 			Color color = Color.RED;
 			int size = 1;
 			NodeShape shape = NodeShape.Circle;
-			NodeProperty nodeProperty = new NodeProperty(alterName, color,
-					shape, size);
+			NodeProperty nodeProperty = new NodeProperty(alterName, color,shape, size);
 			nodeProperty.setToolTipText(getAlterInfo(i, false));
 			nodeProperty.setDetailedToolTipText(getAlterInfo(i, true));
 			nodeSettingsMap.put(new Vertex(renderer.getAlterList()[i]), nodeProperty);
@@ -144,11 +172,11 @@ public class GraphSettings {
 						throw new RuntimeException(err);
 						
 					}
+					
 					graph.addEdge(edge, verts);
 					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j]).toString();
 					
-					EdgeProperty edgeProperty = new EdgeProperty(label,
-							Color.BLACK, EdgeShape.Line, 1);
+					EdgeProperty edgeProperty = new EdgeProperty(label, Color.BLACK, EdgeShape.Line, 1);
 					edgeProperty.setVisible(true);
 					edgeSettingsMap.put(edge, edgeProperty);
 				}
