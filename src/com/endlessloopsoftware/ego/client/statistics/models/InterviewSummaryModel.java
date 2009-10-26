@@ -51,7 +51,7 @@ public class InterviewSummaryModel extends StatTableModel
 					case 0 :
 						return ("Degree Centrality Maximum");
 					case 1 :
-						return ("Closeness Centrality Minimum");
+						return ("Closeness Centrality Maximum");
 					case 2 :
 						return ("Betweenness Centrality Maximum");
 					case 3 :
