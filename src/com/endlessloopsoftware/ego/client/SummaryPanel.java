@@ -237,12 +237,12 @@ public class SummaryPanel extends JPanel
 				
 				for (int i = 0; i < answer.selections.length; i++)
 				{
+					String selectionName = FileHelpers.formatForCSV(answer.selections[i]);
 					
-					w.print(", " + title + "|Answer:" + answer.selections[i] + 
+					w.print(", " + title + "|Answer:" + selectionName + 
 								"|Value:" + answer.AnswerIndex[i] + "|Count");
-					w.print(", " + title + "|Answer:" + answer.selections[i] + 
+					w.print(", " + title + "|Answer:" + selectionName + 
 							"|Value:" + answer.AnswerIndex[i] + "|Percentage");
-					
 				}
 				//end of code modify
 			}
