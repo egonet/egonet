@@ -194,26 +194,17 @@ public class CategoryInputPane extends JDialog {
 //		
 		listBuilder.setAdjacencyActive(q.questionType == Shared.QuestionType.ALTER_PAIR);
 
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setSize(500, 400); // width, height
+		
 		// Center the window
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = this.getSize();
-
 		this.setLocation((screenSize.width - frameSize.width) / 2,
 				(screenSize.height - frameSize.height) / 2);
 		
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
-
-		//logger.info("initial lb.pref=" + disp());
-		
-		/* Pack since we've modified the GUI elements */
-		validate();
-		pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack(); pack();
-		
-		//logger.info("after invalidate and pack lb.pref " + disp());
 		
 		this.setVisible(true);
-		
-		//logger.info("after it was visible lb.pref " + disp());
 	}
 }
