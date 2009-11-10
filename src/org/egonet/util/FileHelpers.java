@@ -145,22 +145,16 @@ public class FileHelpers
      */
     public static String formatForCSV(String s)
     {
-        if (s != null)
-        {
-            while (s.indexOf(",") != -1)
-            {
-                s = s.substring(0, s.indexOf(",")) + s.substring(s.indexOf(",") + 1);
-            }
-
-            while (s.indexOf(" ") != -1)
-            {
-                s = s.substring(0, s.indexOf(" ")) + "_" + s.substring(s.indexOf(" ") + 1);
-            }
-        }
-
-        return s;
+    	String[] stringsToReplaceWithUnderscores = 
+    		new String[] {" ",",","\"","___","__"};
+    	if(s == null) {
+    		return null;
+    	}
+    	for(String badString : stringsToReplaceWithUnderscores) {
+    		s = s.replaceAll(badString, "_");
+    	}
+        return "\""+s+"\"";
     }
-
 
     /**
      *

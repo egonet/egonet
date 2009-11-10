@@ -219,11 +219,10 @@ public class SummaryPanel extends JPanel
 		while (it.hasNext())
 		{
 			StatRecord.AlterAnswer answer = (StatRecord.AlterAnswer) it.next();
-			String title = FileHelpers.formatForCSV(answer.title);
 			
 			if (answer.selections.length == 1)
 			{
-				w.print(", " + title + "_mn");
+				w.print(", " + FileHelpers.formatForCSV(answer.title + "_mn"));
 			}
 			else
 			{
@@ -239,10 +238,10 @@ public class SummaryPanel extends JPanel
 				{
 					String selectionName = FileHelpers.formatForCSV(answer.selections[i]);
 					
-					w.print(", " + title + "|Answer:" + selectionName + 
-								"|Value:" + answer.AnswerIndex[i] + "|Count");
-					w.print(", " + title + "|Answer:" + selectionName + 
-							"|Value:" + answer.AnswerIndex[i] + "|Percentage");
+					w.print(", " + FileHelpers.formatForCSV(answer.title + "|Answer:" + selectionName + 
+								"|Value:" + answer.AnswerIndex[i] + "|Count"));
+					w.print(", " + FileHelpers.formatForCSV(answer.title + "|Answer:" + selectionName + 
+							"|Value:" + answer.AnswerIndex[i] + "|Percentage"));
 				}
 				//end of code modify
 			}
