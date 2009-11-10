@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
@@ -52,6 +51,8 @@ import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
@@ -326,15 +327,19 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			FileHelpers.formatForCSV(egoClient.getStudy().getStudyName())
 			.replaceAll("\"", "");
 		String filename = name + "_Summary";
-		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
-				"Study Summary", "csv", filename);
+		CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
+				"Study Summary", "csv", filename));
 
 		if (w != null) {
 			try {
 				((SummaryPanel) egoClient.getFrame().getContentPane())
 						.writeStudySummary(w);
 			} finally {
-				w.close();
+				try {
+					w.close();
+				} catch (IOException e1) {
+					logger.error("Unable to close CSVWriter", e1);
+				}
 			}
 		}
 	}
@@ -617,14 +622,18 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         				FileHelpers.formatForCSV(egoClient.getStudy().getStudyName())
         				.replaceAll("\"", "");
         			String filename = name + "_Summary";
-        			PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
-        					"Study Summary", "csv", filename);
+        			CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
+        					"Study Summary", "csv", filename));
 
         			if (w != null) {
         				try {
         					((SummaryPanel) this.getValue()).writeStudySummary(w);
         				} finally {
-        					w.close();
+        					try {
+								w.close();
+							} catch (IOException e) {
+								logger.error("Unable to close CSVWriter", e);
+							}
         				}
         			}
         		}

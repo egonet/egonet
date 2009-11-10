@@ -23,10 +23,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -39,9 +40,10 @@ import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StatisticsFileReader;
 import org.egonet.util.DirList;
-import org.egonet.util.FileHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.StatisticsArrayPanel;
@@ -194,7 +196,7 @@ public class SummaryPanel extends JPanel
 		}
 	}
 
-	public void writeStudySummary(PrintWriter w)
+	public void writeStudySummary(CSVWriter w)
 	{
 		Iterator it;
 		StatRecord stat = _stats[0];
@@ -208,11 +210,12 @@ public class SummaryPanel extends JPanel
 		/*******
 		 * Column Headers
 		 */
-		w.print("Respondant_Name");
+		List<String> header = new ArrayList<String>();
+		header.add("Respondant_Name");
 		it = stat.egoAnswers.iterator();
 		while (it.hasNext())
 		{
-			w.print(", " + FileHelpers.formatForCSV(((StatRecord.EgoAnswer) it.next()).title));
+			header.add(((StatRecord.EgoAnswer) it.next()).title);
 		}
 
 		it = stat.alterAnswers.iterator();
@@ -222,7 +225,7 @@ public class SummaryPanel extends JPanel
 			
 			if (answer.selections.length == 1)
 			{
-				w.print(", " + FileHelpers.formatForCSV(answer.title + "_mn"));
+				header.add(answer.title + "_mn");
 			}
 			else
 			{
@@ -236,38 +239,39 @@ public class SummaryPanel extends JPanel
 				
 				for (int i = 0; i < answer.selections.length; i++)
 				{
-					String selectionName = FileHelpers.formatForCSV(answer.selections[i]);
-					
-					w.print(", " + FileHelpers.formatForCSV(answer.title + "|Answer:" + selectionName + 
-								"|Value:" + answer.AnswerIndex[i] + "|Count"));
-					w.print(", " + FileHelpers.formatForCSV(answer.title + "|Answer:" + selectionName + 
-							"|Value:" + answer.AnswerIndex[i] + "|Percentage"));
+					header.add(answer.title + "|Answer:" + answer.selections[i] + 
+							"|Value:" + answer.AnswerIndex[i] + "|Count");
+					header.add(answer.title + "|Answer:" + answer.selections[i] + 
+							"|Value:" + answer.AnswerIndex[i] + "|Percentage");
 				}
 				//end of code modify
 			}
 		}
-		/*w.println(
-			", Max_Deg_Name, Max_Deg_Value, Max_Close_Name, Max_Close_Value"
-				+ ", Max_Between_Name, Max_Between_Value, #_Cliques, #_Components");*/
-		w.println(
-				", Max_Deg_Name, Max_Deg_Value, Max_Close_Name, Max_Close_Value"
-				+ ", Max_Between_Name, Max_Between_Value, N_Cliques, N_Components, Degree_Mean"
-				+ ", Closeness_Mean, Between_Mean, DegreeNC, ClosenessNC, BetweenNC"
-				+ ", N_Isolates, N_Dyads");
+		String[] statHeaders = 
+			("Max_Deg_Name,Max_Deg_Value,Max_Close_Name,Max_Close_Value,"
+			+ "Max_Between_Name,Max_Between_Value,N_Cliques,N_Components,Degree_Mean,"
+			+ "Closeness_Mean,Between_Mean,DegreeNC,ClosenessNC,BetweenNC,"
+			+ "N_Isolates,N_Dyads").split(",");
+		for(String statHeader : statHeaders) {
+			header.add(statHeader);
+		}
+		w.writeNext(header.toArray(new String[]{}));
 		
 		/*******
 		 * Data Lines
 		 */
 		for (int i = 0; i < _recordCount; i++)
 		{
+			List<String> row = new ArrayList<String>();
+			
 			stat = _stats[i];
 
-			w.print(FileHelpers.formatForCSV(stat.getName()));
+			row.add(stat.getName());
 
 			it = stat.egoAnswers.iterator();
 			while (it.hasNext())
 			{
-				w.print(", " + ((StatRecord.EgoAnswer) it.next()).index);
+				row.add(((StatRecord.EgoAnswer) it.next()).index+"");
 			}
 
 			it = stat.alterAnswers.iterator();
@@ -279,64 +283,48 @@ public class SummaryPanel extends JPanel
 				{
 					if ((answer.count == 0) || (answer.totals[0] == 0))
 					{
-						w.print(", " + 0);
+						row.add(0+"");
 					}
 					else
 					{
-						w.print(", " + ((float) answer.totals[0] / answer.count));
+						row.add(((float) answer.totals[0] / answer.count)+"");
 					}
 				}
 				else
 				{
 					for (int j = 0; j < answer.selections.length; j++)
 					{
-						w.print(", " + answer.totals[j]);
+						row.add(answer.totals[j]+"");
 
 						if ((answer.count == 0) || (answer.totals[j] == 0))
 						{
-							w.print(", " + 0);
+							row.add(0+"");
 						}
 						else
 						{
-							w.print(", " + percentFormatter.format((double) answer.totals[j] / answer.count));
+							row.add(percentFormatter.format((double) answer.totals[j] / answer.count));
 						}
 					}
 				}
 			}
 
-			w.println(
-				", "
-					+ FileHelpers.formatForCSV(stat.degreeName)
-					+ ", "
-					+ stat.degreeValue
-					+ ", "
-					+ FileHelpers.formatForCSV(stat.closenessName)
-					+ ", "
-					+ stat.closenessValue
-					+ ", "
-					+ FileHelpers.formatForCSV(stat.betweenName)
-					+ ", "
-					+ stat.betweenValue
-					+ ", "
-					+ stat.numCliques
-					+ ", "
-					+ stat.numComponents
-					+ ", "
-					+ stat.degreeMean
-					+ ", "
-					+ (stat.closenessMean.floatValue()== -1 ? ".":stat.closenessMean.toString())
-					+ ", "
-					+ stat.betweenMean
-					+ ", "
-					+ stat.degreeNC
-					+ ", "
-					+ stat.closenessNC
-					+ ", "
-					+ stat.betweenNC
-					+ ","
-					+ stat.numIsolates
-					+ ","
-					+ stat.numDyads);
+			row.add(stat.degreeName);
+			row.add(stat.degreeValue+"");
+			row.add(stat.closenessName);
+			row.add(stat.closenessValue+"");
+			row.add(stat.betweenName);
+			row.add(stat.betweenValue+"");
+			row.add(stat.numCliques+"");
+			row.add(stat.numComponents+"");
+			row.add(stat.degreeMean+"");
+			row.add(stat.closenessMean.floatValue()== -1 ? "." : stat.closenessMean.toString());
+			row.add(stat.betweenMean+"");
+			row.add(stat.degreeNC+"");
+			row.add(stat.closenessNC+"");
+			row.add(stat.betweenNC+"");
+			row.add(stat.numIsolates+"");
+			row.add(stat.numDyads+"");
+			w.writeNext(row.toArray(new String[]{}));
 		}
 	}
 

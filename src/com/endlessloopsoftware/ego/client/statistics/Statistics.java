@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.client.statistics;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,6 +32,8 @@ import org.egonet.util.FileHelpers;
 import org.egonet.util.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
@@ -824,8 +827,9 @@ public class Statistics
      */
     public void writeAdjacencyFile(PrintWriter adjacencyWriter, String[] name, boolean weighted) throws IOException {
         logger.info("Writing "+(weighted ? "" : "non-")+"weighted adjacency file for " + name[0] + " " + name[1]);
-        writeAdjacencyArray(new Name(name[0],name[1]).toString(), adjacencyWriter, weighted);
-        adjacencyWriter.close();
+        CSVWriter adjacencyCSVWriter = new CSVWriter(adjacencyWriter);
+        writeAdjacencyArray(new Name(name[0],name[1]).toString(), adjacencyCSVWriter, weighted);
+        adjacencyCSVWriter.close();
     }
 
     /********
@@ -834,26 +838,27 @@ public class Statistics
      * @param w         PrintWriter
      * @param weighted  use weighted proximity array
      */
-    private void writeAdjacencyArray(String name, PrintWriter w, boolean weighted)
+    private void writeAdjacencyArray(String name, CSVWriter w, boolean weighted)
     {
         // Write column names
-        w.print(FileHelpers.formatForCSV(name));
-
+    	List<String> columnNames = new ArrayList<String>();
+    	columnNames.add(name);
         for (int i = 0; i < alterList.length; ++i)
         {
-            w.print(", " + FileHelpers.formatForCSV(alterList[i]));
+        	columnNames.add(alterList[i]);
         }
-        w.println();
+        w.writeNext(columnNames.toArray(new String[]{}));
 
+        // Write other rows
         for (int i = 0; i < alterList.length; ++i)
         {
-            w.print(FileHelpers.formatForCSV(alterList[i]));
+        	List<String> row = new ArrayList<String>();
+        	row.add(alterList[i]);
             for (int j = 0; j < alterList.length; ++j)
             {
-                w.print(", ");
-                w.print(weighted ? weightedAdjacencyMatrix[i][j] : adjacencyMatrix[i][j]);
+                row.add(""+(weighted ? weightedAdjacencyMatrix[i][j] : adjacencyMatrix[i][j]));
             }
-            w.println();
+            w.writeNext(row.toArray(new String[]{}));
         }
     }
 
