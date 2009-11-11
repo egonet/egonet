@@ -687,7 +687,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	public void clearPanel() {
 		((DefaultListModel) questionList.getModel()).removeAllElements();
 	}
-
+	
 	/**
 	 * Figure out the question type and the answer type, and store the
 	 * appropriate data. Most controls that could provide selection of a
@@ -707,6 +707,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			logger.info("More prompts? " + morePrompts);
 			
 			// value starts at zero, so add one to compare to # alters needed
+			// TODO: make sure answer.getValue matches number of alters created
+			answer.setValue(7);
 			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
 			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
 			answer.answered = morePrompts || maxAlters;
@@ -947,11 +949,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			// TODO: was skip || question.answer.answered
-			// but this conflicts with entering alters as single name
-			// Would be good to fix so that it is possible to enter
-			// only a few alters, but for now we at least need to be
-			// able to enter alters.
+			question.answer.answered = 
+				! (alterList.getListStrings().length < 
+						egoClient.getStudy().getNumAlters());
 			questionButtonNext.setEnabled(question.answer.answered); 
 			                                                         
 			questionButtonNext.setText("Next Question");
