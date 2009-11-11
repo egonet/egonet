@@ -949,9 +949,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			question.answer.answered = 
+			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
+			boolean maxAlters = 
 				! (alterList.getListStrings().length < 
-						egoClient.getStudy().getNumAlters());
+					egoClient.getStudy().getNumAlters());
+			question.answer.answered = maxAlters || morePrompts;
+				
 			questionButtonNext.setEnabled(question.answer.answered); 
 			                                                         
 			questionButtonNext.setText("Next Question");
