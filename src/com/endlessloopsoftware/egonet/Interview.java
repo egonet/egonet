@@ -862,4 +862,15 @@ public class Interview implements Comparable<Interview> {
 	public String getNotes() {
 		return notes;
 	}
+	
+	public String toString() {
+		String result = "";
+		for(String namePart : getName()) {
+			if(! result.isEmpty()) {
+				result += " ";
+			}
+			result += namePart;
+		}
+		return result;
+	}
 }

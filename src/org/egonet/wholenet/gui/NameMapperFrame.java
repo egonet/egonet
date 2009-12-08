@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -27,9 +30,13 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.functionalj.tuple.Pair;
+import net.sf.functionalj.tuple.Triple;
 
+import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
+import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 public class NameMapperFrame extends JFrame {
 
@@ -175,8 +182,22 @@ public class NameMapperFrame extends JFrame {
 		public final String [] columns = {"Alter Name (Source Ego)", "Mapping Group"};
 		private final List<NameMapping> mappings;
 		
+		private final List<Question> alterQuestions;
+		private final Set<Long> alterQuestionIds;
+		private final Map<Triple<Long,String,Integer>,Answer> questionInterviewAlterToAnswer;
+		
 		public MapperTableModel() {
 			mappings = new ArrayList<NameMapping>();
+			alterQuestions = new ArrayList<Question>();
+			alterQuestionIds = new TreeSet<Long>();
+			questionInterviewAlterToAnswer = new TreeMap<Triple<Long,String,Integer>,Answer>();
+			
+			for(Question question : study.getQuestions().values()) {
+				if(question.questionType.equals(QuestionType.ALTER)) {
+					alterQuestions.add(question);
+					alterQuestionIds.add(question.UniqueId);
+				}
+			}
 			
 			int group = 1;
 			
@@ -192,17 +213,32 @@ public class NameMapperFrame extends JFrame {
 					mappings.add(mapping);
 					
 				}
+				for(Answer answer : interview.get_answers()) {
+					if(alterQuestionIds.contains(answer.questionId)) {
+						questionInterviewAlterToAnswer.put(
+								new Triple<Long,String,Integer>(
+										answer.questionId,
+										interview.toString(),
+										answer.firstAlter()),
+								answer);
+					}
+				}
 			}
 		}
 		
 		public int getColumnCount() {
-			return columns.length;
+			return columns.length + alterQuestions.size();
 		}
 
 	    public String getColumnName(int column) {
-	    	return columns[column];
+	    	return column < columns.length ? columns[column] : 
+	    		questionForColumn(column).title;
 	    }
 		
+	    private Question questionForColumn(int column) {
+	    	return alterQuestions.get(column - columns.length);
+	    }
+	    
 		public int getRowCount() {
 			return mappings.size();
 		}
@@ -215,8 +251,15 @@ public class NameMapperFrame extends JFrame {
 			else if(columnIndex == 1) {
 				return row.group;
 			}
-			else {
-				return row;
+			else { // Answer to alter question
+				Question question = questionForColumn(columnIndex);
+				Triple<Long,String,Integer> key =
+					new Triple<Long,String,Integer>(
+							question.UniqueId,
+							row.getInterview().toString(),
+							row.alterNumber);
+				String result = questionInterviewAlterToAnswer.get(key)+"";
+				return result.equals("-1") || result.equals("null") ? "" : result;
 			}
 		}
 		
@@ -288,6 +331,7 @@ public class NameMapperFrame extends JFrame {
 		final MapperTableModel model = new MapperTableModel();
 		final JXTable table = new JXTable(model);
 		table.setSortable(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		// column 0 - source ego/alter
 		table.getColumnModel().getColumn(0).setCellRenderer(new MappingRenderer());
@@ -298,7 +342,10 @@ public class NameMapperFrame extends JFrame {
     	MigLayout layout = new MigLayout("fill", "[grow]");
 		setLayout(layout);
 		
-		JScrollPane scrollPane = new JScrollPane(table);		
+		JScrollPane scrollPane = 
+			new JScrollPane(table,
+					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);		
 		add(new JLabel("Please perform alter/ego name mappings"),  "growx, wrap");
 		add(scrollPane, "grow, span, wrap");
 
