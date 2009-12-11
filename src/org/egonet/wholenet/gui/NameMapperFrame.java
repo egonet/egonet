@@ -18,9 +18,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.egonet.io.InterviewReader;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.graph.WholeNetwork;
+import org.egonet.wholenet.io.NameMappingReader;
+import org.egonet.wholenet.io.NameMappingWriter;
 import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -367,6 +370,49 @@ public class NameMapperFrame extends JFrame {
 		};
 		JButton automatchButton = new JButton(automatchAction);
 		add(automatchButton,  "split, growx");
+
+		add(
+				new JButton(new CatchingAction("Save") {
+					public void safeActionPerformed(ActionEvent e)
+							throws Exception {
+						File studyFile = NameMapperFrame.this.studyFile;
+						File suggestedOutputFile = 
+							new File(
+									studyFile.getParent(),
+									NameMapperFrame.this.study.getStudyName()+".mapping");
+						JFileChooser fc = new JFileChooser(suggestedOutputFile);
+						fc.setSelectedFile(suggestedOutputFile);
+						fc.addChoosableFileFilter(new ExtensionFileFilter("Name Mapping Files","mapping"));
+						fc.setDialogTitle("Save name mappings");
+						if(fc.showSaveDialog(NameMapperFrame.this) == 
+							JFileChooser.APPROVE_OPTION) 
+						{
+							new NameMappingWriter(model.getMappings())
+							.writeToFile(fc.getSelectedFile());
+						}
+					}
+				}), 
+				"split, growx");
+		add(
+				new JButton(new CatchingAction("Load") {
+					public void safeActionPerformed(ActionEvent e)
+							throws Exception {
+						File studyFile = NameMapperFrame.this.studyFile;
+						File suggestedOutputFile = 
+							new File(studyFile.getParent());
+						JFileChooser fc = new JFileChooser(suggestedOutputFile);
+						fc.setSelectedFile(suggestedOutputFile);
+						fc.addChoosableFileFilter(new ExtensionFileFilter("Name Mapping Files","mapping"));
+						fc.setDialogTitle("Load name mappings from file");
+						if(fc.showOpenDialog(NameMapperFrame.this) == 
+							JFileChooser.APPROVE_OPTION) 
+						{
+							new NameMappingReader(fc.getSelectedFile())
+							.applyTo(model.getMappings());
+						}
+					}
+				}), 
+				"split, growx");
 		
 		Action continueAction = new CatchingAction("Continue") {
 			@Override

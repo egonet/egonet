@@ -59,6 +59,7 @@
 			<zipfileset src="${dir.lib.Enet}/simmetrics_jar_v1_6_2_d07_02_07.jar" />
 			<zipfileset src="${dir.lib.Enet}/slf4j-api-1.5.6.jar" />
 			<zipfileset src="${dir.lib.Enet}/slf4j-jdk14-1.5.6.jar" />
+			<zipfileset src="${dir.lib.Enet}/google-collect-1.0-rc2.jar" />
 
 			<zipfileset src="${dir.lib.Enet}/jung/collections-generic-4.01.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/colt-1.2.0.jar" />
