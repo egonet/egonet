@@ -84,35 +84,36 @@ public class WholeNetwork {
 				Question q = study.getQuestion((Long) questions.next());
 				try {
 					int [][] adj = interview.generateAdjacencyMatrix(q, false);
-	
+					int [][] adjWeight = interview.generateAdjacencyMatrix(q, true);
+					
 					// loop through adj
 					// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
 	
-					for(int i = 0; i < adj.length; i++)
+					int alters = Math.min(adj.length,thisInterviewAlterlist.length);
+					for(int i = 0; i < alters; i++)
 					{
-						for(int j = 0; j < adj[i].length; j++)
+						for(int j = i+1; j < alters; j++)
 						{
-							if(adj[i][j] == 1 && i != j && 
-									i < thisInterviewAlterlist.length && j < thisInterviewAlterlist.length)
-							{
-	
-								String alter1 = thisInterviewAlterlist[i];
-								String alter2 = thisInterviewAlterlist[j];
-								logger.debug(alter1 + "("+i+") and " + alter2 + "("+j+") are adjacent");
-								
-								// find whole network alters, tie them!
-								Pair<WholeNetworkAlter,NameMapping> wholeAlter1 = findAlter(interview, i);
-								Pair<WholeNetworkAlter,NameMapping> wholeAlter2 = findAlter(interview, j);
-								
-								
-								if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
-									Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
-									wholeAlter1 = wholeAlter2;
-									wholeAlter2 = swap;
-								}
-								
+							boolean adjacent = adj[i][j] == 1;
+							String alter1 = thisInterviewAlterlist[i];
+							String alter2 = thisInterviewAlterlist[j];
+							logger.debug(alter1 + "("+i+") and " + alter2 + "("+j+") are" +
+									(adjacent ? " " : " not ")+"adjacent");
+
+
+							// find whole network alters
+							Pair<WholeNetworkAlter,NameMapping> wholeAlter1 = findAlter(interview, i);
+							Pair<WholeNetworkAlter,NameMapping> wholeAlter2 = findAlter(interview, j);
+
+							if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
+								Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
+								wholeAlter1 = wholeAlter2;
+								wholeAlter2 = swap;
+							}
+
+							// TODO: strength of tie, even if not adjacent
+							if(adjacent){
 								tie(wholeAlter1, wholeAlter2, q);
-								
 							}
 						}
 					}
@@ -187,14 +188,13 @@ public class WholeNetwork {
 				Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1, wholeAlter2);
 				if(wholeNetworkTies.containsKey(tieKey)) {
 					WholeNetworkTie tie = wholeNetworkTies.get(tieKey);
-					adj[x][y] = tie.numberOfTies();
+					adj[x][y] = tie.numberOfTies() > 0 ? 1 : 0;
 				}
 				else {
 					adj[x][y] = 0;
 				}
 			}
 		}
-		
 		
 		return new Pair<String[],int[][]>(names,adj);
 	}
