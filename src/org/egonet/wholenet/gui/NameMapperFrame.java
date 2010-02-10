@@ -182,7 +182,7 @@ public class NameMapperFrame extends JFrame {
 	
 	public class MapperTableModel extends AbstractTableModel {
 
-		public final String [] columns = {"Alter Name (Source Ego)", "Mapping Group"};
+		public final String [] columns = {"Alter", "Ego", "Mapping Group"};
 		private final List<NameMapping> mappings;
 		
 		private final List<Question> alterQuestions;
@@ -249,9 +249,11 @@ public class NameMapperFrame extends JFrame {
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			NameMapping row = mappings.get(rowIndex);
 			if(columnIndex == 0) {
-				return row;
-			}
-			else if(columnIndex == 1) {
+				return row.alterName;
+			} else if(columnIndex == 1) {
+				String[] egoName = row.getInterview().getName();
+				return new Name(egoName[0],egoName[1]).toString();
+			} else if(columnIndex == 2) {
 				return row.group;
 			}
 			else { // Answer to alter question
