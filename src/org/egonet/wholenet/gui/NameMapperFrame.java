@@ -270,14 +270,14 @@ public class NameMapperFrame extends JFrame {
 		
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if(columnIndex == 1)
+			if(columnIndex == 2)
 				return true;
 			return false;
 		}
 		
 		@Override
 	    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			if(columnIndex == 1 && aValue instanceof String) {
+			if(columnIndex == 2 && aValue instanceof String) {
 				
 				Integer i = null;
 				try {

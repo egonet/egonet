@@ -55,13 +55,20 @@ public class NameMappingReader {
 		}
 		
 		public Key key() {
-			return new Key(egoFirst+" "+egoLast, alterNumber);
+			return new Key(
+					(egoFirst == null ? "" : egoFirst)+
+					" "+
+					(egoLast == null ? "" : egoLast), 
+					alterNumber);
 		}
 	}
 	
 	public static class Key extends Pair<String,Integer> {
 		public Key(String name, Integer alterNumber) {
 			super(name,alterNumber);
+		}
+		public String toString() {
+			return getFirst()+" "+getSecond();
 		}
 	}
 	
