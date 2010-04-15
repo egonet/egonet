@@ -423,6 +423,12 @@ public class ListBuilder extends JPanel implements Observer {
 					JOptionPane.showMessageDialog(this,
 							"You cannot add any more alters!",
 							"Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
+				} else if(selection.getString() == null || 
+						selection.getString().trim().isEmpty()) 
+				{
+					JOptionPane.showMessageDialog(this,
+							"Must enter a name to add an alter!",
+							"Empty alter won't be added", JOptionPane.ERROR_MESSAGE);
 				} else if(contains(elementList, selection)) {
 					JOptionPane.showMessageDialog(this,
 							"Name is already in the list!",
