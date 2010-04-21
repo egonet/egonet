@@ -1,6 +1,5 @@
 package org.egonet.wholenet.graph;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +29,7 @@ public class WholeNetwork {
 	final private static Logger logger = LoggerFactory.getLogger(WholeNetwork.class);
 	
 	final Study study;
-	final List<Pair<File, Interview>> interviewMap;
+	final List<Interview> interviews;
 	final List<NameMapping> nameMap;
 
 	// maps for fast access
@@ -38,11 +37,11 @@ public class WholeNetwork {
 	final Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
 
 	
-	public WholeNetwork(Study study, List<Pair<File, Interview>> interviewMap,
+	public WholeNetwork(Study study, List<Interview> interviews,
 			List<NameMapping> nameMap) {
 		super();
 		this.study = study;
-		this.interviewMap = interviewMap;
+		this.interviews = interviews;
 		this.nameMap = nameMap;
 	
 		wholeNetworkAlters = new HashMap<Integer,WholeNetworkAlter>();
@@ -65,9 +64,8 @@ public class WholeNetwork {
 		}
 		
 		// build all ties
-		for(Pair<File, Interview> pair : interviewMap) {
+		for(Interview interview : interviews) {
 			
-			Interview interview = pair.getSecond();
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			
 			// tie the ego to all alters

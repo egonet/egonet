@@ -32,6 +32,7 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 import net.miginfocom.swing.MigLayout;
+import net.sf.functionalj.Functions;
 import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
@@ -40,6 +41,7 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
+import com.google.common.collect.Lists;
 
 public class NameMapperFrame extends JFrame {
 
@@ -429,8 +431,11 @@ public class NameMapperFrame extends JFrame {
 						
 						List<NameMapping> mappings = model.getMappings();
 						
+						List<Interview> interviews = Lists.newArrayList(
+							Functions.map(new Pair<File,Interview>().second, interviewMap));
+						
 						// do the whole network combination, and export/show it!
-						WholeNetwork net = new WholeNetwork(study, interviewMap, mappings);
+						WholeNetwork net = new WholeNetwork(study, interviews, mappings);
 						net.recompile();
 						
 						viewer = new WholeNetworkViewer(study, studyFile, net);
