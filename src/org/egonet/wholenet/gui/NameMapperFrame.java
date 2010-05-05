@@ -51,6 +51,9 @@ public class NameMapperFrame extends JFrame {
 	private final File studyFile;
 	
 	private final List<Pair<File, Interview>> interviewMap;
+	
+	private Integer inclusionThreshold = 1;
+	
 	public NameMapperFrame(Study study, File studyFile, List<File> mappableFiles) {
 		super("Whole Network - Alter Name Mapping Editor");
 		this.study = study;
@@ -417,6 +420,26 @@ public class NameMapperFrame extends JFrame {
 					}
 				}), 
 				"split, growx");
+		add(new JButton(
+				new CatchingAction("Inclusion threshold") {
+					@Override
+					public void safeActionPerformed(ActionEvent e) throws Exception {
+						String inclusionThresholdString = (String)
+							JOptionPane.showInputDialog(NameMapperFrame.this, 
+									"In how many interviews must an alter be mentioned " +
+									"in order to be included in the whole network?", 
+									"Inclusion threshold", JOptionPane.PLAIN_MESSAGE, 
+									null, 
+									null, 
+									inclusionThreshold+"");
+						try {
+							inclusionThreshold = Integer.parseInt(inclusionThresholdString);
+						} catch(Exception ex) {
+							
+						}
+					}
+				}),
+				"split, growx");
 		
 		Action continueAction = new CatchingAction("Continue") {
 			@Override
@@ -435,7 +458,8 @@ public class NameMapperFrame extends JFrame {
 							Functions.map(new Pair<File,Interview>().second, interviewMap));
 						
 						// do the whole network combination, and export/show it!
-						WholeNetwork net = new WholeNetwork(study, interviews, mappings);
+						WholeNetwork net = 
+							new WholeNetwork(study, interviews, mappings, inclusionThreshold);
 						net.recompile();
 						
 						viewer = new WholeNetworkViewer(study, studyFile, net);

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.exceptions.MissingPairException;
@@ -32,17 +34,20 @@ public class WholeNetwork {
 	final List<Interview> interviews;
 	final List<NameMapping> nameMap;
 
+	private Integer inclusionThreshold;
+	
 	// maps for fast access
-	final Map<Integer,WholeNetworkAlter> wholeNetworkAlters;
-	final Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
+	Map<Integer,WholeNetworkAlter> wholeNetworkAlters;
+	Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
 
 	
 	public WholeNetwork(Study study, List<Interview> interviews,
-			List<NameMapping> nameMap) {
+			List<NameMapping> nameMap, Integer inclusionThreshold) {
 		super();
 		this.study = study;
 		this.interviews = interviews;
 		this.nameMap = nameMap;
+		this.inclusionThreshold = inclusionThreshold;
 	
 		wholeNetworkAlters = new HashMap<Integer,WholeNetworkAlter>();
 		wholeNetworkTies = new HashMap<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie>();
@@ -63,6 +68,17 @@ public class WholeNetwork {
 			alter.addOccurence(mapping);
 		}
 		
+		// remove WholeNetworkAlters that are not mentioned in enough interviews
+		Map<Integer,WholeNetworkAlter> remainingAlters = new HashMap<Integer,WholeNetworkAlter>();
+		for(Entry<Integer,WholeNetworkAlter> entry : wholeNetworkAlters.entrySet()) {
+			if(entry.getValue().getOccurences().size() < inclusionThreshold) {
+				// not mentioned often enough, so don't include
+			} else {
+				remainingAlters.put(entry.getKey(), entry.getValue());
+			}
+		}
+		wholeNetworkAlters = remainingAlters;
+		
 		// build all ties
 		for(Interview interview : interviews) {
 			
@@ -70,17 +86,21 @@ public class WholeNetwork {
 			
 			// tie the ego to all alters
 			Pair<WholeNetworkAlter,NameMapping> ego = findAlter(interview, -1);
-			for(int i = 0; i < interview.getAlterList().length; i++) {
-				Pair<WholeNetworkAlter,NameMapping> alter = findAlter(interview, i);
-				tie(ego, alter, null);
+			if(ego != null) {
+				for(int i = 0; i < interview.getAlterList().length; i++) {
+					Pair<WholeNetworkAlter,NameMapping> alter = findAlter(interview, i);
+					if(alter != null) {
+						tie(ego, alter, null);
+					}
+				}
 			}
-			
 
 			// tie adjacent alters together
 			Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				try {
+					// TODO: should skip building adjacency matrices for questions that never indicate adjacency
 					int [][] adj = interview.generateAdjacencyMatrix(q, false);
 					int [][] adjWeight = interview.generateAdjacencyMatrix(q, true);
 					
@@ -103,15 +123,17 @@ public class WholeNetwork {
 							Pair<WholeNetworkAlter,NameMapping> wholeAlter1 = findAlter(interview, i);
 							Pair<WholeNetworkAlter,NameMapping> wholeAlter2 = findAlter(interview, j);
 
-							if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
-								Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
-								wholeAlter1 = wholeAlter2;
-								wholeAlter2 = swap;
-							}
+							if(wholeAlter1 != null && wholeAlter2 != null) {
+								if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
+									Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
+									wholeAlter1 = wholeAlter2;
+									wholeAlter2 = swap;
+								}
 
-							// TODO: strength of tie, even if not adjacent
-							if(adjacent){
-								tie(wholeAlter1, wholeAlter2, q);
+								// TODO: strength of tie, even if not adjacent
+								if(adjacent){
+									tie(wholeAlter1, wholeAlter2, q);
+								}
 							}
 						}
 					}
@@ -133,8 +155,8 @@ public class WholeNetwork {
 					return new Pair<WholeNetworkAlter,NameMapping>(alter,mapping);
 			}
 		}
-		
-		throw new IllegalArgumentException("Alter did not exist -- it must have been derived from somewhere, so we *must* find it");
+		return null;
+		//throw new IllegalArgumentException("Alter did not exist -- it must have been derived from somewhere, so we *must* find it");
 	}
 
 	public Map<Integer, WholeNetworkAlter> getWholeNetworkAlters() {
