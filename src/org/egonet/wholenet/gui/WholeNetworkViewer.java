@@ -154,7 +154,7 @@ public class WholeNetworkViewer extends JFrame {
 					
 					AdjacencyWriter fw = new AdjacencyWriter(dataFile);
 					Pair<String[], int[][]> p = net.getAdjacencyMatrix();
-					fw.writeAdjacency(p.getSecond());
+					fw.writeAdjacency(p.getFirst(),p.getSecond());
 					fw.close();
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);
