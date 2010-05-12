@@ -190,7 +190,7 @@ public class WholeNetwork {
 		
 		String [] names = new String[size];
 		for(int i = 0; i < names.length; i++) {
-			names[i] = alterList.get(i).toString();
+			names[i] = alterList.get(i).getOccurences().get(0).toString();
 		}
 		
 		int [][] adj = new int[size][size];
