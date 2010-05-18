@@ -167,6 +167,9 @@ public class SummaryPanel extends JPanel
 			} catch (IOException ex)
 			{
 				logger.info("Failed to read " + thisIntFileName,ex);
+			} catch(Exception ex) {
+				throw new RuntimeException(
+						"Failed to generate statistics for "+intFile.getName(), ex);
 			}
 		
 			
