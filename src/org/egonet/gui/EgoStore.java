@@ -925,21 +925,13 @@ public class EgoStore {
 	}
 
 	public File interviewStatisticsFile(String istPath, String intFile) {
-		return (new File(istPath, intFile
-				.substring(0, intFile.lastIndexOf("."))
-				+ ".ist"));
+		return createFileWithNewEndingFromDot(istPath,intFile,".ist");
 	}
-
-	public File interviewMatrixFile(String istPath, String intFile) {
-		return (new File(istPath, intFile
-				.substring(0, intFile.lastIndexOf("."))
-				+ "_matrix.csv"));
-	}
-
-	public File interviewWeightedMatrixFile(String istPath, String intFile) {
-		return (new File(istPath, intFile
-				.substring(0, intFile.lastIndexOf("."))
-				+ "_weighted_matrix.csv"));
+	
+	private File createFileWithNewEndingFromDot(String path, String oldFileName, String newEnding) {
+		return (new File(path, oldFileName
+				.substring(0, oldFileName.lastIndexOf("."))
+				+ newEnding));
 	}
 
 	public void writeStatisticsFiles(Statistics stats, String[] egoName)
@@ -955,13 +947,18 @@ public class EgoStore {
 			File statFile = interviewStatisticsFile(statdir, name);
 			writeStatisticsFile(statFile, stats);
 
-			File adjFile = interviewMatrixFile(statdir, name);
+			File adjFile = createFileWithNewEndingFromDot(statdir,name,"_matrix.csv");
 			PrintWriter pwNA = new PrintWriter(adjFile);
 			stats.writeAdjacencyFile(pwNA, egoName, false);
 
-			File wadjFile = interviewWeightedMatrixFile(statdir, name);
+			File wadjFile = createFileWithNewEndingFromDot(statdir,name,"_weighted_matrix.csv");
 			PrintWriter pwAA = new PrintWriter(wadjFile);
 			stats.writeAdjacencyFile(pwAA, egoName, true);
+			
+			File asFile = createFileWithNewEndingFromDot(statdir,name,"_alter_summary.csv");
+			PrintWriter pwAS = new PrintWriter(asFile);
+			stats.writeAlterArray(pwAS);
+			pwAS.close();
 		}
 
 	}

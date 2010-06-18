@@ -235,7 +235,7 @@ public class StatisticsFrame extends JPanel {
 
 	void saveAlterSummary_actionPerformed(ActionEvent e) {
 		String[] name = egoClient.getInterview().getName();
-		String filename = name[0] + "_" + name[1] + "_Alter_Summary";
+		String filename = name[0] + "_" + name[1] + "_alter_summary";
 		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter("Alter Summary", "csv", filename);
 
 		try {
