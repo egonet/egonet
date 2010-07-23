@@ -256,9 +256,20 @@ public class ClientPanel
 				new File(egoClient.getStorage().getStudyFile().getParent(), 
 						"/Interviews/");
 			File outputCSV = fc.getSelectedFile();
-			new RawDataCSVWriter(egoClient.getStudy())
-			.writeFromInterviewDirectoryToFile(
-					interviewDirectory, outputCSV);
+			if(outputCSV != null) {
+				String path = outputCSV.getPath();
+				if( !(path == null || path.isEmpty() || path.endsWith("/") || 
+						path.endsWith("\\") || path.endsWith("."))) 
+				{
+					if(! path.toLowerCase().endsWith(".csv")) {
+						outputCSV = new File(path+".csv");
+					}
+					new RawDataCSVWriter(egoClient.getStudy())
+					.writeFromInterviewDirectoryToFile(
+							interviewDirectory, outputCSV);
+					
+				}
+			}
 		}
 	}
 
