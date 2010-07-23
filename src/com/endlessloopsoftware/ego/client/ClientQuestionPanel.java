@@ -708,7 +708,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			
 			// value starts at zero, so add one to compare to # alters needed
 			// TODO: make sure answer.getValue matches number of alters created
+			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			answer.setValue(7);
+			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
 			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
 			answer.answered = morePrompts || maxAlters;

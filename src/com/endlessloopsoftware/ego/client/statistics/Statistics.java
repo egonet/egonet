@@ -853,7 +853,7 @@ public class Statistics
         for (int i = 0; i < alterList.length; ++i)
         {
         	List<String> row = new ArrayList<String>();
-        	row.add(alterList[i]);
+        	row.add(FileHelpers.formatForCSV(alterList[i]));
             for (int j = 0; j < alterList.length; ++j)
             {
                 row.add(""+(weighted ? weightedAdjacencyMatrix[i][j] : adjacencyMatrix[i][j]));
