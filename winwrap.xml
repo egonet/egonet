@@ -1,0 +1,11 @@
+<launch4jConfig>
+	<headerType>gui</headerType>
+	<outfile>dist/Egonet.exe</outfile>
+	<jar>dist/Egonet.jar</jar>
+	<jre>
+		<minVersion>1.5.0</minVersion>
+		<initialHeapSize>256</initialHeapSize>
+		<maxHeapSize>512</maxHeapSize>
+		<maxHeapPercent>30</maxHeapPercent>
+	</jre>
+</launch4jConfig>

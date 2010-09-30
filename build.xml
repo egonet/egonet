@@ -92,10 +92,16 @@
 		<delete dir="${dir.dist.Egonet}" />
 	</target>
 
+	<property name="launch4j.dir" location="lib/launch4j" />
+	
+	<taskdef name="launch4j"
+		classname="net.sf.launch4j.ant.Launch4jTask"
+		classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+	
 	<target name="dist" depends="clean,jar" description="Create Windows-compatible executables from the built Jar files">
-		<taskdef name="jsmoothgen" classname="net.charabia.jsmoothgen.ant.JSmoothGen" classpath="${dir.lib.Enet}/jsmooth/jsmoothgen-ant.jar" />
-
-		<jsmoothgen project="Egonet.jsmooth" skeletonroot="lib/jsmooth/" />
+		
+		<launch4j configFile="winwrap.xml" />
+		
 		<move file="${dir.dist.Egonet}/Egonet.jar" tofile="${dir.dist.Egonet}/Egonet-${build.date}.jar"/>
 		<move file="${dir.dist.Egonet}/Egonet.exe" tofile="${dir.dist.Egonet}/Egonet-${build.date}.exe"/>
 
