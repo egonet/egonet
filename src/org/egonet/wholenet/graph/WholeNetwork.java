@@ -30,15 +30,15 @@ public class WholeNetwork {
 
 	final private static Logger logger = LoggerFactory.getLogger(WholeNetwork.class);
 	
-	final Study study;
-	final List<Interview> interviews;
-	final List<NameMapping> nameMap;
+	final private Study study;
+	final private List<Interview> interviews;
+	final private List<NameMapping> nameMap;
 
-	private Integer inclusionThreshold;
+	final private Integer inclusionThreshold;
 	
 	// maps for fast access
-	Map<Integer,WholeNetworkAlter> wholeNetworkAlters;
-	Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
+	private Map<Integer,WholeNetworkAlter> wholeNetworkAlters;
+	private Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
 
 	
 	public WholeNetwork(Study study, List<Interview> interviews,
@@ -99,47 +99,44 @@ public class WholeNetwork {
 			Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
-				try {
-					// TODO: should skip building adjacency matrices for questions that never indicate adjacency
-					int [][] adj = interview.generateAdjacencyMatrix(q, false);
-					int [][] adjWeight = interview.generateAdjacencyMatrix(q, true);
-					
-					// loop through adj
-					// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
+				if(q.determinesAdjacency()) {
+					try {
+						int [][] adj = interview.generateAdjacencyMatrix(q, false);
+						//int [][] adjWeight = interview.generateAdjacencyMatrix(q, true);
+						
+						// loop through adj
+						// if adj[i][j] == 1, thisInterviewAlters[i] && thisInterviewAlters[j] are adjacent in final matrix
+		
+						int alters = Math.min(adj.length,thisInterviewAlterlist.length);
+						for(int i = 0; i < alters; i++) {
+							for(int j = i+1; j < alters; j++) {
+								boolean adjacent = adj[i][j] == 1;
+								String alter1 = thisInterviewAlterlist[i];
+								String alter2 = thisInterviewAlterlist[j];
+								logger.debug(alter1 + "("+i+") and " + alter2 + "("+j+") are" +
+										(adjacent ? " " : " not ")+"adjacent");
 	
-					int alters = Math.min(adj.length,thisInterviewAlterlist.length);
-					for(int i = 0; i < alters; i++)
-					{
-						for(int j = i+1; j < alters; j++)
-						{
-							boolean adjacent = adj[i][j] == 1;
-							String alter1 = thisInterviewAlterlist[i];
-							String alter2 = thisInterviewAlterlist[j];
-							logger.debug(alter1 + "("+i+") and " + alter2 + "("+j+") are" +
-									(adjacent ? " " : " not ")+"adjacent");
-
-
-							// find whole network alters
-							Pair<WholeNetworkAlter,NameMapping> wholeAlter1 = findAlter(interview, i);
-							Pair<WholeNetworkAlter,NameMapping> wholeAlter2 = findAlter(interview, j);
-
-							if(wholeAlter1 != null && wholeAlter2 != null) {
-								if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
-									Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
-									wholeAlter1 = wholeAlter2;
-									wholeAlter2 = swap;
-								}
-
-								// TODO: strength of tie, even if not adjacent
-								if(adjacent){
-									tie(wholeAlter1, wholeAlter2, q);
+								// find whole network alters
+								Pair<WholeNetworkAlter,NameMapping> wholeAlter1 = findAlter(interview, i);
+								Pair<WholeNetworkAlter,NameMapping> wholeAlter2 = findAlter(interview, j);
+	
+								if(wholeAlter1 != null && wholeAlter2 != null) {
+									if(wholeAlter1.getFirst().compareTo(wholeAlter2.getFirst()) > 0) {
+										Pair<WholeNetworkAlter,NameMapping> swap = wholeAlter1;
+										wholeAlter1 = wholeAlter2;
+										wholeAlter2 = swap;
+									}
+	
+									// TODO: strength of tie, even if not adjacent
+									if(adjacent){
+										tie(wholeAlter1, wholeAlter2, q);
+									}
 								}
 							}
 						}
+					} catch (MissingPairException ex) {
+						logger.error("Couldn't create adjacency matrix for question " + q, ex);
 					}
-				}
-				catch (MissingPairException ex) {
-					logger.error("Couldn't create adjacency matrix for question " + q, ex);
 				}
 			}
 		}

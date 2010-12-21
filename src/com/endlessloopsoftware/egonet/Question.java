@@ -94,8 +94,19 @@ public class Question implements Cloneable {
 				}
 			}
 		}
-
 		return rval;
+	}
+	
+	/**
+	 * Does the answer to this question determine whether alters are adjacent?
+	 */
+	public boolean determinesAdjacency() {
+		for(Selection selection : getSelections()) {
+			if(selection.isAdjacent()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/***************************************************************************
