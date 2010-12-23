@@ -61,11 +61,9 @@ public class WholeNetworkViewer extends JFrame {
 		JMenuItem saveAdj = new JMenuItem(saveAdjAction);
 		fileMenu.add(saveAdj);
 
-		
 		JMenuBar mb = new JMenuBar();
 		mb.add(fileMenu);
 		setJMenuBar(mb);
-		
 		
 		SparseGraph<WholeNetworkAlter,WholeNetworkTie> graph = new SparseGraph<WholeNetworkAlter,WholeNetworkTie>();
 		
@@ -74,7 +72,7 @@ public class WholeNetworkViewer extends JFrame {
 			logger.info("Adding vertex " + alter);
 		}
 
-		for(WholeNetworkTie tie : net.getWholeNetworkTies().values()) {
+		for(WholeNetworkTie tie : net.getWholeNetworkTies()) {
 			graph.addEdge(tie, tie.getA(), tie.getB());
 			logger.info("Adding edge " + tie);
 		}

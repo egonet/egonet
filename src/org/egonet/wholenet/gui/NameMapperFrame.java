@@ -22,6 +22,8 @@ import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.graph.WholeNetwork;
+import org.egonet.wholenet.graph.WholeNetwork.Settings;
+import org.egonet.wholenet.graph.WholeNetworkTie.DiscrepancyStrategy;
 import org.egonet.wholenet.io.NameMappingReader;
 import org.egonet.wholenet.io.NameMappingWriter;
 import org.jdesktop.swingx.JXTable;
@@ -51,8 +53,6 @@ public class NameMapperFrame extends JFrame {
 	private final File studyFile;
 	
 	private final List<Pair<File, Interview>> interviewMap;
-	
-	private Integer inclusionThreshold = 1;
 	
 	public NameMapperFrame(Study study, File studyFile, List<File> mappableFiles) {
 		super("Whole Network - Alter Name Mapping Editor");
@@ -337,6 +337,53 @@ public class NameMapperFrame extends JFrame {
 		}
 	}
 	
+	private Settings settings = new Settings();
+	
+	private void editSettings(final Settings settings) {
+		JPanel panel = new JPanel(new MigLayout());
+
+		panel.add(new JLabel("In how many interviews must an alter be mentioned"),"span,grow");
+		panel.add(new JLabel("in order to be included in the whole network?"),"span,grow");
+		final JTextField inclusionField = new JTextField(5);
+		inclusionField.setText(settings.inclusionThreshold+"");
+		panel.add(inclusionField,"wrap");
+		
+		panel.add(new JSeparator(),"span,grow");
+		
+		panel.add(new JLabel("Alter tie discrepancies"),"wrap");
+		final ButtonGroup group = new ButtonGroup();
+		for(DiscrepancyStrategy strategy : DiscrepancyStrategy.values()) {
+			JRadioButton button = new JRadioButton(strategy.name()+" - "+strategy.getDescription());
+			button.setActionCommand(strategy.name());
+			group.add(button);
+			panel.add(button,"span,grow");
+			if(settings.discrepancyStrategy.equals(strategy)) {
+				button.setSelected(true);
+			}
+		}
+		
+		panel.add(new JSeparator(),"span,grow");
+		
+		final JFrame frame = new JFrame("Whole Network Analysis");
+		
+		panel.add(new JButton(new CatchingAction("Save") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				try {
+					settings.inclusionThreshold = Integer.parseInt(inclusionField.getText());
+				} catch(Exception ex) {
+					
+				}
+				settings.discrepancyStrategy = 
+					DiscrepancyStrategy.valueOf(group.getSelection().getActionCommand());
+				frame.dispose();
+			}
+		}));
+		
+		frame.setContentPane(panel);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
     private void build() {
 		final MapperTableModel model = new MapperTableModel();
 		final JXTable table = new JXTable(model);
@@ -421,22 +468,10 @@ public class NameMapperFrame extends JFrame {
 				}), 
 				"split, growx");
 		add(new JButton(
-				new CatchingAction("Inclusion threshold") {
+				new CatchingAction("Settings") {
 					@Override
 					public void safeActionPerformed(ActionEvent e) throws Exception {
-						String inclusionThresholdString = (String)
-							JOptionPane.showInputDialog(NameMapperFrame.this, 
-									"In how many interviews must an alter be mentioned " +
-									"in order to be included in the whole network?", 
-									"Inclusion threshold", JOptionPane.PLAIN_MESSAGE, 
-									null, 
-									null, 
-									inclusionThreshold+"");
-						try {
-							inclusionThreshold = Integer.parseInt(inclusionThresholdString);
-						} catch(Exception ex) {
-							
-						}
+						editSettings(settings);
 					}
 				}),
 				"split, growx");
@@ -459,7 +494,7 @@ public class NameMapperFrame extends JFrame {
 						
 						// do the whole network combination, and export/show it!
 						WholeNetwork net = 
-							new WholeNetwork(study, interviews, mappings, inclusionThreshold);
+							new WholeNetwork(study, interviews, mappings, settings);
 						net.recompile();
 						
 						viewer = new WholeNetworkViewer(study, studyFile, net);

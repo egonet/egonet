@@ -1,21 +1,11 @@
 package org.egonet.wholenet.graph;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 import net.sf.functionalj.tuple.Pair;
-import net.sf.functionalj.tuple.Triple;
-
-import org.egonet.wholenet.gui.NameMapperFrame.NameMapping;
-
-import com.endlessloopsoftware.egonet.Question;
 
 public class WholeNetworkTie {
 
 	private final WholeNetworkAlter a;
 	private final WholeNetworkAlter b;
-	private final List<Triple<NameMapping,NameMapping,Question>> ties;
 	
 	public WholeNetworkTie(Pair<WholeNetworkAlter,WholeNetworkAlter> tie) {
 		this(tie.getFirst(), tie.getSecond());
@@ -25,21 +15,45 @@ public class WholeNetworkTie {
 		super();
 		this.a = a.compareTo(b) < 0 ? a : b;
 		this.b = a.compareTo(b) < 0 ? b : a;
-		ties = new ArrayList<Triple<NameMapping,NameMapping,Question>>();
 	}
 	
-	public void addTie(NameMapping x,NameMapping y,Question q) {
-		if(x.compareTo(y) < 0)
-			addTie(new Triple<NameMapping,NameMapping,Question>(x,y,q));
-		else
-			addTie(new Triple<NameMapping,NameMapping,Question>(y,x,q));
+	private int tiedYes = 0;
+	private int tiedNo = 0;
+	
+	public void addEvidence(boolean isTied) {
+		if(isTied) {
+			tiedYes++;
+		} else {
+			tiedNo++;
+		}
 	}
 	
-	private void addTie(Triple<NameMapping,NameMapping,Question> o) {
-		if(!ties.contains(o))
-			ties.add(o);
+	public boolean isTied(DiscrepancyStrategy strategy) {
+		if(strategy.equals(DiscrepancyStrategy.Maximum)) {
+			return tiedYes > 0;
+		} else if(strategy.equals(DiscrepancyStrategy.Majority)) {
+			return tiedYes > tiedNo;
+		} else if(strategy.equals(DiscrepancyStrategy.Minimum)) {
+			return tiedYes > 0 && tiedNo < 1;
+		} else {
+			throw new RuntimeException("Unrecognized DiscrepancyStrategy: "+strategy);
+		}
 	}
-
+	
+	public static enum DiscrepancyStrategy {
+		Maximum("tie if any interviews say to tie"),
+		Majority("tie if more interviews say to tie than not to tie"),
+		Minimum("tie only when an interview says to tie and no interviews say not to tie");
+		
+		private final String description;
+		DiscrepancyStrategy(String description) {
+			this.description = description;
+		}
+		public String getDescription() {
+			return description;
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -77,9 +91,5 @@ public class WholeNetworkTie {
 
 	public WholeNetworkAlter getB() {
 		return b;
-	}
-	
-	public int numberOfTies() {
-		return ties.size();
 	}
 }

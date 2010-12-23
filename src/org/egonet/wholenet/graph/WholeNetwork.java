@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.wholenet.graph.WholeNetworkTie.DiscrepancyStrategy;
 import org.egonet.wholenet.gui.NameMapperFrame.NameMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
+import com.google.common.collect.Sets;
 
 /**
  * This class encapsulates everything necessary to compile and retain data from
@@ -33,26 +37,30 @@ public class WholeNetwork {
 	final private Study study;
 	final private List<Interview> interviews;
 	final private List<NameMapping> nameMap;
-
-	final private Integer inclusionThreshold;
 	
 	// maps for fast access
 	private Map<Integer,WholeNetworkAlter> wholeNetworkAlters;
 	private Map<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie> wholeNetworkTies;
 
+	private Settings settings;
 	
 	public WholeNetwork(Study study, List<Interview> interviews,
-			List<NameMapping> nameMap, Integer inclusionThreshold) {
+			List<NameMapping> nameMap, Settings settings) {
 		super();
 		this.study = study;
 		this.interviews = interviews;
 		this.nameMap = nameMap;
-		this.inclusionThreshold = inclusionThreshold;
+		this.settings = settings;
 	
 		wholeNetworkAlters = new HashMap<Integer,WholeNetworkAlter>();
 		wholeNetworkTies = new HashMap<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie>();
 	}
 
+	public static class Settings {
+		public Integer inclusionThreshold = 1;
+		public DiscrepancyStrategy discrepancyStrategy = DiscrepancyStrategy.Majority;
+	}
+	
 	public void recompile() {
 		wholeNetworkAlters.clear();
 		wholeNetworkTies.clear();
@@ -71,7 +79,7 @@ public class WholeNetwork {
 		// remove WholeNetworkAlters that are not mentioned in enough interviews
 		Map<Integer,WholeNetworkAlter> remainingAlters = new HashMap<Integer,WholeNetworkAlter>();
 		for(Entry<Integer,WholeNetworkAlter> entry : wholeNetworkAlters.entrySet()) {
-			if(entry.getValue().getOccurences().size() < inclusionThreshold) {
+			if(entry.getValue().getOccurences().size() < settings.inclusionThreshold) {
 				// not mentioned often enough, so don't include
 			} else {
 				remainingAlters.put(entry.getKey(), entry.getValue());
@@ -90,7 +98,7 @@ public class WholeNetwork {
 				for(int i = 0; i < interview.getAlterList().length; i++) {
 					Pair<WholeNetworkAlter,NameMapping> alter = findAlter(interview, i);
 					if(alter != null) {
-						tie(ego, alter, null);
+						tie(ego, alter, true);
 					}
 				}
 			}
@@ -128,9 +136,7 @@ public class WholeNetwork {
 									}
 	
 									// TODO: strength of tie, even if not adjacent
-									if(adjacent){
-										tie(wholeAlter1, wholeAlter2, q);
-									}
+									tie(wholeAlter1, wholeAlter2, adjacent);
 								}
 							}
 						}
@@ -160,11 +166,17 @@ public class WholeNetwork {
 		return wholeNetworkAlters;
 	}
 
-	public Map<Pair<WholeNetworkAlter, WholeNetworkAlter>, WholeNetworkTie> getWholeNetworkTies() {
-		return wholeNetworkTies;
+	public Set<WholeNetworkTie> getWholeNetworkTies() {
+		Set<WholeNetworkTie> ties = Sets.newHashSet();
+		for(WholeNetworkTie tie : wholeNetworkTies.values()) {
+			if(tie.isTied(settings.discrepancyStrategy)) {
+				ties.add(tie);
+			}
+		}
+		return ties;
 	}
 	
-	private void tie(Pair<WholeNetworkAlter,NameMapping> wholeAlter1, Pair<WholeNetworkAlter,NameMapping> wholeAlter2, Question q) {
+	private void tie(Pair<WholeNetworkAlter,NameMapping> wholeAlter1, Pair<WholeNetworkAlter,NameMapping> wholeAlter2,boolean isTied) {
 		
 		Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1.getFirst(), wholeAlter2.getFirst());
 			
@@ -174,7 +186,7 @@ public class WholeNetwork {
 		}
 		
 		WholeNetworkTie tieEntry = wholeNetworkTies.get(tieKey);
-		tieEntry.addTie(wholeAlter1.getSecond(), wholeAlter1.getSecond(), q);
+		tieEntry.addEvidence(isTied);
 	}
 	
 	public Pair<String[],int[][]> getAdjacencyMatrix() {
@@ -205,7 +217,7 @@ public class WholeNetwork {
 				Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1, wholeAlter2);
 				if(wholeNetworkTies.containsKey(tieKey)) {
 					WholeNetworkTie tie = wholeNetworkTies.get(tieKey);
-					adj[x][y] = tie.numberOfTies() > 0 ? 1 : 0;
+					adj[x][y] = tie.isTied(settings.discrepancyStrategy) ? 1 : 0;
 				}
 				else {
 					adj[x][y] = 0;
