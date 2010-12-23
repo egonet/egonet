@@ -34,6 +34,8 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 import net.miginfocom.swing.MigLayout;
+import net.sf.functionalj.Function2;
+import net.sf.functionalj.Function2Impl;
 import net.sf.functionalj.Functions;
 import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
@@ -44,6 +46,7 @@ import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class NameMapperFrame extends JFrame {
 
@@ -53,6 +56,8 @@ public class NameMapperFrame extends JFrame {
 	private final File studyFile;
 	
 	private final List<Pair<File, Interview>> interviewMap;
+	
+	private MapperTableModel tableModel;
 	
 	public NameMapperFrame(Study study, File studyFile, List<File> mappableFiles) {
 		super("Whole Network - Alter Name Mapping Editor");
@@ -194,6 +199,20 @@ public class NameMapperFrame extends JFrame {
 		private final Set<Long> alterQuestionIds;
 		private final Map<Triple<Long,String,Integer>,Answer> questionInterviewAlterToAnswer;
 		
+		public Map<String,String> 
+		attributesForInterviewAndAlterId(Interview interview,Integer alterId) {
+			Map<String,String> attributes = Maps.newTreeMap();
+			String interviewName = interview.toString();
+			for(Question question : alterQuestions) {
+				Answer answer = 
+					questionInterviewAlterToAnswer.get(
+							new Triple<Long,String,Integer>(
+									question.UniqueId,interviewName,alterId));
+				attributes.put(question.title, showAnswer(answer));
+			}
+			return attributes;
+		}
+		
 		public MapperTableModel() {
 			mappings = new ArrayList<NameMapping>();
 			alterQuestions = new ArrayList<Question>();
@@ -268,9 +287,13 @@ public class NameMapperFrame extends JFrame {
 							question.UniqueId,
 							row.getInterview().toString(),
 							row.alterNumber);
-				String result = questionInterviewAlterToAnswer.get(key)+"";
-				return result.equals("-1") || result.equals("null") ? "" : result;
+				return showAnswer(questionInterviewAlterToAnswer.get(key));
 			}
+		}
+		
+		private String showAnswer(Answer answer) {
+			String result = answer+"";
+			return result.equals("-1") || result.equals("null") ? "" : result;
 		}
 		
 		@Override
@@ -385,8 +408,8 @@ public class NameMapperFrame extends JFrame {
 	}
 	
     private void build() {
-		final MapperTableModel model = new MapperTableModel();
-		final JXTable table = new JXTable(model);
+		tableModel = new MapperTableModel();
+		final JXTable table = new JXTable(tableModel);
 		table.setSortable(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
@@ -418,7 +441,7 @@ public class NameMapperFrame extends JFrame {
 		Action automatchAction = new CatchingAction("Automatch") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				doDefaultSimilarity(model, 0.8f);
+				doDefaultSimilarity(tableModel, 0.8f);
 				table.repaint();
 			}
 		};
@@ -441,7 +464,7 @@ public class NameMapperFrame extends JFrame {
 						if(fc.showSaveDialog(NameMapperFrame.this) == 
 							JFileChooser.APPROVE_OPTION) 
 						{
-							new NameMappingWriter(model.getMappings())
+							new NameMappingWriter(tableModel.getMappings())
 							.writeToFile(fc.getSelectedFile());
 						}
 					}
@@ -462,7 +485,7 @@ public class NameMapperFrame extends JFrame {
 							JFileChooser.APPROVE_OPTION) 
 						{
 							new NameMappingReader(fc.getSelectedFile())
-							.applyTo(model.getMappings());
+							.applyTo(tableModel.getMappings());
 						}
 					}
 				}), 
@@ -487,15 +510,21 @@ public class NameMapperFrame extends JFrame {
 					@Override
 					public Object construct() {
 						
-						List<NameMapping> mappings = model.getMappings();
+						List<NameMapping> mappings = tableModel.getMappings();
 						
 						List<Interview> interviews = Lists.newArrayList(
 							Functions.map(new Pair<File,Interview>().second, interviewMap));
 						
+						Function2<Map<String,String>,Interview,Integer> getAlterAttributes = new Function2Impl<Map<String,String>,Interview,Integer>(){
+							public Map<String, String> call(
+									Interview interview, Integer alterId) {
+								return tableModel.attributesForInterviewAndAlterId(interview, alterId);
+							}
+						};
+						
 						// do the whole network combination, and export/show it!
 						WholeNetwork net = 
-							new WholeNetwork(study, interviews, mappings, settings);
-						net.recompile();
+							new WholeNetwork(study, interviews, mappings, settings, getAlterAttributes);
 						
 						viewer = new WholeNetworkViewer(study, studyFile, net);
 						return viewer;

@@ -4,6 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -21,8 +27,12 @@ import org.egonet.wholenet.graph.WholeNetworkTie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 import com.endlessloopsoftware.ego.client.graph.ELSFRLayout2;
 import com.endlessloopsoftware.egonet.Study;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -61,6 +71,10 @@ public class WholeNetworkViewer extends JFrame {
 		JMenuItem saveAdj = new JMenuItem(saveAdjAction);
 		fileMenu.add(saveAdj);
 
+		saveAlterAttributesCSVAction.setParent(this);
+		JMenuItem saveAlterAttributes = new JMenuItem(saveAlterAttributesCSVAction);
+		fileMenu.add(saveAlterAttributes);
+		
 		JMenuBar mb = new JMenuBar();
 		mb.add(fileMenu);
 		setJMenuBar(mb);
@@ -127,7 +141,7 @@ public class WholeNetworkViewer extends JFrame {
 			}
 		}
 	};
-	
+
 	final CatchingAction saveAdjAction = new CatchingAction("Save Adjacency Matrix") {
 		@Override
 		public void safeActionPerformed(ActionEvent e) throws Exception {
@@ -154,6 +168,68 @@ public class WholeNetworkViewer extends JFrame {
 					Pair<String[], int[][]> p = net.getAdjacencyMatrix();
 					fw.writeAdjacency(p.getFirst(),p.getSecond());
 					fw.close();
+				} catch (Exception e1) {
+					throw new RuntimeException(e1);
+				}
+				break;
+			}
+		}
+	};
+	
+	final CatchingAction saveAlterAttributesCSVAction = new CatchingAction("Save Alter Attributes") {
+		@Override
+		public void safeActionPerformed(ActionEvent e) throws Exception {
+			
+			String fileName;
+			fileName = study.getStudyName() + "_wholenetwork_nodes";
+			File currentDirectory = new File(studyFile.getParent()
+					+ "/Graphs");
+			currentDirectory.mkdir();
+
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setCurrentDirectory(currentDirectory);
+			fileChooser.setSelectedFile(new File(fileName + ".csv"));
+			fileChooser.setDialogTitle("Save Alter Attributes (CSV)");
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+			int returnValue = JFileChooser.APPROVE_OPTION;
+			while (returnValue == JFileChooser.APPROVE_OPTION) {
+				returnValue = fileChooser.showSaveDialog(parent);
+				File dataFile = fileChooser.getSelectedFile();
+				try {
+					if(dataFile != null) {
+						String path = dataFile.getAbsolutePath();
+						if(! path.endsWith(".csv")) {
+							path += ".csv";
+							dataFile = new File(path);
+						}
+						
+						FileWriter fw = new FileWriter(dataFile);
+						CSVWriter csv = new CSVWriter(fw);
+						
+						Set<String> questionSet = Sets.newHashSet();
+						for(WholeNetworkAlter alter : net.getWholeNetworkAlters().values()) {
+							questionSet.addAll(alter.getAttributes().keySet());
+						}
+						List<String> questionList = new ArrayList<String>(questionSet);
+						
+						List<String> heading = Lists.newArrayList("Name");
+						heading.addAll(questionList);
+						csv.writeNext(heading.toArray(new String[]{}));
+
+						for(WholeNetworkAlter alter : net.getWholeNetworkAlters().values()) {
+							ArrayList<String> row = Lists.newArrayList(alter.toString());
+							Map<String,String> answers = alter.getAttributes();
+							for(String question : questionList) {
+								String value = answers.get(question);
+								row.add(value == null ? "" : value);
+							}
+							csv.writeNext(row.toArray(new String[]{}));
+						}
+						
+						csv.flush();
+						fw.close();
+					}
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);
 				}

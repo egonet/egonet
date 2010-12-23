@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import net.sf.functionalj.Function2;
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.exceptions.MissingPairException;
@@ -45,15 +45,15 @@ public class WholeNetwork {
 	private Settings settings;
 	
 	public WholeNetwork(Study study, List<Interview> interviews,
-			List<NameMapping> nameMap, Settings settings) {
+			List<NameMapping> nameMap, Settings settings, 
+			Function2<Map<String,String>,Interview,Integer> getAlterAttributes) 
+	{
 		super();
 		this.study = study;
 		this.interviews = interviews;
 		this.nameMap = nameMap;
 		this.settings = settings;
-	
-		wholeNetworkAlters = new HashMap<Integer,WholeNetworkAlter>();
-		wholeNetworkTies = new HashMap<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie>();
+		build(getAlterAttributes);
 	}
 
 	public static class Settings {
@@ -61,9 +61,9 @@ public class WholeNetwork {
 		public DiscrepancyStrategy discrepancyStrategy = DiscrepancyStrategy.Majority;
 	}
 	
-	public void recompile() {
-		wholeNetworkAlters.clear();
-		wholeNetworkTies.clear();
+	public void build(Function2<Map<String,String>,Interview,Integer> getAlterAttributes) {
+		wholeNetworkAlters = new HashMap<Integer,WholeNetworkAlter>();
+		wholeNetworkTies = new HashMap<Pair<WholeNetworkAlter,WholeNetworkAlter>,WholeNetworkTie>();
 		
 		// add all alters
 		for(NameMapping mapping : nameMap) {
@@ -87,7 +87,16 @@ public class WholeNetwork {
 		}
 		wholeNetworkAlters = remainingAlters;
 		
-		// build all ties
+		// Set attributes for remaining alters
+		for(WholeNetworkAlter wholeNetworkAlter : wholeNetworkAlters.values()) {
+			for(NameMapping mapping : wholeNetworkAlter.getOccurences()) {
+				wholeNetworkAlter.addAttributes(
+						getAlterAttributes.call(
+								mapping.getInterview(), 
+								mapping.getAlterNumber()));
+			}
+		}
+		
 		for(Interview interview : interviews) {
 			
 			String [] thisInterviewAlterlist = interview.getAlterList();

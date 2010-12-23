@@ -4,6 +4,9 @@ import java.util.*;
 
 import org.egonet.wholenet.gui.NameMapperFrame.NameMapping;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Maps;
+
 public class WholeNetworkAlter implements Comparable<WholeNetworkAlter> {
 
 	private final Integer id;
@@ -59,5 +62,38 @@ public class WholeNetworkAlter implements Comparable<WholeNetworkAlter> {
 		if(occurences.size() <= 0)
 			return id.toString();
 		return occurences.get(0).toString() + " (" + id + ")";
+	}
+	
+	private Map<String,HashMultiset<String>> rawAttributes = Maps.newTreeMap();
+	
+	public void addAttributes(Map<String,String> attributes) {
+		for(String key : attributes.keySet()) {
+			HashMultiset<String> attribute = rawAttributes.get(key);
+			if(attribute == null) {
+				attribute = HashMultiset.create();
+				rawAttributes.put(key, attribute);
+			}
+			attribute.add(attributes.get(key));
+		}
+	}
+	
+	public Map<String,String> getAttributes() {
+		Map<String,String> results = Maps.newTreeMap();
+		for(String key : rawAttributes.keySet()) {
+			String bestValue = "";
+			Integer bestCount = 0;
+			HashMultiset<String> valueCounts = rawAttributes.get(key);
+			for(String value : valueCounts.elementSet()) {
+				Integer count = valueCounts.count(value);
+				if(count > bestCount || 
+						(count.equals(bestCount) && value.length() > bestValue.length()))
+				{
+					bestValue = value;
+					bestCount = count;
+				}
+			}
+			results.put(key, bestValue);
+		}
+		return results;
 	}
 }
