@@ -50,7 +50,7 @@ public class AdjacencyWriter extends FileWriter {
 	// Labels need to be just letters, numbers, dashes, and underscores. No spaces allowed.
 	private String stripLabel(String label) {
 		return label == null ? "" :
-			label.replaceAll("[^a-zA-Z_\\-0-9]", "");
+			label.replaceAll("[^a-zA-Z_\\-0-9]", "_");
 	}
 	
 	public void writeAdjacency(String[] labels, int [][] adj) throws IOException {

@@ -40,7 +40,11 @@ public class EdgeListWriter extends FileWriter {
 					String alter2 = thisInterviewAlterlist[j];
 					
 					// mark those as adjacent in the new big matrix
-					String line = ("\"" + alter1 + "\",\"" + alter2 + "\","+adj[i][j] +"\n");
+					String line = ("\"" + 
+							alter1.replaceAll("[^a-zA-Z_\\-0-9]", "_") 
+							+ "\",\"" + 
+							alter2.replaceAll("[^a-zA-Z_\\-0-9]", "_") 
+							+ "\","+adj[i][j] +"\n");
 					write(line);
 				}
 			}

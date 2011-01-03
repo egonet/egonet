@@ -121,7 +121,7 @@ public class WholeNetworkViewer extends JFrame {
 			JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setCurrentDirectory(currentDirectory);
 			fileChooser.setSelectedFile(new File(fileName + ".csv"));
-			fileChooser.setDialogTitle("Save Whole Network EdgeList");
+			fileChooser.setDialogTitle("Save Whole Network EdgeList (CSV)");
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 			int returnValue = JFileChooser.APPROVE_OPTION;
@@ -155,7 +155,7 @@ public class WholeNetworkViewer extends JFrame {
 			JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setCurrentDirectory(currentDirectory);
 			fileChooser.setSelectedFile(new File(fileName + ".csv"));
-			fileChooser.setDialogTitle("Save Whole Network EdgeList");
+			fileChooser.setDialogTitle("Save Whole Network Adjacency Matrix (CSV)");
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 			int returnValue = JFileChooser.APPROVE_OPTION;
@@ -218,7 +218,9 @@ public class WholeNetworkViewer extends JFrame {
 						csv.writeNext(heading.toArray(new String[]{}));
 
 						for(WholeNetworkAlter alter : net.getWholeNetworkAlters().values()) {
-							ArrayList<String> row = Lists.newArrayList(alter.toString());
+							ArrayList<String> row = 
+								Lists.newArrayList(
+										alter.getOccurences().get(0).toString().replaceAll("[^a-zA-Z_\\-0-9]", "_"));
 							Map<String,String> answers = alter.getAttributes();
 							for(String question : questionList) {
 								String value = answers.get(question);
