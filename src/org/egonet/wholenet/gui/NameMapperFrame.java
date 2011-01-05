@@ -1,6 +1,7 @@
 package org.egonet.wholenet.gui;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.Serializable;
@@ -441,8 +442,13 @@ public class NameMapperFrame extends JFrame {
 		Action automatchAction = new CatchingAction("Automatch") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				doDefaultSimilarity(tableModel, 0.8f);
-				table.repaint();
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Hourglass cursor
+				try {
+					doDefaultSimilarity(tableModel, 0.8f);
+					table.repaint();
+				} finally {
+					setCursor(Cursor.getDefaultCursor()); // Finished - back to normal cursor
+				}
 			}
 		};
 		JButton automatchButton = new JButton(automatchAction);
