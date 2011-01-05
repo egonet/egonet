@@ -16,6 +16,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.io.AdjacencyWriter;
@@ -119,6 +121,7 @@ public class WholeNetworkViewer extends JFrame {
 			currentDirectory.mkdir();
 
 			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Comma-Separated Values","csv"));
 			fileChooser.setCurrentDirectory(currentDirectory);
 			fileChooser.setSelectedFile(new File(fileName + ".csv"));
 			fileChooser.setDialogTitle("Save Whole Network EdgeList (CSV)");
@@ -129,11 +132,17 @@ public class WholeNetworkViewer extends JFrame {
 				returnValue = fileChooser.showSaveDialog(parent);
 				File dataFile = fileChooser.getSelectedFile();
 				try {
-					
-					EdgeListWriter fw = new EdgeListWriter(dataFile);
-					Pair<String[], int[][]> p = net.getAdjacencyMatrix();
-					fw.writeEdgelist(p.getFirst(), p.getSecond());
-					fw.close();
+					if(dataFile != null && ! dataFile.isDirectory()) {
+						String path = dataFile.getAbsolutePath();
+						if(! path.endsWith(".csv")) {
+							path += ".csv";
+							dataFile = new File(path);
+						}
+						EdgeListWriter fw = new EdgeListWriter(dataFile);
+						Pair<String[], int[][]> p = net.getAdjacencyMatrix();
+						fw.writeEdgelist(p.getFirst(), p.getSecond());
+						fw.close();
+					}
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);
 				}
@@ -153,6 +162,7 @@ public class WholeNetworkViewer extends JFrame {
 			currentDirectory.mkdir();
 
 			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Comma-Separated Values","csv"));
 			fileChooser.setCurrentDirectory(currentDirectory);
 			fileChooser.setSelectedFile(new File(fileName + ".csv"));
 			fileChooser.setDialogTitle("Save Whole Network Adjacency Matrix (CSV)");
@@ -163,11 +173,17 @@ public class WholeNetworkViewer extends JFrame {
 				returnValue = fileChooser.showSaveDialog(parent);
 				File dataFile = fileChooser.getSelectedFile();
 				try {
-					
-					AdjacencyWriter fw = new AdjacencyWriter(dataFile);
-					Pair<String[], int[][]> p = net.getAdjacencyMatrix();
-					fw.writeAdjacency(p.getFirst(),p.getSecond());
-					fw.close();
+					if(dataFile != null  && ! dataFile.isDirectory()) {
+						String path = dataFile.getAbsolutePath();
+						if(! path.endsWith(".csv")) {
+							path += ".csv";
+							dataFile = new File(path);
+						}
+						AdjacencyWriter fw = new AdjacencyWriter(dataFile);
+						Pair<String[], int[][]> p = net.getAdjacencyMatrix();
+						fw.writeAdjacency(p.getFirst(),p.getSecond());
+						fw.close();
+					}
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);
 				}
@@ -187,6 +203,7 @@ public class WholeNetworkViewer extends JFrame {
 			currentDirectory.mkdir();
 
 			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Comma-Separated Values","csv"));
 			fileChooser.setCurrentDirectory(currentDirectory);
 			fileChooser.setSelectedFile(new File(fileName + ".csv"));
 			fileChooser.setDialogTitle("Save Alter Attributes (CSV)");
@@ -197,7 +214,7 @@ public class WholeNetworkViewer extends JFrame {
 				returnValue = fileChooser.showSaveDialog(parent);
 				File dataFile = fileChooser.getSelectedFile();
 				try {
-					if(dataFile != null) {
+					if(dataFile != null && ! dataFile.isDirectory()) {
 						String path = dataFile.getAbsolutePath();
 						if(! path.endsWith(".csv")) {
 							path += ".csv";
