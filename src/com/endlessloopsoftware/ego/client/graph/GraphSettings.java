@@ -370,36 +370,34 @@ public class GraphSettings {
 							}
 
 						} else {
-							// do same for node property
+							// not edge? must be node.
 
-                            if (!propertyElement.getAttribute("color").equals(""))
-                            {
+                            if (!propertyElement.getAttribute("color").equals("")) {
                                 NodeProperty npColor = new NodeProperty();
 
                                 npColor.setColor(Color.decode(propertyElement.getAttribute("color")));
                                 npColor.setProperty(NodePropertyType.Color);
                                 renderer.addQAsettings(graphQuestion, npColor);
-                            }
-
-                            if (!propertyElement.getAttribute("size").equals(""))
-                            {
+                            } else if (!propertyElement.getAttribute("size").equals("")) {
                                 NodeProperty npSize = new NodeProperty();
                                 npSize.setSize(Integer.parseInt(propertyElement.getAttribute("size")));
                                 npSize.setProperty(NodePropertyType.Size);
 
                                 renderer.addQAsettings(graphQuestion, npSize);
-                            }
-
-                            if (!propertyElement.getAttribute("shape").equals(""))
-                            {
+                            } else if (!propertyElement.getAttribute("shape").equals("")) {
                                 NodeProperty npShape = new NodeProperty();
                                 npShape.setShapeFromString(propertyElement.getAttribute("shape"));
                                 npShape.setProperty(NodePropertyType.Shape);
 
                                 renderer.addQAsettings(graphQuestion, npShape);
+                            } else {
+                            	// If none of those, then label
+                            	NodeProperty npLabel = new NodeProperty();
+                            	npLabel.setProperty(NodePropertyType.Label);
+                            	npLabel.setLabel(graphQuestion.getSelection().getString());
+                            	renderer.addQAsettings(graphQuestion, npLabel);
                             }
 						}
-
 					}
 				}
 			}
