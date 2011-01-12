@@ -59,6 +59,7 @@ import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import edu.uci.ics.jung.visualization.util.VertexShapeFactory;
 
 public class GraphRenderer /*implements
@@ -230,6 +231,7 @@ public class GraphRenderer /*implements
 		
 		//this.setVertexStringer(this);
 		ctx.setVertexLabelTransformer(new VertexLabelTransformer());
+		visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
 
 		
 		visualizationViewerScrollPane = new GraphZoomScrollPane(
