@@ -5,6 +5,8 @@ import java.io.FileDescriptor;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.egonet.util.FileHelpers;
+
 public class EdgeListWriter extends FileWriter {
 
 	public EdgeListWriter(File file, boolean append) throws IOException {
@@ -41,9 +43,9 @@ public class EdgeListWriter extends FileWriter {
 					
 					// mark those as adjacent in the new big matrix
 					String line = ("\"" + 
-							alter1.replaceAll("[^a-zA-Z_\\-0-9]", "_") 
+							FileHelpers.formatForCSV(alter1) 
 							+ "\",\"" + 
-							alter2.replaceAll("[^a-zA-Z_\\-0-9]", "_") 
+							FileHelpers.formatForCSV(alter2) 
 							+ "\","+adj[i][j] +"\n");
 					write(line);
 				}
