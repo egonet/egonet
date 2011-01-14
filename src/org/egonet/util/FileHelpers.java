@@ -145,15 +145,10 @@ public class FileHelpers
      */
     public static String formatForCSV(String s)
     {
-    	String[] stringsToReplaceWithUnderscores = 
-    		new String[] {" ",",","\"","___","__"};
     	if(s == null) {
     		return null;
     	}
-    	for(String badString : stringsToReplaceWithUnderscores) {
-    		s = s.replaceAll(badString, "_");
-    	}
-        return "\""+s+"\"";
+    	return s.replaceAll("[^a-zA-Z_\\-0-9]+", "_");
     }
 
     /**

@@ -324,8 +324,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	void saveStudySummary_actionPerformed(ActionEvent e) {
 		String name = 
-			FileHelpers.formatForCSV(egoClient.getStudy().getStudyName())
-			.replaceAll("\"", "");
+			FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
 		String filename = name + "_Summary";
 		CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
 				"Study Summary", "csv", filename));
@@ -619,8 +618,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         	public void finished() {
         		if (! progressMonitor.isCanceled()) {
         			String name = 
-        				FileHelpers.formatForCSV(egoClient.getStudy().getStudyName())
-        				.replaceAll("\"", "");
+        				FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
         			String filename = name + "_Summary";
         			CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
         					"Study Summary", "csv", filename));

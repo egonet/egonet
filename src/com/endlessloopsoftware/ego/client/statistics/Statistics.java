@@ -845,7 +845,7 @@ public class Statistics
     	columnNames.add(name);
         for (int i = 0; i < alterList.length; ++i)
         {
-        	columnNames.add(alterList[i]);
+        	columnNames.add(FileHelpers.formatForCSV(alterList[i]));
         }
         w.writeNext(columnNames.toArray(new String[]{}));
 
