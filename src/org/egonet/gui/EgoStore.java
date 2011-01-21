@@ -19,6 +19,7 @@ import org.egonet.io.RTFWriter;
 import org.egonet.io.StatisticsFileWriter;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
+import org.egonet.io.VnaInterviewWriter;
 import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
@@ -959,6 +960,9 @@ public class EgoStore {
 			PrintWriter pwAS = new PrintWriter(asFile);
 			stats.writeAlterArray(pwAS);
 			pwAS.close();
+			
+			new VnaInterviewWriter(stats.getStudy(),stats.getInterview())
+			.write(createFileWithNewEndingFromDot(statdir,name,".vna"));
 		}
 
 	}
