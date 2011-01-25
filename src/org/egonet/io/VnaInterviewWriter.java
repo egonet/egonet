@@ -91,11 +91,8 @@ public class VnaInterviewWriter {
 		aphead.add("FROM TO");
 		for(Long qid : apQIds) {
 			Question question = questions.linkQuestions.get(qid);
-			if(InterviewDataWritingUtil.showableAsText(question)) {
-				aphead.add(sanitize(question.title+" text"));
-			}
 			if(InterviewDataWritingUtil.showableAsNumber(question)) {
-				aphead.add(sanitize(question.title+" value"));
+				aphead.add(sanitize(question.title));
 			}
 		}
 		pw.println(Joiner.on(" ").join(aphead));
@@ -111,11 +108,9 @@ public class VnaInterviewWriter {
 						answers.linkQuestionToAnswer.get(
 								new Triple<Long,Integer,Integer>(
 										qid,alterID1,alterID2));
-					if(InterviewDataWritingUtil.showableAsText(question)) {
-						rowData.add(sanitize(InterviewDataWritingUtil.showAsText(answer)));
-					}
 					if(InterviewDataWritingUtil.showableAsNumber(question)) {
-						rowData.add(sanitize(InterviewDataWritingUtil.showAsNumber(answer)+""));
+						Integer number = InterviewDataWritingUtil.showAsNumber(answer);
+						rowData.add((number == null ? 0 : number)+"");
 					}
 				}
 				pw.println(Joiner.on(" ").join(rowData));
