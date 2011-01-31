@@ -28,11 +28,18 @@ public class WholeNetworkTie {
 		}
 	}
 	
+	private boolean egoSaysTied = false;
+	
+	public void addEvidenceEgoSaysTied() {
+		egoSaysTied = true;
+		tiedYes++;
+	}
+	
 	public boolean isTied(DiscrepancyStrategy strategy) {
 		if(strategy.equals(DiscrepancyStrategy.Maximum)) {
 			return tiedYes > 0;
 		} else if(strategy.equals(DiscrepancyStrategy.Majority)) {
-			return tiedYes > tiedNo;
+			return egoSaysTied || tiedYes > tiedNo;
 		} else if(strategy.equals(DiscrepancyStrategy.Minimum)) {
 			return tiedYes > 0 && tiedNo < 1;
 		} else {
