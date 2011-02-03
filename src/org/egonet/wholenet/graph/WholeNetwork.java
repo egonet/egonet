@@ -58,6 +58,7 @@ public class WholeNetwork {
 
 	public static class Settings {
 		public Integer inclusionThreshold = 1;
+		public Boolean alwaysIncludeEgo = true;
 		public DiscrepancyStrategy discrepancyStrategy = DiscrepancyStrategy.Majority;
 	}
 	
@@ -80,8 +81,19 @@ public class WholeNetwork {
 		Map<Integer,WholeNetworkAlter> remainingAlters = new HashMap<Integer,WholeNetworkAlter>();
 		for(Entry<Integer,WholeNetworkAlter> entry : wholeNetworkAlters.entrySet()) {
 			if(entry.getValue().getOccurences().size() < settings.inclusionThreshold) {
-				// not mentioned often enough, so don't include
+				if(settings.alwaysIncludeEgo) {
+					boolean isEgo = false;
+					for(NameMapping occurrence : entry.getValue().getOccurences()) {
+						if(occurrence.getAlterNumber().equals(-1)) {
+							isEgo = true;
+						}
+					}
+					if(isEgo) {
+						remainingAlters.put(entry.getKey(), entry.getValue());
+					}
+				}
 			} else {
+				// Include alter only if mentioned in enough interviews.
 				remainingAlters.put(entry.getKey(), entry.getValue());
 			}
 		}

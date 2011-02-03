@@ -368,9 +368,19 @@ public class NameMapperFrame extends JFrame {
 
 		panel.add(new JLabel("In how many interviews must an alter be mentioned"),"span,grow");
 		panel.add(new JLabel("in order to be included in the whole network?"),"span,grow");
+		panel.add(new JLabel("(Ego is always included)"),"span,grow");
 		final JTextField inclusionField = new JTextField(5);
 		inclusionField.setText(settings.inclusionThreshold+"");
 		panel.add(inclusionField,"wrap");
+		
+		panel.add(new JSeparator(),"span,grow");
+		
+		final JCheckBox egoAlwaysIncludedField = 
+			new JCheckBox(
+					"Always include ego (otherwise ego not mentioned often " +
+					"enough is filtered as above)", 
+					settings.alwaysIncludeEgo);
+		panel.add(egoAlwaysIncludedField,"span,grow");
 		
 		panel.add(new JSeparator(),"span,grow");
 		
@@ -397,6 +407,7 @@ public class NameMapperFrame extends JFrame {
 				} catch(Exception ex) {
 					
 				}
+				settings.alwaysIncludeEgo = egoAlwaysIncludedField.isSelected();
 				settings.discrepancyStrategy = 
 					DiscrepancyStrategy.valueOf(group.getSelection().getActionCommand());
 				frame.dispose();
