@@ -40,14 +40,16 @@ public class EdgeListWriter extends FileWriter {
 					
 					String alter1 = thisInterviewAlterlist[i];
 					String alter2 = thisInterviewAlterlist[j];
-					
-					// mark those as adjacent in the new big matrix
-					String line = ("\"" + 
-							FileHelpers.formatForCSV(alter1) 
-							+ "\",\"" + 
-							FileHelpers.formatForCSV(alter2) 
-							+ "\","+adj[i][j] +"\n");
-					write(line);
+					int edgeValue = adj[i][j];
+					if(edgeValue != 0) { // Don't need to include edges that don't 
+						                 // represent a connection.
+						String line = ("\"" + 
+								FileHelpers.formatForCSV(alter1) 
+								+ "\",\"" + 
+								FileHelpers.formatForCSV(alter2) 
+								+ "\","+adj[i][j] +"\n");
+						write(line);
+					}
 				}
 			}
 		}
