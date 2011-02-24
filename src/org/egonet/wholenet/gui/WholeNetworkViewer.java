@@ -237,7 +237,7 @@ public class WholeNetworkViewer extends JFrame {
 						for(WholeNetworkAlter alter : net.getWholeNetworkAlters().values()) {
 							ArrayList<String> row = 
 								Lists.newArrayList(
-										alter.getOccurences().get(0).toString().replaceAll("[^a-zA-Z_\\-0-9]", "_"));
+										alter.getOccurences().get(0).toString().replaceAll("[^a-zA-Z_\\-0-9]+", "_"));
 							Map<String,String> answers = alter.getAttributes();
 							for(String question : questionList) {
 								String value = answers.get(question);
