@@ -42,6 +42,8 @@ public class WholeNetworkTie {
 			return egoSaysTied || tiedYes > tiedNo;
 		} else if(strategy.equals(DiscrepancyStrategy.Minimum)) {
 			return tiedYes > 0 && tiedNo < 1;
+		} else if(strategy.equals(DiscrepancyStrategy.EgoAlterTiesOnly)) {
+			return egoSaysTied;
 		} else {
 			throw new RuntimeException("Unrecognized DiscrepancyStrategy: "+strategy);
 		}
@@ -49,8 +51,9 @@ public class WholeNetworkTie {
 	
 	public static enum DiscrepancyStrategy {
 		Maximum("tie if any interviews say to tie"),
-		Majority("tie if more interviews say to tie than not to tie"),
-		Minimum("tie only when an interview says to tie and no interviews say not to tie");
+		Majority("tie if more interviews say to tie than not to tie, ego vote overrides"),
+		Minimum("tie only when an interview says to tie and no interviews say not to tie"),
+		EgoAlterTiesOnly("ignore alter pair tie question");
 		
 		private final String description;
 		DiscrepancyStrategy(String description) {

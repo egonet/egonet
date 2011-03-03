@@ -368,7 +368,6 @@ public class NameMapperFrame extends JFrame {
 
 		panel.add(new JLabel("In how many interviews must an alter be mentioned"),"span,grow");
 		panel.add(new JLabel("in order to be included in the whole network?"),"span,grow");
-		panel.add(new JLabel("(Ego is always included)"),"span,grow");
 		final JTextField inclusionField = new JTextField(5);
 		inclusionField.setText(settings.inclusionThreshold+"");
 		panel.add(inclusionField,"wrap");
