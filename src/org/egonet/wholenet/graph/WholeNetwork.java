@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import net.sf.functionalj.Function2;
 import net.sf.functionalj.tuple.Pair;
-import net.sf.functionalj.tuple.PairUni;
 
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.wholenet.graph.WholeNetworkTie.DiscrepancyStrategy;
