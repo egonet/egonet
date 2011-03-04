@@ -26,6 +26,7 @@ import org.egonet.util.CatchingAction;
 import org.egonet.wholenet.graph.WholeNetwork;
 import org.egonet.wholenet.graph.WholeNetworkAlter;
 import org.egonet.wholenet.graph.WholeNetworkTie;
+import org.egonet.wholenet.io.ConsensusDataWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +71,13 @@ public class WholeNetworkViewer extends JFrame {
 		fileMenu.add(saveEdgelist);
 		
 		saveAdjAction.setParent(this);
-		JMenuItem saveAdj = new JMenuItem(saveAdjAction);
-		fileMenu.add(saveAdj);
+		fileMenu.add(new JMenuItem(saveAdjAction));
 
 		saveAlterAttributesCSVAction.setParent(this);
-		JMenuItem saveAlterAttributes = new JMenuItem(saveAlterAttributesCSVAction);
-		fileMenu.add(saveAlterAttributes);
+		fileMenu.add(new JMenuItem(saveAlterAttributesCSVAction));
+		
+		saveConsensusAction.setParent(this);
+		fileMenu.add(new JMenuItem(saveConsensusAction));
 		
 		JMenuBar mb = new JMenuBar();
 		mb.add(fileMenu);
@@ -183,6 +185,43 @@ public class WholeNetworkViewer extends JFrame {
 						Pair<String[], int[][]> p = net.getAdjacencyMatrix();
 						fw.writeAdjacency(p.getFirst(),p.getSecond());
 						fw.close();
+					}
+				} catch (Exception e1) {
+					throw new RuntimeException(e1);
+				}
+				break;
+			}
+		}
+	};
+
+	final CatchingAction saveConsensusAction = new CatchingAction("Save Consensus Matrix") {
+		@Override
+		public void safeActionPerformed(ActionEvent e) throws Exception {
+			
+			String fileName;
+			fileName = study.getStudyName() + "_consensus_matrix";
+			File currentDirectory = new File(studyFile.getParent());
+			currentDirectory.mkdir();
+
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Comma-Separated Values","csv"));
+			fileChooser.setCurrentDirectory(currentDirectory);
+			fileChooser.setSelectedFile(new File(fileName + ".csv"));
+			fileChooser.setDialogTitle("Save Consensus Matrix (CSV)");
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+			int returnValue = JFileChooser.APPROVE_OPTION;
+			while (returnValue == JFileChooser.APPROVE_OPTION) {
+				returnValue = fileChooser.showSaveDialog(parent);
+				File dataFile = fileChooser.getSelectedFile();
+				try {
+					if(dataFile != null  && ! dataFile.isDirectory()) {
+						String path = dataFile.getAbsolutePath();
+						if(! path.endsWith(".csv")) {
+							path += ".csv";
+							dataFile = new File(path);
+						}
+						new ConsensusDataWriter(net).writeToFile(dataFile);
 					}
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);

@@ -1,5 +1,11 @@
 package org.egonet.wholenet.graph;
 
+import java.util.HashSet;
+
+import org.egonet.util.Name;
+
+import com.google.common.collect.Sets;
+
 import net.sf.functionalj.tuple.Pair;
 
 public class WholeNetworkTie {
@@ -14,25 +20,39 @@ public class WholeNetworkTie {
 	public WholeNetworkTie(WholeNetworkAlter a, WholeNetworkAlter b) {
 		super();
 		this.a = a.compareTo(b) < 0 ? a : b;
-		this.b = a.compareTo(b) < 0 ? b : a;
+		this.b = a.compareTo(b) < 0 ? b : a; 
+		//SetView view = Sets.intersection(new HashSet(), new HashSet());
 	}
 	
 	private int tiedYes = 0;
 	private int tiedNo = 0;
 	
-	public void addEvidence(boolean isTied) {
+	private HashSet<String> tiedYesSet = Sets.newHashSet();
+	private HashSet<String> tiedNoSet = Sets.newHashSet();
+	
+	public HashSet<String> tiedYes() {
+		return tiedYesSet;
+	}
+	public HashSet<String> tiedNo() {
+		return tiedNoSet;
+	}
+	
+	public void addEvidence(String[] reporter, boolean isTied) {
+		String reporterName = new Name(reporter[0],reporter[1]).toString();
 		if(isTied) {
 			tiedYes++;
+			tiedYesSet.add(reporterName);
 		} else {
 			tiedNo++;
+			tiedNoSet.add(reporterName);
 		}
 	}
 	
 	private boolean egoSaysTied = false;
 	
-	public void addEvidenceEgoSaysTied() {
+	public void addEvidenceEgoSaysTied(String[] reporter) {
 		egoSaysTied = true;
-		tiedYes++;
+		addEvidence(reporter,true);
 	}
 	
 	public boolean isTied(DiscrepancyStrategy strategy) {

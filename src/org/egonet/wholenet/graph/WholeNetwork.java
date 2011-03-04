@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import net.sf.functionalj.Function2;
 import net.sf.functionalj.tuple.Pair;
+import net.sf.functionalj.tuple.PairUni;
 
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.wholenet.graph.WholeNetworkTie.DiscrepancyStrategy;
@@ -119,7 +120,7 @@ public class WholeNetwork {
 				for(int i = 0; i < interview.getAlterList().length; i++) {
 					Pair<WholeNetworkAlter,NameMapping> alter = findAlter(interview, i);
 					if(alter != null) {
-						tie(ego, alter, true, true);
+						tie(ego, alter, interview.getName(), true, true);
 					}
 				}
 			}
@@ -157,7 +158,7 @@ public class WholeNetwork {
 									}
 	
 									// TODO: strength of tie, even if not adjacent
-									tie(wholeAlter1, wholeAlter2, adjacent,false);
+									tie(wholeAlter1, wholeAlter2, interview.getName(), adjacent,false);
 								}
 							}
 						}
@@ -197,7 +198,23 @@ public class WholeNetwork {
 		return ties;
 	}
 	
-	private void tie(Pair<WholeNetworkAlter,NameMapping> wholeAlter1, Pair<WholeNetworkAlter,NameMapping> wholeAlter2,boolean isTied, boolean egoReportingOnSelf) {
+	public WholeNetworkTie getTie(WholeNetworkAlter alter1, WholeNetworkAlter alter2) {
+		WholeNetworkTie tie1 = 
+			wholeNetworkTies.get(new PairUni<WholeNetworkAlter>(alter1,alter2));
+		if(tie1 != null) {
+			return tie1;
+		}
+		WholeNetworkTie tie2 = 
+			wholeNetworkTies.get(new PairUni<WholeNetworkAlter>(alter2,alter1));
+		if(tie2 != null) {
+			return tie2;
+		}
+		return null;
+	}
+	
+	private void tie(Pair<WholeNetworkAlter,NameMapping> wholeAlter1, Pair<WholeNetworkAlter,NameMapping> wholeAlter2,
+			String[] reporter, boolean isTied, boolean egoReportingOnSelf) 
+	{
 		
 		Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1.getFirst(), wholeAlter2.getFirst());
 			
@@ -208,9 +225,9 @@ public class WholeNetwork {
 		
 		WholeNetworkTie tieEntry = wholeNetworkTies.get(tieKey);
 		if(isTied && egoReportingOnSelf) {
-			tieEntry.addEvidenceEgoSaysTied();
+			tieEntry.addEvidenceEgoSaysTied(reporter);
 		} else {
-			tieEntry.addEvidence(isTied);
+			tieEntry.addEvidence(reporter, isTied);
 		}
 	}
 	
