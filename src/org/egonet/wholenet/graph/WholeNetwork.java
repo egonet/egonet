@@ -200,12 +200,12 @@ public class WholeNetwork {
 	
 	public WholeNetworkTie getTie(WholeNetworkAlter alter1, WholeNetworkAlter alter2) {
 		WholeNetworkTie tie1 = 
-			wholeNetworkTies.get(new PairUni<WholeNetworkAlter>(alter1,alter2));
+			wholeNetworkTies.get(new Pair<WholeNetworkAlter,WholeNetworkAlter>(alter1,alter2));
 		if(tie1 != null) {
 			return tie1;
 		}
 		WholeNetworkTie tie2 = 
-			wholeNetworkTies.get(new PairUni<WholeNetworkAlter>(alter2,alter1));
+			wholeNetworkTies.get(new Pair<WholeNetworkAlter,WholeNetworkAlter>(alter2,alter1));
 		if(tie2 != null) {
 			return tie2;
 		}
