@@ -55,11 +55,13 @@ public class WholeNetworkTie {
 		addEvidence(reporter,true);
 	}
 	
-	public boolean isTied(DiscrepancyStrategy strategy) {
-		if(strategy.equals(DiscrepancyStrategy.Maximum)) {
+	public boolean isTied(DiscrepancyStrategy strategy, boolean egoAlwaysTiedToOwn) {
+		if(egoAlwaysTiedToOwn && egoSaysTied) {
+			return true;
+		} else if(strategy.equals(DiscrepancyStrategy.Maximum)) {
 			return tiedYes > 0;
 		} else if(strategy.equals(DiscrepancyStrategy.Majority)) {
-			return egoSaysTied || tiedYes > tiedNo;
+			return tiedYes > tiedNo;
 		} else if(strategy.equals(DiscrepancyStrategy.Minimum)) {
 			return tiedYes > 0 && tiedNo < 1;
 		} else if(strategy.equals(DiscrepancyStrategy.EgoAlterTiesOnly)) {

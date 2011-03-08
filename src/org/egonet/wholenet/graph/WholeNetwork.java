@@ -59,6 +59,7 @@ public class WholeNetwork {
 	public static class Settings {
 		public Integer inclusionThreshold = 1;
 		public Boolean alwaysIncludeEgo = true;
+		public Boolean egoAlwaysTiedToOwnAlters = true;
 		public DiscrepancyStrategy discrepancyStrategy = DiscrepancyStrategy.Majority;
 	}
 	
@@ -190,7 +191,7 @@ public class WholeNetwork {
 	public Set<WholeNetworkTie> getWholeNetworkTies() {
 		Set<WholeNetworkTie> ties = Sets.newHashSet();
 		for(WholeNetworkTie tie : wholeNetworkTies.values()) {
-			if(tie.isTied(settings.discrepancyStrategy)) {
+			if(tie.isTied(settings.discrepancyStrategy,settings.egoAlwaysTiedToOwnAlters)) {
 				ties.add(tie);
 			}
 		}
@@ -258,7 +259,11 @@ public class WholeNetwork {
 				Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1, wholeAlter2);
 				if(wholeNetworkTies.containsKey(tieKey)) {
 					WholeNetworkTie tie = wholeNetworkTies.get(tieKey);
-					adj[x][y] = tie.isTied(settings.discrepancyStrategy) ? 1 : 0;
+					adj[x][y] = 
+						tie.isTied(
+								settings.discrepancyStrategy,
+								settings.egoAlwaysTiedToOwnAlters) 
+						? 1 : 0;
 				}
 				else {
 					adj[x][y] = 0;

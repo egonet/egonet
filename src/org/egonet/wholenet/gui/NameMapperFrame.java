@@ -394,6 +394,12 @@ public class NameMapperFrame extends JFrame {
 				button.setSelected(true);
 			}
 		}
+		final JCheckBox egoOverrideField =
+			new JCheckBox(
+					"Ego always connected to own alters " +
+					"(even if all other respondents disagree)",
+					settings.egoAlwaysTiedToOwnAlters);
+		panel.add(egoOverrideField,"span,grow");
 		
 		panel.add(new JSeparator(),"span,grow");
 		
@@ -409,6 +415,7 @@ public class NameMapperFrame extends JFrame {
 				settings.alwaysIncludeEgo = egoAlwaysIncludedField.isSelected();
 				settings.discrepancyStrategy = 
 					DiscrepancyStrategy.valueOf(group.getSelection().getActionCommand());
+				settings.egoAlwaysTiedToOwnAlters = egoOverrideField.isSelected();
 				frame.dispose();
 			}
 		}));
