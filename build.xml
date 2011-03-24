@@ -22,7 +22,6 @@
 		<fileset dir="${dir.lib.Enet}/jung" includes="*.jar" />
 	</path>
 
-
 	<!-- Compiling the Egoweb and Enet java Files -->
 	<target name="compile" description="compile the Enet source" depends="init">
 		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}" target="1.5">
@@ -51,19 +50,19 @@
 			<zipfileset src="${dir.lib.Enet}/clojure-contrib-1.2.0.jar" />
 			<zipfileset src="${dir.lib.Enet}/EXML.jar" />
 			<zipfileset src="${dir.lib.Enet}/forms-1.1.0.jar" />
-			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
-			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
-			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
-			<zipfileset src="${dir.lib.Enet}/miglayout-3.7-swing.jar" />
-			<zipfileset src="${dir.lib.Enet}/opencsv-1.8.jar" />
 			<zipfileset src="${dir.lib.Enet}/functionalj.jar" />
+			<zipfileset src="${dir.lib.Enet}/guava-r08.jar" />
 			<zipfileset src="${dir.lib.Enet}/iText-2.1.5.jar" />
 			<zipfileset src="${dir.lib.Enet}/iText-rtf-2.1.5.jar" />
-			<zipfileset src="${dir.lib.Enet}/swingx-0.9.7.jar" />
+			<zipfileset src="${dir.lib.Enet}/looks-2.1.4.jar" />
+			<zipfileset src="${dir.lib.Enet}/miglayout-3.7-swing.jar" />
+			<zipfileset src="${dir.lib.Enet}/opencsv-1.8.jar" />
 			<zipfileset src="${dir.lib.Enet}/simmetrics_jar_v1_6_2_d07_02_07.jar" />
 			<zipfileset src="${dir.lib.Enet}/slf4j-api-1.5.6.jar" />
 			<zipfileset src="${dir.lib.Enet}/slf4j-jdk14-1.5.6.jar" />
-			<zipfileset src="${dir.lib.Enet}/google-collect-1.0-rc2.jar" />
+			<zipfileset src="${dir.lib.Enet}/swing-layout-1.0.3.jar" />
+			<zipfileset src="${dir.lib.Enet}/swing-worker-1.1.jar" />
+			<zipfileset src="${dir.lib.Enet}/swingx-0.9.7.jar" />
 
 			<zipfileset src="${dir.lib.Enet}/jung/collections-generic-4.01.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/colt-1.2.0.jar" />
@@ -73,7 +72,6 @@
 			<zipfileset src="${dir.lib.Enet}/jung/jung-graph-impl-2.0-beta1.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/jung-io-2.0-beta1.jar" />
 			<zipfileset src="${dir.lib.Enet}/jung/jung-visualization-2.0-beta1.jar" />
-			
 		</jar>
 	</target>
 
@@ -86,7 +84,6 @@
 			<zipfileset dir="${dir.build.Egonet}" includes="**/*.class" />
 			<zipfileset dir="${dir.src.Egonet}" />
 			<zipfileset src="${dir.dist.Egonet}/Egonet-lib.jar" />
-
 		</jar>
 		<delete file="${dir.dist.Egonet}/Egonet-lib.jar"/>
 	</target>
@@ -103,7 +100,6 @@
 		classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
 	
 	<target name="dist" depends="clean,jar" description="Create Windows-compatible executables from the built Jar files">
-		
 		<launch4j configFile="winwrap.xml" />
 		
 		<move file="${dir.dist.Egonet}/Egonet.jar" tofile="${dir.dist.Egonet}/Egonet-${build.date}.jar"/>
