@@ -9,6 +9,7 @@
 	<!-- Global Properties-->
 	<property name="dir.lib.Enet" location="lib" />
 	<property name="dir.src.Egonet" location="src" />
+	<property name="dir.test.Egonet" location="test" />
 	<property name="dir.build.Egonet" location="build" />
 	<property name="dir.dist.Egonet" location="dist" />
 
@@ -20,18 +21,34 @@
 		<pathelement location="${dir.build.Egonet}" />
 		<fileset dir="${dir.lib.Enet}" includes="*.jar" />
 		<fileset dir="${dir.lib.Enet}/jung" includes="*.jar" />
+		<fileset dir="${dir.lib.Enet}/fest-swing-1.0b1" includes="*.jar" />
 	</path>
 
+	<!-- Testing -->
+	<target name="test" depends="compile" description="Run all tests after building from scratch">
+		<junit printsummary="withOutAndErr" haltonfailure="yes" showoutput="true">
+			<classpath refid="classpath.project.Egonet" />
+			<formatter type="plain" usefile="false" />
+			<batchtest fork="yes">
+				<fileset dir="${dir.build.Egonet}">
+					<include name="org/egonet/test/**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
 	<!-- Compiling the Egoweb and Enet java Files -->
 	<target name="compile" description="compile the Enet source" depends="init">
 		<javac srcdir="${dir.src.Egonet}" destdir="${dir.build.Egonet}" target="1.5">
+			<classpath refid="classpath.project.Egonet" />
+		</javac>
+		<javac srcdir="${dir.test.Egonet}" destdir="${dir.build.Egonet}" target="1.5">
 			<classpath refid="classpath.project.Egonet" />
 		</javac>
 	</target>
 
 	<!-- Creat a build folder to put the class files-->
 	<target name="init">
-
 		<tstamp>
 			<format property="build.date" pattern="yyyy-MM-dd"/>
 		</tstamp>
