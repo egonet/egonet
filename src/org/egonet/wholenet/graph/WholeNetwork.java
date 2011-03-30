@@ -241,7 +241,7 @@ public class WholeNetwork {
 		
 		String [] names = new String[size];
 		for(int i = 0; i < names.length; i++) {
-			names[i] = alterList.get(i).getOccurences().get(0).toString();
+			names[i] = alterList.get(i).getId()+"";
 		}
 		
 		int [][] adj = new int[size][size];
