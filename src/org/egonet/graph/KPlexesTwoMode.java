@@ -58,7 +58,8 @@ public class KPlexesTwoMode<N> {
 		}
 		return highest;
 	}
-	public Set<N> meetConnectednessThreshold(Map<N,Set<N>> graph, Integer threshold) {
+	public Set<N> meetConnectednessThreshold(Map<N,Set<N>> graph, Integer k, Integer targetSize) {
+		Integer threshold = targetSize - k;
 		Set<N> result = Sets.newHashSet();
 		Map<N,Integer> connectedness = connectednessByNode(graph);
 		for(N n : graph.keySet()) {
@@ -102,18 +103,6 @@ public class KPlexesTwoMode<N> {
 			}
 		}
 		Set<N> criticalNodes = criticalNodesInKPlex(graph, mode1, kplex, k);
-		if(criticalNodes.isEmpty()) {
-			Map<N,Integer> connectionsWithinKPlex = connectionsWithinSubgroup(graph,kplex);
-			Set<N> neighbors = Sets.newHashSet();
-			for(N n : graph.keySet()) {
-				if(connectionsWithinKPlex.get(n) > 0) {
-					neighbors.add(n);
-				}
-			}
-			neighbors.removeAll(kplex);
-			Set<N> result = Sets.difference(neighbors,kplex);
-			return result;
-		}
 		Set<N> outsideKPlex = Sets.difference(graph.keySet(),kplex);
 		Set<N> mode1Eligible = Sets.intersection(mode1, outsideKPlex);
 		Set<N> mode2Eligible = Sets.difference(outsideKPlex, mode1Eligible);
@@ -135,13 +124,23 @@ public class KPlexesTwoMode<N> {
 		}
 		return subgraph;
 	}
+	public Set<N> neighborsOfSubgroup(Map<N,Set<N>> graph, Set<N> subgroup) {
+		Map<N,Integer> connections = connectionsWithinSubgroup(graph, subgroup);
+		Set<N> results = Sets.newHashSet();
+		for(N n : graph.keySet()) {
+			if(connections.get(n) > 0 && !subgroup.contains(n)) {
+				results.add(n);
+			}
+		}
+		return results;
+	}
 	public Map<N,Set<N>> subgraphBoundingFinalKPlex(
 			Map<N,Set<N>> graph, Set<N> mode1, Set<N> kplex, Integer k, Integer targetSize)
 	{
 		Set<N> includeInSubgraph =
 			Sets.union(kplex,
 					Sets.intersection(
-							meetConnectednessThreshold(graph,targetSize-k), 
+							meetConnectednessThreshold(graph,k,targetSize), 
 							nodesThatCanBeAddedToKPlex(graph,mode1,kplex,k)));
 		return createSubgraph(graph,includeInSubgraph);
 	}
@@ -151,11 +150,14 @@ public class KPlexesTwoMode<N> {
 		Map<N,Integer> connectedness = connectednessByNode(graph);
 		Map<N,Integer> connectionsWithinKPlex = connectionsWithinSubgroup(graph,kplex);
 		Set<N> addable = nodesThatCanBeAddedToKPlex(graph, mode1, kplex, k);
+		if(!kplex.isEmpty()) {
+			addable = Sets.intersection(addable, neighborsOfSubgroup(graph,kplex));
+		}
 		Integer alreadyInMode1 = Sets.intersection(mode1, kplex).size();
 		Integer alreadyInMode2 = kplex.size()-alreadyInMode1;
 		for(N n : addable) {
-			Integer score = connectedness.get(n) + connectionsWithinKPlex.get(n)
-				+ (mode1.contains(n) ? alreadyInMode2 : alreadyInMode1);
+			Integer score = connectedness.get(n) + 5*connectionsWithinKPlex.get(n)
+				+ 5*(mode1.contains(n) ? alreadyInMode2 : alreadyInMode1);
 			if(score > highScore) {
 				highScore = score;
 				choice = n;
@@ -182,7 +184,7 @@ public class KPlexesTwoMode<N> {
 			targetSize > mostInSmallMode; 
 			targetSize--)
 		{
-			Set<N> seeds = meetConnectednessThreshold(graph, targetSize-k);
+			Set<N> seeds = meetConnectednessThreshold(graph, k, targetSize);
 			Map<N,Set<N>> boundedGraph = createSubgraph(graph,seeds);
 			for(N seed : seeds) {
 				Set<N> kplex = Sets.newHashSet();

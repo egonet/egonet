@@ -107,6 +107,16 @@ public class KPlexesTwoModeTest {
 	}
 	
 	@Test
+	public void testMeetConnectednessThreshold() {
+		Set<Integer> kPlex = intSet(1,3,4,7,9,10);
+		Set<Integer> notConnectedEnough =
+			Sets.difference(kPlex, kp.meetConnectednessThreshold(exampleGraph(), 1, 3));
+		assertTrue("Members of 1-plex are sufficiently connected to be in 1-plex. " +
+				"So why did these fail: "+notConnectedEnough,
+				notConnectedEnough.isEmpty());
+	}
+	
+	@Test
 	public void testCriticalNodes() {
 		assertEquals("All nodes are critical in a 1-plex.",
 				intSet(7),
@@ -134,16 +144,36 @@ public class KPlexesTwoModeTest {
 						exampleMode1(),
 						intSet(1,3,7,9,10),
 						0));
+		Set<Integer> kPlex = intSet(1,3,4,7,9,10);
+
+		for(Integer i : kPlex) {
+			Set<Integer> canBeAdded = 
+				kp.nodesThatCanBeAddedToKPlex(exampleGraph(), exampleMode1(), intSet(i), 1);
+			Set<Integer> nonAddableMembers = Sets.difference(kPlex, Sets.union(canBeAdded,intSet(i)));
+			assertTrue(nonAddableMembers+" can't be added to "+i+" but are part of same 1-plex "+kPlex,
+					nonAddableMembers.isEmpty());
+		}
 	}
 	
 	@Test
-	public void testSubgraphBoundingFinalKPlex() {
+	public void testSubgraphBoundingFinalClique() {
 		Set<Integer> finalKPlex = intSet(1,4,7,10);
 		Map<Integer,Set<Integer>> subgraph = 
 			kp.subgraphBoundingFinalKPlex(exampleGraph(), exampleMode1(), intSet(1), 0, 2);
 		Set<Integer> boundsKPlex = subgraph.keySet();
 		assertTrue(boundsKPlex+" should bound "+finalKPlex+" (full graph is "+subgraph+")",
 				boundsKPlex.containsAll(finalKPlex));
+	}
+	@Test
+	public void testSubgraphBoundingFinalKPlex() {
+		Set<Integer> finalKPlex = intSet(1,3,4,7,9,10);
+		for(Integer i : finalKPlex) {
+			Map<Integer,Set<Integer>> subgraph = 
+				kp.subgraphBoundingFinalKPlex(exampleGraph(), exampleMode1(), intSet(i), 1, 3);
+			Set<Integer> boundsKPlex = subgraph.keySet();
+			assertTrue(boundsKPlex+" grown from "+i+" should bound "+finalKPlex,
+					boundsKPlex.containsAll(finalKPlex));
+		}
 	}
 	
 	@Test
