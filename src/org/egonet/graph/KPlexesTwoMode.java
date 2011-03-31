@@ -114,7 +114,16 @@ public class KPlexesTwoMode<N> {
 				mode1Eligible = Sets.intersection(mode1Eligible, graph.get(n));
 			}
 		}
-		Set<N> result = Sets.union(mode1Eligible, mode2Eligible);
+		Set<N> result = Sets.newHashSet();
+		Map<N,Integer> connections = connectionsWithinSubgroup(graph,kplex);
+		Integer kplexMode1Size = Sets.intersection(kplex, mode1).size();
+		Integer kplexMode2Size = kplex.size()-kplexMode1Size;
+		for(N n : Sets.union(mode1Eligible, mode2Eligible)) {
+			if(connections.get(n) > (mode1.contains(n) ? kplexMode2Size : kplexMode1Size)-k-1)
+			{
+				result.add(n);
+			}
+		}
 		return result;
 	}
 	public Map<N,Set<N>> createSubgraph(Map<N,Set<N>> graph, Set<N> nodes) {
