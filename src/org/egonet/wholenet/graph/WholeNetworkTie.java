@@ -2,8 +2,6 @@ package org.egonet.wholenet.graph;
 
 import java.util.HashSet;
 
-import org.egonet.util.Name;
-
 import com.google.common.collect.Sets;
 
 import net.sf.functionalj.tuple.Pair;
@@ -27,32 +25,35 @@ public class WholeNetworkTie {
 	private int tiedYes = 0;
 	private int tiedNo = 0;
 	
-	private HashSet<String> tiedYesSet = Sets.newHashSet();
-	private HashSet<String> tiedNoSet = Sets.newHashSet();
+	private HashSet<Integer> tiedYesSet = Sets.newHashSet();
+	private HashSet<Integer> tiedNoSet = Sets.newHashSet();
 	
-	public HashSet<String> tiedYes() {
+	public HashSet<Integer> tiedYes() {
 		return tiedYesSet;
 	}
-	public HashSet<String> tiedNo() {
+	public HashSet<Integer> tiedNo() {
 		return tiedNoSet;
 	}
 	
-	public void addEvidence(String[] reporter, boolean isTied) {
-		String reporterName = new Name(reporter[0],reporter[1]).toString();
+	public void addEvidence(Integer reporterMappingId, boolean isTied) {
 		if(isTied) {
 			tiedYes++;
-			tiedYesSet.add(reporterName);
+			if(reporterMappingId != null) {
+				tiedYesSet.add(reporterMappingId);
+			}
 		} else {
 			tiedNo++;
-			tiedNoSet.add(reporterName);
+			if(reporterMappingId != null) {
+				tiedNoSet.add(reporterMappingId);
+			}
 		}
 	}
 	
 	private boolean egoSaysTied = false;
 	
-	public void addEvidenceEgoSaysTied(String[] reporter) {
+	public void addEvidenceEgoSaysTied(Integer reporterMappingId) {
 		egoSaysTied = true;
-		addEvidence(reporter,true);
+		addEvidence(reporterMappingId,true);
 	}
 	
 	public boolean isTied(DiscrepancyStrategy strategy, boolean egoAlwaysTiedToOwn) {

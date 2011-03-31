@@ -41,7 +41,6 @@ public class KPlexesTwoModeTest {
 	
 	@SuppressWarnings("unchecked")
 	private Map<Integer,Set<Integer>> exampleGraph() {
-		intGraphItem(1,2,3);
 		return intGraph(
 				intGraphItem(1,  7,8,9,10),
 				intGraphItem(2,  10),
@@ -62,6 +61,30 @@ public class KPlexesTwoModeTest {
 		results.add(intSet(1,3,4,7,10));
 		results.add(intSet(1,3,7,9,10));
 		return results;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Integer,Set<Integer>> example2Graph() {
+		return intGraph(
+				intGraphItem(1,  6,7,8,9,10),
+				intGraphItem(2,  6,7,8,  10),
+				intGraphItem(3,  6,7,8,  10),
+				intGraphItem(4,  6,7,8,9,10),
+				intGraphItem(5,  6,7,  9,10),
+				intGraphItem(6,  1,2,3,4,5),
+				intGraphItem(7,  1,2,3,4,5),
+				intGraphItem(8,  1,2,3,4  ),
+				intGraphItem(9,  1,    4,5),
+				intGraphItem(10, 1,2,3,4,5));
+	}
+	private Set<Integer> example2Mode1() {
+		return intSet(1,2,3,4,5);
+	}
+	private Set<Integer> example2OnePlex() {
+		return intSet(1,2,3,4,5,6,7,8,10);
+	}
+	private Integer example2outlier() {
+		return 9;
 	}
 
 	@Test
@@ -153,6 +176,8 @@ public class KPlexesTwoModeTest {
 			assertTrue(nonAddableMembers+" can't be added to "+i+" but are part of same 1-plex "+kPlex,
 					nonAddableMembers.isEmpty());
 		}
+		assertEquals("Can't add one more element to 1-plex "+example2OnePlex()+" in graph "+example2Graph(),
+				intSet(),kp.nodesThatCanBeAddedToKPlex(example2Graph(), example2Mode1(), example2OnePlex(), 1));
 	}
 	
 	@Test
@@ -202,7 +227,14 @@ public class KPlexesTwoModeTest {
 	public void testKPlexSearch() {
 		assertEquals("Looks like the largest 1-plex is {1,3,4,7,9,10}.",
 				intSet(1,3,4,7,9,10),kp.findLargeKPlex(exampleGraph(), exampleMode1(), 1));
-		// XXX: Found {1,7,8,9,10}, which is a bit smaller than the largest.
+	}
+	
+	@Test
+	public void testMaxMissingEdgesPerNodeInSubgroup() {
+		assertEquals("Known 1-plex has at most one missing edge per node",
+				1, 
+				kp.maxMissingEdgesPerNodeInSubgroup(exampleGraph(),exampleMode1(),
+						intSet(1,3,4,7,9,10)));
 	}
 
 	public static junit.framework.Test suite() {

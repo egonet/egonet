@@ -120,7 +120,7 @@ public class WholeNetwork {
 				for(int i = 0; i < interview.getAlterList().length; i++) {
 					Pair<WholeNetworkAlter,NameMapping> alter = findAlter(interview, i);
 					if(alter != null) {
-						tie(ego, alter, interview.getName(), true, true);
+						tie(ego, alter, ego.getFirst().getId(), true, true);
 					}
 				}
 			}
@@ -158,7 +158,9 @@ public class WholeNetwork {
 									}
 	
 									// TODO: strength of tie, even if not adjacent
-									tie(wholeAlter1, wholeAlter2, interview.getName(), adjacent,false);
+									tie(wholeAlter1, wholeAlter2, 
+											ego == null ? null : ego.getFirst().getId(), 
+											adjacent,false);
 								}
 							}
 						}
@@ -213,7 +215,7 @@ public class WholeNetwork {
 	}
 	
 	private void tie(Pair<WholeNetworkAlter,NameMapping> wholeAlter1, Pair<WholeNetworkAlter,NameMapping> wholeAlter2,
-			String[] reporter, boolean isTied, boolean egoReportingOnSelf) 
+			Integer reporterMappingId, boolean isTied, boolean egoReportingOnSelf) 
 	{
 		
 		Pair<WholeNetworkAlter, WholeNetworkAlter> tieKey = new Pair<WholeNetworkAlter,WholeNetworkAlter>(wholeAlter1.getFirst(), wholeAlter2.getFirst());
@@ -225,9 +227,9 @@ public class WholeNetwork {
 		
 		WholeNetworkTie tieEntry = wholeNetworkTies.get(tieKey);
 		if(isTied && egoReportingOnSelf) {
-			tieEntry.addEvidenceEgoSaysTied(reporter);
+			tieEntry.addEvidenceEgoSaysTied(reporterMappingId);
 		} else {
-			tieEntry.addEvidence(reporter, isTied);
+			tieEntry.addEvidence(reporterMappingId, isTied);
 		}
 	}
 	

@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -53,12 +54,15 @@ public class WholeNetworkViewer extends JFrame {
 	
 	final private File studyFile;
 	final private Study study;
+	
+	final private WholeNetworkViewer self;
 
 	public WholeNetworkViewer(Study study, File studyFile, WholeNetwork net) throws HeadlessException {
 		super("Whole Network Output");
 		this.study = study;
 		this.studyFile = studyFile;
 		this.net = net;
+		this.self = this;
 		build();
 	}
 	
@@ -221,7 +225,22 @@ public class WholeNetworkViewer extends JFrame {
 							path += ".csv";
 							dataFile = new File(path);
 						}
-						new ConsensusDataWriter(net).writeToFile(dataFile);
+						Integer missingAllowed = 2;
+						String missingString = (String)
+							JOptionPane.showInputDialog(self,
+									"How many alters can a reporter not report on?" +
+										"\n    (Enter a number)",
+									"Allowed missing values - filled in randomly",
+									JOptionPane.PLAIN_MESSAGE,
+									null,null,missingAllowed+"");
+						try {
+							missingAllowed = Integer.parseInt(missingString);
+						} catch(Exception ex) {
+							JOptionPane.showMessageDialog(self, "Didn't understand how many alters a reporter is allowed to not report on."+
+									"\nFalling back on default value of "+missingAllowed+".");
+						}
+						String msg = new ConsensusDataWriter(net,missingAllowed).writeToFile(dataFile);
+						JOptionPane.showMessageDialog(self, msg);
 					}
 				} catch (Exception e1) {
 					throw new RuntimeException(e1);

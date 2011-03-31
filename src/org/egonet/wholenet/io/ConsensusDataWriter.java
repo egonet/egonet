@@ -5,8 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
+import org.egonet.graph.KPlexesTwoMode;
 import org.egonet.wholenet.graph.WholeNetwork;
 import org.egonet.wholenet.graph.WholeNetworkAlter;
 import org.egonet.wholenet.graph.WholeNetworkTie;
@@ -24,10 +26,13 @@ public class ConsensusDataWriter {
 	final private static Logger logger = LoggerFactory.getLogger(ConsensusDataWriter.class);
 	
 	WholeNetwork net;
-	public ConsensusDataWriter(WholeNetwork net) {
+	Integer allowedMissingEdgesPerNode;
+	public ConsensusDataWriter(WholeNetwork net, Integer allowedMissingEdgesPerNode) {
 		this.net = net;
+		this.allowedMissingEdgesPerNode = allowedMissingEdgesPerNode;
 	}
-	public void writeToFile(File file) throws IOException {
+	@SuppressWarnings("unchecked")
+	public String writeToFile(File file) throws IOException {
 		Set<WholeNetworkAlter> allAlters = 
 			Sets.newHashSet(net.getWholeNetworkAlters().values());
 		
@@ -38,11 +43,11 @@ public class ConsensusDataWriter {
 		Integer numUntied = 0;
 		Integer numTiedWithoutVotes = 0;
 		
-		Map<WholeNetworkAlter,Set<String>> 
+		Map<WholeNetworkAlter,Set<Integer>> 
 		reportersByAlter = Maps.newHashMap();
-		Set<String> allReporters = Sets.newHashSet();
+		Set<Integer> allReporters = Sets.newHashSet();
 		for(WholeNetworkAlter alter1 : allAlters) {
-			Set<String> alter1reporters = Sets.newHashSet();
+			Set<Integer> alter1reporters = Sets.newHashSet();
 			for(WholeNetworkAlter alter2 : allAlters) {
 				if(! alter1.equals(alter2)) {
 					WholeNetworkTie tie = net.getTie(alter1, alter2);
@@ -50,7 +55,7 @@ public class ConsensusDataWriter {
 						numUntied++;
 					} else {
 						numTies++;
-						Set<String> tieReporters = Sets.union(tie.tiedNo(), tie.tiedYes());
+						Set<Integer> tieReporters = Sets.union(tie.tiedNo(), tie.tiedYes());
 						alter1reporters.addAll(tieReporters);
 						if(tieReporters.isEmpty()) {
 							numTiedWithoutVotes++;
@@ -71,9 +76,9 @@ public class ConsensusDataWriter {
 				", NumYesOnly: "+numYesOnlyTies+", NumNoOnly: "+numNoOnlyTies+
 				", NumUntied: "+numUntied+", NumTiedWithoutVotes: "+numTiedWithoutVotes);
 		
-		Map<String,Set<WholeNetworkAlter>>
+		Map<Integer,Set<WholeNetworkAlter>>
 		altersByReporter = Maps.newHashMap();
-		for(String reporter : allReporters) {
+		for(Integer reporter : allReporters) {
 			Set<WholeNetworkAlter> reporterAlters = Sets.newHashSet();
 			for(WholeNetworkAlter alter : allAlters) {
 				if(reportersByAlter.get(alter).contains(reporter)) {
@@ -88,65 +93,31 @@ public class ConsensusDataWriter {
 		// Add connections for 100% density within modes so that I can use a
 		// one mode clique finding algorithm.
 		Map<Object,Set> alterAndReporterTwoMode = Maps.newHashMap();
-		for(String reporter : allReporters) {
+		for(Integer reporter : allReporters) {
 			Set<Object> reporterConnections = Sets.newHashSet();
-			for(String otherReporter : allReporters) {
-				if(! reporter.equals(otherReporter)) {
-					reporterConnections.add(otherReporter);
-				}
-			}
 			reporterConnections.addAll(altersByReporter.get(reporter));
 			alterAndReporterTwoMode.put(reporter, reporterConnections);
 		}
 		for(WholeNetworkAlter alter : allAlters) {
 			Set<Object> alterConnections = Sets.newHashSet();
-			for(WholeNetworkAlter otherAlter : allAlters) {
-				if(! alter.equals(otherAlter)) {
-					alterConnections.add(otherAlter);
-				}
-			}
 			alterConnections.addAll(reportersByAlter.get(alter));
 			alterAndReporterTwoMode.put(alter, alterConnections);
 		}
-		Set<Set<Object>> cliques = 
-			(Set<Set<Object>>) new clj.graph.Core().cliques(alterAndReporterTwoMode);
-		Set<String> bestReporters = Sets.newHashSet();
-		Set<WholeNetworkAlter> bestAlters = Sets.newHashSet();
-		Integer bestScore = 0;
-		for(Set<Object> clique : cliques) {
-			Set<String> reporters = Sets.newHashSet();
-			Set<WholeNetworkAlter> alters = Sets.newHashSet();
-			for(Object cliqueMember : clique) {
-				if(cliqueMember instanceof String) {
-					reporters.add((String) cliqueMember);
-				} else if(cliqueMember instanceof WholeNetworkAlter) {
-					alters.add((WholeNetworkAlter) cliqueMember);
-				} else {
-					throw new RuntimeException("This clique member is neither a reporter " +
-							"nor an alter: "+cliqueMember+" ("+cliqueMember.getClass()+")");
-				}
-			}
-			Integer numrep = reporters.size(), numalt = alters.size();
-			Integer score = numrep*numalt*Math.min(numrep,numalt);
-			if(score > bestScore) {
-				logger.info("Found "+numrep+" reporters and "+numalt+" alters" +
-						" for score of "+score);
-				bestReporters = reporters;
-				bestAlters = alters;
-				bestScore = score;
-			}
-		}
-		logger.info("Best score was "+bestScore);
+		Set<Object> kplex = new KPlexesTwoMode().findLargeKPlex(alterAndReporterTwoMode, allReporters, allowedMissingEdgesPerNode);
+		Set<Integer> kplexReporters = Sets.intersection(allReporters, kplex);
+		Set<WholeNetworkAlter> kplexAlters = Sets.intersection(allAlters, kplex);
 		
-		List<WholeNetworkAlter> alterList = Lists.newArrayList(bestAlters);
-		List<String> reporterList = Lists.newArrayList(bestReporters);
+		List<WholeNetworkAlter> alterList = Lists.newArrayList(kplexAlters);
+		List<Integer> reporterList = Lists.newArrayList(kplexReporters);
 		
 		FileWriter fw = new FileWriter(file);
 		CSVWriter csv = new CSVWriter(fw);
 		
 		List<String> header = Lists.newArrayList("");
-		for(WholeNetworkAlter alter1 : alterList) {
-			for(WholeNetworkAlter alter2 : alterList) {
+		for(int i = 0; i < alterList.size(); i++) {
+			WholeNetworkAlter alter1 = alterList.get(i);
+			for(int j = i+1; j < alterList.size(); j++) {
+				WholeNetworkAlter alter2 = alterList.get(j);
 				if(! alter1.equals(alter2)) {
 					header.add(alter1+" - "+alter2);
 				}
@@ -154,21 +125,69 @@ public class ConsensusDataWriter {
 		}
 		csv.writeNext(header.toArray(new String[]{}));
 		
-		for(String reporter : reporterList) {
-			List<String> line = Lists.newArrayList(reporter);
-			for(WholeNetworkAlter alter1 : alterList) {
-				for(WholeNetworkAlter alter2 : alterList) {
-					if(! alter1.equals(alter2)) {
-						line.add(
-								net.getTie(alter1, alter2).tiedYes().contains(reporter)
-									? "1" : "0");
+		Integer dataYes = 0, dataNo = 0, guessYes = 0, guessNo = 0;
+		Integer guessWithKnownAlters = 0;
+		Integer guessWithUnknownAlters = 0;
+		Random rand = new Random();
+		
+		for(Integer reporter : reporterList) {
+			List<String> line = Lists.newArrayList(reporter+"");
+			for(int i = 0; i < alterList.size(); i++) {
+				WholeNetworkAlter alter1 = alterList.get(i);
+				for(int j = i+1; j < alterList.size(); j++) {
+					WholeNetworkAlter alter2 = alterList.get(j);
+					WholeNetworkTie tie = net.getTie(alter1, alter2);
+					if(alterAndReporterTwoMode.get(reporter).contains(alter1) &&
+							alterAndReporterTwoMode.get(reporter).contains(alter2))
+					{
+						if(alter1.getId().equals(reporter) ||
+								alter2.getId().equals(reporter))
+						{ // Tie between ego and alter
+							line.add("1");
+							dataYes++;
+						} else if(tie != null && tie.tiedYes().contains(reporter)) {
+							line.add("1");
+							dataYes++;
+						} else if(tie != null && tie.tiedNo().contains(reporter)) {
+							line.add("0");
+							dataNo++;
+						} else {
+							guessWithKnownAlters++;
+							System.out.println(reporter+" knows "+alter1+" and "+alter2+
+									" but didn't say whether they are linked.");
+						}
+					} else {
+						if(rand.nextInt(2) > 0) {
+							line.add("1");
+							guessYes++;
+						} else {
+							line.add("0");
+							guessNo++;
+						}
+						guessWithUnknownAlters++;
 					}
 				}
 			}
 			csv.writeNext(line.toArray(new String[]{}));
 		}
+		Integer reportedAnswers = dataYes+dataNo;
+		Integer imputedAnswers = guessYes+guessNo;
+		Double portionImputed = imputedAnswers*1.0/(reportedAnswers+imputedAnswers);
+		String msg = 
+			"Allowed max missing per node: "+allowedMissingEdgesPerNode+
+			"\nActual max missing per node: "+
+			new KPlexesTwoMode().maxMissingEdgesPerNodeInSubgroup(alterAndReporterTwoMode, allReporters, kplex)+
+			"\nReporters: "+reporterList.size()+
+			"\nAlters: "+alterList.size()+
+			"\nReported answers: "+reportedAnswers+
+			"\nImputed answers: "+imputedAnswers+
+			"\nPercent imputed: "+((int) (portionImputed*100))+"%"+
+			"\nReporter didn't know one or both alters: "+guessWithUnknownAlters+
+			"\nReporter knew alters, but I couldn't find answer: "+guessWithKnownAlters;
+		System.out.println(msg);
 
 		csv.flush();
 		fw.close();
+		return msg;
 	}
 }

@@ -174,6 +174,16 @@ public class KPlexesTwoMode<N> {
 		Set<N> newKPlex = Sets.newHashSet();
 		newKPlex.add(newNode);
 		newKPlex.addAll(kplex);
+		Integer actualk = maxMissingEdgesPerNodeInSubgroup(graph,mode1,newKPlex);
+		if(actualk > k) {
+			String msg = "After adding "+newNode+", found k-plex with k that is too high. "+
+			actualk+" instead of "+k+": "+newKPlex;
+			System.out.println(msg);
+			for(N n : newKPlex) {
+				System.out.println(n+" : "+Sets.intersection(graph.get(n), newKPlex));
+			}
+			throw new RuntimeException(msg);
+		}
 		return growKPlex(boundingGraph, mode1,newKPlex,k,targetSize);
 	}
 	public Set<N> findLargeKPlex(Map<N,Set<N>> graph, Set<N> mode1, Integer k) {
@@ -203,6 +213,30 @@ public class KPlexesTwoMode<N> {
 				}
 			}
 		}
+		Integer actualk = maxMissingEdgesPerNodeInSubgroup(graph,mode1,largestFound);
+		if(actualk > k) {
+			throw new RuntimeException("Found k-plex with k that is too high. "+
+					actualk+" instead of "+k+": "+largestFound);
+		}
 		return largestFound;
+	}
+	public Integer maxMissingEdgesPerNodeInSubgroup(
+			Map<N,Set<N>> graph, Set<N> mode1, Set<N> subgroup) 
+	{
+		Integer maxMissing = 0;
+		Set<N> submode1 = Sets.intersection(mode1, subgroup);
+		Set<N> submode2 = Sets.difference(subgroup, submode1);
+		for(N n1 : subgroup) {
+			Set<N> otherSubmode = mode1.contains(n1) ? submode2 : submode1;
+			Integer edges = Sets.intersection(otherSubmode, graph.get(n1)).size();
+			Integer missing = otherSubmode.size()-edges;
+			if(missing > maxMissing) {
+				maxMissing = missing;
+			}
+			if(missing < 0) {
+				throw new RuntimeException("Can't be missing negative number of edges.");
+			}
+		}
+		return maxMissing;
 	}
 }
