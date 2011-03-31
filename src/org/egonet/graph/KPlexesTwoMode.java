@@ -72,6 +72,9 @@ public class KPlexesTwoMode<N> {
 		return highestConnectedness(graph)+k;
 	}
 	public Set<N> criticalNodesInKPlex(Map<N,Set<N>> graph, Set<N> mode1, Set<N> kplex, Integer k) {
+		if(! graph.keySet().containsAll(kplex)) {
+			throw new RuntimeException("The kplex "+kplex+" is not a subset of the graph "+graph);
+		}
 		Integer mode1KPlexSize = Sets.intersection(mode1, kplex).size();
 		Integer mode2KPlexSize = kplex.size() - mode1KPlexSize;
 		Map<N,Integer> connectionsWithinKPlex = connectionsWithinSubgroup(graph,kplex);
@@ -81,12 +84,15 @@ public class KPlexesTwoMode<N> {
 			if(connections == null) {
 				throw new RuntimeException("null connections for "+n+" in "+kplex+" of graph "+graph);
 			}
-			if(connections < (mode1.contains(n) ? mode1KPlexSize : mode2KPlexSize)-k+1) {
+			Integer otherModeSize = (mode1.contains(n) ? mode2KPlexSize : mode1KPlexSize);
+			Integer threshold = otherModeSize-k;
+			if(connections < threshold+1) {
 				criticalNodes.add(n);
 			}
 		}
 		return criticalNodes;
 	}
+	
 	public Set<N> nodesThatCanBeAddedToKPlex(Map<N,Set<N>> graph, Set<N> mode1, Set<N> kplex, Integer k) {
 		if(kplex.isEmpty()) {
 			if(k > 0) {
@@ -105,7 +111,8 @@ public class KPlexesTwoMode<N> {
 				}
 			}
 			neighbors.removeAll(kplex);
-			return Sets.difference(neighbors,kplex);
+			Set<N> result = Sets.difference(neighbors,kplex);
+			return result;
 		}
 		Set<N> outsideKPlex = Sets.difference(graph.keySet(),kplex);
 		Set<N> mode1Eligible = Sets.intersection(mode1, outsideKPlex);
@@ -118,7 +125,8 @@ public class KPlexesTwoMode<N> {
 				mode1Eligible = Sets.intersection(mode1Eligible, graph.get(n));
 			}
 		}
-		return Sets.union(mode1Eligible, mode2Eligible);
+		Set<N> result = Sets.union(mode1Eligible, mode2Eligible);
+		return result;
 	}
 	public Map<N,Set<N>> createSubgraph(Map<N,Set<N>> graph, Set<N> nodes) {
 		Map<N,Set<N>> subgraph = Maps.newHashMap();
@@ -143,8 +151,11 @@ public class KPlexesTwoMode<N> {
 		Map<N,Integer> connectedness = connectednessByNode(graph);
 		Map<N,Integer> connectionsWithinKPlex = connectionsWithinSubgroup(graph,kplex);
 		Set<N> addable = nodesThatCanBeAddedToKPlex(graph, mode1, kplex, k);
+		Integer alreadyInMode1 = Sets.intersection(mode1, kplex).size();
+		Integer alreadyInMode2 = kplex.size()-alreadyInMode1;
 		for(N n : addable) {
-			Integer score = connectedness.get(n) + connectionsWithinKPlex.get(n);
+			Integer score = connectedness.get(n) + connectionsWithinKPlex.get(n)
+				+ (mode1.contains(n) ? alreadyInMode2 : alreadyInMode1);
 			if(score > highScore) {
 				highScore = score;
 				choice = n;
@@ -154,7 +165,7 @@ public class KPlexesTwoMode<N> {
 	}
 	public Set<N> growKPlex(Map<N,Set<N>> graph, Set<N> mode1, Set<N> kplex, Integer k, Integer targetSize) {
 		Map<N,Set<N>> boundingGraph = subgraphBoundingFinalKPlex(graph, mode1,kplex,k,targetSize);
-		N newNode = chooseNodeForInclusionInKPlex(graph, mode1,kplex,k);
+		N newNode = chooseNodeForInclusionInKPlex(boundingGraph, mode1,kplex,k);
 		if(newNode == null) {
 			return kplex;
 		}
@@ -165,8 +176,10 @@ public class KPlexesTwoMode<N> {
 	}
 	public Set<N> findLargeKPlex(Map<N,Set<N>> graph, Set<N> mode1, Integer k) {
 		Set<N> largestFound = Sets.newHashSet();
+		Integer mostInSmallMode = 0;
+		Integer mostInLargeMode = 0;
 		for(Integer targetSize = largestPossibleKPlex(graph, k); 
-			targetSize > largestFound.size(); 
+			targetSize > mostInSmallMode; 
 			targetSize--)
 		{
 			Set<N> seeds = meetConnectednessThreshold(graph, targetSize-k);
@@ -175,8 +188,16 @@ public class KPlexesTwoMode<N> {
 				Set<N> kplex = Sets.newHashSet();
 				kplex.add(seed);
 				kplex = growKPlex(boundedGraph,mode1,kplex,k,targetSize);
-				if(kplex.size() > largestFound.size()) {
+				Set<N> inMode1 = Sets.intersection(kplex,mode1);
+				Set<N> inMode2 = Sets.difference(kplex, inMode1);
+				Integer inSmallMode = Math.min(inMode1.size(), inMode2.size());
+				Integer inLargeMode = Math.max(inMode1.size(), inMode2.size());
+				if(inSmallMode > mostInSmallMode ||
+						(inSmallMode.equals(mostInSmallMode) && inLargeMode > mostInLargeMode)) 
+				{
 					largestFound = kplex;
+					mostInSmallMode = inSmallMode;
+					mostInLargeMode = inLargeMode;
 				}
 			}
 		}

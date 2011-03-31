@@ -114,14 +114,33 @@ public class KPlexesTwoModeTest {
 						exampleGraph(),
 						exampleMode1(),
 						intSet(7),
-						1));
+						0));
+		Set<Integer> clique = intSet(1,3,7,9,10);
+		assertEquals("All nodes are critical in a 1-plex.",
+				clique,
+				kp.criticalNodesInKPlex(
+						exampleGraph(),
+						exampleMode1(),
+						clique,
+						0));
+	}
+	
+	@Test
+	public void testNodesThatCanBeAddedToKPlex() {
+		assertEquals("No more nodes can be added to a clique.",
+				intSet(),
+				kp.nodesThatCanBeAddedToKPlex(
+						exampleGraph(),
+						exampleMode1(),
+						intSet(1,3,7,9,10),
+						0));
 	}
 	
 	@Test
 	public void testSubgraphBoundingFinalKPlex() {
 		Set<Integer> finalKPlex = intSet(1,4,7,10);
 		Map<Integer,Set<Integer>> subgraph = 
-			kp.subgraphBoundingFinalKPlex(exampleGraph(), exampleMode1(), intSet(1), 1, 2);
+			kp.subgraphBoundingFinalKPlex(exampleGraph(), exampleMode1(), intSet(1), 0, 2);
 		Set<Integer> boundsKPlex = subgraph.keySet();
 		assertTrue(boundsKPlex+" should bound "+finalKPlex+" (full graph is "+subgraph+")",
 				boundsKPlex.containsAll(finalKPlex));
@@ -129,22 +148,31 @@ public class KPlexesTwoModeTest {
 	
 	@Test
 	public void testGrowClique() {
-		Set<Integer> clique = kp.growKPlex(exampleGraph(), exampleMode1(), intSet(4), 1, 2);
-		assertTrue("Expect {7} to grow into one of the two largest cliques.",
+		Set<Integer> clique = kp.growKPlex(exampleGraph(), exampleMode1(), intSet(4), 0, 2);
+		assertTrue(
+				"Expected {7} to grow into one of the two largest cliques, but got "
+					+clique+" instead.",
 				exampleLargestCliques().contains(clique));
+		Set<Integer> seed = intSet(3,4,7,10);
+		Set<Integer> expected = intSet(1,3,4,7,9,10);
+		Set<Integer> onePlex = kp.growKPlex(exampleGraph(), exampleMode1(), seed, 1, 3);
+		assertEquals("Expected "+seed+" to grow into large 1-plex "+expected+
+				" but got "+onePlex+" instead.",
+				expected,onePlex);
 	}
 	
 	@Test
 	public void testCliqueSearch() {
-		Set<Integer> clique = kp.findLargeKPlex(exampleGraph(), exampleMode1(), 1);
-		assertTrue("Find one of the largest cliques.",
+		Set<Integer> clique = kp.findLargeKPlex(exampleGraph(), exampleMode1(), 0);
+		assertTrue("Expected this to be one of the largest cliques: "+clique,
 				exampleLargestCliques().contains(clique));
 	}
 	
 	@Test
 	public void testKPlexSearch() {
-		assertEquals("Looks like the largest 2-plex is {1,3,4,7,9,10}.",
-				intSet(1,3,4,7,9,10),kp.findLargeKPlex(exampleGraph(), exampleMode1(), 2));
+		assertEquals("Looks like the largest 1-plex is {1,3,4,7,9,10}.",
+				intSet(1,3,4,7,9,10),kp.findLargeKPlex(exampleGraph(), exampleMode1(), 1));
+		// XXX: Found {1,7,8,9,10}, which is a bit smaller than the largest.
 	}
 
 	public static junit.framework.Test suite() {
