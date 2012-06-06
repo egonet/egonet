@@ -17,8 +17,9 @@ public class GraphTest {
 		for(Integer i = 0; i < 60; i++) {
 			Double expectedDensity = rand.nextDouble();
 			Graph graph = Graph.random(i, expectedDensity);
+			
 			assertEquals("Random graph of "+i+" nodes actually has "+i+" nodes.",
-					i,graph.nodes().size());
+					i.intValue(),graph.nodes().size());
 			Double calculatedDensity = graph.density();
 			if(i > 50) {
 				assertEquals("Random graph with "+i+" nodes has requested density.",

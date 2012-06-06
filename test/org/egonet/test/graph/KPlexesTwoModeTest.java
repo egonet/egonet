@@ -234,7 +234,7 @@ public class KPlexesTwoModeTest {
 		assertEquals("Known 1-plex has at most one missing edge per node",
 				1, 
 				kp.maxMissingEdgesPerNodeInSubgroup(exampleGraph(),exampleMode1(),
-						intSet(1,3,4,7,9,10)));
+						intSet(1,3,4,7,9,10)).intValue());
 	}
 
 	public static junit.framework.Test suite() {
