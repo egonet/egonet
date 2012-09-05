@@ -16,10 +16,14 @@ import java.util.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PDFWriter {
 	private Study study;
 	private Interview interview;
+	
+	final private static Logger logger = LoggerFactory.getLogger(PDFWriter.class);
 	
 	public PDFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super();
@@ -185,6 +189,7 @@ public class PDFWriter {
 						names += ", ";
 				}
 				
+				logger.info("Answer alters: " + Arrays.asList(names));
 				// document.add(new Paragraph("Answer Alters: " + names));
 			}
 			

@@ -65,7 +65,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_link_label = new JLabel("Question Link:");
     private final JLabel question_link_field = new JLabel("None");
     private final JLabel question_follows_label = new JLabel("Follows Question:");
-    private final JComboBox question_answer_type_menu = new JComboBox(AnswerType.values());
+    private final JComboBox question_answer_type_menu = new JComboBox<AnswerType>(AnswerType.values());
     private final JComboBox question_follows_menu = new JComboBox();
 
     private final JLabel question_followup_only_label = new JLabel("Follow up protocols only:");

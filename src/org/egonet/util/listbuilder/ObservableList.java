@@ -92,6 +92,11 @@ public class ObservableList<T> extends Observable
 		return list.toArray();
 	}
 	
+	public T[] toArray(T[] original)
+	{
+		return list.toArray(original);
+	}
+	
 	public T get(int index)
 	{
 		return list.get(index);

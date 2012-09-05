@@ -83,7 +83,7 @@ public class KPlexesTwoModeTest {
 	private Set<Integer> example2OnePlex() {
 		return intSet(1,2,3,4,5,6,7,8,10);
 	}
-	private Integer example2outlier() {
+	public Integer example2outlier() {
 		return 9;
 	}
 

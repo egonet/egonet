@@ -97,7 +97,7 @@ public class EdgeShapePanel extends JPanel {
 					qList.add(currentQuestion);
 			}
 		}
-		questionCombo = new JComboBox(qList.toArray());
+		questionCombo = new JComboBox<Question>(qList.toArray(new Question[0]));
 		questionCombo.setVisible(true);
 		questionCombo.setEnabled(true);
 		questionCombo.setPreferredSize(new Dimension(20, 20));
@@ -114,7 +114,7 @@ public class EdgeShapePanel extends JPanel {
 		});
 
 		// create shape combo for table cell
-		shapeCombo = new JComboBox(EdgeProperty.EdgeShape.values());
+		shapeCombo = new JComboBox<EdgeProperty.EdgeShape>(EdgeProperty.EdgeShape.values());
 		shapeCombo.setPreferredSize(new Dimension(20, 20));
 		shapeCombo.setMaximumSize(new Dimension(20, 30));
 		// shapeCombo.setSelectedIndex(0);

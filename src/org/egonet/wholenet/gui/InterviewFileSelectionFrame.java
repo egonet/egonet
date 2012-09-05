@@ -29,7 +29,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 	private final Study study;
 	private final File studyFile;
 	
-	private JList interviewList;
+	private JList<File> interviewList;
 	
 	final InterviewFileFilter filter;
 	
@@ -53,7 +53,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 		
-		interviewList = new JList();
+		interviewList = new JList<File>();
 		DefaultListCellRenderer cellRenderer = new DefaultListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list,
@@ -163,9 +163,9 @@ public class InterviewFileSelectionFrame extends JFrame {
 		if(selected.length > 0) {
 			InterviewFileListModel newModel = new InterviewFileListModel();
 			
-			ListModel model = interviewList.getModel();
+			ListModel<File> model = interviewList.getModel();
 			for(int i = 0; i < model.getSize(); i++) {
-				Object item = model.getElementAt(i);
+				File item = model.getElementAt(i);
 				
 				boolean remove = false;
 				for(int j = 0; j < selected.length; j++) {
@@ -174,7 +174,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 				}
 					
 				if(!remove)
-					newModel.addElement(item);
+					newModel.addElement(item); 
 			}
 		
 			interviewList.setModel(newModel);
@@ -296,7 +296,7 @@ public class InterviewFileSelectionFrame extends JFrame {
 		return studyFile;
 	}
 
-	public class InterviewFileListModel extends DefaultListModel {
+	public class InterviewFileListModel extends DefaultListModel<File> {
 		public InterviewFileListModel() {
 			super();
 		}

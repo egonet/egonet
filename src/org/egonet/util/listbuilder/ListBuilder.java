@@ -245,7 +245,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 		if (isPresetListsActive()) {
 			// logger.info("Presets are supposed to be active");
-			final JComboBox comboPresets = new JComboBox();
+			final JComboBox<String> comboPresets = new JComboBox<String>();
 			comboPresets.addItem(CHOOSE_PRESET_INSTRUCTION);
 			for (String presetName : presets.keySet())
 				comboPresets.addItem(presetName);
