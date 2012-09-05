@@ -281,7 +281,7 @@ public class ClientPanel
 
 		if (ok == JOptionPane.OK_OPTION)
 		{
-		    // TODO: as the commented-out method isn't called any more, lots of code could be deleted or cleaned up
+		    // as the commented-out method isn't called any more, lots of code could be deleted or cleaned up
 			// egoClient.getFrame().gotoSummaryPanel();
 			
 		    egoClient.getFrame().quickSaveSummary();

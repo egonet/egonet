@@ -74,7 +74,7 @@ public class Interview implements Comparable<Interview> {
 	public void setFollowup(boolean followup) {
 		this.followup = followup;
 	}
-
+	
 	public boolean _statisticsAvailable = false;
 
 	/***************************************************************************

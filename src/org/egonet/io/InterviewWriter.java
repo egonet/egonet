@@ -65,7 +65,7 @@ public class InterviewWriter {
 		for (int i = 0; i < _alterList.length; i++) {
 			alterListElem.addElement("Name").setText(_alterList[i]);
 		}
-
+		
 		Answer[] _answers = interview.get_answers();
 		for (int i = 0; i < _answers.length; i++) {
 			writeAnswer(answerListElem, interview.getQuestion(i), interview, _answers[i]);

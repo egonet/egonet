@@ -525,16 +525,16 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	public void setMdiContext(MDIContext context) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public void internalFrameActivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	public void internalFrameClosed(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -543,22 +543,22 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	public void internalFrameDeactivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	public void internalFrameDeiconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	public void internalFrameIconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	public void internalFrameOpened(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

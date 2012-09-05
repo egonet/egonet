@@ -161,6 +161,8 @@ public class InterviewReader {
 				interview.setName(egoNameElem.getString("First"), egoNameElem.getString("Last"));
 			}
 			
+			// TODO: Read new 'original alters' field
+			
 			readAnswers(study, interview, answerListElem);
 
 			Element notes = e.getElement("notes");

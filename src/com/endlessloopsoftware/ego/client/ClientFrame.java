@@ -268,7 +268,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	// Overridden so we can exit when window is closed
 	protected void processWindowEvent(WindowEvent e) {
-		//TODO super.processWindowEvent(e);
+		// super.processWindowEvent(e);
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			try { jMenuFileExit_actionPerformed(null); } catch (Exception ex) { throw new RuntimeException(ex); }
 		}
@@ -697,16 +697,13 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 
 	public void setMdiContext(MDIContext context) {
-		// TODO Auto-generated method stub
 	}
 
 	public void internalFrameActivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void internalFrameClosed(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -716,22 +713,17 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 
 	public void internalFrameDeactivated(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void internalFrameDeiconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void internalFrameIconified(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void internalFrameOpened(InternalFrameEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }

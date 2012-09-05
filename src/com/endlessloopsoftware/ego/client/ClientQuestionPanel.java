@@ -719,6 +719,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
 			{
 				answer.setValue(alterList.getListStrings().length);
+				
+				// TODO smithmb: In all three cases below, make some determination about 'follow up only' and 
+				// then note the added alters when setting the new list
+				
 				egoClient.getInterview().setAlterList(alterList.getListStrings());
 			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.NTH_ALTER))
 			{
