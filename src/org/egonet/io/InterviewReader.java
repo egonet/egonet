@@ -152,6 +152,7 @@ public class InterviewReader {
 			}
 			
 			interview.setComplete(e.getBoolean("Complete"));
+			interview.setFollowup(e.getBoolean("FollowUpProtocol"));
 
 			/* Read interviewee name */
 			Element egoNameElem = e.getElement("EgoName");

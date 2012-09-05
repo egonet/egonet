@@ -171,6 +171,11 @@ public class StudyReader {
 
 		q.citation = question.getTextString("Citation");
 		q.citation = (q.citation == null) ? "" : q.citation;
+		
+		if(question.hasElement("FollowUpOnly")) {
+			boolean foo = question.getBoolean("FollowUpOnly");
+			q.followupOnly = foo;
+		}
 
 		q.UniqueId = new Long(question.getLong("Id"));
 		q.questionType = QuestionType.values()[question.getInt("QuestionType")];
@@ -199,6 +204,7 @@ public class StudyReader {
 			/* Only support questions with single answers for link */
 			q.link.getAnswer().string = link.getTextString("string");
 		}
+		
 
 		if (q.answerType == Shared.AnswerType.CATEGORICAL) {
 			Element answerList = question.getElement("Answers");
@@ -227,15 +233,11 @@ public class StudyReader {
 
 					try {
 						q.getSelections()[index] = new Selection();
-						q.getSelections()[index].setString(selection
-								.getTextString());
+						q.getSelections()[index].setString(selection.getTextString());
 						q.getSelections()[index]
-								.setValue(Integer.parseInt(selection
-										.getAttributeValue("value")));
+								.setValue(Integer.parseInt(selection.getAttributeValue("value")));
 
-						q.getSelections()[index].setAdjacent(Boolean.valueOf(
-								selection.getAttributeValue("adjacent"))
-								.booleanValue());
+						q.getSelections()[index].setAdjacent(Boolean.valueOf(selection.getAttributeValue("adjacent")).booleanValue());
 						q.getSelections()[index].setIndex(index);
 
 					} catch (NumberFormatException ex) {

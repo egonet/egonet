@@ -53,6 +53,7 @@ public class InterviewWriter {
 
 		writeInterviewStudy(e);
 		e.addElement("Complete").setBoolean(interview.isComplete());
+		e.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
 		
 		String[] _egoName = interview.getName();
 		

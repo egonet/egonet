@@ -196,6 +196,8 @@ public class EgoStore {
 							answer.answer.answered = false;
 						}
 						
+						curInt.setFollowup(true);
+						
 						setCurrentInterview(curInt, newFile);
 						writeCurrentInterview();
 						success = true;

@@ -64,6 +64,16 @@ public class Interview implements Comparable<Interview> {
 	private int _numAnswers;
 
 	private int _numAlters;
+	
+	private boolean followup = false;
+
+	public boolean isFollowup() {
+		return followup;
+	}
+
+	public void setFollowup(boolean followup) {
+		this.followup = followup;
+	}
 
 	public boolean _statisticsAvailable = false;
 
@@ -489,7 +499,13 @@ public class Interview implements Comparable<Interview> {
 		boolean b = false;
 
 		while (!b && (checkIndex < get_numAnswers()) && (checkIndex >= 0)) {
-			if (checkQuestionLink(checkIndex)) {
+			
+			// validate follow up and link
+			if (getQuestion(checkIndex).isFollowupOnly() && isFollowup() && checkQuestionLink(checkIndex)) {
+				b = true;
+			}
+			// validate non-followup and link
+			else if (!getQuestion(checkIndex).isFollowupOnly() && checkQuestionLink(checkIndex)) {
 				b = true;
 			} else {
 				checkIndex = forward ? (checkIndex + 1) : (checkIndex - 1);

@@ -20,6 +20,7 @@ package com.endlessloopsoftware.ego.author;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -66,6 +67,10 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_follows_label = new JLabel("Follows Question:");
     private final JComboBox question_answer_type_menu = new JComboBox(AnswerType.values());
     private final JComboBox question_follows_menu = new JComboBox();
+
+    private final JLabel question_followup_only_label = new JLabel("Follow up protocols only:");
+    private final JCheckBox question_followup_only_combo = new JCheckBox();
+    
     private final JTextArea question_question_field = new NoTabTextArea();
     private final JTextArea question_citation_field = new NoTabTextArea();
     private final JTextField question_title_field = new JTextField();
@@ -194,10 +199,18 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_answer_type_button, new GridBagConstraints(2, 8, 1, 1, 0.2, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        
         question_panel_right.add(question_follows_label, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_follows_menu, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+        
+        question_panel_right.add(question_followup_only_label, new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0,
+                GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        question_panel_right.add(question_followup_only_combo, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0,
+                GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+        
+        
         question_panel_right.add(question_link_label, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_link_field, new GridBagConstraints(1, 10, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -276,6 +289,15 @@ public class AuthoringQuestionPanel extends EgoQPanel
             {
                 question_follows_menu_actionPerformed(e);
             }
+        });
+        
+        question_followup_only_combo.addItemListener(new java.awt.event.ItemListener()
+        {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				question_followup_only_combo_actionPerformed(e);
+				
+			}
         });
 
         question_type_menu.addActionListener(new java.awt.event.ActionListener()
@@ -418,7 +440,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
             	// select it
             	question_list.setSelectedIndex(selectedIndex);
             }
-            // if the index-11 is still valid in the model
+            // if the index-1 is still valid in the model
             else if(selectedIndex-1 >= 0 && selectedIndex-1 < listModel.getSize()){
             	question_list.setSelectedIndex(selectedIndex-1);
             }
@@ -471,6 +493,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_citation_field.setText(q.citation);
                 question_title_field.setText(q.title);
                 question_follows_menu.setSelectedIndex(index);
+                question_followup_only_combo.setSelected(q.followupOnly);
 
                 question_type_menu.setEnabled(true);
                 question_answer_type_menu.setEnabled(q.questionType != Shared.QuestionType.ALTER_PROMPT);
@@ -720,6 +743,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
             q.citation = q_old.citation;
             q.statable = q_old.statable;
             q.text = q_old.text;
+            q.followupOnly = q_old.followupOnly;
 
             try
             {
@@ -853,6 +877,27 @@ public class AuthoringQuestionPanel extends EgoQPanel
             }
         }
     }
+    
+    void question_followup_only_combo_actionPerformed(ItemEvent e)
+    {
+        if (!inUpdate)
+        {
+            if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
+            {
+                Question q = (Question) question_list.getSelectedValue();
+                q.setFollowupOnly(e.getStateChange() != ItemEvent.DESELECTED);
+                
+                egoNet.getStudy().setCompatible(false);
+                egoNet.getStudy().setModified(true);
+                fillPanel();
+            }
+            else
+            {
+                questionUpdate();
+            }
+        }
+    }
+    
 
     void question_central_checkBox_actionPerformed(ActionEvent e)
     {

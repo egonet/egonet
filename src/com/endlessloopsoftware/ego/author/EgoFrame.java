@@ -55,6 +55,9 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	final private static Logger logger = LoggerFactory.getLogger(EgoFrame.class);
 
     Shared.QuestionType lastTab = Shared.QuestionType.STUDY_CONFIG;
+    /**
+     * Changes based on jTabbedPane_stateChanged, which is activated when tabs are clicked
+     */
 	Shared.QuestionType curTab = Shared.QuestionType.STUDY_CONFIG;
 
 	private final EgoNet egoNet;
