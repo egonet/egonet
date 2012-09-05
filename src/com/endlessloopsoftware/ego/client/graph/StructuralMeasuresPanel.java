@@ -40,9 +40,9 @@ public class StructuralMeasuresPanel extends JPanel {
 
 	private JButton applyColorButton;
 
-	private JComboBox structuralCombo_1;
+	private JComboBox<StructuralMeasures> structuralCombo_1;
 
-	private JComboBox structuralCombo_2;
+	private JComboBox<StructuralMeasures> structuralCombo_2;
 
 	private JLabel sizeLabel;
 
@@ -68,9 +68,9 @@ public class StructuralMeasuresPanel extends JPanel {
 	private void createComponents() {
 		sizeLabel = new JLabel("Size nodes based on : ");
 		colorLabel = new JLabel("Color nodes based on : ");
-		structuralCombo_1 = new JComboBox(StructuralMeasures.values());
+		structuralCombo_1 = new JComboBox<StructuralMeasures>(StructuralMeasures.values());
 		structuralCombo_1.setMaximumSize(new Dimension(50, 100));
-		structuralCombo_2 = new JComboBox(StructuralMeasures.values());
+		structuralCombo_2 = new JComboBox<StructuralMeasures>(StructuralMeasures.values());
 		structuralCombo_2.setMaximumSize(new Dimension(50, 100));
 		applySizeButton = new JButton("Apply Size");
 		applyColorButton = new JButton("Apply Color");

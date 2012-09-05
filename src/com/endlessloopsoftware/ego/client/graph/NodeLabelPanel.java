@@ -45,7 +45,7 @@ public class NodeLabelPanel extends JPanel {
 
 	final private static Logger logger = LoggerFactory.getLogger(NodeLabelPanel.class);
 	
-	private JComboBox questionCombo;
+	private JComboBox<Question> questionCombo;
 
 	private JRadioButton questionRadio;
 
@@ -91,7 +91,7 @@ public class NodeLabelPanel extends JPanel {
 					qList.add(currentQuestion);
 			}
 		}
-		questionCombo = new JComboBox(qList.toArray());
+		questionCombo = new JComboBox<Question>(qList.toArray(new Question[0]));
 		questionCombo.setVisible(true);
 		questionCombo.setEnabled(false);
 		questionCombo.setPreferredSize(new Dimension(20, 20));

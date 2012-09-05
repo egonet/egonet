@@ -49,9 +49,9 @@ public class NodeSizePanel extends JPanel {
 	
 	private JLabel questionLabel;
 
-	private JComboBox questionCombo;
+	private JComboBox<Question> questionCombo;
 
-	private JComboBox sizeCombo;
+	private JComboBox<String> sizeCombo;
 
 	private JTable table;
 
@@ -98,7 +98,7 @@ public class NodeSizePanel extends JPanel {
 					qList.add(currentQuestion);
 			}
 		}
-		questionCombo = new JComboBox(qList.toArray());
+		questionCombo = new JComboBox<Question>(qList.toArray(new Question[0]));
 		questionCombo.setVisible(true);
 		questionCombo.setEnabled(true);
 		questionCombo.setPreferredSize(new Dimension(20, 20));
@@ -115,7 +115,7 @@ public class NodeSizePanel extends JPanel {
 		});
 
 		// create size combo for table cell
-		sizeCombo = new JComboBox(sizes);
+		sizeCombo = new JComboBox<String>(sizes);
 		sizeCombo.setPreferredSize(new Dimension(20, 20));
 		sizeCombo.setMaximumSize(new Dimension(20, 30));
 		sizeCombo.setSelectedIndex(0);
@@ -234,8 +234,7 @@ public class NodeSizePanel extends JPanel {
 
 		DefaultCellEditor sizeEditor = new DefaultCellEditor(sizeCombo);
 		columnModel.getColumn(1).setCellEditor(sizeEditor);
-		columnModel.getColumn(1).setCellRenderer(
-				new TableComboBoxRenderer(sizes));
+		columnModel.getColumn(1).setCellRenderer(new TableComboBoxRenderer<String>(sizes));
 
 		columnModel.getColumn(0).setMaxWidth(200);
 		columnModel.getColumn(1).setMaxWidth(80);

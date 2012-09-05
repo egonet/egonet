@@ -52,7 +52,7 @@ public class PrintPreview extends JFrame
 	protected int m_hPage;
 	protected int m_orientation;
 	protected Printable m_target;
-	protected JComboBox m_cbScale;
+	protected JComboBox<String> m_cbScale;
 	protected PreviewContainer m_preview;
 
 	public PrintPreview(Printable target, PageFormat pFormat)
@@ -123,7 +123,7 @@ public class PrintPreview extends JFrame
 		tb.add(bt);
 
 		String[] scales = { "10 %", "25 %", "50 %", "100 %" };
-		m_cbScale = new JComboBox(scales);
+		m_cbScale = new JComboBox<String>(scales);
 		lst = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)

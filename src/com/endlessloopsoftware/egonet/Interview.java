@@ -193,7 +193,7 @@ public class Interview implements Comparable<Interview> {
 	 * @param dlm
 	 *            list model to use in inserting questions
 	 */
-	public void fillList(DefaultListModel dlm) {
+	public void fillList(DefaultListModel<String> dlm) {
 		dlm.removeAllElements();
 
 		for (int i = 0; i < get_numAnswers(); i++) {

@@ -493,7 +493,7 @@ public class Study extends Observable implements Comparable<Study>
 	 * @param dlm
 	 *            list model to use in inserting questions
 	 */
-	public void fillList(QuestionType questionType, DefaultListModel dlm)
+	public void fillList(QuestionType questionType, DefaultListModel<Question> dlm)
 	{
         for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
         {

@@ -49,7 +49,7 @@ public class NodeColorPanel extends JPanel {
 	
 	private JLabel questionLabel;
 
-	private JComboBox questionCombo;
+	private JComboBox<Question> questionCombo;
 
 	ColorChooserEditor colorChooser;
 
@@ -96,7 +96,7 @@ public class NodeColorPanel extends JPanel {
 					qList.add(currentQuestion);
 			}
 		}
-		questionCombo = new JComboBox(qList.toArray());
+		questionCombo = new JComboBox<Question>(qList.toArray(new Question[0]));
 		questionCombo.setVisible(true);
 		questionCombo.setEnabled(true);
 		questionCombo.setPreferredSize(new Dimension(20, 20));

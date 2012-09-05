@@ -52,7 +52,7 @@ public class QuestionLinkDialog extends JDialog
 
    /* Containers */
    private final JSplitPane          questionSplit        = new JSplitPane();
-   private final JList               questionList         = new JList();
+   private final JList<Question>               questionList         = new JList<Question>();
    private final JScrollPane         questionListScroll   = new JScrollPane(questionList);
    private final JPanel              answerPanel          = new JPanel();
    private final JPanel              radioPanel           = new JPanel();
@@ -271,7 +271,7 @@ public class QuestionLinkDialog extends JDialog
 		baseQuestion    = q;
 
 		// Question vars
-		questionList.setModel(new DefaultListModel());
+		questionList.setModel(new DefaultListModel<Question>());
 		egoNet.getStudy().fillList((DefaultListModel) questionList.getModel(), q.UniqueId);
 
 		// Set Selection

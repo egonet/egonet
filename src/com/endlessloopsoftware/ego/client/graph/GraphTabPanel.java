@@ -55,7 +55,7 @@ public class GraphTabPanel extends JPanel {
 
 	private JLabel layoutLabel;
 
-	private JComboBox layoutCombo;
+	private JComboBox<Class> layoutCombo;
 
 	private JLabel modeLabel;
 
@@ -125,7 +125,7 @@ public class GraphTabPanel extends JPanel {
 		layoutOptions.add(ISOMLayout.class); // Meyer's "Self-Organizing Map" layout
 		Class[] layoutList = (Class[]) layoutOptions.toArray(new Class[0]);
 
-		layoutCombo = new JComboBox(layoutList);
+		layoutCombo = new JComboBox<Class>(layoutList);
 
 		// use a renderer to shorten the layout name presentation
 		layoutCombo.setRenderer(new DefaultListCellRenderer() {

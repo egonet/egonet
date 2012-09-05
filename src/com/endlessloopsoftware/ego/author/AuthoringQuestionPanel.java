@@ -59,7 +59,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_question_label = new JLabel("Question:");
     private final JLabel question_citation_label = new JLabel("Citation:");
     private final JLabel question_type_label = new JLabel("Question Type:");
-    private final JComboBox question_type_menu = new JComboBox();
+    private final JComboBox<QuestionType> question_type_menu = new JComboBox<QuestionType>();
     private final JLabel question_answer_type_label = new JLabel("Answer Type:");
     private final JButton question_answer_type_button = new JButton("Selections");
     private final JLabel question_link_label = new JLabel("Question Link:");
@@ -97,7 +97,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
         super(type);
         this.egoNet = egoNet;
         
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        DefaultComboBoxModel<QuestionType> model = new DefaultComboBoxModel<QuestionType>();
         for(QuestionType qType : QuestionType.values())
         {
         	if(qType.equals(QuestionType.STUDY_CONFIG))
@@ -915,15 +915,14 @@ public class AuthoringQuestionPanel extends EgoQPanel
  * Implements ListCellRenderer to differentiate between base and custom
  * questions
  */
-class QuestionListCellRenderer implements ListCellRenderer
+class QuestionListCellRenderer<T> implements ListCellRenderer<T>
 {
     protected final DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus)
     {
-        JLabel renderer = (JLabel) defaultRenderer
-                .getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         return renderer;
     }
 }

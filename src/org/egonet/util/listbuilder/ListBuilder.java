@@ -84,7 +84,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	private String description = "";
 
-	private JList jList = null;;
+	private JList<Selection> jList = null;;
 
 	private JScrollPane jScrollPane = null;
 
@@ -130,7 +130,7 @@ public class ListBuilder extends JPanel implements Observer {
 	 * item has been updated. update our JList.
 	 */
 	public void update(Observable o, Object arg) {
-		jList.setListData(elementList.toArray());
+		jList.setListData(elementList.toArray(new Selection[0]));
 		jList.revalidate();
 		jList.repaint();
 		if(listCounter != null)
@@ -142,9 +142,9 @@ public class ListBuilder extends JPanel implements Observer {
 		removeAll();
 
 		// logger.info("Building List builder...");
-		jList = new JList();
+		jList = new JList<Selection>();
 		jList.setCellRenderer(new SelectionListCellRenderer());
-		jList.setListData(elementList.toArray());
+		jList.setListData(elementList.toArray(new Selection[0]));
 		jScrollPane = new JScrollPane(jList);
 
 		// is NOT editable, we only use the main panel i.e. "this"

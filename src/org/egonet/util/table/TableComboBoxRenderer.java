@@ -28,14 +28,12 @@ import java.awt.Component;
  * @author sonam
  *
  */
-public class TableComboBoxRenderer extends JComboBox implements
-		TableCellRenderer {
-	public TableComboBoxRenderer(Object[] items) {
+public class TableComboBoxRenderer<T> extends JComboBox<T> implements TableCellRenderer {
+	public TableComboBoxRenderer(T[] items) {
 		super(items);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		if (isSelected) {
 			setForeground(table.getSelectionForeground());
 			super.setBackground(table.getSelectionBackground());

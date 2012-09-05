@@ -49,9 +49,9 @@ public class NodeShapePanel extends JPanel {
 	
 	private JLabel questionLabel;
 
-	private JComboBox questionCombo;
+	private JComboBox<Question> questionCombo;
 
-	private JComboBox shapeCombo;
+	private JComboBox<NodeProperty.NodeShape> shapeCombo;
 
 	private JTable table;
 
@@ -96,7 +96,7 @@ public class NodeShapePanel extends JPanel {
 					qList.add(currentQuestion);
 			}
 		}
-		questionCombo = new JComboBox(qList.toArray());
+		questionCombo = new JComboBox<Question>(qList.toArray(new Question[0]));
 		questionCombo.setVisible(true);
 		questionCombo.setEnabled(true);
 		questionCombo.setPreferredSize(new Dimension(20, 20));
@@ -113,7 +113,7 @@ public class NodeShapePanel extends JPanel {
 		});
 
 		// create shape combo for table cell
-		shapeCombo = new JComboBox(NodeProperty.NodeShape.values());
+		shapeCombo = new JComboBox<NodeProperty.NodeShape>(NodeProperty.NodeShape.values());
 		shapeCombo.setPreferredSize(new Dimension(20, 20));
 		shapeCombo.setMaximumSize(new Dimension(20, 30));
 		// shapeCombo.setSelectedIndex(0);
@@ -238,8 +238,7 @@ public class NodeShapePanel extends JPanel {
 
 		DefaultCellEditor shapeEditor = new DefaultCellEditor(shapeCombo);
 		columnModel.getColumn(1).setCellEditor(shapeEditor);
-		columnModel.getColumn(1).setCellRenderer(
-				new TableComboBoxRenderer(NodeProperty.NodeShape.values()));
+		columnModel.getColumn(1).setCellRenderer(new TableComboBoxRenderer<NodeProperty.NodeShape>(NodeProperty.NodeShape.values()));
 
 		columnModel.getColumn(0).setMaxWidth(200);
 		columnModel.getColumn(1).setMaxWidth(150);

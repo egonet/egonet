@@ -183,8 +183,7 @@ public class EdgeShapePanel extends JPanel {
 
 		DefaultCellEditor shapeEditor = new DefaultCellEditor(shapeCombo);
 		columnModel.getColumn(2).setCellEditor(shapeEditor);
-		columnModel.getColumn(2).setCellRenderer(
-				new TableComboBoxRenderer(EdgeProperty.EdgeShape.values()));
+		columnModel.getColumn(2).setCellRenderer(new TableComboBoxRenderer<EdgeProperty.EdgeShape>(EdgeProperty.EdgeShape.values()));
 
 		columnModel.getColumn(0).setMaxWidth(50);
 		columnModel.getColumn(1).setMaxWidth(200);
