@@ -52,7 +52,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private boolean inUpdate;
 
     private final JSplitPane question_split = new JSplitPane();
-    private final JList question_list = new JList();
+    private final JList<Question> question_list = new JList<Question>();
     private final JScrollPane question_list_scroll = new JScrollPane(question_list);
     private final JPanel question_panel_right = new RightPanel();
     private final JLabel question_title_label = new JLabel("Title:");
@@ -227,8 +227,8 @@ public class AuthoringQuestionPanel extends EgoQPanel
         question_panel_right.add(question_duplicate_button, new GridBagConstraints(1, 12, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 
-        question_list.setModel(new DefaultListModel());
-        egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
+        question_list.setModel(new DefaultListModel<Question>());
+        egoNet.getStudy().fillList(questionType, (DefaultListModel<Question>)question_list.getModel());
 
         question_list.getSelectionModel().addListSelectionListener(new ListSelectionListener()
         {

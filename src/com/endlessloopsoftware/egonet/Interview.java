@@ -199,8 +199,7 @@ public class Interview implements Comparable<Interview> {
 		for (int i = 0; i < get_numAnswers(); i++) {
 			// Question q = getQuestion(i);
 
-			Question q = _study.getQuestions().getQuestion(
-					_answers[i].questionId);
+			Question q = _study.getQuestions().getQuestion(_answers[i].questionId);
 
 			if (q.questionType == Shared.QuestionType.ALTER_PAIR
 					&& (_study.getUIType().equals(Shared.PAIR_ELICITATION) || _study

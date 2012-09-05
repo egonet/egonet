@@ -334,8 +334,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress.setStringPainted(true);
 		
 		questionList.setModel(new DefaultListModel());
-		egoClient.getInterview()
-		.fillList((DefaultListModel) questionList.getModel());
+		egoClient.getInterview().fillList((DefaultListModel) questionList.getModel());
 
 		if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 			questionList.setSelectedIndex(0);

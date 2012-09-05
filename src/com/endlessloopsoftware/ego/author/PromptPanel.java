@@ -50,7 +50,7 @@ public class PromptPanel extends EgoQPanel
     private boolean inUpdate;
 
     private final JSplitPane question_split = new JSplitPane();
-    private final JList question_list = new JList();
+    private final JList<Question> question_list = new JList<Question>();
     private final JScrollPane question_list_scroll = new JScrollPane(question_list);
     private final JPanel question_panel_right = new RightPanel();
     private final JLabel question_title_label = new JLabel("Title:");
@@ -163,7 +163,7 @@ public class PromptPanel extends EgoQPanel
         question_panel_right.add(question_follows_menu, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
 
-        DefaultListModel listModel = new DefaultListModel();
+        DefaultListModel<Question> listModel = new DefaultListModel<Question>();
         question_list.setModel(listModel);
         egoNet.getStudy().fillList(questionType, listModel);
 
