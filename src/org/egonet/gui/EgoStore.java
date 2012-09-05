@@ -42,8 +42,7 @@ import javax.swing.*;
  */
 public class EgoStore {
 
-	final private static Logger logger = LoggerFactory
-			.getLogger(EgoStore.class);
+	final private static Logger logger = LoggerFactory.getLogger(EgoStore.class);
 
 	// a window for dialogs to parent
 	private Window parent;
@@ -55,17 +54,14 @@ public class EgoStore {
 	private Tuple<File, Interview> currentInterview;
 
 	// useful file filters
-	protected static final FileFilter packageFilter = new ExtensionFileFilter(
-			"Study Definition Files", "ego");
+	protected static final FileFilter packageFilter = new ExtensionFileFilter("Study Definition Files", "ego");
 
 	// constant lookup for the prefs API
 	protected static final String FILE_PREF = "FILE_PREF";
 
 	private static final String[] questionExtensions = { "qst", "qtp" };
-	private static FileFilter readQuestionFilter = (FileFilter) new ExtensionFileFilter(
-			"Question Files", questionExtensions[0]);
-	private static FileFilter writeQuestionFilter = (FileFilter) new ExtensionFileFilter(
-			"Question Templates", questionExtensions);
+	private static FileFilter readQuestionFilter = (FileFilter) new ExtensionFileFilter("Question Files", questionExtensions[0]);
+	private static FileFilter writeQuestionFilter = (FileFilter) new ExtensionFileFilter("Question Templates", questionExtensions);
 	private static FileFilter studyFilter = new ExtensionFileFilter(
 			"Study Files", "ego");
 
@@ -94,16 +90,17 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
-		InterviewWriter iw = new InterviewWriter(currentStudy.second(),
-				currentInterview.first());
+		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
 
 	public void setCurrentInterview(Interview interview, File file) {
+		logger.info("Set current interview " + (file == null ? file : file.toString()) + " with " + (interview == null ? interview : interview.toString()));
 		currentInterview = new Tuple<File, Interview>(file, interview);
 	}
 
 	public void unsetCurrentInterview() {
+		logger.info("Unset current interview");
 		currentInterview = null;
 	}
 
@@ -115,55 +112,38 @@ public class EgoStore {
 	 * @throws IOException
 	 */
 	public boolean saveInterview() throws IOException {
-		boolean exists = false;
-		boolean complete = false;
-		boolean confirmed = false;
-		boolean resume = false;
 		boolean success = false;
 
 		try {
 			String[] name = currentInterview.second().getName();
-			File path = new File(currentStudy.first().getParent(),
-					"/Interviews/");
-			File f = new File(path, name[0].toLowerCase() + "_"
-					+ name[1].toLowerCase() + ".int");
+			logger.info("EgoStore savng interview called with " + Arrays.asList(name) + " and current study " + currentStudy.first().toString());
 
-			if (!path.exists()) {
-				path.mkdir();
-			}
+			File studyPath = new File(currentStudy.first().getParent(), "/Interviews/");
+			
+			File incompleteFile = null;
+			File completeFile = null;
+			File [] possibles = InterviewReader.findInterviews(currentStudy, name);
 
-			if (f.exists()) {
-				exists = true;
-
-				try {
-					InterviewReader ir = new InterviewReader(currentStudy.second(), f);
-					complete = ir.getInterview().isComplete();
-				} catch (Exception ex) {
-					exists = false;
-					complete = false;
+			for(File possible : possibles) {
+				InterviewReader ir = new InterviewReader(currentStudy.second(), possible);
+				if(!ir.getInterview().isComplete()) {
+					incompleteFile = possible;
 				}
+				else if(ir.getInterview().isComplete()) {
+					completeFile = possible;
+				}
+			}
+			
+			logger.info("Detemined there was an incomplete file " + (incompleteFile == null ? incompleteFile : incompleteFile.getName()) + " and a complete file " + (completeFile == null ? completeFile : completeFile.getName()) + " with possibles totalling " + possibles.length);
 
-				if (exists && complete) {
+
+			// do any interviews exist and do any incomplete interviews exist?
+			if(possibles.length > 0 && incompleteFile != null) {
+				logger.info("Determinted that possible interview files exist, including an incomplete interview");
 					int selected = JOptionPane
 							.showConfirmDialog(
 									parent,
-									"There is already a complete interview for "
-											+ name[0]
-											+ " "
-											+ name[1]
-											+ "\nDo you wish to replace it with a new interview?",
-									"Completed Interview Exists",
-									JOptionPane.YES_NO_OPTION);
-
-					if (selected == JOptionPane.YES_OPTION) {
-						exists = false;
-					}
-					confirmed = true;
-				} else if (exists && !complete) {
-					int selected = JOptionPane
-							.showConfirmDialog(
-									parent,
-									"There is already an incomplete interview for "
+									"There is already at least one incomplete interview for "
 											+ name[0]
 											+ " "
 											+ name[1]
@@ -172,38 +152,63 @@ public class EgoStore {
 									JOptionPane.YES_NO_OPTION);
 
 					if (selected == JOptionPane.YES_OPTION) {
-						resume = true;
-						confirmed = true;
-					}
-				}
+						setCurrentInterview(readInterview(incompleteFile), incompleteFile);
 
-				if (exists && !confirmed) {
+						if (currentInterview.second() != null) {
+							success = true;
+							setCurrentInterview(currentInterview.second(), incompleteFile);
+							return success;
+						}
+					}	
+			} 
+			// do any interviews exist and do any complete interviews exist?
+			else if(possibles.length > 0 && completeFile != null) {
+				logger.info("Determinted that possible interview files exist, including a complete interview");
 					int selected = JOptionPane
 							.showConfirmDialog(
 									parent,
-									"Should I erase the old interview and start a new one?",
-									"Delete Interview",
+									"There is already a complete interview for "
+											+ name[0]
+											+ " "
+											+ name[1]
+											+ "\nDo you wish to replace it with a new interview? (Press no to start a second interview.)",
+									"Completed Interview Exists, delete it and start over?",
 									JOptionPane.YES_NO_OPTION);
 
+					// replace it
 					if (selected == JOptionPane.YES_OPTION) {
-						exists = false;
+						setCurrentInterview(currentInterview.second(), completeFile);
+						writeCurrentInterview();
+						success = true;
+						return success;
+					} 
+					// do a second copy of one
+					else {
+						InterviewReader tempIr = new InterviewReader(currentStudy.second(), completeFile);
+						Interview curInt = tempIr.getInterview();
+						File newFile = InterviewReader.getNewInterviewPath(studyPath, name);
+						
+						curInt.setComplete(false);
+						for(Answer answer : curInt.getEgoAnswers()) {
+							answer.answered = false;
+						}
+						for(Question answer : curInt.getAlterAnswers()) {
+							answer.answer.answered = false;
+						}
+						
+						setCurrentInterview(curInt, newFile);
+						writeCurrentInterview();
+						success = true;
+						return success;
 					}
-					confirmed = true;
-				}
 			}
-
-			if (!exists) {
-				setCurrentInterview(currentInterview.second(), f);
+			else {
+				logger.info("Determinted that possible interview files DON'T exist");
+				File newFile = InterviewReader.defaultInterviewPath(studyPath, name);
+				setCurrentInterview(currentInterview.second(), newFile);
 				writeCurrentInterview();
 				success = true;
-
-			} else if (resume) {
-				setCurrentInterview(readInterview(f), f);
-
-				if (currentInterview.second() != null) {
-					success = true;
-					setCurrentInterview(currentInterview.second(), f);
-				}
+				return success;
 			}
 		} catch (SecurityException e) {
 			JOptionPane.showMessageDialog(parent,

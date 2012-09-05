@@ -31,7 +31,6 @@ public class StudyReader {
 		this.studyFile = studyFile;
 	}
 	
-	
 	public Study getStudy() throws EgonetException {
 		try {
 			Study readStudy = readPackageStudy(new Document(studyFile));
