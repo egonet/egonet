@@ -781,7 +781,7 @@ public class Statistics
                     try {
                         Answer a = (Answer) aIt.next();
 
-                        if (a.answered)
+                        if (a.isAnswered())
                         {
                             alterSummary[a.firstAlter()][index] = new Integer(a.getValue());
 
@@ -906,7 +906,7 @@ public class Statistics
 
             if (q.answerType == Shared.AnswerType.TEXT)
             {
-                if (answer.answered)
+                if (answer.isAnswered())
                 {
                     w.println("Ego Question: " + q.title);
                     w.println("Text: " + q.text);
@@ -933,7 +933,7 @@ public class Statistics
                 {
                     Answer a = (Answer) aIt.next();
 
-                    if (a.answered)
+                    if (a.isAnswered())
                     {
                         w.println(alterList[a.firstAlter()] + ": " + a.string);
                     }

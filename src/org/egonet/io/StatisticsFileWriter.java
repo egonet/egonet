@@ -63,7 +63,7 @@ public class StatisticsFileWriter {
 								study.getQuestions().getQuestion(
 										answer.questionId).title);
 
-				if (answer.answered) {
+				if (answer.isAnswered()) {
 					aElement.addElement("Answer").setString(answer.string);
 					aElement.addElement("AnswerIndex")
 							.setInt(answer.getValue());

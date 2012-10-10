@@ -27,6 +27,7 @@ public class InterviewWriter {
 		Document document = new Document();
 
 		if (interviewFile != null) {
+			
 			document.setEncoding("UTF-8");
 			document.setVersion("1.0");
 			Element interviewDocument = document.setRoot("Interview");
@@ -84,9 +85,9 @@ public class InterviewWriter {
         
         
         answerElement.addElement("QuestionId").setLong(answer.questionId.longValue());
-        answerElement.addElement("Answered").setBoolean(answer.answered);
+        answerElement.addElement("Answered").setBoolean(answer.isAnswered());
 
-        if (answer.answered) {
+        if (answer.isAnswered()) {
             if(answer.questionId.equals(1205185478364L)) System.err.println("Printed a value into the XML file that was zero: " + answer.getString());
             answerElement.addElement("Value").setInt(answer.getValue());
             answerElement.addElement("Index").setInt(answer.getIndex());

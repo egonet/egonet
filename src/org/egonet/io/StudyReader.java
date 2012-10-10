@@ -12,6 +12,8 @@ import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.util.listbuilder.Selection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
@@ -25,6 +27,8 @@ import electric.xml.ParseException;
 
 public class StudyReader {
 
+	final private static Logger logger = LoggerFactory.getLogger(StudyReader.class);
+	
 	private File studyFile;
 	public StudyReader(File studyFile)
 	{
@@ -75,7 +79,7 @@ public class StudyReader {
 		}
 
 		if(root.getElement("allowskipquestions") != null) {
-			System.out.println("FOUND ALLOW SKIPS");
+			//System.out.println("FOUND ALLOW SKIPS");
 			study.setAllowSkipQuestions(root.getBoolean("allowskipquestions"));
 		}
 		
@@ -257,7 +261,15 @@ public class StudyReader {
 				 * a question must have at least one of each selection type to
 				 * be statable
 				 */
-				q.statable = adjacent && nonadjacent;
+				q.setStatable(adjacent && nonadjacent);
+				if(!q.isStatable()) {
+					String str = "Study readQuestion found that there wasn't a valid adjacency map, marking alter pair question NON statable";
+					logger.error(str);
+					//throw new RuntimeException(str);
+				}
+				else {
+					logger.info("Successfully determined that this study is statable");
+				}
 
 				/* Check to make sure all answers are contiguous */
 				for (int i = 0; i < selections.size(); i++) {

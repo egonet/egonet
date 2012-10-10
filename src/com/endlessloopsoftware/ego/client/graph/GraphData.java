@@ -147,15 +147,15 @@ public class GraphData {
 		while (questionIterator.hasNext()) {
 
 			interviewQuestion = (Question) questionIterator.next();
-			if (interviewQuestion.answer.answered == false) {
+			if (interviewQuestion.getAnswer().isAnswered() == false) {
 				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
 
 			if (interviewQuestion.UniqueId == QID) {
-				if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
-				    alterNumbers.addAll(interviewQuestion.answer.getAlters());
+				if (interviewQuestion.getAnswer().getValue() == graphQuestion.getSelection().getValue()) {
+				    alterNumbers.addAll(interviewQuestion.getAnswer().getAlters());
 				}
 			}
 		}
@@ -171,14 +171,14 @@ public class GraphData {
 		questionIterator = interviewAlterQuestionList.iterator();
 		while (questionIterator.hasNext()) {
 			interviewQuestion = (Question) questionIterator.next();
-			if (interviewQuestion.answer.answered == false) {
+			if (interviewQuestion.getAnswer().isAnswered() == false) {
 				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
 			if (interviewQuestion.UniqueId == QID) {
-				if (interviewQuestion.answer.getValue() == selection.getValue()) {
-				    alterNumbers.addAll(interviewQuestion.answer.getAlters());
+				if (interviewQuestion.getAnswer().getValue() == selection.getValue()) {
+				    alterNumbers.addAll(interviewQuestion.getAnswer().getAlters());
 				}
 			}
 		}
@@ -211,15 +211,15 @@ public class GraphData {
 		while (questionIterator.hasNext()) {
 
 			interviewQuestion = (Question) questionIterator.next();
-			if (interviewQuestion.answer.answered == false) {
+			if (interviewQuestion.getAnswer().isAnswered() == false) {
 				logger.info(interviewQuestion.UniqueId + " | "
 						+ interviewQuestion.text + " | Unanswered");
 				continue;
 			}
 			if (interviewQuestion.UniqueId == QID) {
-			    if (interviewQuestion.answer.getValue() == graphQuestion.getSelection().getValue()) {
+			    if (interviewQuestion.getAnswer().getValue() == graphQuestion.getSelection().getValue()) {
 					
-					for (int alterNum : interviewQuestion.answer.getAlters()) {
+					for (int alterNum : interviewQuestion.getAnswer().getAlters()) {
 						alterNames.add(completeAlterNameList[alterNum]);
 					}
 				}

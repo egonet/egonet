@@ -297,7 +297,7 @@ public class QuestionLinkDialog extends JDialog
 			{
 				linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
 				linkAnswer.string  	= baseQuestion.link.getAnswer().string;
-				linkAnswer.answered = true;
+				linkAnswer.setAnswered(true);
 			}
 		}
 
@@ -344,7 +344,7 @@ public class QuestionLinkDialog extends JDialog
 					linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
 					linkAnswer.setIndex(baseQuestion.link.getAnswer().getIndex());
 					linkAnswer.string  	= baseQuestion.link.getAnswer().string;
-					linkAnswer.answered = true;
+					linkAnswer.setAnswered(true);
 				}
 			}
 
@@ -380,7 +380,7 @@ public class QuestionLinkDialog extends JDialog
 				answerTextField.setDocument(plainDocument);
 				answerTextField.requestFocus();
 
-				if (linkAnswer.answered)
+				if (linkAnswer.isAnswered())
 				{
 					answerTextField.setText(linkAnswer.string);
 				}
@@ -395,7 +395,7 @@ public class QuestionLinkDialog extends JDialog
 				answerTextField.setDocument(wholeNumberDocument);
 				answerTextField.requestFocus();
 
-				if (linkAnswer.answered)
+				if (linkAnswer.isAnswered())
 				{
 					answerTextField.setText(linkAnswer.string);
 				}
@@ -411,7 +411,7 @@ public class QuestionLinkDialog extends JDialog
 
 				answerPanel.add(radioPanel);
 
-				if (linkAnswer.answered)
+				if (linkAnswer.isAnswered())
 				{
 					if (linkAnswer.getValue() == Answer.ALL_ADJACENT)
 					{
@@ -501,21 +501,21 @@ public class QuestionLinkDialog extends JDialog
 			{
 				linkAnswer.string   	= answerTextField.getText();
 				linkAnswer.setValue(Integer.valueOf(linkAnswer.string).intValue());
-				linkAnswer.answered     = true;
+				linkAnswer.setAnswered(true);
 			}
 			else
 			{
 				linkAnswer.setValue(Answer.NO_ANSWER);
-				linkAnswer.answered 	= false;
+				linkAnswer.setAnswered(false);
 			}
 		} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 			linkAnswer.string   		= answerTextField.getText();
 			linkAnswer.setValue(linkAnswer.string.length());
-			linkAnswer.answered     	= (linkAnswer.getValue() != 0);
+			linkAnswer.setAnswered((linkAnswer.getValue() != 0));
 		} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
 			linkAnswer.string = "informational";
 			linkAnswer.setValue(1);
-			linkAnswer.answered = true;
+			linkAnswer.setAnswered(true);
 		} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 			
 			// option/radio buttons
@@ -523,13 +523,13 @@ public class QuestionLinkDialog extends JDialog
 				if (allAdjacentCheck.isSelected()) {
 					linkAnswer.setValue(Answer.ALL_ADJACENT);
 					linkAnswer.string   		= "All Adjacent";
-					linkAnswer.answered     = true;
+					linkAnswer.setAnswered(true);
 				}
 				else {
 					int button          		= selectedButtonIndex(answerButtons);
-					linkAnswer.answered 		= (button != MAX_BUTTONS);
+					linkAnswer.setAnswered( (button != MAX_BUTTONS));
 					
-					if (linkAnswer.answered)
+					if (linkAnswer.isAnswered())
 					{
 						linkAnswer.setValue(question.getSelections()[button].getValue());
 						linkAnswer.setIndex(question.getSelections()[button].getIndex());
@@ -550,20 +550,20 @@ public class QuestionLinkDialog extends JDialog
 				{
 					linkAnswer.setValue(Answer.ALL_ADJACENT);
 					linkAnswer.string   		= "All Adjacent";
-					linkAnswer.answered     = true;
+					linkAnswer.setAnswered(true);
 				}
 				else if (answerMenu.getSelectedIndex() > 0) // 0th option is "Select an answer"
 				{
 					int selectionIndex = answerMenu.getSelectedIndex() - 1;
 					linkAnswer.setValue(question.getSelections()[selectionIndex].getValue());
 					linkAnswer.string   		= answerMenu.getSelectedItem().toString();
-					linkAnswer.answered     = (selectionIndex <= question.getSelections().length);
+					linkAnswer.setAnswered((selectionIndex <= question.getSelections().length));
 				}
 				else
 				{
 					linkAnswer.setValue(Answer.NO_ANSWER);
 					linkAnswer.string   		= "";
-					linkAnswer.answered     = false;
+					linkAnswer.setAnswered(false);
 				}
 			}
 		}
@@ -597,7 +597,7 @@ public class QuestionLinkDialog extends JDialog
 
 	void questionButtonOK_actionPerformed(ActionEvent e) throws IOException
 	{
-		if ((linkAnswer != null) && (linkAnswer.answered) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
+		if ((linkAnswer != null) && (linkAnswer.isAnswered()) && egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
 		{
 			baseQuestion.link.setAnswer(linkAnswer);
 			egoNet.getStudy().setModified(true);
@@ -626,7 +626,7 @@ public class QuestionLinkDialog extends JDialog
 
 	void setOKButtonState()
 	{
-		questionButtonOK.setEnabled((question != null) && linkAnswer.answered);
+		questionButtonOK.setEnabled((question != null) && linkAnswer.isAnswered());
 	}
 
 

@@ -190,10 +190,10 @@ public class EgoStore {
 						
 						curInt.setComplete(false);
 						for(Answer answer : curInt.getEgoAnswers()) {
-							answer.answered = false;
+							answer.setAnswered(false);
 						}
 						for(Question answer : curInt.getAlterAnswers()) {
-							answer.answer.answered = false;
+							answer.getAnswer().setAnswered(false);
 						}
 						
 						curInt.setFollowup(true);
@@ -970,6 +970,9 @@ public class EgoStore {
 			
 			new VnaInterviewWriter(stats.getStudy(),stats.getInterview())
 			.write(createFileWithNewEndingFromDot(statdir,name,".vna"));
+		}
+		else {
+			logger.warn("Study file was null. While you asked for statistics, you aren't going to get any.");
 		}
 
 	}

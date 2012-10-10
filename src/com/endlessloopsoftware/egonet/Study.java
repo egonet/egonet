@@ -161,7 +161,7 @@ public class Study extends Observable implements Comparable<Study>
 		{
 			Question q = (Question) _questions.getQuestion(questions.next());
 
-			if (q.statable && !q.link.isActive())
+			if (q.isStatable() && !q.link.isActive())
 			{
 				statable = q;
 				break;
@@ -178,7 +178,7 @@ public class Study extends Observable implements Comparable<Study>
 			{
 				Question q = (Question) _questions.getQuestion(questions.next());
 
-				if (q.statable)
+				if (q.isStatable())
 				{
 					statable = q;
 				}

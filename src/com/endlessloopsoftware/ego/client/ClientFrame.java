@@ -683,12 +683,12 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
     }
 
 	public void focusActivated() {
-		logger.info(this.getTitle() + " activated");
+		logger.trace(this.getTitle() + " activated");
 		
 	}
 
 	public void focusDeactivated() {
-		logger.info(this.getTitle() + " deactivated");
+		logger.trace(this.getTitle() + " deactivated");
 		
 	}
 

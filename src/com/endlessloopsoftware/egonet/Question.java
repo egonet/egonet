@@ -30,7 +30,7 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 public class Question implements Cloneable {
 	public boolean centralMarker = false;
 
-	public boolean statable = false;
+	private boolean statable = false;
 	
 	public boolean followupOnly = false;
 
@@ -60,7 +60,7 @@ public class Question implements Cloneable {
 
 	private Selection[] selections = new Selection[0];
 
-	public Answer answer = new Answer(new Long(-1));
+	private Answer answer = new Answer(new Long(-1));
 
 	public static final int MAX_CATEGORICAL_CHOICES = 9;
 
@@ -149,7 +149,7 @@ public class Question implements Cloneable {
 			 * Dangerous to clone answers as multiple answers refer to same
 			 * question Make sure they are assigned explicitly
 			 */
-			q.answer = null;
+			q.setAnswer(null);
 		} catch (CloneNotSupportedException ex) {
 			q = null;
 		}
@@ -160,7 +160,7 @@ public class Question implements Cloneable {
 	public String getString() {
 		String str = "";
 		str = "ID : " + UniqueId + ", Qtype="+questionType+",Atype="+answerType+", Title : " + title + " text : " + text
-				+ "\nAnswer : " + answer.getString();
+				+ "\nAnswer : " + getAnswer().getString();
 		return str;
 	}
 
@@ -170,5 +170,21 @@ public class Question implements Cloneable {
 
 	public Selection[] getSelections() {
 		return selections;
+	}
+
+	public Answer getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(Answer answer) {
+		this.answer = answer;
+	}
+
+	public boolean isStatable() {
+		return statable;
+	}
+
+	public void setStatable(boolean statable) {
+		this.statable = statable;
 	}
 }

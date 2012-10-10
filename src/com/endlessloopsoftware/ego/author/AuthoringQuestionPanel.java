@@ -741,7 +741,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                     + (q_old.title != null && q_old.title.endsWith("Duplicate Question") ? "" : " (Duplicate Question)"));
             q.answerType = q_old.answerType;
             q.citation = q_old.citation;
-            q.statable = q_old.statable;
+            q.setStatable(q_old.isStatable());
             q.text = q_old.text;
             q.followupOnly = q_old.followupOnly;
 

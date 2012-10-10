@@ -117,6 +117,11 @@ public class GraphSettings {
 
 	private void init() {
 		int noOfAlters = egoClient.getInterview().getNumAlters();
+		
+		String[] renderAlterList = renderer.getAlterList();
+		if(renderAlterList.length < 1)
+			throw new IllegalArgumentException("Graph renderer was called with an empty alter list!");
+		
 		// initialize nodes with default settings
 		for (int i = 0; i < noOfAlters; i++) {
 			String alterName = egoClient.getInterview().getAlterList()[i];
@@ -126,7 +131,7 @@ public class GraphSettings {
 			NodeProperty nodeProperty = new NodeProperty(alterName, color,shape, size);
 			nodeProperty.setToolTipText(getAlterInfo(i, false));
 			nodeProperty.setDetailedToolTipText(getAlterInfo(i, true));
-			nodeSettingsMap.put(new Vertex(renderer.getAlterList()[i]), nodeProperty);
+			nodeSettingsMap.put(new Vertex(renderAlterList[i]), nodeProperty);
 		}
 		// initialize edges with default settings
 		Graph<Vertex, Edge> g = GraphRenderer.getGraph();

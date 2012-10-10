@@ -35,6 +35,8 @@ import javax.swing.JTabbedPane;
 
 import org.egonet.util.CatchingAction;
 import org.egonet.util.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -71,6 +73,8 @@ public class StatisticsFrame extends JPanel {
 	private JPanel qSummaryPanel = null;
 
 	private EgoClient egoClient;
+	
+	final private static Logger logger = LoggerFactory.getLogger(StatisticsFrame.class);
 
 	public StatisticsFrame(EgoClient egoClient) {
 		this.egoClient = egoClient;
@@ -87,7 +91,7 @@ public class StatisticsFrame extends JPanel {
 		while (questions.hasNext()) {
 			Question q = egoClient.getStudy().getQuestion((Long) questions.next());
 
-			if (q.statable) {
+			if (q.isStatable()) {
 				//alterQuestionMenu.addItem(q);
 				studyStatable = true;
 				stats = egoClient.getInterview().generateStatistics(q);
@@ -180,6 +184,9 @@ public class StatisticsFrame extends JPanel {
 
 				
 				updateAll();
+			}
+			else {
+				logger.error("No stateable ALTER_PAIR question, bailing on lots of stuff");
 			}
 		}
 

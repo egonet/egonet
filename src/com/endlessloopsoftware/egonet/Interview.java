@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.egonet;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -167,7 +168,7 @@ public class Interview implements Comparable<Interview> {
 					if (question == null) {
 						throw new CorruptedInterviewException();
 					} else {
-						if (question.statable) {
+						if (question.isStatable()) {
 							_statisticsAvailable = true;
 						}
 
@@ -287,8 +288,7 @@ public class Interview implements Comparable<Interview> {
 	public List<Answer> getEgoAnswers() {
 		List<Answer> l = new ArrayList<Answer>();
 		int index = 0;
-		Question q = _study.getQuestions().getQuestion(
-				_answers[index].questionId);
+		Question q = _study.getQuestions().getQuestion(_answers[index].questionId);
 
 		while (q.questionType == Shared.QuestionType.EGO) {
 			l.add(_answers[index]);
@@ -361,10 +361,10 @@ public class Interview implements Comparable<Interview> {
 			_qIndex = i;
 
 			q = (Question) getQuestion(_qIndex).clone();
-			q.answer = _answers[_qIndex];
+			q.setAnswer(_answers[_qIndex]);
 
 			// replaces $$n in String with alter name indexed as alter #n
-			q.text = completeText(q.text, q.answer.getAlters());
+			q.text = completeText(q.text, q.getAnswer().getAlters());
 		}
 
 		return (q);
@@ -381,7 +381,7 @@ public class Interview implements Comparable<Interview> {
 
 		i = nextValidAnswer(0, true);
 		while (i != -1) {
-			if (!_answers[i].answered) {
+			if (!_answers[i].isAnswered()) {
 				rv = i;
 				break;
 			}
@@ -540,8 +540,8 @@ public class Interview implements Comparable<Interview> {
 		_qIndex = nextValidAnswer(_qIndex + 1, true);
 
 		q = (Question) getQuestion(_qIndex).clone();
-		q.answer = _answers[_qIndex];
-		q.text = completeText(q.text, q.answer.getAlters());
+		q.setAnswer(_answers[_qIndex]);
+		q.text = completeText(q.text, q.getAnswer().getAlters());
 
 		return (q);
 	}
@@ -558,8 +558,8 @@ public class Interview implements Comparable<Interview> {
 		// assert (qIndex != -1);
 
 		q = (Question) getQuestion(_qIndex).clone();
-		q.answer = _answers[_qIndex];
-		q.text = completeText(q.text, q.answer.getAlters());
+		q.setAnswer(_answers[_qIndex]);
+		q.text = completeText(q.text, q.getAnswer().getAlters());
 
 		return (q);
 	}
@@ -585,14 +585,14 @@ public class Interview implements Comparable<Interview> {
 		String[] s = new String[2];
 
 		try {
-			if ((q.answer.hasAtLeastOneAlter())
-					&& (q.answer.firstAlter() != -1)) {
-				s[0] = _alterList[q.answer.firstAlter()];
+			if ((q.getAnswer().hasAtLeastOneAlter())
+					&& (q.getAnswer().firstAlter() != -1)) {
+				s[0] = _alterList[q.getAnswer().firstAlter()];
 			}
 
-			if ((q.answer.hasTwoAlters())
-					&& (q.answer.secondAlter() != -1)) {
-				s[1] = _alterList[q.answer.secondAlter()];
+			if ((q.getAnswer().hasTwoAlters())
+					&& (q.getAnswer().secondAlter() != -1)) {
+				s[1] = _alterList[q.getAnswer().secondAlter()];
 			}
 		} catch (Exception ex) {
 			s[0] = "";
@@ -707,7 +707,16 @@ public class Interview implements Comparable<Interview> {
 
 		if (q != null) {
 			Statistics stats = storage.getInterview().generateStatistics(q);
+			if(stats == null)
+				logger.error("generateStatistics produced null output. This is likely to cause problems later.");
+			else if(stats.alterList == null || stats.alterList.length==0)
+				logger.error("generateStatistics produced an empty alter list. This is likely to cause problems later.");
+			else
+				logger.trace(Arrays.asList(stats.alterList).toString());
 			storage.writeStatisticsFiles(stats, _egoName);
+		}
+		else {
+			logger.info("Interview completion DID NOT generate statistics!");
 		}
 	}
 
@@ -725,7 +734,7 @@ public class Interview implements Comparable<Interview> {
 		while (egoAnswerIter.hasNext()) {
 			Answer answer = (Answer) egoAnswerIter.next();
 
-			if (answer.answered) {
+			if (answer.isAnswered()) {
 				egoAnswers[index++] = new EgoAnswer(_study
 						.getQuestions().getQuestion(answer.questionId).title,
 						answer.string, answer.getValue());

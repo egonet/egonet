@@ -36,9 +36,17 @@ public class Answer implements Cloneable {
      */
     private List<Integer> alters;
 
-    public boolean answered;
+    private boolean _answered = false;
 
-    public boolean adjacent;
+    public boolean isAnswered() {
+		return _answered;
+	}
+
+	public void setAnswered(boolean _answered) {
+		this._answered = _answered;
+	}
+
+	public boolean adjacent;
 
     private int value;
 
@@ -58,7 +66,7 @@ public class Answer implements Cloneable {
     public Answer(Long Id, int[] alters) {
         //logger.info("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
         questionId = Id;
-        answered = false;
+        setAnswered(false);
         adjacent = false;
         setValue(-1);
         string = "";
@@ -103,7 +111,7 @@ public class Answer implements Cloneable {
 
     public String getString() {
         String str = "";
-        str = "questionId=" + questionId + ", answered=" + answered + ", string=" + string + ", index="+getIndex()+", value=" + getValue();
+        str = "questionId=" + questionId + ", answered=" + isAnswered() + ", adjacent=" + adjacent +  ", string=" + string + ", index="+getIndex()+", value=" + getValue();
         return str;
 
     }

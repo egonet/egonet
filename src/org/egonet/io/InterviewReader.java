@@ -187,14 +187,14 @@ public class InterviewReader {
 			Question question = interview.getStudy().getQuestion(answer.questionId);
 			//logger.info("\tFound question by answer " + question.getString());
 			
-			if(!answer.answered && question.link.isActive()) { // if there's a real possibility this is linked
+			if(!answer.isAnswered() && question.link.isActive()) { // if there's a real possibility this is linked
 				Answer linkedAnswer = answers[question.link.getAnswer().getIndex()];
-				if(!linkedAnswer.answered) {
+				if(!linkedAnswer.isAnswered()) {
 					//logger.info("\t!answer.answered && question.link.isActive()");
 					all = false;
 				}
 			} 
-			else if(!answer.answered && !question.link.isActive()) {
+			else if(!answer.isAnswered() && !question.link.isActive()) {
 				//logger.info("\t!answer.answered && !question.link.isActive()");
 				all = false;
 			}
@@ -260,9 +260,9 @@ public class InterviewReader {
 
         Answer r = new Answer(qId, qAlters);
 
-        r.answered = e.getBoolean("Answered");
+        r.setAnswered(e.getBoolean("Answered"));
 
-        if (r.answered) {
+        if (r.isAnswered()) {
             r.string = e.getString("String");
             r.setValue(e.getInt("Value"));
             r.setIndex(e.getInt("Index"));

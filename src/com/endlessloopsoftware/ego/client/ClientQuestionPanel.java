@@ -557,8 +557,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerTextField.setDocument(plainDocument);
 			answerTextField.requestFocus();
 
-			if (question.answer.answered) {
-				answerTextField.setText(question.answer.string);
+			if (question.getAnswer().isAnswered()) {
+				answerTextField.setText(question.getAnswer().string);
 			} else {
 				answerTextField.setText("");
 			}
@@ -576,9 +576,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			numericalTextField.setDocument(wholeNumberDocument);
 			numericalTextField.requestFocusInWindow();
 
-			if (question.answer.answered) {
-				if (question.answer.getValue() != -1) {
-					numericalTextField.setText(question.answer.string);
+			if (question.getAnswer().isAnswered()) {
+				if (question.getAnswer().getValue() != -1) {
+					numericalTextField.setText(question.getAnswer().string);
 					noAnswerBox.setSelected(false);
 				} else {
 					noAnswerBox.setSelected(true);
@@ -624,12 +624,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					logger.info("Creating radio button " + i + ": " + answerButtons[i].getText());
 				}
 				
-				logger.info("-- answer: " + question.answer.answered + ", answer index: " + question.answer.getIndex());
-				if (question.answer.answered && (question.answer.getIndex() >= -1)) {
+				logger.info("-- answer: " + question.getAnswer().isAnswered() + ", answer index: " + question.getAnswer().getIndex());
+				if (question.getAnswer().isAnswered() && (question.getAnswer().getIndex() >= -1)) {
 					logger.info(" -- was it actually answered with index >= -1 (not unselected)");
 					//int idx = question.selections.length - (question.answer.getValue() + 1);
 					if (answerButtons != null && answerButtons.length != 0) {
-						answerButtons[question.answer.getIndex()].setSelected(true);
+						answerButtons[question.getAnswer().getIndex()].setSelected(true);
 						logger.info("-- YES -- setting a selection for the new loaded question's answer!");
 					}
 				} else {
@@ -654,14 +654,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerMenu.addItem(question.getSelections()[i]);
 					// If question already answered, then select that answer
 					if(	i > 0 && 
-						question.answer.getIndex() >= 0 &&
-						question.answer.getIndex()+1 == i
+						question.getAnswer().getIndex() >= 0 &&
+						question.getAnswer().getIndex()+1 == i
 						)
 						answerMenu.setSelectedIndex(i);	
 				}
 				
 				// Question not answered yet, so should start on "Select an answer"
-				if(( ! question.answer.answered) || question.answer.getIndex() < 0) {
+				if(( ! question.getAnswer().isAnswered()) || question.getAnswer().getIndex() < 0) {
 					answerMenu.setSelectedIndex(0);
 				}
 				
@@ -712,7 +712,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
 			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
-			answer.answered = morePrompts || maxAlters;
+			answer.setAnswered(morePrompts || maxAlters);
 			
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
@@ -765,35 +765,35 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.timestamp = generateTimeStamp();
 					//logger.info("Timestamp: " + answer.timestamp);
 					if (noAnswerBox.isSelected()) {
-						answer.answered = true;
+						answer.setAnswered(true);
 						answer.setValue((Answer.NO_ANSWER));
 						answer.string = "No Answer";
 					} else {
 						answer.string = numericalTextField.getText();
 						answer.setValue((Integer.valueOf(answer.string).intValue()));
-						answer.answered = true;
+						answer.setAnswered(true);
 					}
 				} else {
 					answer.setValue((Answer.NO_ANSWER));
-					answer.answered = false;
+					answer.setAnswered(false);
 				}
 			} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
 				answer.setValue(1);
-				answer.answered = true;
+				answer.setAnswered(true);
 			} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
 				//logger.info("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
-				answer.answered = (answer.getValue() != 0);
+				answer.setAnswered((answer.getValue() != 0));
 			} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 				
 				// option items
 				if (question.getSelections().length <= answerButtons.length) {
 					int buttonIndex = selectedButtonIndex(answerButtons);
-					answer.answered = (buttonIndex != -1);
+					answer.setAnswered((buttonIndex != -1));
 
-					if (answer.answered) {
+					if (answer.isAnswered()) {
 						answer.timestamp = generateTimeStamp();
 						
 						int selectionIndex = buttonIndex;
@@ -812,9 +812,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					// combo boxes
 					int selectionIndex = answerMenu.getSelectedIndex() - 1;
 					
-					answer.answered = (selectionIndex >= 0) && (selectionIndex < question.getSelections().length+1);
+					answer.setAnswered((selectionIndex >= 0) && (selectionIndex < question.getSelections().length+1));
 
-					if (answer.answered) {
+					if (answer.isAnswered()) {
 						answer.timestamp = generateTimeStamp();
 						//logger.info("Timestamp: " + answer.timestamp);
 
@@ -958,9 +958,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			boolean maxAlters = 
 				! (alterList.getListStrings().length < 
 					egoClient.getStudy().getNumAlters());
-			question.answer.answered = maxAlters || morePrompts;
+			question.getAnswer().setAnswered(maxAlters || morePrompts);
 				
-			questionButtonNext.setEnabled(question.answer.answered); 
+			questionButtonNext.setEnabled(question.getAnswer().isAnswered()); 
 			                                                         
 			questionButtonNext.setText("Next Question");
 		} else {
@@ -970,10 +970,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				questionButtonNext.setText("Study Complete");
 				questionButtonNext
 				.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-						&& (skip || question.answer.answered));
+						&& (skip || question.getAnswer().isAnswered()));
 			} else {
 				questionButtonNext.setText("Next Question");
-				questionButtonNext.setEnabled(skip || question.answer.answered);
+				questionButtonNext.setEnabled(skip || question.getAnswer().isAnswered());
 			}
 		}
 		if(question.answerType == Shared.AnswerType.INFORMATIONAL) {
@@ -984,14 +984,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private void questionAnsweredEventHandler(ActionEvent e) {
 		//logger.info("questionAnsweredEventHandler");
 		if (e.getActionCommand() != "Initialization") {
-			fillAnswer(question.answer);
+			fillAnswer(question.getAnswer());
 			setButtonNextState();
 		}
 	}
 
 	private void answerTextEvent(DocumentEvent e) {
-		logger.info("answerTextEvent");
-		fillAnswer(question.answer);
+		logger.debug("answerTextEvent " + e.toString());
+		fillAnswer(question.getAnswer());
 		setButtonNextState();
 	}
 
@@ -1015,7 +1015,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	
 	public void update(Observable o, Object arg) {
 		logger.info("update");
-		fillAnswer(question.answer);
+		fillAnswer(question.getAnswer());
 		setButtonNextState();
 	}
 
@@ -1024,14 +1024,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (noAnswerBox.isSelected()) {
 			numericalTextField.setText("");
 		}
-		fillAnswer(question.answer);
+		fillAnswer(question.getAnswer());
 		setButtonNextState();
 	}
 
 	private void setDefaultAnswer() {
-		if (!question.answer.answered
+		if (!question.getAnswer().isAnswered()
 				&& (question.answerType == Shared.AnswerType.CATEGORICAL)
-				&& (question.answer.secondAlter() > (question.answer
+				&& (question.getAnswer().secondAlter() > (question.getAnswer()
 						.firstAlter() + 1))) {
 			int defaultAnswer = -1;
 			if (!question.getSelections()[question.getSelections().length - 1]
@@ -1048,13 +1048,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			if ((defaultAnswer >= 0)
 					&& (defaultAnswer < question.getSelections().length)) {
-				question.answer.setValue((question.getSelections()[defaultAnswer].getValue()));
-				question.answer.setIndex(question.getSelections()[defaultAnswer].getIndex());
+				question.getAnswer().setValue((question.getSelections()[defaultAnswer].getValue()));
+				question.getAnswer().setIndex(question.getSelections()[defaultAnswer].getIndex());
 
-				question.answer.string = question.getSelections()[defaultAnswer]
+				question.getAnswer().string = question.getSelections()[defaultAnswer]
 				                                                  .getString();
-				question.answer.adjacent = false;
-				question.answer.answered = true;
+				question.getAnswer().adjacent = false;
+				question.getAnswer().setAnswered(true);
 			}
 		}
 	}

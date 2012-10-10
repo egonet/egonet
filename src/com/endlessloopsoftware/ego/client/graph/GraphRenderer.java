@@ -96,7 +96,12 @@ public class GraphRenderer /*implements
 		Interview interview = egoClient.getInterview();
 		
 		Statistics stats = interview.getStats();
-		alterList = stats.alterList;
+		if(stats == null)
+			logger.error("No statistics were computed for this interview. This is likely going to cause problems later.");
+		else if(stats.alterList == null || stats.alterList.length == 0)
+			logger.error("Statistics alter list is null or empty. This is likely going to cause problems later.");
+		
+		alterList = stats != null ? stats.alterList : new String[0];
 		
 		for (String alter : alterList) {
 				graph.addVertex(new Vertex(alter));

@@ -161,8 +161,8 @@ public class PDFWriter {
 			document.add(new Paragraph());
 			document.add(new Paragraph());
 
-			if(!answer.answered)
-				document.add(new Paragraph("Answered: " + answer.answered));
+			if(!answer.isAnswered())
+				document.add(new Paragraph("Answered: " + answer.isAnswered()));
 
 			String qText = question.text;
 			qText = qText.replaceAll("\\$\\$[^0-9]+", "\\$\\$1");
@@ -196,13 +196,13 @@ public class PDFWriter {
 			document.add(new Paragraph("Text: " + qText));
 			
 			if(question.answerType == AnswerType.NUMERICAL) {
-				if(answer.answered && answer.getValue() != -1)
+				if(answer.isAnswered() && answer.getValue() != -1)
 					document.add(new Paragraph("Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex()));
 				else
 					document.add(new Paragraph("Answer Value: _________________ "));
 			}
 			else if(question.answerType == AnswerType.TEXT) {
-				if(answer.answered && answer.string != null && !answer.string.equals(""))
+				if(answer.isAnswered() && answer.string != null && !answer.string.equals(""))
 					document.add(new Paragraph("String answer: " + answer.string));
 				else {
 					document.add(new Paragraph("Answer Value: "));
@@ -212,7 +212,7 @@ public class PDFWriter {
 				}
 			}
 			else if(question.answerType == AnswerType.CATEGORICAL) {
-				if(answer.answered && answer.getIndex() > -1) {
+				if(answer.isAnswered() && answer.getIndex() > -1) {
 					Selection sel = question.getSelections()[answer.getIndex()];
 					document.add(new Paragraph(sel.getString() + " (Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex() + ")"));
 				}
