@@ -152,7 +152,13 @@ public class InterviewReader {
 			}
 			
 			interview.setComplete(e.getBoolean("Complete"));
-			interview.setFollowup(e.getBoolean("FollowUpProtocol"));
+			try {
+				interview.setFollowup(e.getBoolean("FollowUpProtocol"));
+			} catch (Exception ex) {
+				// no followup was found, set false
+				interview.setFollowup(false);
+			}
+			
 
 			/* Read interviewee name */
 			Element egoNameElem = e.getElement("EgoName");
