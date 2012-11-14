@@ -318,6 +318,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 		itemName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
+				buttonAdd.setEnabled(true);
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
