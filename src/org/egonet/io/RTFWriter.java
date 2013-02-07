@@ -15,8 +15,8 @@ import com.lowagie.text.rtf.RtfWriter2;
 
 public class RTFWriter extends PDFWriter {
 
-	public RTFWriter(Study study) throws CorruptedInterviewException {
-		super(study);
+	public RTFWriter(Study study, String name) throws CorruptedInterviewException {
+		super(study, name);
 	}
 
 	public RTFWriter(Study study, Interview interview) throws CorruptedInterviewException {

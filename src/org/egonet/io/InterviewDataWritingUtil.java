@@ -6,7 +6,6 @@ import static com.endlessloopsoftware.egonet.Shared.QuestionType.EGO;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeMap;
 
 import net.sf.functionalj.tuple.Pair;
@@ -22,12 +21,9 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.google.common.collect.Maps;
 
 public class InterviewDataWritingUtil {
 
-	final private static Logger logger = LoggerFactory.getLogger(InterviewDataWritingUtil.class);
-	
 	public static boolean showableAsText(Question question) {
 		return question.answerType.equals(Shared.AnswerType.TEXT)
 			|| question.answerType.equals(Shared.AnswerType.CATEGORICAL);
@@ -134,11 +130,10 @@ public class InterviewDataWritingUtil {
 		}
 		public Iterator<Interview> iterator() {
 
-			final String[] interviewFilenames = 
-				DirList.getDirList(interviewDirectory, "int");
+			final String[] interviewFilenames =  DirList.getDirList(interviewDirectory, "int");
 			return new Iterator<Interview>() {
 				private int i=0;
-				private Map<String,String> egonameToFilename;
+				//private Map<String,String> egonameToFilename;
 				public boolean hasNext() {
 					return i < interviewFilenames.length;
 				}
@@ -147,21 +142,11 @@ public class InterviewDataWritingUtil {
 				}
 				public Interview next() {
 					if(hasNext()) {
-						if(egonameToFilename == null) {
-							egonameToFilename = Maps.newTreeMap();
-						}
 						String intFileName = interviewFilenames[i++];
 						File intFile = new File(interviewDirectory, intFileName);
 						InterviewReader intReader = new InterviewReader(study, intFile);
 						try {
 							Interview interview = intReader.getInterview();
-							String egoname = interview.getName()[0]+" "+interview.getName()[1];
-							if(egonameToFilename.get(egoname) != null) {
-								logger.warn("Two interview files have the same ego name: name="+
-										egoname+" file1="+egonameToFilename.get(egoname)+" file2="+
-										intFileName);
-							}
-							egonameToFilename.put(egoname, intFileName);
 							return interview;
 						} catch(CorruptedInterviewException ex) {
 							String err = "Unable to read interview file "+ intFile.getName();

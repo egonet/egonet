@@ -52,7 +52,12 @@ public class StudyReader {
 		Study study = new Study();
 		
 		Element root = document.getRoot();
-		study.setStudyId(Long.parseLong(root.getAttributeValue("Id")));
+		try {
+			study.setStudyId(Long.parseLong(root.getAttributeValue("Id")));
+		}
+		catch (NumberFormatException nfe) {
+			throw new EgonetException("Unable to parse the unique ID for this study", nfe);
+		}
 	
 		root = root.getElement("Study");
 	

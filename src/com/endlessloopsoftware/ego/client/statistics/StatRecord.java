@@ -67,7 +67,7 @@ public class StatRecord
    
    public StatRecord(Statistics stats)
    {
-	   setName(new Name(stats.getInterview().getName()[0],stats.getInterview().getName()[1]).toString());
+	   setName(new Name(stats.getInterview().getIntName()).toString());
       
       degreeName  = stats.mostCentralDegreeAlterName;
       degreeValue = new Integer(stats.mostCentralDegreeAlterValue);

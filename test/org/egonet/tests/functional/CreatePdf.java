@@ -19,7 +19,8 @@ public class CreatePdf {
 		StudyReader sr = new StudyReader(new File("C:/Documents and Settings/Martin/My Documents/EgoNet/EgoNet Study/Sample Study.ego"));
 		Study study = sr.getStudy();
 		
-		InterviewReader ir = new InterviewReader(study, new File("C:/Documents and Settings/Martin/My Documents/EgoNet/EgoNet Study/Interviews/martin_smith.int"));
+		File fInterview = new File("C:/Documents and Settings/Martin/My Documents/EgoNet/EgoNet Study/Interviews/martin_smith.int");
+		InterviewReader ir = new InterviewReader(study, fInterview);
 		Interview interview = ir.getInterview();
 		
 		String path = "C:/Documents and Settings/Martin/Desktop/";
@@ -29,7 +30,7 @@ public class CreatePdf {
 		pdfWriter1.write(completeFile);
 		
 		File incompleteFile = new File(path+"incomplete.pdf");
-		PDFWriter pdfWriter2 = new PDFWriter(study);
+		PDFWriter pdfWriter2 = new PDFWriter(study, interview.getIntName());
 		pdfWriter2.write(incompleteFile);
 	}
 

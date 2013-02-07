@@ -27,39 +27,32 @@ public class NameMappingReader {
 		
 		// "ego_first","ego_last","alter_number","alter_name","group"
 		
-		public String egoFirst, egoLast, alterName;
+		public String egoName,alterName;
 		public Integer alterNumber, group;
 		
 		public Mapping(String[] csvColumns) {
-			this(csvColumns[0],csvColumns[1],csvColumns[2],
-					csvColumns[3],csvColumns[4]);
+			this(csvColumns[0],csvColumns[1],csvColumns[2],csvColumns[3]);
 		}
 		
-		public Mapping(String egoFirst, String egoLast, 
-				String alterNumber, String alterName, String group) 
+		public Mapping(String egoName, String alterNumber, String alterName, String group) 
 		{
-			this.egoFirst = egoFirst;
-			this.egoLast = egoLast;
+			this.egoName = egoName;
 			this.alterNumber = Integer.parseInt(alterNumber);
 			this.alterName = alterName;
 			this.group = Integer.parseInt(group);
 		}
 		
 		public Mapping(NameMapping mapping) {
-			String[] name = mapping.getInterview().getName();
-			this.egoFirst = name.length > 0 ? name[0] : "";
-			this.egoLast = name.length > 1 ? name[1] : "";
+			String name = mapping.getInterview().getIntName();
+			this.egoName = name;
+			
 			this.alterNumber = mapping.getAlterNumber();
 			this.alterName = mapping.toString();
 			this.group = mapping.getGroup();
 		}
 		
 		public Key key() {
-			return new Key(
-					(egoFirst == null ? "" : egoFirst)+
-					" "+
-					(egoLast == null ? "" : egoLast), 
-					alterNumber);
+			return new Key(egoName,alterNumber);
 		}
 	}
 	

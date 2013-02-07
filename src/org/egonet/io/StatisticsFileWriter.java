@@ -114,10 +114,9 @@ public class StatisticsFileWriter {
 	 */
 	public void writeStructuralStatistics(Element e, Interview _interview, Statistics stats)
 	{
-	    String[] egoName = _interview.getName();
+	    String egoName = _interview.getIntName();
 	    Element egoNameElem = e.addElement("EgoName");
-	    egoNameElem.addElement("First").setString(egoName[0]);
-	    egoNameElem.addElement("Last").setString(egoName[1]);
+	    egoNameElem.setString(egoName);
 	
 	    e.addElement("DegreeValue").setInt(stats.mostCentralDegreeAlterValue);
 	    e.addElement("DegreeName").setString(stats.mostCentralDegreeAlterName);

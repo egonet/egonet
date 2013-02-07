@@ -47,7 +47,6 @@ import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
-import org.egonet.util.Name;
 import org.egonet.util.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,10 +344,10 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	void saveGraph_actionPerformed(ActionEvent e) {
 		String fileName;
-		fileName = egoClient.getInterview().getName() + "_graph";
-		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
-				.getParent()
-				+ "/Graphs");
+		
+		
+		fileName = egoClient.getStorage().getInterviewFile().getName() + "_graph";
+		File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent()+ "/Graphs");
 		currentDirectory.mkdir();
 
 		JFileChooser fileChooser = new JFileChooser();
@@ -381,10 +380,8 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	
 	void saveEdgeList_actionPerformed(ActionEvent e) {
 		String fileName;
-		fileName = egoClient.getInterview().getName() + "_edgelist";
-		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
-				.getParent()
-				+ "/Graphs");
+		fileName = egoClient.getStorage().getInterviewFile().getName() + "_edgelist";
+		File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent()+ "/Graphs");
 		currentDirectory.mkdir();
 
 		JFileChooser fileChooser = new JFileChooser();
@@ -427,7 +424,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	
 	void saveGraphCoordinates_actionPerformed(ActionEvent e) {
 		String fileName;
-		fileName = egoClient.getInterview().getName() + "_graph_coordinates";
+		fileName = egoClient.getStorage().getInterviewFile().getName() + "_graph_coordinates";
 		File currentDirectory = new File(egoClient.getStorage().getStudyFile()
 				.getParent()
 				+ "/Graphs");
@@ -453,11 +450,10 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 	
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String fileName = "/" + new Name(name[0],name[1]).toString("_") + ".xml";
+		String name = egoClient.getStorage().getInterviewFile().getName();
+		String fileName = "/" + name.replace(".int", "") + ".xml";
 
-		final File currentDirectory = new File(egoClient.getStorage()
-				.getStudyFile().getParent(), "Graphs");
+		final File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
 		File file = new File(currentDirectory.getAbsolutePath() + fileName);
 
@@ -480,8 +476,8 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 	
 	protected void applyGraphSettings_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String fileName = "/" + name[0] + "_" + name[1] + ".xml";
+		String name = egoClient.getStorage().getInterviewFile().getName();
+		String fileName = "/" + name.replace(".int", "") + ".xml";
 
 		final File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent(), "Graphs");
 		currentDirectory.mkdir();
@@ -589,19 +585,8 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         setContentPane(sp);
         pack();
         setSize(350, 350);
-        /* Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = getSize();
-        if (frameSize.height > screenSize.height)
-        {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width)
-        {
-            frameSize.width = screenSize.width;
-        }
-        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2); */
         setVisible(true);
-        sp.doFocus();
+
     }
     		
     public void quickSaveSummary() {

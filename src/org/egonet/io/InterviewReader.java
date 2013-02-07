@@ -1,12 +1,8 @@
 package org.egonet.io;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 import org.egonet.exceptions.CorruptedInterviewException;
-import org.egonet.util.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,62 +26,6 @@ public class InterviewReader {
 	public InterviewReader(Study study, File interviewFile)	{
 		this.study = study;
 		this.interviewFile = interviewFile;
-	}
-	
-	public static File [] findInterviews(Tuple<File, Study> study, String [] name) {
-		File studyPath = new File(study.first().getParent(), "/Interviews/");
-		if (!studyPath.exists()) {
-			studyPath.mkdir();
-		}
-		
-		
-		logger.info("Searching for all interviews for " + Arrays.asList(name) + " in " + studyPath.getAbsolutePath());
-		List<File> interviewFiles = new ArrayList<File>();
-		
-		for(File potential : studyPath.listFiles()) {
-			if(!potential.canRead() || !potential.getAbsolutePath().toLowerCase().endsWith(".int")) {
-				logger.info("Skipped " + potential.getAbsolutePath() + " because it did not end in .int or couldn't read it");
-				continue;
-			}
-			
-			try {
-				InterviewReader ir = new InterviewReader(study.second(), potential);
-				Interview interview = ir.getInterview();
-				
-				String [] potName = interview.getName();
-				if(potName[0].toLowerCase().equals(name[0].toLowerCase())
-					&& potName[1].toLowerCase().equals(name[1].toLowerCase())) {
-					// name matches, consider it!
-					
-					interviewFiles.add(potential);
-					logger.info("Added " + potential.getAbsolutePath() + " because " + Arrays.asList(potName) + " matched " + Arrays.asList(name));
-				}
-				else {
-					logger.info("Skipped " + potential.getAbsolutePath() + " because " + Arrays.asList(potName) + " didn't match " + Arrays.asList(name));
-				}
-			} 
-			catch (Exception ex) {
-				logger.error("Failed to get interview while examining " + potential.getAbsolutePath(), ex);
-			}
-			
-		}
-		
-		// for backwards compatibility, add this one if it exists and isn't already in this list
-		File backcompatInt = defaultInterviewPath(studyPath, name);
-		if(backcompatInt.exists() && backcompatInt.canRead() && !interviewFiles.contains(backcompatInt)) {
-			interviewFiles.add(backcompatInt);
-			logger.info("Added " + backcompatInt.getAbsolutePath() + " because backwards compatibility of .int file matched " + Arrays.asList(name));
-		}
-		
-		return interviewFiles.toArray(new File[0]);
-	}
-	
-	public static File defaultInterviewPath(File studyPath, String [] name) {
-		if(studyPath.isFile()) // someone passed us the study file
-			throw new IllegalArgumentException("studyPath should be a path, not a file");
-		
-		File backcompatInt = new File(studyPath, name[0].toLowerCase() + "_" + name[1].toLowerCase() + ".int");
-		return backcompatInt;
 	}
 	
 	public static File getNewInterviewPath(File studyPath, String [] name) {
@@ -123,7 +63,7 @@ public class InterviewReader {
 			long studyId = Long.parseLong(document.getRoot().getAttribute("StudyId"));
 			if (studyId != study.getStudyId())
 				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
-			Interview interview = readInterview(study, document.getRoot());
+			Interview interview = readInterview(study, document.getRoot(), interviewFile.getName().replace(".int", ""));
 			logger.info("Completely parsed interview with study ID " + studyId + " and interview " + interview);
 			return interview;
 		} catch (ParseException ex) {
@@ -132,13 +72,13 @@ public class InterviewReader {
 		
 	}
 	
-	private static Interview readInterview(Study study, Element e) throws CorruptedInterviewException{
+	private static Interview readInterview(Study study, Element e, String name) throws CorruptedInterviewException{
 			Element alterListElem = e.getElement("AlterList");
 			Element answerListElem = e.getElement("AnswerList");
 			
 			/* Read alter list so we can size interview record */
 			String[] lAlterList = readAlters(alterListElem);
-			Interview interview = new Interview(study);
+			Interview interview = new Interview(study, name);
 			interview.setAlterList(lAlterList);
 
 			/* Read answers */
@@ -157,14 +97,6 @@ public class InterviewReader {
 			} catch (Exception ex) {
 				// no followup was found, set false
 				interview.setFollowup(false);
-			}
-			
-
-			/* Read interviewee name */
-			Element egoNameElem = e.getElement("EgoName");
-
-			if (egoNameElem != null) {
-				interview.setName(egoNameElem.getString("First"), egoNameElem.getString("Last"));
 			}
 			
 			// TODO: Read new 'original alters' field

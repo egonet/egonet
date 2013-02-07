@@ -31,8 +31,8 @@ public class PDFWriter {
 		this.interview = interview;
 	}
 	
-	public PDFWriter(Study study) throws CorruptedInterviewException {
-		this(study, new Interview(study));
+	public PDFWriter(Study study, String name) throws CorruptedInterviewException {
+		this(study, new Interview(study, name));
 	}
 	public Study getStudy() {
 		return study;
@@ -77,12 +77,6 @@ public class PDFWriter {
 		document.add(new Paragraph(study.getStudyName()));
 		writeLine(document);
 		
-		// STUDY_CONFIG("Study", "Study questions"),
-	    // EGO("Ego", "Questions About You"),
-	    // ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
-	    // ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
-	    // ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
-	    
 		for(QuestionType qT : QuestionType.values()) {
 			document.add(new Paragraph("Questions of type: " + qT.niceName));
 			writeLine(document);

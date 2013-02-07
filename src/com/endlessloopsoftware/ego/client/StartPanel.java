@@ -25,20 +25,16 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import org.egonet.util.AlphaDocument;
-import org.egonet.util.CatchingAction;
+import org.egonet.exceptions.CorruptedInterviewException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
-
+import java.io.File;
 import java.io.IOException;
 
 
@@ -48,17 +44,10 @@ public class StartPanel extends JPanel
 	final private static Logger logger = LoggerFactory.getLogger(StartPanel.class);
 	
 	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
-	private final JLabel titleLabel = new JLabel("What is your name?");
-	private final JLabel firstNameLabel = new JLabel("First: ");
-	private final JTextField firstNameField = new JTextField();
+	private final JLabel titleLabel = new JLabel("Create a new interview file");
 	
-	private final JLabel lastNameLabel;
-	
-	
-	private final JTextField lastNameField = new JTextField();
-	private final JButton startInterviewButton = new JButton("Start Interview");
-	private final AlphaDocument firstNameDocument = new AlphaDocument();
-	private final AlphaDocument lastNameDocument = new AlphaDocument();
+	private final JButton startBrandNewInterviewButton = new JButton("Save or Continue a Respondent Interview (New Respondent)");
+	private final JButton startLongitudinalInterviewButton = new JButton("Save New Longitudinal Interview (Existing Respondent)");
 	
 	private final EgoClient egoClient;
 
@@ -67,15 +56,6 @@ public class StartPanel extends JPanel
 		this.egoClient = egoClient;
 		logger.info("Create of start panel using " + egoClient + " - " + egoClient.getStudy().getAlterNameModel());
 		
-		
-		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
-			firstNameField.setName("firstNameField");
-			lastNameLabel = new JLabel("Last: ");
-		} 
-		else {
-			lastNameLabel = new JLabel("Name: ");
-		}
-		lastNameField.setName("lastNameField");
 		jbInit();
 	}
 
@@ -86,9 +66,6 @@ public class StartPanel extends JPanel
 		titleLabel.setFont(new java.awt.Font("Lucida Grande", 1, 16));
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-		firstNameLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-		lastNameLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-		startInterviewButton.setEnabled(false);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 		this.add(
@@ -108,52 +85,9 @@ public class StartPanel extends JPanel
 		
 		logger.info(egoClient.getStudy().getAlterNameModel().toString());
 		logger.info(egoClient.getStudy().getStudyName());
-		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
-			this.add(
-				firstNameLabel,
-				new GridBagConstraints(
-					0,
-					1,
-					1,
-					1,
-					0.3,
-					0.1,
-					GridBagConstraints.CENTER,
-					GridBagConstraints.NONE,
-					new Insets(0, 0, 0, 0),
-					0,
-					0));
-			this.add(
-				firstNameField,
-				new GridBagConstraints(
-					1,
-					1,
-					1,
-					1,
-					0.7,
-					0.0,
-					GridBagConstraints.CENTER,
-					GridBagConstraints.HORIZONTAL,
-					new Insets(10, 10, 10, 10),
-					0,
-					6));
-		}
+
 		this.add(
-			lastNameLabel,
-			new GridBagConstraints(
-				0,
-				2,
-				1,
-				1,
-				0.0,
-				0.1,
-				GridBagConstraints.CENTER,
-				GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0),
-				0,
-				0));
-		this.add(
-			lastNameField,
+				startBrandNewInterviewButton,
 			new GridBagConstraints(
 				1,
 				2,
@@ -167,7 +101,7 @@ public class StartPanel extends JPanel
 				0,
 				6));
 		this.add(
-			startInterviewButton,
+				startLongitudinalInterviewButton,
 			new GridBagConstraints(
 				0,
 				3,
@@ -177,83 +111,92 @@ public class StartPanel extends JPanel
 				0.0,
 				GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL,
-				new Insets(20, 80, 20, 80),
+				new Insets(10, 10, 10, 10),
 				0,
 				0));
 
-		startInterviewButton.addActionListener(new java.awt.event.ActionListener()
+		startBrandNewInterviewButton.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				startInterviewButton_actionPerformed(e);
+				startBrandNewInterviewButton_actionPerformed(e);
 			}
 		});
 
-		firstNameField.addActionListener(new java.awt.event.ActionListener()
+		
+		startLongitudinalInterviewButton.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				firstNameField_actionPerformed(e);
+				startLongitudinalInterviewButton_actionPerformed(e);
 			}
-		});
 
-		lastNameField.addActionListener(new CatchingAction("lastNameField")
-		{
-			public void safeActionPerformed(ActionEvent e) throws Exception
-			{
-				lastNameField_actionPerformed(e);
-			}
-		});
-
-		firstNameField.setDocument(firstNameDocument);
-		firstNameDocument.addDocumentListener(new DocumentListener()
-		{
-			public void insertUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
-			public void changedUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
-			public void removeUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
-		});
-
-		lastNameField.setDocument(lastNameDocument);
-		lastNameDocument.addDocumentListener(new DocumentListener()
-		{
-			public void insertUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
-			public void changedUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
-			public void removeUpdate(DocumentEvent e)
-			{
-				textEvent(e);
-			}
 		});
 	}
-
-	void startInterviewButton_actionPerformed(ActionEvent e)
-	{
+	
+	private void startLongitudinalInterviewButton_actionPerformed(ActionEvent e) {
 		boolean success = false;
 
 		/* Logic */
 		try
 		{
-			egoClient.getInterview().setName(firstNameField.getText(), lastNameField.getText());
-
-			success = egoClient.getStorage().saveInterview();
+			
+			File studyFile = egoClient.getStorage().getStudyFile();
+			File studyPath = studyFile.getParentFile();
+			
+			final JFileChooser fcOpen = new JFileChooser();
+			
+			final JFileChooser fcSave = new JFileChooser() {
+			    
+				// this chooser needs to understand the "overwrite?" confirmation
+				
+				@Override
+			    public void approveSelection(){
+			        File f = getSelectedFile();
+			        if(f.exists() && getDialogType() == SAVE_DIALOG){
+			            int result = JOptionPane.showConfirmDialog(this,"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+			            switch(result){
+			                case JOptionPane.YES_OPTION:
+			                    super.approveSelection();
+			                    return;
+			                case JOptionPane.NO_OPTION:
+			                    return;
+			                case JOptionPane.CLOSED_OPTION:
+			                    return;
+			                case JOptionPane.CANCEL_OPTION:
+			                    cancelSelection();
+			                    return;
+			            }
+			        }
+			        super.approveSelection();
+			    }
+			    
+			};
+			
+			fcOpen.setCurrentDirectory(new File(studyPath.getAbsolutePath()+"/Interviews/"));
+			fcSave.setCurrentDirectory(new File(studyPath.getAbsolutePath()+"/Interviews/"));
+			
+			int rOpen = fcOpen.showOpenDialog(this);
+			if(rOpen != JFileChooser.APPROVE_OPTION)
+				return;
+			
+			int rSave = fcSave.showSaveDialog(this);
+			if(rSave != JFileChooser.APPROVE_OPTION)
+				return;
+			
+			// don't warn about incomplete?
+			// copy extant interview
+			
+			
+			success = egoClient.getStorage().saveLongitudinalFile(fcOpen.getSelectedFile(), fcSave.getSelectedFile());
 		}
 		catch (IOException ex)
 		{
 			success = false;
+		} catch (CorruptedInterviewException ex) {
+			JOptionPane.showMessageDialog(this, "The original interview you selected is corrupted. Will not proceed.");
+			success = false;
+			logger.info("Corrupted interview while trying to start a longitudinal study", ex);
 		}
 
 		/* UI */
@@ -267,47 +210,73 @@ public class StartPanel extends JPanel
 		}
 	}
 
-	protected void lastNameField_actionPerformed(ActionEvent e) throws Exception
+	void startBrandNewInterviewButton_actionPerformed(ActionEvent e)
 	{
-		if (egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST) && firstNameField.getText().length() == 0)
+		boolean success = false;
+
+		/* Logic */
+		try
 		{
-			firstNameField.requestFocus();
+			
+			File studyFile = egoClient.getStorage().getStudyFile();
+			File studyPath = studyFile.getParentFile();
+			
+			final JFileChooser fc = new JFileChooser() {
+			    
+				// this chooser needs to understand the "overwrite?" confirmation
+				
+				@Override
+			    public void approveSelection(){
+			        File f = getSelectedFile();
+			        if(f.exists() && getDialogType() == SAVE_DIALOG){
+			            int result = JOptionPane.showConfirmDialog(this,"The file exists, are you sure you want to continue with an existing interview?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+			            switch(result){
+			                case JOptionPane.YES_OPTION:
+			                    super.approveSelection();
+			                    return;
+			                case JOptionPane.NO_OPTION:
+			                    return;
+			                case JOptionPane.CLOSED_OPTION:
+			                    return;
+			                case JOptionPane.CANCEL_OPTION:
+			                    cancelSelection();
+			                    return;
+			            }
+			        }
+			        super.approveSelection();
+			    }
+			    
+			};
+			fc.setCurrentDirectory(new File(studyPath.getAbsolutePath()+"/Interviews/"));
+			
+			int result = fc.showSaveDialog(this);
+			if(result != JFileChooser.APPROVE_OPTION)
+				return;
+			
+			File fSelected = fc.getSelectedFile();
+			if(fSelected.exists() && fSelected.canRead())
+				success = egoClient.getStorage().continueInterview(fSelected);
+			else
+				success = egoClient.getStorage().saveInterview(fSelected);
+		}
+		catch (IOException ex)
+		{
+			success = false;
+		} catch (CorruptedInterviewException ex) {
+			JOptionPane.showMessageDialog(this, "The interview you selected is corrupted. Will not proceed.");
+			success = false;
+			logger.info("Corrupted interview while trying to continue a brand new interview", ex);
+		}
+
+		/* UI */
+		if (success)
+		{
+		    egoClient.getFrame().gotoClientQuestionPanel();
 		}
 		else
 		{
-			startInterviewButton_actionPerformed(e);
+		    egoClient.getFrame().gotoSourceSelectPanel();
 		}
 	}
 
-	protected void firstNameField_actionPerformed(ActionEvent e)
-	{
-		if (lastNameField.getText().length() == 0)
-		{
-			lastNameField.requestFocus();
-		}
-		else
-		{
-			startInterviewButton_actionPerformed(e);
-		}
-	}
-
-	protected void textEvent(DocumentEvent e) 
-	{
-		try {
-		startInterviewButton.setEnabled(
-			(firstNameField.getText().length() > 0 || !egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) && (lastNameField.getText().length() > 0));
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	public void doFocus() {
-		if(egoClient.getStudy().getAlterNameModel().equals(AlterNameModel.FIRST_LAST)) {
-			firstNameField.requestFocusInWindow();
-		} 
-		else {
-			lastNameLabel.requestFocusInWindow();
-		}
-		
-	}
 }

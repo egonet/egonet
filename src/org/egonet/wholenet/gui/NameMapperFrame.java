@@ -107,12 +107,12 @@ public class NameMapperFrame extends JFrame {
 		}
 		
 		// ego constructor
-		public NameMapping(Study study, Interview interview, Integer group) {
+		public NameMapping(Study study, Interview interview, String iName, Integer group) {
 			super();
 			this.interview = interview;
 			this.study = study;
 			this.alterNumber = -1;
-			this.alterName = new Name(interview.getName()[0],interview.getName()[1]).toString();
+			this.alterName = new Name(iName).toString();
 			this.group = group;
 		}
 
@@ -232,7 +232,7 @@ public class NameMapperFrame extends JFrame {
 			for(Pair<File, Interview> entry : interviewMap) {
 				Interview interview = entry.getSecond();
 
-				NameMapping egoMapping = new NameMapping(study, interview, group++);
+				NameMapping egoMapping = new NameMapping(study, interview, entry.getFirst().getName(), group++);
 				mappings.add(egoMapping);
 				
 				String [] alterList = interview.getAlterList();
@@ -276,8 +276,8 @@ public class NameMapperFrame extends JFrame {
 			if(columnIndex == 0) {
 				return row.alterName;
 			} else if(columnIndex == 1) {
-				String[] egoName = row.getInterview().getName();
-				return new Name(egoName[0],egoName[1]).toString();
+				String egoName = row.getInterview().getIntName();
+				return new Name(egoName).toString();
 			} else if(columnIndex == 2) {
 				return row.group;
 			}
@@ -354,7 +354,7 @@ public class NameMapperFrame extends JFrame {
 		
 		private String convert(NameMapping mapping) {
 			Interview intv = mapping.interview;
-			String ego = new Name(intv.getName()[0],intv.getName()[1]).toString();
+			String ego = new Name(intv.getIntName()).toString();
 			String alter = mapping.alterName;
 			
 			return alter + " (" + ego + ")";

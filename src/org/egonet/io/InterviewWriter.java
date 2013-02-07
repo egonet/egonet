@@ -50,17 +50,10 @@ public class InterviewWriter {
 	private void writeInterview(Element e, Interview interview) {
 		Element alterListElem = e.addElement("AlterList");
 		Element answerListElem = e.addElement("AnswerList");
-		Element egoNameElem = e.addElement("EgoName");
 
 		writeInterviewStudy(e);
 		e.addElement("Complete").setBoolean(interview.isComplete());
 		e.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
-		
-		String[] _egoName = interview.getName();
-		
-		egoNameElem.addElement("First").setString(_egoName[0]);
-		egoNameElem.addElement("Last").setString(_egoName[1]);
-
 		
 		String[] _alterList = interview.getAlterList();
 		for (int i = 0; i < _alterList.length; i++) {

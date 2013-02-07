@@ -103,132 +103,41 @@ public class EgoStore {
 		logger.info("Unset current interview");
 		currentInterview = null;
 	}
+	
+	public boolean saveInterview(File fInterview) throws IOException {
+		logger.info("Saving a brand new, never before used file");
+		setCurrentInterview(currentInterview.second(), fInterview);
+		writeCurrentInterview();
+		return true;
+	}
+	
+	public boolean continueInterview(File fInterview) throws IOException, CorruptedInterviewException {
+		logger.info("Saving on top of an existing file");
+		setCurrentInterview(readInterview(fInterview), fInterview);
 
-	/***************************************************************************
-	 * Writes all questions to a package file for later use
-	 * 
-	 * @return successful
-	 * @throws IOException
-	 * @throws IOException
-	 */
-	public boolean saveInterview() throws IOException {
-		boolean success = false;
-
-		try {
-			String[] name = currentInterview.second().getName();
-			logger.info("EgoStore savng interview called with " + Arrays.asList(name) + " and current study " + currentStudy.first().toString());
-
-			File studyPath = new File(currentStudy.first().getParent(), "/Interviews/");
-			
-			File incompleteFile = null;
-			File completeFile = null;
-			File [] possibles = InterviewReader.findInterviews(currentStudy, name);
-
-			for(File possible : possibles) {
-				InterviewReader ir = new InterviewReader(currentStudy.second(), possible);
-				if(!ir.getInterview().isComplete()) {
-					incompleteFile = possible;
-				}
-				else if(ir.getInterview().isComplete()) {
-					completeFile = possible;
-				}
-			}
-			
-			logger.info("Detemined there was an incomplete file " + (incompleteFile == null ? incompleteFile : incompleteFile.getName()) + " and a complete file " + (completeFile == null ? completeFile : completeFile.getName()) + " with possibles totalling " + possibles.length);
-
-
-			// do any interviews exist and do any incomplete interviews exist?
-			if(possibles.length > 0 && incompleteFile != null) {
-				logger.info("Determinted that possible interview files exist, including an incomplete interview");
-					int selected = JOptionPane
-							.showConfirmDialog(
-									parent,
-									"There is already at least one incomplete interview for "
-											+ name[0]
-											+ " "
-											+ name[1]
-											+ "\nWould you like to continue this interview?",
-									"Incomplete Interview Exists",
-									JOptionPane.YES_NO_OPTION);
-
-					if (selected == JOptionPane.YES_OPTION) {
-						setCurrentInterview(readInterview(incompleteFile), incompleteFile);
-
-						if (currentInterview.second() != null) {
-							success = true;
-							setCurrentInterview(currentInterview.second(), incompleteFile);
-							return success;
-						}
-					}	
-			} 
-			// do any interviews exist and do any complete interviews exist?
-			else if(possibles.length > 0 && completeFile != null) {
-				logger.info("Determinted that possible interview files exist, including a complete interview");
-					int selected = JOptionPane
-							.showConfirmDialog(
-									parent,
-									"There is already a complete interview for "
-											+ name[0]
-											+ " "
-											+ name[1]
-											+ "\nDo you wish to replace it with a new interview? (Press no to start a second interview.)",
-									"Completed Interview Exists, delete it and start over?",
-									JOptionPane.YES_NO_OPTION);
-
-					// replace it
-					if (selected == JOptionPane.YES_OPTION) {
-						setCurrentInterview(currentInterview.second(), completeFile);
-						writeCurrentInterview();
-						success = true;
-						return success;
-					} 
-					// do a second copy of one
-					else {
-						InterviewReader tempIr = new InterviewReader(currentStudy.second(), completeFile);
-						Interview curInt = tempIr.getInterview();
-						File newFile = InterviewReader.getNewInterviewPath(studyPath, name);
-						
-						curInt.setComplete(false);
-						for(Answer answer : curInt.getEgoAnswers()) {
-							answer.setAnswered(false);
-						}
-						for(Question answer : curInt.getAlterAnswers()) {
-							answer.getAnswer().setAnswered(false);
-						}
-						
-						curInt.setFollowup(true);
-						
-						setCurrentInterview(curInt, newFile);
-						writeCurrentInterview();
-						success = true;
-						return success;
-					}
-			}
-			else {
-				logger.info("Determinted that possible interview files DON'T exist");
-				File newFile = InterviewReader.defaultInterviewPath(studyPath, name);
-				setCurrentInterview(currentInterview.second(), newFile);
-				writeCurrentInterview();
-				success = true;
-				return success;
-			}
-		} catch (SecurityException e) {
-			JOptionPane.showMessageDialog(parent,
-					"Unable to create interview directory.",
-					"New Interview Error", JOptionPane.ERROR_MESSAGE);
-			throw new IOException(e);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(parent, "Unable to Read Interview.",
-					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
-			throw new IOException();
-		} catch (CorruptedInterviewException e) {
-			JOptionPane.showMessageDialog(parent,
-					"Interview file not created from this study file.",
-					"Read Interview Error", JOptionPane.ERROR_MESSAGE);
-			throw new IOException();
+		setCurrentInterview(currentInterview.second(), fInterview);
+		writeCurrentInterview();
+		return true;
+	}
+	
+	public boolean saveLongitudinalFile(File fOriginal, File fInterview) throws IOException, CorruptedInterviewException {
+		InterviewReader tempIr = new InterviewReader(currentStudy.second(), fOriginal);
+		Interview curInt = tempIr.getInterview();
+		File newFile = fInterview;
+		
+		curInt.setComplete(false);
+		for(Answer answer : curInt.getEgoAnswers()) {
+			answer.setAnswered(false);
 		}
-
-		return (success);
+		for(Question answer : curInt.getAlterAnswers()) {
+			answer.getAnswer().setAnswered(false);
+		}
+		
+		curInt.setFollowup(true);
+		
+		setCurrentInterview(curInt, newFile);
+		writeCurrentInterview();
+		return true;
 	}
 
 	public Window getParent() {
@@ -349,17 +258,10 @@ public class EgoStore {
 
 						if (exportFile.getName().toLowerCase().endsWith("pdf")) {
 
-							PDFWriter pw = includeInterview ? new PDFWriter(
-									currentStudy.second(), currentInterview
-											.second()) : new PDFWriter(
-									currentStudy.second());
+							PDFWriter pw = includeInterview ? new PDFWriter(currentStudy.second(), currentInterview.second()) : new PDFWriter(currentStudy.second(), "Interviewee");
 							pw.write(exportFile);
-						} else if (exportFile.getName().toLowerCase().endsWith(
-								"rtf")) {
-							RTFWriter pw = includeInterview ? new RTFWriter(
-									currentStudy.second(), currentInterview
-											.second()) : new RTFWriter(
-									currentStudy.second());
+						} else if (exportFile.getName().toLowerCase().endsWith("rtf")) {
+							RTFWriter pw = includeInterview ? new RTFWriter(currentStudy.second(), currentInterview.second()) : new RTFWriter(currentStudy.second(), "Interviewee");
 							pw.write(exportFile);
 
 						}
@@ -937,14 +839,15 @@ public class EgoStore {
 	}
 	
 	private File createFileWithNewEndingFromDot(String path, String oldFileName, String newEnding) {
-		return (new File(path, oldFileName
-				.substring(0, oldFileName.lastIndexOf("."))
-				+ newEnding));
+		String n = oldFileName;
+		if(n.contains("."))
+			n= n.substring(0, oldFileName.lastIndexOf("."));
+		return (new File(path, n + newEnding));
 	}
 
-	public void writeStatisticsFiles(Statistics stats, String[] egoName)
+	public void writeStatisticsFiles(Statistics stats)
 			throws IOException {
-		String name = getInterviewFile().getName();
+		String name = getInterviewFile().getName().replace(".int", "");
 		String statdir;
 		String parentDir;
 
@@ -957,11 +860,11 @@ public class EgoStore {
 
 			File adjFile = createFileWithNewEndingFromDot(statdir,name,"_matrix.csv");
 			PrintWriter pwNA = new PrintWriter(adjFile);
-			stats.writeAdjacencyFile(pwNA, egoName, false);
+			stats.writeAdjacencyFile(pwNA, name, false);
 
 			File wadjFile = createFileWithNewEndingFromDot(statdir,name,"_weighted_matrix.csv");
 			PrintWriter pwAA = new PrintWriter(wadjFile);
-			stats.writeAdjacencyFile(pwAA, egoName, true);
+			stats.writeAdjacencyFile(pwAA, name, true);
 			
 			File asFile = createFileWithNewEndingFromDot(statdir,name,"_alter_summary.csv");
 			PrintWriter pwAS = new PrintWriter(asFile);

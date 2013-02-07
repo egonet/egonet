@@ -6,6 +6,10 @@ public class Name {
 		this.first = first;
 		this.last = last;
 	}
+	public Name(String only) {
+		this.first = only;
+		this.last = null;
+	}
 	public String toString(String separator) {
 		return
 			(first == null ? "" : first) +

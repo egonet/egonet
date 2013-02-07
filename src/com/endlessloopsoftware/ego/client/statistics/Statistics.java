@@ -29,7 +29,6 @@ import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.util.FileHelpers;
-import org.egonet.util.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -825,10 +824,10 @@ public class Statistics
      * @throws IOException 
      * @throws IOException
      */
-    public void writeAdjacencyFile(PrintWriter adjacencyWriter, String[] name, boolean weighted) throws IOException {
-        logger.info("Writing "+(weighted ? "" : "non-")+"weighted adjacency file for " + name[0] + " " + name[1]);
+    public void writeAdjacencyFile(PrintWriter adjacencyWriter, String name, boolean weighted) throws IOException {
+        logger.info("Writing "+(weighted ? "" : "non-")+"weighted adjacency file for " + name);
         CSVWriter adjacencyCSVWriter = new CSVWriter(adjacencyWriter);
-        writeAdjacencyArray(new Name(name[0],name[1]).toString(), adjacencyCSVWriter, weighted);
+        writeAdjacencyArray(name, adjacencyCSVWriter, weighted);
         adjacencyCSVWriter.close();
     }
 

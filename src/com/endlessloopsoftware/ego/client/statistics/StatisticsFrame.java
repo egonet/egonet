@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.egonet.util.CatchingAction;
-import org.egonet.util.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,8 +240,8 @@ public class StatisticsFrame extends JPanel {
 	}*/
 
 	void saveAlterSummary_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String filename = name[0] + "_" + name[1] + "_alter_summary";
+		String name = egoClient.getInterview().getIntName();
+		String filename = name + "_alter_summary";
 		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter("Alter Summary", "csv", filename);
 
 		try {
@@ -253,8 +252,8 @@ public class StatisticsFrame extends JPanel {
 	}
 
 	void saveTextSummary_actionPerformed(ActionEvent e) {
-		String[] name = egoClient.getInterview().getName();
-		String filename = name[0] + "_" + name[1] + "_Text_Summary";
+		String name = egoClient.getInterview().getIntName();
+		String filename = name + "_Text_Summary";
 		PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(
 				"Text Summary", "txt", filename);
 
@@ -268,12 +267,11 @@ public class StatisticsFrame extends JPanel {
 	}
 	
 	void saveAdjacencyMatrix_actionPerformed(ActionEvent e, boolean weighted) throws IOException {
-	    String[] name = egoClient.getInterview().getName();
-	    String filename = new Name(name[0],name[1]).toString("_") + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
+	    String filename = egoClient.getStorage().getInterviewFile().getName() + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
 	    
 	    PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
 	    
-	    stats.writeAdjacencyFile(w, name, weighted);
+	    stats.writeAdjacencyFile(w, egoClient.getStorage().getInterviewFile().getName().replace(".int", ""), weighted);
 	}
 
 	void close_actionPerformed(ActionEvent e) {
@@ -288,8 +286,7 @@ public class StatisticsFrame extends JPanel {
 		Question q = egoClient.getStudy().getFirstStatableQuestion();
 
 		if (q != null) {
-			egoClient.getStorage().writeStatisticsFiles(stats,
-					egoClient.getInterview().getName());
+			egoClient.getStorage().writeStatisticsFiles(stats);
 		} else {
 		    throw new IOException("No statable questions");
 		}

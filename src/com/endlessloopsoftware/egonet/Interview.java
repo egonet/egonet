@@ -50,8 +50,6 @@ public class Interview implements Comparable<Interview> {
 
 	private Statistics _stats = null;
 
-	private String[] _egoName = { "", "" };
-
 	private String notes = "";
 	
 	private boolean _complete;
@@ -66,6 +64,12 @@ public class Interview implements Comparable<Interview> {
 
 	private int _numAlters;
 	
+	private final String sIntName;
+	
+	public String getIntName() {
+		return sIntName;
+	}
+
 	private boolean followup = false;
 
 	public boolean isFollowup() {
@@ -88,11 +92,13 @@ public class Interview implements Comparable<Interview> {
 	 * @throws CorruptedInterviewException
 	 *             if unable to read interview
 	 */
-	public Interview(Study study) throws CorruptedInterviewException {
+	public Interview(Study study, String sIntName) throws CorruptedInterviewException {
 		/* Locals */
 		int j, k;
 		Iterator questions;
 
+		this.sIntName = sIntName;
+		
 		/* Calculate some interview values */
 		_study = study;
 		_numAlters = study.getNumAlters();
@@ -315,30 +321,6 @@ public class Interview implements Comparable<Interview> {
 		}
 
 		return (l);
-	}
-
-	/***************************************************************************
-	 * Gets name of interview subject
-	 * 
-	 * @return String Array of first and last name
-	 */
-	public String[] getName() {
-		String[] s = { _egoName[0], _egoName[1] };
-
-		return s;
-	}
-
-	/***************************************************************************
-	 * Sets name of interviewee
-	 * 
-	 * @param first
-	 *            first name
-	 * @param last
-	 *            last name
-	 */
-	public void setName(String first, String last) {
-		_egoName[0] = first;
-		_egoName[1] = last;
 	}
 
 	/***************************************************************************
@@ -713,7 +695,7 @@ public class Interview implements Comparable<Interview> {
 				logger.error("generateStatistics produced an empty alter list. This is likely to cause problems later.");
 			else
 				logger.trace(Arrays.asList(stats.alterList).toString());
-			storage.writeStatisticsFiles(stats, _egoName);
+			storage.writeStatisticsFiles(stats);
 		}
 		else {
 			logger.info("Interview completion DID NOT generate statistics!");
@@ -876,7 +858,7 @@ public class Interview implements Comparable<Interview> {
 	}
 
 	public int compareTo(Interview o) {
-		return _egoName.hashCode() - o._egoName.hashCode();
+		return sIntName.hashCode() - o.sIntName.hashCode();
 	}
 
 	public void setNotes(String notes) {
@@ -888,13 +870,6 @@ public class Interview implements Comparable<Interview> {
 	}
 	
 	public String toString() {
-		String result = "";
-		for(String namePart : getName()) {
-			if(! result.isEmpty()) {
-				result += " ";
-			}
-			result += namePart;
-		}
-		return result;
+		return sIntName;
 	}
 }

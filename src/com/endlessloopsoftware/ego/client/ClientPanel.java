@@ -196,7 +196,9 @@ public class ClientPanel
       egoClient.getStorage().setPackageInUse();
 		try
 		{
-         egoClient.getStorage().setCurrentInterview(new Interview(egoClient.getStudy()), null);
+			File fInterview = egoClient.getStorage().getInterviewFile();
+			String sIntName = fInterview != null ? fInterview.getName().replace(".int", "") :"";
+         egoClient.getStorage().setCurrentInterview(new Interview(egoClient.getStudy(), sIntName), null);
          
          
          

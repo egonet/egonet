@@ -21,15 +21,13 @@ public class NameMappingWriter {
 		CSVWriter csv = new CSVWriter(fw);
 		
 		csv.writeNext(new String[]{
-				"ego_first","ego_last","alter_number","alter_name","group"});
+				"ego_name","unused","alter_number","alter_name","group"});
 		
 		for(NameMapperFrame.NameMapping mapping : nameMappings) {
-			String[] name = mapping.getInterview().getName();
-			String first = name.length > 0 ? name[0] : "";
-			String last = name.length > 1 ? name[1] : "";
+			String name = mapping.getInterview().getIntName();
 			csv.writeNext(new String[]{
-					first,
-					last,
+					name,
+					"",
 					mapping.getAlterNumber()+"",
 					mapping.toString(), // alter name
 					mapping.getGroup()+""

@@ -101,11 +101,9 @@ public class RawDataCSVWriter {
 		for(Interview interview : interviews) {
 			if(interview.isComplete()) {
 				egoID++;
-				String egoName = 
-					interview.getName()[0]+" "+interview.getName()[1];
+				String egoName = interview.getIntName();
 			
-				InterviewDataWritingUtil.InterviewAnswers answers = 
-					InterviewDataWritingUtil.interviewAnswers(study, interview);
+				InterviewDataWritingUtil.InterviewAnswers answers = InterviewDataWritingUtil.interviewAnswers(study, interview);
 
 				String[] alterList = interview.getAlterList();
 				Integer numAlters = alterList.length;
@@ -161,8 +159,7 @@ public class RawDataCSVWriter {
 		for(Interview interview : interviews) {
 			if(interview.isComplete()) {
 				egoId++;
-				String egoName = 
-					interview.getName()[0]+" "+interview.getName()[1];
+				String egoName = interview.getIntName();
 				
 				InterviewDataWritingUtil.InterviewAnswers answers = 
 					InterviewDataWritingUtil.interviewAnswers(study, interview);
