@@ -13,9 +13,6 @@ import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.DirList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;

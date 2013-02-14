@@ -21,6 +21,8 @@ package com.endlessloopsoftware.ego.author;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -215,6 +217,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_link_field, new GridBagConstraints(1, 10, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        
         question_panel_right.add(question_new_button, new GridBagConstraints(0, 11, 1, 1, 0.33, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
         question_panel_right.add(question_preview_button, new GridBagConstraints(1, 11, 1, 1, 0.33, 0.0,
@@ -237,7 +240,52 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_list_selectionChanged(e);
             }
         });
+        
+        question_list.addKeyListener(new KeyAdapter() {
 
+        	public void keyPressed(KeyEvent ke){
+        		
+        		// is anything selected
+        		if(question_list.getSelectedIndex() == -1)
+        			return;
+        		
+        		// did we see something that wasn't UP or DOWN
+                if(ke.getKeyCode() != KeyEvent.VK_DOWN)
+                	return;
+                
+                // did it not have a "SHIFT" key
+            	int modifiersEx = ke.getModifiersEx();
+            	String tmpString = KeyEvent.getModifiersExText(modifiersEx);
+            	if(!tmpString.contains("Shift"))
+            		return;
+                	
+            	// we got a shift-up or shift-down
+                ke.consume();                	
+
+                Question q_old = (Question) question_list.getSelectedValue();
+                if (q_old == null)
+                {
+                    JOptionPane.showMessageDialog(egoNet.getFrame(), "Select a question first!", "Dupe Question",
+                            JOptionPane.OK_OPTION);
+                    return;
+                }
+                
+                
+                Question q = (Question) question_list.getSelectedValue();
+                
+                try {
+	                egoNet.getStudy().removeQuestion(q);
+	                egoNet.getStudy().addQuestion(q);
+	                egoNet.getStudy().setModified(true);
+                } catch (Exception ex) {
+                	throw new RuntimeException(ex);
+                }
+                                
+                fillPanel();
+                
+        	}
+        });
+        
         question_new_button.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(ActionEvent e)
