@@ -511,6 +511,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		    strTitle = strTitle.replace("$$1", alterNames[0]);
 		if(strTitle.contains("$$2"))
             strTitle = strTitle.replace("$$2", alterNames[1]);
+		
+		// for informational answers, don't show "Questions about $$1" -- they may not always apply.
+		if(question.answerType.equals(AnswerType.INFORMATIONAL))
+			strTitle = "Informational Item";
 		titleText.setText(strTitle);
 
 		answerPanel.setVisible(false);

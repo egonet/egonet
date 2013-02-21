@@ -794,8 +794,7 @@ public class EgoStore {
 							setCurrentInterview(null, f);
 
 							try {
-								InterviewReader sr = new InterviewReader(
-										getStudy(), f);
+								InterviewReader sr = new InterviewReader(getStudy(), f);
 								complete = sr.getInterview().isComplete();
 							} catch (Exception ex) {
 								complete = false;
