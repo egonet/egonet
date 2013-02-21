@@ -139,6 +139,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private JButton questionButtonPrevious;
 
 	private JButton questionButtonNext;
+	
+	private JButton questionButtonUnansweredNext;
 
 	private JProgressBar questionProgress;
 
@@ -254,6 +256,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		.addActionListener(new CatchingAction("Next Question Button") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				questionButtonNext_actionPerformed(e);
+			}
+		});
+		
+		questionButtonUnansweredNext
+		.addActionListener(new CatchingAction("Next Unanswered Question Button") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				questionButtonUnansweredNext_actionPerformed(e);
 			}
 		});
 
@@ -379,6 +388,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionButtonNext.setName("questionButtonNext");
 		questionButtonNext.setFocusCycleRoot(true);
 		
+		questionButtonUnansweredNext = new JButton("Next Question (Unanswered)");
+		questionButtonUnansweredNext.setName("questionButtonUnansweredNext");
+		
 		titleText = new JLabel("title");
 		titleText.setName("titleText");
 		titleText.setFont(new java.awt.Font("Lucida Grande Bold", 0, 15));
@@ -444,6 +456,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		panel.add(questionButtonPrevious, "split, growx");
 		panel.add(questionButtonNext, "growx");
+		panel.add(questionButtonUnansweredNext, "growx");
+
 
 		// build notes
 		notesDocument.addDocumentListener(new DocumentListener() {
@@ -925,6 +939,52 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 	}
+	
+	
+	private void questionButtonUnansweredNext_actionPerformed(ActionEvent e) throws IOException {
+		if (egoClient.getInterview().hasNext()) {
+			question = egoClient.getInterview().next();
+			while(question.getAnswer().isAnswered() == true) {
+				question = egoClient.getInterview().next();
+			}
+			
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
+			{
+			    egoClient.getStorage().writeCurrentInterview();
+			}
+
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+					&& (question.questionType == Shared.QuestionType.ALTER_PAIR)) {
+				setDefaultAnswer();
+			}
+
+			fillPanel();
+
+			if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
+				questionList.setSelectedIndex(egoClient.getInterview()
+						.getQuestionIndex());
+			}
+		} else {
+			try {
+				egoClient.getInterview().completeInterview(egoClient.getStorage());
+			} catch (IOException ex) {
+				String msg = "Unable to complete interview OR unable to generate statistics. It may not be saved.";
+				logger.info(msg,ex);
+				JOptionPane.showMessageDialog(egoClient.getFrame(),
+						msg,
+						"Statistics Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			JOptionPane.showMessageDialog(egoClient.getFrame(),
+					"You have completed this interview.", "Interview Complete",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			/* Return to first screen */
+			egoClient.getFrame().gotoSourceSelectPanel();
+		}
+
+		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
+	}
 
 	private void questionButtonPrevious_actionPerformed(ActionEvent e) {
 		if (egoClient.getInterview().hasPrevious()) {
@@ -964,16 +1024,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					egoClient.getStudy().getNumAlters());
 			question.getAnswer().setAnswered(maxAlters || morePrompts);
 				
-			questionButtonNext.setEnabled(question.getAnswer().isAnswered()); 
-			                                                         
+			questionButtonNext.setEnabled(question.getAnswer().isAnswered());
 			questionButtonNext.setText("Next Question");
 		} else {
 			boolean next = egoClient.getInterview().hasNext();
 
 			if (next == false) {
 				questionButtonNext.setText("Study Complete");
-				questionButtonNext
-				.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+				questionButtonNext.setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
 						&& (skip || question.getAnswer().isAnswered()));
 			} else {
 				questionButtonNext.setText("Next Question");
@@ -983,6 +1041,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if(question.answerType == Shared.AnswerType.INFORMATIONAL) {
 			questionButtonNext.setEnabled(true);
 		}
+		
+		questionButtonUnansweredNext.setEnabled(questionButtonNext.isEnabled());
+		//questionButtonUnansweredNext.setText(questionButtonNext.getText());
 	}
 
 	private void questionAnsweredEventHandler(ActionEvent e) {
