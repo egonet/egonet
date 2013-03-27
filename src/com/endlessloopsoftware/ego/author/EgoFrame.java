@@ -365,12 +365,24 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	private void jMenuFileSave_actionPerformed(ActionEvent e) throws IOException {
-		if (egoNet.getStorage().getStudyFile() == null) {
+            int save  = 0;
+            if(egoNet.getStudy().getNumAlters()== 0){ 
+                
+               save = JOptionPane.showConfirmDialog(egoNet.getFrame(), "The minimum alters of this study is 0.  "
+                        + "That means if anyone doesn't introduce any alter, \n statistics and graph will not be generated. "
+                       + "Are you sure you want to continue saving?  ", "Warning", JOptionPane.WARNING_MESSAGE );  
+            } 
+            if(save==0){
+            
+                if (egoNet.getStorage().getStudyFile() == null) {
 			jMenuFileSaveAs_actionPerformed(e);
 		} else {
 			egoNet.getStorage().saveStudyFile();
 			egoNet.getStudy().setModified(false);
 		}
+            }else{
+                  JOptionPane.showMessageDialog(egoNet.getFrame(), "The study was not saved!");
+            }   
 	}
 	
 	private void jMenuFileExportStudy_actionPerformed(ActionEvent e) throws IOException, CorruptedInterviewException {
@@ -378,11 +390,23 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 	
 	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) throws IOException {
-		egoNet.getStorage().saveAsStudyFile();
+            int save  = 0;
+            if(egoNet.getStudy().getNumAlters()== 0){ 
+                
+               save = JOptionPane.showConfirmDialog(egoNet.getFrame(), "The minimum alters of this study is 0.  "
+                        + "That means that if anyone doesn't introduce any alter, \n statistics will not be generated. "
+                       + "Are you sure you want to continue saving?  ", "Warning", JOptionPane.WARNING_MESSAGE );  
+            } 
+            if(save==0){
+                egoNet.getStorage().saveAsStudyFile();
 		fillStudyPanel();
 		egoNet.getStudy().addObserver(this);
 		egoNet.getStudy().setModified(false);
-		egoNet.getStudy().setCompatible(true);
+		egoNet.getStudy().setCompatible(true); 
+            } else {
+                JOptionPane.showMessageDialog(egoNet.getFrame(), "The study was not saved!");
+            }
+               
 	}
 
 	// File | Exit action performed

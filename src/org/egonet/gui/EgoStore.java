@@ -42,6 +42,8 @@ import javax.swing.*;
  */
 public class EgoStore {
 
+        
+    
 	final private static Logger logger = LoggerFactory.getLogger(EgoStore.class);
 
 	// a window for dialogs to parent
@@ -90,7 +92,8 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
-		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
+ 
+                InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
 
@@ -116,7 +119,7 @@ public class EgoStore {
 
 		try {
 			String[] name = currentInterview.second().getName();
-			logger.info("EgoStore savng interview called with " + Arrays.asList(name) + " and current study " + currentStudy.first().toString());
+			logger.info("EgoStore saving interview called with " + Arrays.asList(name) + " and current study " + currentStudy.first().toString());
 
 			File studyPath = new File(currentStudy.first().getParent(), "/Interviews/");
 			
@@ -186,7 +189,7 @@ public class EgoStore {
 					else {
 						InterviewReader tempIr = new InterviewReader(currentStudy.second(), completeFile);
 						Interview curInt = tempIr.getInterview();
-						File newFile = InterviewReader.getNewInterviewPath(studyPath, name);
+                                                File newFile = InterviewReader.getNewInterviewPath(studyPath, name);
 						
 						curInt.setComplete(false);
 						for(Answer answer : curInt.getEgoAnswers()) {
@@ -206,7 +209,7 @@ public class EgoStore {
 			}
 			else {
 				logger.info("Determinted that possible interview files DON'T exist");
-				File newFile = InterviewReader.defaultInterviewPath(studyPath, name);
+                                File newFile = InterviewReader.defaultInterviewPath(studyPath, name);
 				setCurrentInterview(currentInterview.second(), newFile);
 				writeCurrentInterview();
 				success = true;
@@ -238,7 +241,7 @@ public class EgoStore {
 	public void setParent(Window parent) {
 		this.parent = parent;
 	}
-
+   
 	/***************************************************************************
 	 * Reads in study information from an XML like input file Includes files
 	 * paths and arrays of question orders

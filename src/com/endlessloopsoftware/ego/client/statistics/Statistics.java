@@ -50,6 +50,7 @@ public class Statistics
 
     public int[][]          adjacencyMatrix         = new int[0][];
     public int[][]          weightedAdjacencyMatrix = new int[0][];
+    public int[][]          answerByPromptMatrix    = new int[0][];
     public int[][]          proximityMatrix         = new int[0][];
     public float[]          betweennessArray        = new float[0];
     public float[]          closenessArray          = new float[0];
@@ -112,7 +113,7 @@ public class Statistics
             if (noneYet)
             {
                 stats.adjacencyMatrix            = new int[0][];
-                stats.weightedAdjacencyMatrix    = new int[0][];
+                stats.weightedAdjacencyMatrix    = new int[0][]; 
                 stats.proximityMatrix            = new int[0][];
                 stats.betweennessArray           = new float[0];
                 stats.closenessArray             = new float[0];
@@ -127,8 +128,9 @@ public class Statistics
             else
             {
                 stats.adjacencyMatrix            = interview.generateAdjacencyMatrix(q, false);
+                stats.answerByPromptMatrix       = interview.generateAlterMatrixByPrompt();
                 stats.weightedAdjacencyMatrix    = interview.generateAdjacencyMatrix(q, true);
-                stats.alterList                  = interview.getAlterList();
+                stats.alterList                  = interview.getAlterList(); 
                 stats.allSet                     = new HashSet<Stack<Integer>>(0);
                 stats.cliqueSet                  = new HashSet<Stack<Integer>>(0);
                 stats.componentSet               = new HashSet<Set<Integer>>(0);
@@ -832,6 +834,24 @@ public class Statistics
         adjacencyCSVWriter.close();
     }
 
+    
+    /******************************************************************************
+     * Writes matrix alter-prompt to see which alters has appeared in which alter prompt
+     * questions.
+     * 
+     * @param alterPromptWriter
+     *              File to write data to
+     * 
+     * @throws IOException
+     * 
+     */
+    public void writeAlterByPromptMatrix(PrintWriter alterPromptWriter, String[] name) throws IOException{
+        logger.info("Writing Alter By Prompt matrix");
+        CSVWriter alterByPromptCSVWriter = new CSVWriter(alterPromptWriter);
+        writeAlterByPromptMatrix( new Name(name[0],name[1]).toString(), alterByPromptCSVWriter );
+        alterByPromptCSVWriter.close(); 
+    }
+    
     /********
      * Write proximity array for current question to a printwriter
      * @param name      Name of Ego
@@ -862,6 +882,35 @@ public class Statistics
         }
     }
 
+    private void writeAlterByPromptMatrix(String name, CSVWriter w){
+        
+        List <String> columnNames = new ArrayList<String>();
+        columnNames.add(name);
+        int numPrompts = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+       
+        for (int i = 0; i < numPrompts; ++i)
+        {
+                columnNames.add(FileHelpers.formatForCSV("Question "+i));
+                
+        }
+        
+        w.writeNext(columnNames.toArray(new String[]{}));
+        
+         for (int i = 0; i < alterList.length; i++)
+         {
+             List<String> row = new ArrayList<String>();  
+             //_study.getQuestionIterator(Shared.QuestionType.ALTER_PROMPT);
+             row.add(FileHelpers.formatForCSV(alterList[i]));
+             
+             for (int j = 0; j < numPrompts ; ++j)
+             {
+                 row.add(""+ answerByPromptMatrix[i][j]);
+             }    
+             w.writeNext(row.toArray(new String[]{}));
+         }
+    }
+    
+    
     /********
      * Write alters answer summary to a printwriter
      * @param w         PrintWriter

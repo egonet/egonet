@@ -20,20 +20,26 @@ package org.egonet.util.listbuilder;
 
 import javax.swing.*;
 import javax.swing.event.*;
+ 
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
+
+import java.awt.Dimension ;
 
 import com.endlessloopsoftware.ego.author.CategoryInputPane;
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
+import java.awt.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Map;
+ 
 
 public class ListBuilder extends JPanel implements Observer {
 	/**
@@ -109,19 +115,32 @@ public class ListBuilder extends JPanel implements Observer {
 	private CellConstraints constraints = new CellConstraints();
 
 	private AlterNameModel alterNameModel = null;
-
+        
+        private JList knownAlters = null;
+        
+        private boolean allowMoreAlters = true;
+        
 	private static final Map<String, Selection[]> presets = ListBuilderPresets
 			.getPresets();
 
 	private static final String CHOOSE_PRESET_INSTRUCTION = "Choose from preset options";
 
-	public ListBuilder() {
-		super();
+        private boolean buildKnownAlters = false;
+        
+        private ArrayList <String> knownAlterList = new ArrayList<String>();
+    
+	public ListBuilder( ) {
+		super(); 
 		elementList = new ObservableList<Selection>();
+           
 		build();
-		addListObserver(this);
+		addListObserver(this); 
 	}
-
+        public void setKnownAlters(ArrayList <String> knownAlters){
+            this.knownAlterList = knownAlters;
+        }
+        
+        
 	public void addListObserver(Observer ob) {
 		elementList.addObserver(ob);
 	}
@@ -137,6 +156,10 @@ public class ListBuilder extends JPanel implements Observer {
 			listCounter.setText(jList.getModel().getSize() + " items listed.");
 	}
 
+        public void setBuildKnownAlters(boolean buildValue){
+                this.buildKnownAlters = buildValue; 
+        }
+        
 	private void build() {
 		// purge anything old
 		removeAll();
@@ -161,13 +184,15 @@ public class ListBuilder extends JPanel implements Observer {
 		// is editable, so we start using subpanels for layouts
 		FormLayout mainLayout = new FormLayout(
 				"2dlu, fill:min(pref;300dlu):grow, 2dlu",
-				"2dlu, fill:pref:grow, 2dlu, fill:min(pref;2dlu):grow, 2dlu");
+				"2dlu, fill:pref:grow, 2dlu, fill:pref:grow, 2dlu");
 		setLayout(mainLayout);
 
 		// combine top and bottom panels
 		add(buildTop(), constraints.xy(2, 2));
 		add(buildBottom(), constraints.xy(2, 4));
 
+                
+                
 		// mainLayout.invalidateLayout(this);
 		// when the list selection is changed
 		jList.addListSelectionListener(new ListSelectionListener() {
@@ -210,7 +235,7 @@ public class ListBuilder extends JPanel implements Observer {
 		panelTopHalf = new JPanel();
 		FormLayout topHalfLayout = new FormLayout(
 				"2dlu, fill:145dlu:grow, 2dlu, fill:145dlu:grow, 2dlu",
-				"2dlu, fill:min(pref;150dlu):grow, 2dlu");
+				"2dlu, fill:pref:grow, 2dlu");
 		panelTopHalf.setLayout(topHalfLayout);
 		
 		listCounter = new JLabel();
@@ -284,8 +309,8 @@ public class ListBuilder extends JPanel implements Observer {
 		lastName = new JTextField(); lastName.setName("lastName");
 		itemName = new JTextField(); itemName.setName("itemName");
 		value = new JTextField(); value.setName("itemName");
-		
-		firstName.addKeyListener(new KeyListener() {
+                
+                firstName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
 			}
 
@@ -353,17 +378,35 @@ public class ListBuilder extends JPanel implements Observer {
 				}
 			}
 		});
-
+                
+               
 		// couple different configurations here
 		if (alterNameModel != null && alterNameModel.equals(AlterNameModel.FIRST_LAST)) {
 			formBuilder.append("First Name: ", firstName, false);
-			formBuilder.append("Last Name: ", lastName, true);
+			formBuilder.append("Last Name: ", lastName, true); 
 		} else {
 			String itm = (alterNameModel != null) ? "" : "Item ";
 			formBuilder.append(itm + "Name: ", itemName, false);
 		}
-
-		if (letUserPickValues)
+                
+                //Building list of known Alters.
+                if(buildKnownAlters){
+                    knownAlters = new JList(knownAlterList.toArray());    
+                    knownAlters.setBorder(BorderFactory.createLineBorder(Color.gray) ); 
+                    knownAlters.setVisibleRowCount(-1);
+                    JScrollPane knownAltersScrollBar = new JScrollPane(knownAlters);
+                    knownAltersScrollBar.setPreferredSize(new Dimension(200,80));
+		  
+                    formBuilder.append("Or select someone already known: ", knownAltersScrollBar, false);
+                
+                    knownAlters.addListSelectionListener(new ListSelectionListener(){
+                        public void valueChanged(ListSelectionEvent e){
+                            buttonAdd.setEnabled(true);
+                        }
+                    });
+                }  	
+                
+                if (letUserPickValues)
 			formBuilder.append("Value: ", value, true);
 
 		return formBuilder.getPanel();
@@ -378,13 +421,15 @@ public class ListBuilder extends JPanel implements Observer {
 	 * @param keyEvent
 	 */
 	private void saveDataForSelectionOfList(KeyEvent keyEvent) {
+             
 		Object selectionObject = jList.getSelectedValue();
+               
 		boolean itemSelectedFromList = selectionObject != null && selectionObject instanceof Selection;
 		boolean enterPressed = (keyEvent.getKeyCode() == KeyEvent.VK_ENTER);
 		boolean shouldBlank = (keyEvent.getSource() == value)
 				|| (keyEvent.getSource() == lastName && isNameList() && !isLetUserPickValues())
 				|| (keyEvent.getSource() == itemName && !isNameList() && !isLetUserPickValues());
-
+               
 		if (itemSelectedFromList) {
 			Selection selection = (Selection) selectionObject;
 
@@ -408,8 +453,10 @@ public class ListBuilder extends JPanel implements Observer {
 		} else if (!itemSelectedFromList) {
 			// NEW item -- don't do anything until they hit enter on the LAST
 			// field
-			if (enterPressed && shouldBlank) {
-				Selection selection = new Selection();
+                        Selection selection = new Selection(null, elementList.size(),elementList.size(),false);
+                        boolean canBeAdded = false;
+			
+                        if (enterPressed && shouldBlank ) {	
 				try {
 					convertTextFieldsToSelection(selection);
 				} catch (Exception ex) {
@@ -419,12 +466,7 @@ public class ListBuilder extends JPanel implements Observer {
 					return;
 				}
 				
-				if(maxSize != -1 && elementList.size() + 1 > maxSize)
-				{
-					JOptionPane.showMessageDialog(this,
-							"You cannot add any more alters!",
-							"Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
-				} else if(selection.getString() == null || 
+                                if(selection.getString() == null || 
 						selection.getString().trim().isEmpty()) 
 				{
 					JOptionPane.showMessageDialog(this,
@@ -434,31 +476,77 @@ public class ListBuilder extends JPanel implements Observer {
 					JOptionPane.showMessageDialog(this,
 							"Name is already in the list!",
 							"Identical alter won't be added", JOptionPane.ERROR_MESSAGE);
-				} else {
-					elementList.add(selection);
-					// someone HAS pressed enter
-					jList.clearSelection();
-					clearTextFields();
+				} else if(!allowMoreAlters)
+                                {
+                                    //We have reached maximum number of alters, but we can add 
+                                    //known alters.
+                                    if(knownAlters != null && !knownAlters.isSelectionEmpty())
+                                    {
+                                            canBeAdded = true;
+                                            
+                                    } 
+
+                                }else{    
+                                    //We allow more alters. No problem.
+                                    canBeAdded = true;
 				}
-			}
+                                
+                                //if selection has benn passed all checks, we can add it to the list.
+                                if(canBeAdded)
+                                {
+
+                                    elementList.add(selection); 
+                                    jList.clearSelection(); 
+                                    clearTextFields();
+                                    if(buildKnownAlters){
+                                        knownAlters.clearSelection();
+                                    }
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(this,
+                                                "You can't add new alters! Add alters already known, or press Next.",
+                                                "Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
+                                    clearTextFields();
+                                }
+			} 
 		}
 	}
+        
+        public boolean getTextFieldWritten(){
+    
+            if( !itemName.getText().equals("") || !lastName.getText().equals("") || !firstName.getText().equals("")  )
+            {
+                 return true;   
+            } else 
+            {
+                return false;
+            }
+            
+        }
 
 	private void convertTextFieldsToSelection(Selection selection)
 			throws NumberFormatException {
-		if (isLetUserPickValues() && !value.getText().equals("")
+                
+                if(buildKnownAlters && !knownAlters.isSelectionEmpty())
+                {
+                        selection.setString(knownAlters.getSelectedValue().toString());
+
+                }else{
+                    if (isLetUserPickValues() && !value.getText().equals("")
 				&& !value.getText().equals("-")) {
 			int intVal = Integer.parseInt(value.getText());
 			selection.setValue(intVal);
-		}
-
-		if (isNameList()) {
-			// selection.setString(lastName.getText() + ", " +
-			// firstName.getText());
-			selection.setString(firstName.getText() + " " + lastName.getText());
-		} else {
-			selection.setString(itemName.getText());
-		}
+                       
+                    }
+                    if (isNameList()) {
+                            // selection.setString(lastName.getText() + ", " +
+                            // firstName.getText());
+                            selection.setString(firstName.getText() + " " + lastName.getText());
+                    } else {
+                            selection.setString(itemName.getText());
+                    }
+                }           
+                
 	}
 
 	private void clearTextFields() {
@@ -483,7 +571,8 @@ public class ListBuilder extends JPanel implements Observer {
 		buttonAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				// simulate enter key being pressed at last name
-				if(isNameList()) {
+				if(isNameList()) 
+                                {
 						try {
 							KeyEvent keyEvent = new KeyEvent(lastName, 0, 0, 0, KeyEvent.VK_ENTER, '\n');
 							saveDataForSelectionOfList(keyEvent);
@@ -540,7 +629,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public static void main(String[] args) throws Exception {
 	
-		ListBuilder listBuilder = new ListBuilder();
+		ListBuilder listBuilder = new ListBuilder( );
 
 		listBuilder.setName("name field");
 		listBuilder.setTitle("title field");
@@ -568,6 +657,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+                //Build the list builder again but without removing list elements.
 		build();
 	}
 
@@ -600,8 +690,10 @@ public class ListBuilder extends JPanel implements Observer {
 	public Selection[] getSelections() {
 		
 		List<Selection> selectionList = new ArrayList<Selection>();
-		for(int i = 0 ; i < elementList.size() && ((maxSize != -1 && i < maxSize) || maxSize == -1); i++)
+                
+		for(int i = 0 ; i < elementList.size(); i++) // && ((maxSize != -1 && i < maxSize) || maxSize == -1)
 		{
+                   
 			Object o = elementList.get(i);
 			if (o.getClass().equals(Selection.class))
 				selectionList.add((Selection)o);
@@ -673,9 +765,9 @@ public class ListBuilder extends JPanel implements Observer {
 		String[] listStrings = new String[listSelections.length];
 		
 		int i = 0;
-		for (Selection selection : listSelections)
+		for (Selection selection : listSelections){
 			listStrings[i++] = selection.getString();
-
+                }
 		return listStrings;
 	}
 
@@ -684,7 +776,9 @@ public class ListBuilder extends JPanel implements Observer {
 		for (int i = 0; i < listStrings.length; i++) {
 			elementList.add(new Selection(listStrings[i], i, i, false));
 		}
+                //Build the listBuilder but without removing list elements. 
 		build();
+                
 	}
 
 	public boolean isLetUserPickValues() {
@@ -711,7 +805,7 @@ public class ListBuilder extends JPanel implements Observer {
 	public AlterNameModel getAlterNameModel() {
 		return alterNameModel;
 	}
-
+         
 	public <ITEM> boolean contains(ObservableList<Selection> list, Selection o) {
 		for(int i = 0; i < list.size(); i++) {
 			Selection obj = list.get(i);
@@ -722,4 +816,8 @@ public class ListBuilder extends JPanel implements Observer {
 		return false;
 	}
 
+        public void allowMoreAlters (boolean allow){
+            this.allowMoreAlters = allow; 
+        } 
+        
 }

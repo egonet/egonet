@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
@@ -23,8 +24,8 @@ import electric.xml.ParseException;
 public class InterviewReader {
 
 	final private static Logger logger = LoggerFactory.getLogger(InterviewReader.class);
-	
-	private Study study;
+
+        private static Study study;
 	private File interviewFile;
 	
 	public InterviewReader(Study study, File interviewFile)	{
@@ -124,6 +125,10 @@ public class InterviewReader {
 			if (studyId != study.getStudyId())
 				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
 			Interview interview = readInterview(study, document.getRoot());
+                        
+                        //Sets number of answers into the interview, so we can print them correctly into JList.
+                        interview.set_numAnswers(document.getRoot().getElementsByTagName("Answer").getLength()); 
+                       
 			logger.info("Completely parsed interview with study ID " + studyId + " and interview " + interview);
 			return interview;
 		} catch (ParseException ex) {
@@ -134,20 +139,27 @@ public class InterviewReader {
 	
 	private static Interview readInterview(Study study, Element e) throws CorruptedInterviewException{
 			Element alterListElem = e.getElement("AlterList");
-			Element answerListElem = e.getElement("AnswerList");
+			Element answerListElem = e.getElement("AnswerList"); 
 			
-			/* Read alter list so we can size interview record */
-			String[] lAlterList = readAlters(alterListElem);
+                        /* Read alter list so we can size interview record */
+			String[][] lAlterList = readAlters(alterListElem);
 			Interview interview = new Interview(study);
-			interview.setAlterList(lAlterList);
-
+                      
+                        
+                        interview.setAlterListByPrompt(lAlterList);  
+                        //Unifies alter list by prompt to one unified list without repeated alters. 
+                        String[] unifiedAlterList = interview.getUnifiedAlterList();
+                        interview.setAlterList(unifiedAlterList);
+                        
 			/* Read answers */
 			
-			if (e.getElement("numalters") != null)
+			if (e.getElement("numAlters") != null)
 			{
-				int numAlters = e.getInt("numalters");
-				if(numAlters != study.getNetworkSize())
-					throw new CorruptedInterviewException("Study expected " + study.getNetworkSize() + " but interview file had " + numAlters + " alters");
+				int numAlters = e.getInt("numAlters"); 
+                                boolean complete = e.getBoolean("Complete");
+                                
+                                if(numAlters != study.getNetworkSize() && study.getFixedAlterMode() && complete)
+					throw new CorruptedInterviewException("Study expected " + study.getNetworkSize() + " but interview file had " + numAlters + " alters"); 
 				
 			}
 			
@@ -182,11 +194,11 @@ public class InterviewReader {
 	public static boolean checkForCompleteness(Interview interview) {
 		boolean all = true;
 		
-		Answer [] answers = interview.get_answers();
-		for(int i = 0 ; i < answers.length ; i++) {
+		ArrayList <Answer> answers = interview.get_answers();
+		for(int i = 0 ; i < answers.size() ; i++) {
 			//logger.info("\n---------------------------------------------------------------");
 			
-			Answer answer = answers[i];
+			Answer answer = answers.get(i);
 			//logger.info("Found answer " + answer.getString());
 
 			// can't correctly find the linked question???
@@ -194,7 +206,7 @@ public class InterviewReader {
 			//logger.info("\tFound question by answer " + question.getString());
 			
 			if(!answer.isAnswered() && question.link.isActive()) { // if there's a real possibility this is linked
-				Answer linkedAnswer = answers[question.link.getAnswer().getIndex()];
+				Answer linkedAnswer = answers.get(question.link.getAnswer().getIndex());
 				if(!linkedAnswer.isAnswered()) {
 					//logger.info("\t!answer.answered && question.link.isActive()");
 					all = false;
@@ -212,41 +224,73 @@ public class InterviewReader {
 		return all;
 	}
 
-	private static String[] readAlters(Element alterListElem) throws CorruptedInterviewException{
-		Elements alterIter = alterListElem.getElements("Name");
-		String[] lAlterList;
-		int lNumAlters;
-		int index = 0;
+	private static String[][] readAlters(Element alterListElem) throws CorruptedInterviewException{
+		Elements alterPromptIter = alterListElem.getElements("QuestionPrompt");    
+                String[][] lAlterList;
+		
+                
+                //New Egonet version with multiple prompt questions
+                if(alterPromptIter.size() != 0)
+                {
+                    int lNumPrompt;
+                    int indexI = 0;
+                    int indexJ = 0;
 
-		lNumAlters = alterIter.size();
-		lAlterList = new String[lNumAlters];
+                    lNumPrompt = study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+                    lAlterList = new String[lNumPrompt][];
+                    
+                    while (alterPromptIter.hasMoreElements()) {
 
-		while (alterIter.hasMoreElements()) {
-			lAlterList[index++] = alterIter.next().getTextString();
-		}
+                            Elements alterNames = alterPromptIter.next().getElements("Name");
+                            int sizePromptQuestion = alterNames.size();
+                            lAlterList[indexI] = new String[sizePromptQuestion];
+                            indexJ = 0;
 
+                            while(alterNames.hasMoreElements()){
+                                lAlterList[indexI][indexJ] = alterNames.next().getTextString(); 
+                                indexJ++;
+                            }  
+                            indexI++;
+                    }
+                /*Old Egonet interview version, with only one prompt question. 
+                  This is for retrocompatibility. NOTE: Once the interview has been
+                  opened with the new version, interview file will be saved in the 
+                  format, making impossible to open with old version. */
+                }else
+                {
+                    Elements alterNames = alterListElem.getElements("Name");
+                    lAlterList = new String[1][alterNames.size()];
+                    int index = 0;
+                    
+                    while(alterNames.hasMoreElements()){
+                        lAlterList[0][index] = alterNames.next().getTextString();
+                        index++;
+                    }
+                }
+                
 		return (lAlterList);
 	}		
 	
 	private static void readAnswers(Study study, Interview interview, Element e) throws CorruptedInterviewException {
 
 		Elements answerIter = e.getElements("Answer");
-		if (interview.get_numAnswers() != answerIter.size()) {
+                   
+		/*if (interview.get_numAnswers() != answerIter.size()) {
 			String err = "This interview file had " + answerIter.size() + " answered questions. I was expecting " + interview.get_numAnswers() + "!";
 			throw (new CorruptedInterviewException(err));
-		}
+		}*/
 	
-		for(int index = 0; answerIter.hasMoreElements(); ) {
-			    Element answerElement = answerIter.next();
-				Answer oldAnswer = interview.get_answerElement(index);
+                for(int index = 0; answerIter.hasMoreElements(); ) {
+                                Element answerElement = answerIter.next();
+                                //Answer oldAnswer = interview.get_answerElement(index);
 				Answer newAnswer = readAnswer(study, answerElement);
 				
-				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
+                                //if (oldAnswer.questionId.equals(newAnswer.questionId)) {
 					interview.set_answerElement(index++, newAnswer);
-				} else {
-					throw (new CorruptedInterviewException("mismatch question and answer id in datafile"));
-				}
-		}
+                                //} else {
+					//throw (new CorruptedInterviewException("mismatch question and answer id in datafile"));
+                                //}
+		} 
 	}
 	
     private static Answer readAnswer(Study study, Element e) {

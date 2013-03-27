@@ -174,6 +174,14 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
+                                removeAllActionListeners(egoClient.getFrame().saveAlterByPromptMatrix);
+                                egoClient.getFrame().saveAlterByPromptMatrix
+                                                .addActionListener(new CatchingAction("saveAlterByPromptMatrix"){
+                                                        public void safeActionPerformed(ActionEvent e) throws Exception{
+                                                            saveAlterByPromptMatrix_actionPerformed(e);
+                                                        }
+                                                });
+                                
 				removeAllActionListeners(egoClient.getFrame().saveInterviewStatistics);
 				egoClient.getFrame().saveInterviewStatistics
 						.addActionListener(new CatchingAction("saveInterviewStatistics") {
@@ -276,6 +284,15 @@ public class StatisticsFrame extends JPanel {
 	    stats.writeAdjacencyFile(w, name, weighted);
 	}
 
+        void saveAlterByPromptMatrix_actionPerformed(ActionEvent e) throws IOException{
+             String[] name = egoClient.getInterview().getName();
+             String filename = "_" +new Name(name[0],name[1]).toString("_") + "_alterByAlterPrompt" +  "_Matrix";
+             
+             PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
+             
+             stats.writeAlterByPromptMatrix(w, name);
+        }
+        
 	void close_actionPerformed(ActionEvent e) {
 		//logger.info("Return");
 		egoClient.getFrame().gotoSourceSelectPanel();

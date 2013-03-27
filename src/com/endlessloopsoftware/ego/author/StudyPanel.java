@@ -57,12 +57,12 @@ public class StudyPanel extends JPanel
 	private final JLabel				study_path_field			= new JLabel("< none selected >");
 	private final JLabel				study_name_label			= new JLabel("Study Name:");
 	private final JTextField		study_name_field			= new JTextField("< none selected >");
-	private final JLabel				study_num_alters_label	= new JLabel("Number of Alters:");
+	private final JLabel                    study_num_alters_label	= new JLabel("Number :");
 	private final JTextField		study_num_alters_field	= new JTextField();
-	
+              
 	private JLabel lblAlterModel = new JLabel("Alter Sampling Method");
 	private ButtonGroup alterSampleGroup = new ButtonGroup();
-	
+	 
 	private JRadioButton btnAlterModelAll = new JRadioButton("Select and ask about all alters");
 	
 	private JRadioButton btnAlterModelRandomSubset = new JRadioButton("Select a random subset of alters");
@@ -79,6 +79,11 @@ public class StudyPanel extends JPanel
 
 	private JCheckBox btnAllowQuestionSkip = new JCheckBox("Always allow 'Next' button for skipping questions");
 	
+        private ButtonGroup alterModeGroup = new ButtonGroup(); 
+        
+        private JRadioButton btnAlterModeFixed = new JRadioButton("Fixed number of alters", false);
+        private JRadioButton btnAlterModeMinim = new JRadioButton("Minimum number of alters", false) ;
+        
 	private final JLabel				titleLabel					= new JLabel("EgoCentric Network Study Configuration");
 	private final JTextPane			instructionPane			= new JTextPane();
 	private final Document			altersDocument				= new WholeNumberDocument();
@@ -91,6 +96,7 @@ public class StudyPanel extends JPanel
 	private final EgoNet egoNet;
 	private ActionListener alterModelGroupActionListener;
 	private ActionListener alterNameActionListener;
+        private ActionListener alterNumberModeActionListener;
 	private ActionListener allowSkipListener;
 	
 	/**
@@ -100,7 +106,7 @@ public class StudyPanel extends JPanel
 	public StudyPanel(EgoNet egoNet) throws Exception
 	{
 		this.egoNet = egoNet;
-		study_num_alters_field.setName("study_num_alters_field");
+		study_num_alters_field.setName("study_num_alters_field"); 
 		btnAlterModelRandomSubset.setName("btnAlterModelRandomSubset");
 		txtAlterModelRandomSubset.setName("txtAlterModelRandomSubset");
 		jbInit();
@@ -112,8 +118,8 @@ public class StudyPanel extends JPanel
 	private void jbInit()
 	{
 		this.setLayout(study_layout);
-		this.setMinimumSize(new Dimension(300, 200));
-		this.setPreferredSize(new Dimension(500, 500));
+		this.setMinimumSize(new Dimension(320, 200));
+		this.setPreferredSize(new Dimension(500, 550));
 		study_num_alters_field.setDocument(altersDocument);
 		
 		alterNameActionListener = new ActionListener()
@@ -128,6 +134,18 @@ public class StudyPanel extends JPanel
 				}
 			}
 		};
+                
+                alterNumberModeActionListener = new ActionListener()
+                {
+                        public void actionPerformed (ActionEvent e){
+                                Study study = egoNet.getStudy();
+                                if(btnAlterModeFixed.isSelected()){
+                                    study.setFixedAlterMode(true);
+                                } else if( btnAlterModeMinim.isSelected()){
+                                    study.setFixedAlterMode(false);
+                                }
+                        }
+                };
 		
 		allowSkipListener = new ActionListener()
 		{
@@ -170,22 +188,23 @@ public class StudyPanel extends JPanel
                     if(study != null)
                     {
                         study.setAlterSamplingModel(AlterSamplingModel.NTH_ALTER);
-                        study.setAlterSamplingParameter(Integer.parseInt(txtAlterModelNth.getText()));
+                        study.setAlterSamplingParameter(Integer.parseInt(txtAlterModelNth.getText())); 
                     }
 				}
 			}
-			
+                         
 		};
 		alterSampleGroup.add(btnAlterModelAll); btnAlterModelAll.addActionListener(alterModelGroupActionListener);
 		alterSampleGroup.add(btnAlterModelRandomSubset); btnAlterModelRandomSubset.addActionListener(alterModelGroupActionListener);
 		alterSampleGroup.add(btnAlterModelNth); btnAlterModelNth.addActionListener(alterModelGroupActionListener);
-		alterModelGroupActionListener.actionPerformed(null);
-		
+		alterModelGroupActionListener.actionPerformed(null); 
+                
 		btnAlterModelAll.setEnabled(false);
 		btnAlterModelRandomSubset.setEnabled(false);
 		btnAlterModelNth.setEnabled(false);
-		
-		
+		 
+                alterModeGroup.add(btnAlterModeFixed); btnAlterModeFixed.addActionListener(alterNumberModeActionListener); 
+                alterModeGroup.add(btnAlterModeMinim); btnAlterModeMinim.addActionListener(alterNumberModeActionListener);
 		alternamesGroup.add(btnAlterNamesFirstLast); btnAlterNamesFirstLast.addActionListener(alterNameActionListener);
 		alternamesGroup.add(btnAlterNamesSingle);btnAlterNamesSingle.addActionListener(alterNameActionListener);
 
@@ -205,28 +224,29 @@ public class StudyPanel extends JPanel
 		add(study_name_field, 			new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
 		add(study_path_label, 			new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_path_field, 			new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
-		add(study_num_alters_label, 	new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_num_alters_field, 	new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
-
+                add(study_num_alters_label, 	new GridBagConstraints(0, 7, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_num_alters_field, 	new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+                  
 		
-		add(lblAlterNames, 				new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
-		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
+		add(lblAlterNames, 				new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
+		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
 		
-		add(lblAlterModel, 				new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(lblAlterModel, 				new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAlterModelAll, 			new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelAll, 			new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAlterModelNth, 			new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelNth, 			new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelNth, 			new GridBagConstraints(0, 16, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelNth, 			new GridBagConstraints(1, 16, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 13, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 18, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(instructionPane,            new GridBagConstraints(0, 15, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
-
+		add(instructionPane,            new GridBagConstraints(0, 20, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4)); 
+                add(btnAlterModeFixed,      new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+                add(btnAlterModeMinim,      new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8)); 
 		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
 		 * 
@@ -238,6 +258,7 @@ public class StudyPanel extends JPanel
 			public void changedUpdate(DocumentEvent e) { studyNameTextEvent(); }
 			public void removeUpdate(DocumentEvent e) { studyNameTextEvent(); }});
 
+                  
 		study_num_alters_field.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) { studyAltersTextEvent(); }
 			public void changedUpdate(DocumentEvent e) { studyAltersTextEvent(); }
@@ -296,8 +317,10 @@ public class StudyPanel extends JPanel
 			
 			lblAlterNames.setEnabled(hasStudy);
 			btnAlterNamesFirstLast.setEnabled(hasStudy);
-			btnAlterNamesSingle.setEnabled(hasStudy);
-			
+			btnAlterNamesSingle.setEnabled(hasStudy); 
+                        btnAlterModeFixed.setEnabled(hasStudy);
+                        btnAlterModeMinim.setEnabled(hasStudy);
+                        
 			lblAlterModel.setEnabled(hasStudy);
 			btnAlterModelAll.setEnabled(hasStudy);
 			btnAlterModelRandomSubset.setEnabled(hasStudy);
@@ -314,6 +337,12 @@ public class StudyPanel extends JPanel
 				alterSampleGroup.setSelected(btnAlterNamesSingle.getModel(), true);
 			}
 			
+                        if(hasStudy && study.getFixedAlterMode() == true ){
+                                alterModeGroup.setSelected(btnAlterModeFixed.getModel(), hasStudy);
+                        } else if(hasStudy && study.getFixedAlterMode() == false){
+                                alterModeGroup.setSelected(btnAlterModeMinim.getModel(), hasStudy);
+                        }
+                        
 			if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.RANDOM_SUBSET)) {
 				alterSampleGroup.setSelected(btnAlterModelRandomSubset.getModel(), true);
 				txtAlterModelRandomSubset.setText((study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : 0)+"");
@@ -387,10 +416,10 @@ public class StudyPanel extends JPanel
 			i = Integer.parseInt(s);
 		}
 		
-		if (i != egoNet.getStudy().getNetworkSize())
+		 if (i != egoNet.getStudy().getNetworkSize())
 		{
 			egoNet.getStudy().setNetworkSize(i);
-		}
+		} 
 	}
 	
 }

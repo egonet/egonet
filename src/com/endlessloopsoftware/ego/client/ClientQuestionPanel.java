@@ -43,6 +43,7 @@ import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
+import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
 import com.endlessloopsoftware.egonet.Shared.QuestionType;
@@ -51,6 +52,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.egonet.util.CardPanel;
 import org.egonet.util.CatchingAction;
+import org.egonet.exceptions.CorruptedInterviewException;
 
 import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.ListBuilder;
@@ -72,7 +74,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	
 	private final Object keycountLock = new Object();
 	private int noteKeyEvents;
-	
+        
+        /* A list of known alters in the question prompt questions.*/
+        public ArrayList <String> alters = new ArrayList<String>() ;
+        
 	final private static Logger logger = LoggerFactory.getLogger(ClientQuestionPanel.class);
 	
 	/* Lists */
@@ -144,8 +149,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private final JComboBox answerMenu = new JComboBox();
 
-	private final ListBuilder alterList = new ListBuilder();
-
+	private final ArrayList <ListBuilder> alterLists = new ArrayList<>();
+        
 	private final JCheckBox noAnswerBox = new JCheckBox("Don't Know");
 
 	/* Containers */
@@ -180,7 +185,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private final JTextArea notesTextArea = new JTextArea();
 	
 	private final PlainDocument notesDocument = new PlainDocument();
-
+        
+        private final JLabel progressLabel = new JLabel();
+        
 	/* Question Iteration Variables */
 	private Question question;
 
@@ -201,15 +208,22 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				new EtchedBorder(EtchedBorder.RAISED, Color.white, new Color(
 						178, 178, 178)), "Questions"), BorderFactory
 						.createEmptyBorder(10, 10, 10, 10));
-
-		
+                
 		// Question vars
 		question = egoClient.getInterview().setInterviewIndex(egoClient.getInterview()
 				.getFirstUnansweredQuestion(), false);
-
+                
 		this.setMinimumSize(new Dimension(330, 330));
 		this.setLayout(new GridLayout());
-
+                
+                //Initiliaze all jBuilders we will need in the interview.
+                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+                for (int i=0; i< numQuestionPrompt; i++)
+                {
+                    alterLists.add(new ListBuilder());
+                    alterLists.get(i).addListObserver(this);
+                }
+                
 		tabbedPanel = new JTabbedPane();
 		questionPanelLeft = getLeftPanel();
 		questionPanelRight = getRightPanel();
@@ -325,14 +339,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		answerTextField.registerKeyboardAction(keyActionListener, Integer
 				.toString(0), enter, JComponent.WHEN_FOCUSED);
 		answerMenu.registerKeyboardAction(keyActionListener, Integer
-				.toString(0), enter, JComponent.WHEN_FOCUSED);
-
-		alterList.addListObserver(this);
+				.toString(0), enter, JComponent.WHEN_FOCUSED);          
 
 		questionProgress.setMaximum(egoClient.getInterview().getNumQuestions());
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 		questionProgress.setStringPainted(true);
-		
+                
+                
 		questionList.setModel(new DefaultListModel());
 		egoClient.getInterview().fillList((DefaultListModel) questionList.getModel());
 
@@ -412,8 +425,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionTextScrollPane.setMaximumSize(new Dimension((int)(ss.width*0.4),(int)(ss.height*0.4)));
 
 		/* Set up answer panel cards */
-		answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
-		answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
+                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+                for (int i = 0; i< numQuestionPrompts; i++){
+                      answerPanel.add(new JScrollPane(alterLists.get(i)), "QuestionPrompt"+i);
+                }
+              
+             	answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
 		answerPanel.add(new JScrollPane(numericalPanel), NUMERICAL_CARD);
 		answerPanel.add(new JScrollPane(radioPanel), RADIO_CARD);
 		answerPanel.add(new JScrollPane(menuPanel), MENU_CARD);
@@ -439,7 +456,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		panel.add(questionTextScrollPane, "grow, wrap");
 		panel.add(answerPanel, "grow, wrap");
-
+                
+                if(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW){
+                    progressLabel.setText("Ego and alter prompt questions progress...");
+                } else {
+                    progressLabel.setText("");    
+                }
+                
+                panel.add(progressLabel, "growx, wrap");
 		panel.add(questionProgress, "growx, wrap");
 		
 		panel.add(questionButtonPrevious, "split, growx");
@@ -497,7 +521,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		// we may need some string substitutions for $$1 and $$2
 		String[] alterNames = egoClient.getInterview().getAlterStrings(question);
-
+                
 		String notes = egoClient.getInterview().getNotes();
 		notesTextArea.setText(notes);
 		
@@ -516,35 +540,63 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		answerPanel.setVisible(false);
 		if ((question.questionType == Shared.QuestionType.ALTER_PROMPT)
 				&& egoClient.getStudy().getUIType().equals(
-						Shared.TRADITIONAL_QUESTIONS)) {
-			String qs = "Enter the names of "
-				+ egoClient.getStudy().getNetworkSize() + " people. ";
-
-			if (egoClient.getInterview().isLastAlterPrompt()) {
-				qs += "After entering " + egoClient.getStudy().getNetworkSize()
-				+ " names you can continue.";
-			} else {
-				qs += "";
-			}
-
+						Shared.TRADITIONAL_QUESTIONS)) { 
+                        
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
+                        
+                        //Gets current prompt question in the interview.
+                        int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                        ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
+                        
+                        //Sets the maximum size of list if the study is setted at Fixed alter number.
+                        if(egoClient.getStudy().getFixedAlterMode()){
+                            currentPrompt.setMaxListSize(egoClient.getStudy().getNetworkSize()
+                                                        -alters.size());
+                        }                            
+			currentPrompt.setDescription(getDescriptionListBuilder());
+			currentPrompt.setElementName("Name: ");
+			currentPrompt.setPresetListsActive(false);
+			currentPrompt.setNameModel(egoClient.getStudy().getAlterNameModel());
+			currentPrompt.setTitle("Your Acquaintances");
+                         
+                        /*Sets known alters to the question*/
+                        String [] kAlters =egoClient.getInterview().getUnifiedAlterList();
+                        if(kAlters.length != 0)
+                        {
+                            ArrayList <String> knownAlters = new ArrayList<>(Arrays.asList(kAlters));
+                            currentPrompt.setKnownAlters(knownAlters);
+                            currentPrompt.setBuildKnownAlters(true);
+                        }
+                        
+                        /*If question has been answered previously, we set those alters to the list*/
+                        if(egoClient.getInterview().getAlterListByIndexPrompt(
+                                egoClient.getInterview().getIndexPromptQuestion()) != null)
+                        {
+                            currentPrompt.setListStrings(egoClient.getInterview()
+                                    .getAlterListByIndexPrompt(egoClient.getInterview().getIndexPromptQuestion()));
+                        }
+                        
+                        // set alter Strings IF we are viewing the interview.
+                        if(egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
+                        {
+                             
+                            //Set the index to selected prompt question.  
+                             int index = questionList.getSelectedIndex() - 
+                                            egoClient.getStudy().getQuestionOrder(QuestionType.EGO).size(); 
+                            
+                             //Set the alter list strings to selected prompt question.
+                            currentPrompt.setListStrings(egoClient.getInterview().getAlterListByIndexPrompt(index));
+                        }                        
+			currentPrompt.setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
 
-			answerPanel.showCard(ALTER_CARD);
-			alterList.setMaxListSize(egoClient.getStudy().getNetworkSize());
-			alterList.setDescription(qs);
-			alterList.setElementName("Name: ");
-			alterList.setPresetListsActive(false);
-			alterList.setNameModel(egoClient.getStudy().getAlterNameModel());
-			alterList.setTitle("Your Acquaintances");
-
-			// set alter Strings IF they exist yet
-			alterList.setListStrings(egoClient.getInterview().getAlterList());
-			alterList.setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
-
+                        //Shows panel according to question Prompt.
+                        int indexPrompt = egoClient.getInterview().getIndexPromptQuestion();
+			answerPanel.showCard("QuestionPrompt"+indexPrompt);
+                        
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
-			alterList.requestFocusOnFirstVisibleComponent();
+			currentPrompt.requestFocusOnFirstVisibleComponent();
 		} else if (question.answerType == Shared.AnswerType.INFORMATIONAL) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
@@ -679,6 +731,38 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
+        /**************************************************************************
+         * 
+         */
+        
+        private String getDescriptionListBuilder(){
+                        String qs;
+			int unsettedAlters = egoClient.getStudy().getNetworkSize()-
+                                egoClient.getInterview().getUnifiedAlterList().length;
+                        if(unsettedAlters <= 0 )
+                        {
+                            if(egoClient.getStudy().getFixedAlterMode())
+                            {
+                                 qs = "You have entered all required alters. You can continue " +
+                                 "or add KNOWN alters";
+                                
+                            }else{
+                                
+                                 qs = "You have entered all required alters. You can continue " +
+                                 "or add new and known alters";
+                            }
+                            
+                        } else if(egoClient.getStudy().getFixedAlterMode()){
+                            qs = "Enter the names of "
+				+   unsettedAlters + " more people. ";
+                        }else{
+                             qs = "Enter at least, the names of "
+				+  unsettedAlters + " more people. ";
+                        }
+            
+                        return qs;
+        }
+        
 	/***************************************************************************
 	 * Clear all on screen editable fields Generally called when a new survey is
 	 * started
@@ -701,9 +785,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		Study study = egoClient.getStudy();
 
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			answer.string = "Egonet - University of Florida";
+			
+                        //Gets current prompt builder in the interview.
+                        int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                        ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
+                    //TODO: 
+                        answer.string = "Egonet - University of Florida";
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
 			logger.info("More prompts? " + morePrompts);
+                        
 			
 			// value starts at zero, so add one to compare to # alters needed
 			// TODO: make sure answer.getValue matches number of alters created
@@ -717,15 +807,15 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
 			{
-				answer.setValue(alterList.getListStrings().length);
+				answer.setValue(currentPrompt.getListStrings().length);
 				
 				// TODO smithmb: In all three cases below, make some determination about 'follow up only' and 
 				// then note the added alters when setting the new list
 				
-				egoClient.getInterview().setAlterList(alterList.getListStrings());
+				//egoClient.getInterview().setAlterList(alterList.getListStrings());
 			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.NTH_ALTER))
 			{
-				String [] oldAlterList = alterList.getListStrings();
+				String [] oldAlterList = currentPrompt.getListStrings();
 				
 				java.util.List<String> newAlterList = new ArrayList<String>();
 				
@@ -740,7 +830,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				egoClient.getInterview().setAlterList(newAlterList.toArray(new String[0]));
 			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.RANDOM_SUBSET))
 			{
-				java.util.List<String> oldAlterList = new ArrayList<String>(Arrays.asList(alterList.getListStrings()));
+				java.util.List<String> oldAlterList = new ArrayList<String>(Arrays.asList(currentPrompt.getListStrings()));
 				Collections.shuffle(oldAlterList);
 
 				java.util.List<String> newAlterList = new ArrayList<String>();
@@ -860,9 +950,22 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private void numberKey_actionPerformed(ActionEvent e) throws IOException {
 		int key = Integer.parseInt(e.getActionCommand()) - 1;
 		logger.info("Key pressed " + key);
-		if (key == -1 && questionButtonNext.isEnabled())
-			questionButtonNext_actionPerformed(e);
-
+                
+                /*Gets index of the current prompt question in the 
+                interview (-1 if it's not a prompt question)*/
+                int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                boolean textFieldsWritten = false;
+               
+                if(indexCurrentPrompt != -1)
+                {
+                    ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
+                    textFieldsWritten = currentPrompt.getTextFieldWritten(); 
+                }
+                
+		if (key == -1 && questionButtonNext.isEnabled() && !textFieldsWritten){
+                    questionButtonNext_actionPerformed(e);
+                }  
+                        
 		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
@@ -880,26 +983,42 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
-	private void questionButtonNext_actionPerformed(ActionEvent e) throws IOException {
+	private void questionButtonNext_actionPerformed(ActionEvent e) throws IOException { 
+                
+                /*Checking if current question was an Alter prompt question and 
+                 * if we are doing the interview (not viewing)*/
+                if ((question.questionType == Shared.QuestionType.ALTER_PROMPT)
+                    && (egoClient.getUiPath() == ClientFrame.DO_INTERVIEW ))
+                {
+                    /*Builds known Alters, save the current alters according to 
+                     current prompt, if the prompt question is the last one builds 
+                     alter pair and alter questions...*/
+                    processPromptQuestion();  
+                }
+            
 		if (egoClient.getInterview().hasNext()) {
+                         
 			question = egoClient.getInterview().next();
-			
-			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
+                         
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW ))
+                            // && ((_qIndex % 20) == 0))
 			{
-			    egoClient.getStorage().writeCurrentInterview();
+ 			     egoClient.getStorage().writeCurrentInterview();
 			}
 
-			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) 
 					&& (question.questionType == Shared.QuestionType.ALTER_PAIR)) {
 				setDefaultAnswer();
 			}
 
-			fillPanel();
-
-			if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
+                        if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
 				questionList.setSelectedIndex(egoClient.getInterview()
 						.getQuestionIndex());
 			}
+                        
+			fillPanel();
+
+			
 		} else {
 			try {
 				egoClient.getInterview().completeInterview(egoClient.getStorage());
@@ -918,14 +1037,98 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			/* Return to first screen */
 			egoClient.getFrame().gotoSourceSelectPanel();
 		}
-
+                
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 	}
+        
+        private void processPromptQuestion()
+        {
+            //Gets current prompt question in the interview.
+            int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+            ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
 
+            Study study = egoClient.getStudy(); 
+            Interview interview = egoClient.getInterview();
+
+            /*Updates the list of known alters at this point of interview,
+              adding the alters generated at the current question.*/
+            updateKnownAlters();
+
+            /*Adds the current list of alters to the current question prompt*/
+            interview.setAlterListByIndexPrompt(interview.getIndexPromptQuestion(), 
+                        currentPrompt.getListStrings());
+
+            /*Set the unified list of alters with current list of known alters*/
+            interview.setAlterList(interview.getUnifiedAlterList());     
+
+            /* If it's the last prompt question, we can generate Alter 
+               and Alter Pair questions */
+            if(interview.getIndexPromptQuestion() == 
+               study.getQuestionOrder(QuestionType.ALTER_PROMPT).size()-1)
+            {                                     
+                /*Generate the unified alter list, alter
+                 pair and alter questions*/
+                finishAlterPrompt(interview);     
+
+                /*At this point we will know how many alters will have the 
+                  interview, so we can set the true value of progress bar.*/
+                progressLabel.setText("Total interview progress...");
+                questionProgress.setMaximum(interview.getNumQuestions());
+                questionProgress.setValue(interview.getQuestionIndex());
+
+            }   
+        }
+        
+        private void updateKnownAlters(){
+                //Gets current prompt question in the interview.
+                int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
+               
+                //Adding to "Alter Buffer" alters of the current question
+                for(int i= 0; i< currentPrompt.getListStrings().length; i++ )
+                {  
+                    //Only adds an alter if not exists in the alterList. 
+                    //This check is caused by the Previous Question button. 
+                     if(!alters.contains(currentPrompt.getListStrings()[i])){
+                         alters.add(currentPrompt.getListStrings()[i]);
+                     } 
+                } 
+        }       
+                
+        private void finishAlterPrompt(Interview interview){
+            try{
+
+                
+                if((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW ))
+                {
+                    interview.setAlterList(interview.getUnifiedAlterList()); 
+                   
+                }
+                //Only generates alter and alter pairt questions, if have not been
+                //generated already.
+                if(!interview.isAlterQuestionsGenerated())
+                {
+                    interview.clearAlterQuestions(); 
+                    interview.generateAlterQuestions( );
+                    interview.generateAlterPairQuestions( ); 
+                }
+                
+            } catch (CorruptedInterviewException corrupted) 
+            {
+                String msg ="Error at generating Alter/Alter Pair questions";
+                logger.info(msg,corrupted);
+                JOptionPane.showMessageDialog(egoClient.getFrame(),
+                               msg,
+                               "Question Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        
 	private void questionButtonPrevious_actionPerformed(ActionEvent e) {
 		if (egoClient.getInterview().hasPrevious()) {
-			question = egoClient.getInterview().previous();
-			fillPanel();
+			
+                        question = egoClient.getInterview().previous();
+                        fillPanel();
+                        
 
 			if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
 				questionList.setSelectedIndex(egoClient.getInterview()
@@ -954,13 +1157,52 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
-			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
-			boolean maxAlters = 
-				! (alterList.getListStrings().length < 
-					egoClient.getStudy().getNumAlters());
-			question.getAnswer().setAnswered(maxAlters || morePrompts);
-				
-			questionButtonNext.setEnabled(question.getAnswer().isAnswered()); 
+                     
+                        //Gets current prompt question in the interview.
+                        int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                        ListBuilder currentPrompt = alterLists.get(indexCurrentPrompt);
+                        
+                        Interview interview = egoClient.getInterview();                 
+                        int numAlterPromptQuestions = egoClient.getStudy().getQuestionOrder
+                                (Shared.QuestionType.ALTER_PROMPT).size();
+                        
+                                          
+                        int numAlters = interview.getUnifiedAlterList().length;
+                        numAlters += getCurrentQuestionNewAlters().size();
+                            
+                        if(egoClient.getStudy().getFixedAlterMode())
+                             {
+                                 if(numAlters >= egoClient.getStudy().getNetworkSize()){
+                                     currentPrompt.allowMoreAlters(false);
+                                 }else{
+                                     currentPrompt.allowMoreAlters(true);
+                                 } 
+                        }
+                        
+                        /*Since number of alters can be undeterminated, we enable next 
+                          button at last question prompt, only if the total number of alters introduced
+                          is greater that minimum demanded at Study.*/   
+                        if(numAlterPromptQuestions -1 == interview.getIndexPromptQuestion() )
+                        { 
+
+                            
+                            if (numAlters < egoClient.getStudy().getNetworkSize()){
+                                question.getAnswer().setAnswered(false); 
+                                
+                            }else{
+                                question.getAnswer().setAnswered(true);
+                               
+                            }  
+                        } else{
+                            
+                            /*Else, if we are not in the last question prompt, answered 
+                             answer is always setted true*/
+                             question.getAnswer().setAnswered(true); 
+                             
+                        }
+			
+                        questionButtonNext.setEnabled(question.getAnswer().isAnswered());
+                       
 			                                                         
 			questionButtonNext.setText("Next Question");
 		} else {
@@ -1019,6 +1261,32 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		setButtonNextState();
 	}
 
+        /*Returns an arraylist with the new alters at the current question prompt. It says,
+         alters who are not in unified list already.*/
+        private ArrayList <String> getCurrentQuestionNewAlters( ){
+            
+                Interview interview = egoClient.getInterview();
+                ArrayList <String> currentUnifiedList = new ArrayList<>();
+                
+                //Gets current prompt question in the interview.
+                int indexCurrentPrompt = egoClient.getInterview().getIndexPromptQuestion();
+                ListBuilder currentPrompt= alterLists.get(indexCurrentPrompt);
+                
+                /*Checking if the alters of this current questions are already 
+                in unified list. If someone is already, we don't count this alter.*/
+                for (int i = 0; i < currentPrompt.getListStrings().length; i++)
+                {
+         
+                    if(!(Arrays.asList(interview.getUnifiedAlterList())
+                            .contains(currentPrompt.getListStrings()[i]))){
+
+                            currentUnifiedList.add( currentPrompt.getListStrings()[i]); 
+                    } 
+                }
+                
+                return currentUnifiedList;           
+                
+        }
 	private void noAnswerBox_actionPerformed(ActionEvent e) {
 		logger.info("noAnswerBox_actionPerformed");
 		if (noAnswerBox.isSelected()) {

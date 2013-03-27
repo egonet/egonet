@@ -91,6 +91,7 @@ public class StudyWriter {
 			Element study = document.addElement("Study");
 
 			study.addElement("name").setText(studyObject.getStudyName());
+                        study.addElement("alternumberfixed").setBoolean(studyObject.getFixedAlterMode());
 			study.addElement("numalters").setInt(studyObject.getNetworkSize());
 			study.addElement("altersamplingmodel").setInt(studyObject.getAlterSamplingModel().ordinal());
 			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? studyObject.getNetworkSize() : studyObject.getAlterSamplingParameter());

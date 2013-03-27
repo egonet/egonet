@@ -24,7 +24,7 @@ public class PDFWriter {
 	private Interview interview;
 	
 	final private static Logger logger = LoggerFactory.getLogger(PDFWriter.class);
-	
+	private int indexPromptQuestion = 0;
 	public PDFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super();
 		this.study = study;
@@ -119,16 +119,20 @@ public class PDFWriter {
 		}
 		else if(question.questionType == QuestionType.ALTER_PROMPT) {
 			
-			String[] alterList = interview.getAlterList();
-			
+			String[] alterList = interview.getAlterListByIndexPrompt(indexPromptQuestion);
+                        
 			// we have a list of alters
+                        Paragraph p1 = new Paragraph("Title " + question.title);
+                        Font f1 = p1.getFont(); f1.setStyle(Font.UNDERLINE); p1.setFont(f1);
+                        document.add(p1);
+                        indexPromptQuestion++;
+                        
 			if(alterList.length > 0) {
 				for(int i = 0; i < alterList.length ;i++) {
 					String entry = "("+(i+1)+") " + interview.getAlterList()[i] + " ";
 					while(entry.length() < 25) entry += " "; // pad
 					
 					Paragraph p = new Paragraph(entry);
-					Font f = p.getFont(); f.setStyle(Font.UNDERLINE); p.setFont(f);
 					document.add(p);
 				}
 			}
@@ -142,7 +146,7 @@ public class PDFWriter {
 					document.add(p);
 				}
 			}
-			
+			writeLine(document);
 			return;
 		}
 		else if(question.questionType == QuestionType.EGO) {

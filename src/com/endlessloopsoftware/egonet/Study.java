@@ -38,12 +38,17 @@ public class Study extends Observable implements Comparable<Study>
 {
 	private long              _uniqueId       = -1L;
    private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
+   
+   //By default _fixedAltersMode will be true, so we can have 
+   //retrocompatibility with old version studies of egonet.
+   private boolean           _fixedAltersMode= true;
    private int               _numAlters      = 40;
    private boolean           _studyDirty     = false;
    private boolean           _compatible     = true;
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
-   private boolean			skipQuestions = false;
+   private boolean           skipQuestions   = false;
+   
    
    private Map<QuestionType,List<Long>> _questionOrder  = new HashMap<QuestionType,List<Long>>();
    
@@ -65,7 +70,22 @@ public class Study extends Observable implements Comparable<Study>
 		for(QuestionType type : QuestionType.values())
 		    _questionOrder.put(type, new ArrayList<Long>());
 	}
-	
+        
+        /***************************************************************************
+         * Setter and getter for alter number mode. If its true, the number of alters
+         * will be fixed. Its says, at alter prompt question, the ego will have to 
+         * introduce exactly this number of alters. Otherwise, if its false, the number
+         * of alters will be the minimum alters that ego will have to introduce. 
+         * *************************************************************************/
+        public boolean getFixedAlterMode()
+        {
+            return _fixedAltersMode;
+        }
+        
+        public void setFixedAlterMode(boolean value)
+        {
+            this._fixedAltersMode = value;
+        }
 	/***************************************************************************
 	 * Returns UniqueId of study read from file
 	 * 
@@ -100,10 +120,10 @@ public class Study extends Observable implements Comparable<Study>
 	 * 
 	 * @return numAlters number of alters for which to prompt
 	 */
-	public int getNetworkSize()
+	 public int getNetworkSize()
 	{
 		return (_numAlters);
-	}
+	} 
 
 	/**
 	 * @return Returns the questions.
@@ -220,14 +240,14 @@ public class Study extends Observable implements Comparable<Study>
 	 * @param n
 	 *            number of alters for which to elicit
 	 */
-	public void setNetworkSize(int n)
+	 public void setNetworkSize(int n)
 	{
 		if (_numAlters != n)
 		{
 			_numAlters = n;
 			setModified(true);
 		}
-	}
+	} 
 
 	/***************************************************************************
 	 * Sets study dirty flag; generally done when the study is written to a
@@ -734,7 +754,7 @@ public class Study extends Observable implements Comparable<Study>
 		this.alterSamplingParameter = alterSamplingParameter;
 	}
 
-    public int getNumAlters()
+     public int getNumAlters()
     {
         if(alterSamplingModel.equals(AlterSamplingModel.RANDOM_SUBSET))
             return alterSamplingParameter;
@@ -742,7 +762,7 @@ public class Study extends Observable implements Comparable<Study>
             return getNetworkSize()/alterSamplingParameter;
         else
             return getNetworkSize();
-    }
+    } 
 
 	public int compareTo(Study o) {
 		return (int)(getStudyId() - o.getStudyId());

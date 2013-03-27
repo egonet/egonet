@@ -59,9 +59,16 @@ public class StudyReader {
 		if (root.getElement("name") != null) {
 			study.setStudyName(root.getTextString("name"));
 		}
-	
+                /* Old studies wont have this element. Anyway, by default
+                 * is setted to true in Study class. In this way old studies
+                 * will be compatibles with this version of Egonet. 
+                 */
+                if  (root.getElement("alternumberfixed") != null ){
+                        study.setFixedAlterMode(root.getBoolean("alternumberfixed"));
+                }
+                
 		if (root.getElement("numalters") != null) {
-			study.setNetworkSize(root.getInt("numalters"));
+			study.setNetworkSize(root.getInt("numalters"));  
 		}
 	
 		if(root.getElement("altersamplingmodel") != null) {

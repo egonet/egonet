@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+
 import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
@@ -42,7 +43,8 @@ public class Interview implements Comparable<Interview> {
 
 	final private static Logger logger = LoggerFactory.getLogger(Interview.class);
 	
-	private final Answer[] _answers;
+	//private final Answer[] _answers;
+        private final ArrayList<Answer> _answers;
 
 	private final Study _study;
 
@@ -57,16 +59,19 @@ public class Interview implements Comparable<Interview> {
 	private boolean _complete;
 
 	private String[] _alterList = new String[0];
+        private String[][] _alterListbyPrompt;
+	
+        private int _qIndex = 0;
 
-	private int _qIndex = 0;
-
-	private final int _numAlterPairs;
+	private final int _numAlterPairs = 0;
 
 	private int _numAnswers;
 
 	private int _numAlters;
 	
 	private boolean followup = false;
+        
+        private boolean alterQuestionsGenerated = false;
 
 	public boolean isFollowup() {
 		return followup;
@@ -90,29 +95,34 @@ public class Interview implements Comparable<Interview> {
 	 */
 	public Interview(Study study) throws CorruptedInterviewException {
 		/* Locals */
-		int j, k;
+		//int j, k;
 		Iterator questions;
-
+                /* Initializes the alterListByPrompt at number of quesions prompts in the study.*/
+                _alterListbyPrompt = new String[study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size()][];
 		/* Calculate some interview values */
 		_study = study;
-		_numAlters = study.getNumAlters();
-		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		set_numAnswers(study.getQuestionOrder(Shared.QuestionType.EGO)
-				.size()
-				+ study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
-						.size()
-				+ (_numAlters * study.getQuestionOrder(
-						Shared.QuestionType.ALTER).size())
-				+ (_numAlterPairs * study.getQuestionOrder(
-						Shared.QuestionType.ALTER_PAIR).size()));
-		_answers = new Answer[get_numAnswers()];
+		/*_numAlters = study.getNumAlters();
+		 _numAlterPairs = ELSMath.summation(_numAlters - 1);
+		 set_numAnswers(study.getQuestionOrder(Shared.QuestionType.EGO)
+				 .size()
+				 + study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
+				 		.size()
+				 + (_numAlters * study.getQuestionOrder(
+				 		Shared.QuestionType.ALTER).size())
+				 + (_numAlterPairs * study.getQuestionOrder(
+				 		Shared.QuestionType.ALTER_PAIR).size()));*/
+		_answers = new ArrayList<>(); 
 
 		/* Generate answer instances */
+                /*Since number of alters is
+                 unlimited, at constructor we can't know how many Alter questions and
+                 Alter Pair questions will have the interview.*/
 		_qIndex = 0;
 
 		/* Ego Questions */
 		questions = study.getQuestionOrder(Shared.QuestionType.EGO)
 				.iterator();
+               
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
 			Question question = _study.getQuestions().getQuestion(questionId);
@@ -120,11 +130,13 @@ public class Interview implements Comparable<Interview> {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId);
+                                _answers.add(new Answer(question.UniqueId));
+ 
+				//_answers[_qIndex++] = new Answer(question.UniqueId);
 			}
 		}
-
-		/* Alter Prompt Questions */
+                 
+		/* Alter Prompt Questions. */
 		questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
 				.iterator();
 		while (questions.hasNext()) {
@@ -134,51 +146,157 @@ public class Interview implements Comparable<Interview> {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId);
+         
+                            _answers.add(new Answer(question.UniqueId));	 
+                            //_answers[_qIndex++] = new Answer(question.UniqueId); 
+                                
 			}
 		}
+  
+		/* Checking Adjacency Selections for Alter Pair questions... */ 
+                questions = study.getQuestionOrder(
+                Shared.QuestionType.ALTER_PAIR).iterator(); 
+                while (questions.hasNext()) {
+                        Question question = _study.getQuestions().getQuestion(
+                                        (Long) questions.next());
 
-		/* Alter Questions */
-		for (j = 0; j < _numAlters; j++) {
-			questions = study.getQuestionOrder(
+                        if (question == null) {
+                                throw new CorruptedInterviewException();
+                        } else {
+                                if (question.isStatable()) {
+                                        _statisticsAvailable = true;
+                                } 
+                        }
+                }
+ 
+                _numAnswers = _answers.size(); 
+		 
+	}
+        
+        /* **************************************************************************** 
+         * Called when the Ego has entered all alters into the alter list generators.
+         * At this point, we'll know how many Alter Pair questions will have the interview. 
+         */
+        public void generateAlterPairQuestions( ) throws CorruptedInterviewException
+        {
+          
+           for (int k = 0; k < getNumAlters(); k++) {
+                for (int j = (k + 1); j < getNumAlters(); j++) {
+     
+                    Iterator questions = getStudy().getQuestionOrder(
+                                    Shared.QuestionType.ALTER_PAIR).iterator();
+                    int[] alters = { k, j };
+                    while (questions.hasNext()) { 
+                            Question question = _study.getQuestions().getQuestion(
+                                            (Long) questions.next());
+
+                            if (question == null) {
+                                throw new CorruptedInterviewException();
+                            } else {  
+                               
+                                    _answers.add( new Answer(question.UniqueId, alters)); 
+                            }  
+                    }
+                }
+            } 
+           
+            _numAnswers = _answers.size();
+           
+        }
+        
+        /* **************************************************************************** 
+         * Called when the Ego has entered all alters into the alter list generators
+         * At this point, we'll know how many Alter questions will have the interview. 
+         */
+        public void generateAlterQuestions( ) throws CorruptedInterviewException  
+        {
+ 
+           
+            for (int j = 0; j < getNumAlters(); j++) {
+                       
+                        Iterator questions = getStudy().getQuestionOrder(
 					Shared.QuestionType.ALTER).iterator();
 			int[] alter = { j };
 			while (questions.hasNext()) {
+                          
 				Long questionId = (Long) questions.next();
 				Question question = _study.getQuestions().getQuestion(
 						questionId);
 				if (question == null) {
 					throw new CorruptedInterviewException();
-				} else {
-					_answers[_qIndex++] = new Answer(question.UniqueId, alter);
+				} else { 
+                              
+                                        _answers.add(new Answer(question.UniqueId, alter)); 
 				}
-			}
-		}
-
-		/* Alter Pair Questions */
-		for (k = 0; k < _numAlters; k++) {
-			for (j = (k + 1); j < _numAlters; j++) {
-				questions = study.getQuestionOrder(
-						Shared.QuestionType.ALTER_PAIR).iterator();
-				int[] alters = { k, j };
-				while (questions.hasNext()) {
-					Question question = _study.getQuestions().getQuestion(
-							(Long) questions.next());
-
-					if (question == null) {
-						throw new CorruptedInterviewException();
-					} else {
-						if (question.isStatable()) {
-							_statisticsAvailable = true;
-						}
-
-						_answers[_qIndex++] = new Answer(question.UniqueId, alters);
-					}
-				}
-			}
-		}
-	}
-
+                 
+			} 
+            }
+         
+            _numAnswers = _answers.size();
+            this.alterQuestionsGenerated = true;
+        }
+         /*****************************************************************************
+          * Delete/Clear the previous questions generated by Alter prompt questions. 
+          * ***************************************************************************/
+        public void clearAlterQuestions(){
+           
+            int num_questions  = getStudy().getQuestionOrder(Shared.QuestionType.EGO).size() 
+                                +getStudy().getQuestionOrder(Shared.QuestionType.ALTER_PROMPT) .size(); 
+            _answers.subList(num_questions, _answers.size()).clear() ; 
+        }    
+         
+        /******************************************************************************
+         * Set and get the Alter list structured by prompt questions. 
+         ******************************************************************************/
+        public void setAlterListByIndexPrompt(int i, String[] alters ){
+            this._alterListbyPrompt[i]= alters;  
+        }
+        
+        public String[] getAlterListByIndexPrompt(int i ){
+            try{
+                return this._alterListbyPrompt[i];
+            }catch (Exception e){
+                return null;
+            }
+        }
+        public void setAlterListByPrompt(String [][] alterList){
+            this._alterListbyPrompt = alterList;
+        }
+        
+        public String[][] getAlterListByPrompt(){
+            return this._alterListbyPrompt;
+        }
+        
+        /*************************************************************************** 
+        * Method that returns an unified Alter List. It says, given a alter list by 
+        * prompt, returns an unique dimension array with alter list. In alter list by 
+        * prompt, its possible to be the same alter in different question prompts. In  
+        * the unified list, this alter only will be once. On this way, there is no need
+        * to refactor structures in other parts of application. 
+        ****************************************************************************/
+        public String[] getUnifiedAlterList(){
+            
+            ArrayList <String> tempUnifiedList = new ArrayList <String>();
+            
+            for(int i=0; i< getAlterListByPrompt().length;i++){
+                if(getAlterListByPrompt()[i] != null){
+                    for(int j= 0; j<getAlterListByPrompt()[i].length;j++){
+                    
+                        if (!tempUnifiedList.contains(getAlterListByPrompt()[i][j]))
+                        {
+                            tempUnifiedList.add(getAlterListByPrompt()[i][j]);
+                        }
+                    }  
+                }
+                
+            }
+            
+            String [] unifiedList = tempUnifiedList.toArray(new String[tempUnifiedList.size()]);
+            return unifiedList ;
+        }
+        
+        
+        
 	/***************************************************************************
 	 * Called when user shutting down program
 	 */
@@ -200,7 +318,7 @@ public class Interview implements Comparable<Interview> {
 		for (int i = 0; i < get_numAnswers(); i++) {
 			// Question q = getQuestion(i);
 
-			Question q = _study.getQuestions().getQuestion(_answers[i].questionId);
+			Question q = _study.getQuestions().getQuestion(_answers.get(i).questionId);
 
 			if (q.questionType == Shared.QuestionType.ALTER_PAIR
 					&& (_study.getUIType().equals(Shared.PAIR_ELICITATION) || _study
@@ -210,11 +328,11 @@ public class Interview implements Comparable<Interview> {
 				String s = q.toString();
 
 				if (q.questionType == Shared.QuestionType.ALTER) {
-					s = s + "; " + _answers[i].firstAlter();
+					s = s + "; " + _answers.get(i).firstAlter();
 				} else if (q.questionType == Shared.QuestionType.ALTER_PAIR) {
 					s = s + "; "
-							+ _answers[i].firstAlter() + " & "
-							+ _answers[i].secondAlter();
+							+ _answers.get(i).firstAlter() + " & "
+							+ _answers.get(i).secondAlter();
 				}
 
 				s = q.questionType.niceName + ": " + s;
@@ -243,14 +361,14 @@ public class Interview implements Comparable<Interview> {
 	}
 
 	/***************************************************************************
-	 * Returns current list of alters
+	 * Returns current list of all alters
 	 * 
 	 * @return s String Array of alters
 	 */
 	public String[] getAlterList() {
 		return _alterList;
 	}
-
+       
 	/***************************************************************************
 	 * Sets current list of alters
 	 * 
@@ -259,6 +377,7 @@ public class Interview implements Comparable<Interview> {
 	 */
 	public void setAlterList(String[] s) {
 		_alterList = s;
+                _numAlters = getNumAlters(); 
 	}
 
 	/***************************************************************************
@@ -271,9 +390,9 @@ public class Interview implements Comparable<Interview> {
 	public Set<Answer> getAnswerSubset(Long qId) {
 		Set<Answer> s = new HashSet<Answer>(_numAlterPairs);
 
-		for (int i = 0; i < _answers.length; i++) {
-			if (_answers[i].questionId.equals(qId)) {
-				s.add(_answers[i]);
+		for (int i = 0; i < _answers.size(); i++) {
+			if (_answers.get(i).questionId.equals(qId)) {
+				s.add(_answers.get(i));
 			}
 		}
 
@@ -288,11 +407,11 @@ public class Interview implements Comparable<Interview> {
 	public List<Answer> getEgoAnswers() {
 		List<Answer> l = new ArrayList<Answer>();
 		int index = 0;
-		Question q = _study.getQuestions().getQuestion(_answers[index].questionId);
+		Question q = _study.getQuestions().getQuestion(_answers.get(index).questionId);
 
 		while (q.questionType == Shared.QuestionType.EGO) {
-			l.add(_answers[index]);
-			q = _study.getQuestions().getQuestion(_answers[++index].questionId);
+			l.add(_answers.get(index));
+			q = _study.getQuestions().getQuestion(_answers.get(++index).questionId);
 		}
 
 		return (l);
@@ -361,7 +480,7 @@ public class Interview implements Comparable<Interview> {
 			_qIndex = i;
 
 			q = (Question) getQuestion(_qIndex).clone();
-			q.setAnswer(_answers[_qIndex]);
+			q.setAnswer(_answers.get(_qIndex));
 
 			// replaces $$n in String with alter name indexed as alter #n
 			q.text = completeText(q.text, q.getAnswer().getAlters());
@@ -381,7 +500,8 @@ public class Interview implements Comparable<Interview> {
 
 		i = nextValidAnswer(0, true);
 		while (i != -1) {
-			if (!_answers[i].isAnswered()) {
+                                       
+			if (!_answers.get(i).isAnswered()) {
 				rv = i;
 				break;
 			}
@@ -408,12 +528,12 @@ public class Interview implements Comparable<Interview> {
 		int i;
 
 		for (i = (startIndex - 1); i >= 0; i--) {
-			if (_answers[i].questionId.equals(id))
+			if (_answers.get(i).questionId.equals(id))
 				break;
 		}
 
 		if (i >= 0) {
-			a = _answers[i];
+			a = _answers.get(i);
 		}
 
 		return (a);
@@ -540,7 +660,7 @@ public class Interview implements Comparable<Interview> {
 		_qIndex = nextValidAnswer(_qIndex + 1, true);
 
 		q = (Question) getQuestion(_qIndex).clone();
-		q.setAnswer(_answers[_qIndex]);
+		q.setAnswer(_answers.get(_qIndex));
 		q.text = completeText(q.text, q.getAnswer().getAlters());
 
 		return (q);
@@ -558,7 +678,7 @@ public class Interview implements Comparable<Interview> {
 		// assert (qIndex != -1);
 
 		q = (Question) getQuestion(_qIndex).clone();
-		q.setAnswer(_answers[_qIndex]);
+		q.setAnswer(_answers.get(_qIndex));
 		q.text = completeText(q.text, q.getAnswer().getAlters());
 
 		return (q);
@@ -608,7 +728,7 @@ public class Interview implements Comparable<Interview> {
 	 * @return
 	 */
 	public Question getQuestion(int index) {
-		return _study.getQuestion(_answers[index].questionId);
+		return _study.getQuestion(_answers.get(index).questionId);
 	}
 	
 	public List<Answer> getAnswersByUniqueId(long id) {
@@ -702,6 +822,7 @@ public class Interview implements Comparable<Interview> {
 		 */
 		Question q = _study.getFirstStatableQuestion();
 		_complete = true;
+                
 		
 		storage.writeCurrentInterview();
 
@@ -754,7 +875,7 @@ public class Interview implements Comparable<Interview> {
 	 * @return _numAlters
 	 */
 	public int getNumAlters() {
-		return (_numAlters);
+		return _alterList.length;
 	}
 
 	/***************************************************************************
@@ -803,15 +924,15 @@ public class Interview implements Comparable<Interview> {
 	    //logger.info("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
 	    
 		if (_study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
-			int[][] m = new int[_numAlters][_numAlters];
+			int[][] m = new int[getNumAlters()][getNumAlters()];
 
 			/*
 			 * init to make sure we get all pairs, in the case of linked
 			 * questions not all will be answered
 			 */
 
-			for (int i = 0; i < _numAlters; i++) {
-				for (int j = 0; j < _numAlters; j++) {
+			for (int i = 0; i < getNumAlters(); i++) {
+				for (int j = 0; j < getNumAlters(); j++) {
 					m[i][j] = 0;
 				}
 
@@ -850,21 +971,51 @@ public class Interview implements Comparable<Interview> {
 		return (_matrix);
 	}
 
+        public int[][] generateAlterMatrixByPrompt(){
+            
+            String[] unifiedList = getUnifiedAlterList();
+            int numPrompts = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+            int matrix [][] = new int[unifiedList.length][numPrompts];
+             
+             for (int i = 0; i < unifiedList.length; i++) {
+               
+                for (int j = 0; j < numPrompts; j++){
+                       
+                      if (Arrays.asList(getAlterListByIndexPrompt(j)).contains(unifiedList[i]) ){
+                          
+                          matrix[i][j] = 1;   
+                          
+                      } else
+                      {
+                          matrix[i][j] = 0; 
+                      }
+                }
+            }
+             return matrix;
+        }
+        
 	public void rewind() {
 		while (hasPrevious())
 			previous();
 	}
 
-	public Answer[] get_answers() {
+	public ArrayList <Answer> get_answers() {
 		return _answers;
 	}
 	
 	public Answer get_answerElement(int index){
-		return _answers[index];
+		return _answers.get(index);
 	}
 	
 	public void set_answerElement(int index, Answer value){
-		_answers[index] = value;
+		//_answers[index] = value;
+                
+            try{
+                _answers.set(index, value);
+            } catch(Exception e){
+                _answers.add(value);
+            }
+             
 	}
 
 	public void set_numAnswers(int _numAnswers) {
@@ -897,4 +1048,30 @@ public class Interview implements Comparable<Interview> {
 		}
 		return result;
 	}
+        
+        
+        /*************************************************
+         * Return the current prompt question. If current question is not
+         * a prompt question, returns -1.
+         * ************************************************/
+        public int getIndexPromptQuestion(){
+            
+            int index = getQuestionIndex() -
+                    _study.getQuestionOrder(Shared.QuestionType.EGO).size();
+            
+            if(index < 0 || index >= _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size())
+            {
+                index = -1;
+            }
+            
+            return index;
+        }
+        
+        /************************************************
+         * Returns a boolean specifing if alter and alter pair 
+         * questions have been already generated.
+         * ********************************************/
+        public boolean isAlterQuestionsGenerated(){
+            return alterQuestionsGenerated;
+        }
 }

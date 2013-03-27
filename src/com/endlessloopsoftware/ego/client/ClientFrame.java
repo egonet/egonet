@@ -98,9 +98,10 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
 
 	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
-
+        
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
+        public final JMenuItem saveAlterByPromptMatrix = new JMenuItem ("Save Alter by Alter Prompt");    
 
 	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 	public final JMenuItem applyGraphSettings = new JMenuItem("Load/Apply graph settings");
@@ -293,6 +294,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			jMenuFile.add(saveTextSummary);
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
+                        jMenuFile.add(saveAlterByPromptMatrix);
 
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
