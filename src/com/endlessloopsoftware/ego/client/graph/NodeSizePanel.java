@@ -173,18 +173,18 @@ public class NodeSizePanel extends JPanel {
 			if (!selectionList.isEmpty()) {
 				selectionList.removeAll(selectionList);
 			}
-			Answer[] answers = egoClient.getInterview().get_answers();
-			for (int i = 0; i < answers.length; i++) {
+			ArrayList<Answer> answers = egoClient.getInterview().get_answers();
+			for (int i = 0; i < answers.size(); i++) {
 				// logger.info("Question examining:"
 				// + answers[i].questionId + "," + question.UniqueId);
-				if (answers[i].questionId.equals(question.UniqueId)) {
+				if (answers.get(i).questionId.equals(question.UniqueId)) {
 
-					if (answers[i].string == null
-							|| isPresentInSelectionList(answers[i].string)) {
+					if (answers.get(i).string == null
+							|| isPresentInSelectionList(answers.get(i).string)) {
 						continue;
 					}
 					Selection selection = new Selection();
-					selection.setString(answers[i].string);
+					selection.setString(answers.get(i).string);
 					// logger.info("Selection:" + selection);
 					selectionList.add(selection);
 				}

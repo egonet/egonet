@@ -548,7 +548,7 @@ public class GraphSettings {
 			alterToolTip[i] = "<html>" + egoClient.getInterview().getAlterList()[i]
 					+ "<br>";
 		}
-		Answer[] answers = egoClient.getInterview().get_answers();
+		ArrayList<Answer> answers = egoClient.getInterview().get_answers();
 		for (Answer answer : answers) {
 			String questionTitle = "";
 			String answerString = "";
