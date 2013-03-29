@@ -53,13 +53,16 @@ public class StudyReader {
 		
 		Element root = document.getRoot();
 		try {
-			study.setStudyId(Long.parseLong(root.getAttributeValue("Id")));
+			study.setStudyId(root.getAttributeValue("Id"));
 		}
 		catch (NumberFormatException nfe) {
 			throw new EgonetException("Unable to parse the unique ID for this study", nfe);
 		}
 	
 		root = root.getElement("Study");
+		if(root == null) {
+			throw new EgonetException("Couldn't find a study element in this file, may not be a study file.");
+		}
 	
 		if (root.getElement("name") != null) {
 			study.setStudyName(root.getTextString("name"));
@@ -195,13 +198,12 @@ public class StudyReader {
 		}
 
 		if (question.getAttribute("CentralityMarker") != null) {
-			boolean centrality = question.getAttribute("CentralityMarker")
-					.equals("true");
+			boolean centrality = question.getAttribute("CentralityMarker").equals("true");
 
 			if (centrality
 					&& (q.questionType != Shared.QuestionType.ALTER_PAIR)) {
 				//logger.info("ID:" + q.UniqueId + " title:"+ q.title);
-				throw (new MalformedQuestionException());
+				throw (new MalformedQuestionException("Centrality marker on non-alter pair question"));
 			}
 		}
 
@@ -268,7 +270,8 @@ public class StudyReader {
 				 */
 				q.setStatable(adjacent && nonadjacent);
 				if(!q.isStatable()) {
-					String str = "Study readQuestion found that there wasn't a valid adjacency map, marking alter pair question NON statable";
+					// THIS MAY BE OK IF IT ISN'T AN ALTER PAIR QUESTION
+					String str = "Study readQuestion found that there wasn't a valid adjacency map, marking alter pair question NON statable; q: " + q.getString();
 					logger.error(str);
 					//throw new RuntimeException(str);
 				}

@@ -32,7 +32,7 @@ public class InterviewWriter {
 			document.setVersion("1.0");
 			Element interviewDocument = document.setRoot("Interview");
 
-			interviewDocument.setAttribute("StudyId", Long.toString(study.getStudyId()));
+			interviewDocument.setAttribute("StudyId", study.getStudyId());
 			interviewDocument.setAttribute("StudyName", study.getStudyName());
 			interviewDocument.setAttribute("NumAlters", Integer.toString(study.getNetworkSize()));
 			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);

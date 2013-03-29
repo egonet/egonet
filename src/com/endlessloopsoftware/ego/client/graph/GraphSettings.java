@@ -196,7 +196,7 @@ public class GraphSettings {
 			Document doc = docBuilder.newDocument();
 
 			Element studyElement = doc.createElement("GraphSettings");
-			String studyID = ((Long) egoClient.getStudy().getStudyId()).toString();
+			String studyID = egoClient.getStudy().getStudyId();
 			studyElement.setAttribute("StudyId", studyID);
 			doc.appendChild(studyElement);
 

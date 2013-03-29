@@ -58,14 +58,18 @@ public class InterviewReader {
 	}
 	
 	public Interview getInterview() throws CorruptedInterviewException {
+		String studyId = "";
 		try {
 			Document document = new Document(interviewFile);
-			long studyId = Long.parseLong(document.getRoot().getAttribute("StudyId"));
-			if (studyId != study.getStudyId())
+			studyId = document.getRoot().getAttribute("StudyId");
+			 
+			if (!studyId.equals(study.getStudyId()))
 				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
 			Interview interview = readInterview(study, document.getRoot(), interviewFile.getName().replace(".int", ""));
 			logger.info("Completely parsed interview with study ID " + studyId + " and interview " + interview);
 			return interview;
+		} catch (NumberFormatException ex) {
+			throw new CorruptedInterviewException("Trouble parsing the study ID in this file: id=[" + studyId+"]",ex);
 		} catch (ParseException ex) {
 			throw new CorruptedInterviewException(ex);
 		}

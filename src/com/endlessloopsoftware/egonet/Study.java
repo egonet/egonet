@@ -36,7 +36,7 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
  */
 public class Study extends Observable implements Comparable<Study>
 {
-	private long              _uniqueId       = -1L;
+	private String              _uniqueId       = "";
    private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
    private int               _numAlters      = 40;
    private boolean           _studyDirty     = false;
@@ -71,7 +71,7 @@ public class Study extends Observable implements Comparable<Study>
 	 * 
 	 * @return long Unique Id of study
 	 */
-	public long getStudyId()
+	public String getStudyId()
 	{
 		return (_uniqueId);
 	}
@@ -194,7 +194,7 @@ public class Study extends Observable implements Comparable<Study>
 	 * @param long
 	 *            Unique Id of study
 	 */
-	public void setStudyId(long id)
+	public void setStudyId(String id)
 	{
 		_uniqueId = id;
 	}
@@ -745,7 +745,7 @@ public class Study extends Observable implements Comparable<Study>
     }
 
 	public int compareTo(Study o) {
-		return (int)(getStudyId() - o.getStudyId());
+		return getStudyId().compareTo(o.getStudyId());
 	}
 
 	public AlterNameModel getAlterNameModel() {

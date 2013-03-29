@@ -478,7 +478,7 @@ public class EgoStore {
 
 					/* Clean out study variables */
 					Study study = new Study();
-					study.setStudyId(System.currentTimeMillis());
+					study.setStudyId(System.currentTimeMillis()+"");
 
 					setCurrentStudy(newStudyFile, study);
 					getStudy().setStudyName(projectName);
@@ -698,7 +698,7 @@ public class EgoStore {
 						}
 
 						StudyWriter sw = new StudyWriter(newStudyFile);
-						getStudy().setStudyId(System.currentTimeMillis());
+						getStudy().setStudyId(System.currentTimeMillis()+"");
 						sw.setStudy(getStudy());
 
 						setCurrentStudy(newStudyFile, getStudy());

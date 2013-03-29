@@ -1019,9 +1019,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
-			boolean maxAlters = 
-				! (alterList.getListStrings().length < 
-					egoClient.getStudy().getNumAlters());
+			boolean maxAlters = ! (alterList.getListStrings().length < egoClient.getStudy().getNumAlters());
 			question.getAnswer().setAnswered(maxAlters || morePrompts);
 				
 			questionButtonNext.setEnabled(question.getAnswer().isAnswered());

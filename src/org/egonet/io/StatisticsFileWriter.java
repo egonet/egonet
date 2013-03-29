@@ -36,7 +36,7 @@ public class StatisticsFileWriter {
 		document.setVersion("1.0");
 		Element studyElement = document.setRoot("Statistics");
 
-		studyElement.setAttribute("StudyId", Long.toString(study.getStudyId()));
+		studyElement.setAttribute("StudyId", study.getStudyId());
 		studyElement.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
 		writeStructuralStatistics(studyElement, interview, stats);
