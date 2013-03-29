@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.ELSMath;
@@ -590,7 +591,13 @@ public class Interview implements Comparable<Interview> {
 	 * @return
 	 */
 	public Question getQuestion(int index) {
-		return _study.getQuestion(_answers[index].questionId);
+		int length = _answers.length;
+		if(index > -1 && index < length) {
+			Answer result = _answers[index];
+			return _study.getQuestion(result.questionId);
+		}
+		
+		throw new RuntimeException("Requested a question at index " + index + " but there are only " + length + " questions!");
 	}
 	
 	public List<Answer> getAnswersByUniqueId(long id) {

@@ -942,10 +942,20 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	
 	
 	private void questionButtonUnansweredNext_actionPerformed(ActionEvent e) throws IOException {
+		// if we have future questions....
 		if (egoClient.getInterview().hasNext()) {
+			
+			// advance one question
 			question = egoClient.getInterview().next();
+			
+			// if it's answered, keep advancing
 			while(question.getAnswer().isAnswered() == true) {
+				
+				// if we advance accidentally past the last question, break out
+				if(!egoClient.getInterview().hasNext())
+					break;
 				question = egoClient.getInterview().next();
+				
 			}
 			
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
