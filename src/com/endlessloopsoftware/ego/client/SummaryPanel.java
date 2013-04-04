@@ -39,7 +39,6 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StatisticsFileReader;
-import org.egonet.util.DirList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +129,7 @@ public class SummaryPanel extends JPanel
 	{
 		File intPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Interviews/");
 		File istPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Statistics/");
-		String[] intFiles = DirList.getDirList(intPath, "int");
+		String[] intFiles = intPath.list();
 		Set<File> istFileSet = new HashSet<File>();
 		int i = 0, p = 0;
 
@@ -164,6 +163,7 @@ public class SummaryPanel extends JPanel
 			} catch (CorruptedInterviewException ex)
 			{
 				// no match, eat silently
+				logger.info("Skipped "+thisIntFileName+", interview was corrupted or study ID didn't match");
 			} catch (IOException ex)
 			{
 				logger.info("Failed to read " + thisIntFileName,ex);

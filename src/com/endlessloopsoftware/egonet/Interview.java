@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
-import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.ELSMath;

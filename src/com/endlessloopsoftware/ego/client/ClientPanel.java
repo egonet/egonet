@@ -248,15 +248,27 @@ public class ClientPanel
 	}
 	
 	private void saveRawDataAsCSV() throws Exception {
-		File studyDirectory = 
-			new File(egoClient.getStorage().getStudyFile().getParent());
+		File studyDirectory = new File(egoClient.getStorage().getStudyFile().getParent());
+		
+		JFileChooser jfcInterviewDirectory = new JFileChooser(studyDirectory);
+		jfcInterviewDirectory.setDialogTitle("Choose a directory to search for interview files");
+		jfcInterviewDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		
+		if (jfcInterviewDirectory.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+			return;
+		
+		File fInterviewDirectory = jfcInterviewDirectory.getSelectedFile();
+		if(!fInterviewDirectory.isDirectory())
+			return;
+		
+		
+		
 		JFileChooser fc = new JFileChooser(studyDirectory);
 		fc.addChoosableFileFilter(new ExtensionFileFilter("CSV Files","csv"));
-		fc.setDialogTitle("Save raw data as CSV file");
+		fc.setDialogTitle("Choose a new file to write raw CSV data");
 		if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-			File interviewDirectory = 
-				new File(egoClient.getStorage().getStudyFile().getParent(), 
-						"/Interviews/");
+			//File interviewDirectory = new File(egoClient.getStorage().getStudyFile().getParent(), "/Interviews/");
 			File outputCSV = fc.getSelectedFile();
 			if(outputCSV != null) {
 				String path = outputCSV.getPath();
@@ -266,9 +278,7 @@ public class ClientPanel
 					if(! path.toLowerCase().endsWith(".csv")) {
 						outputCSV = new File(path+".csv");
 					}
-					new RawDataCSVWriter(egoClient.getStudy())
-					.writeFromInterviewDirectoryToFile(
-							interviewDirectory, outputCSV);
+					new RawDataCSVWriter(egoClient.getStudy()).writeFromInterviewDirectoryToFile(fInterviewDirectory, outputCSV);
 					
 				}
 			}

@@ -5,14 +5,15 @@ import static com.endlessloopsoftware.egonet.Shared.QuestionType.ALTER_PAIR;
 import static com.endlessloopsoftware.egonet.Shared.QuestionType.EGO;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 
 import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.exceptions.CorruptedInterviewException;
-import org.egonet.util.DirList;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
@@ -118,6 +119,7 @@ public class InterviewDataWritingUtil {
 	private static class InterviewIterable implements Iterable<Interview> {
 		private final Study study;
 		final File interviewDirectory;
+		
 		public InterviewIterable(
 				final Study study, 
 				final File interviewDirectory) 
@@ -125,37 +127,31 @@ public class InterviewDataWritingUtil {
 			this.study = study;
 			this.interviewDirectory = interviewDirectory;
 		}
+		
 		public Iterator<Interview> iterator() {
+			List<Interview> foundInterviews = new ArrayList<Interview>();
+			
+			final String[] interviewFilenames =  interviewDirectory.list();
+			
+			for(int i = 0; i < interviewFilenames.length; i++) {
+				String intFileName = interviewFilenames[i++];
+				File intFile = new File(interviewDirectory, intFileName);
+				InterviewReader intReader = new InterviewReader(study, intFile);
+				try {
+					Interview interview = intReader.getInterview();
+					foundInterviews.add(interview);
+				} catch(CorruptedInterviewException ex) {
+					
+					// eat silently
+					
+					//String err = "Unable to read interview file, skipping in iterator "+ intFile.getName();
+					//if(ex.getMessage() != null)
+					// err += ": " + ex.getMessage();
+					//logger.debug(err, ex);
+				}
+			}
 
-			final String[] interviewFilenames =  DirList.getDirList(interviewDirectory, "int");
-			return new Iterator<Interview>() {
-				private int i=0;
-				//private Map<String,String> egonameToFilename;
-				public boolean hasNext() {
-					return i < interviewFilenames.length;
-				}
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-				public Interview next() {
-					if(hasNext()) {
-						String intFileName = interviewFilenames[i++];
-						File intFile = new File(interviewDirectory, intFileName);
-						InterviewReader intReader = new InterviewReader(study, intFile);
-						try {
-							Interview interview = intReader.getInterview();
-							return interview;
-						} catch(CorruptedInterviewException ex) {
-							String err = "Unable to read interview file "+ intFile.getName();
-							if(ex.getMessage() != null)
-								err += ": " + ex.getMessage();
-
-							throw new RuntimeException(err,ex);
-						}
-					}
-					throw new java.util.NoSuchElementException();
-				}
-			};
+			return foundInterviews.iterator();
 		}
 	}
 }

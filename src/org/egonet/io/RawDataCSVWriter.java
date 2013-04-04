@@ -34,10 +34,7 @@ public class RawDataCSVWriter {
 	
 	// Writes raw data about interviews found in interview
 	// directory to file outputCSV in CSV format
-	public void writeFromInterviewDirectoryToFile(
-			File interviewDirectory, File outputCSV)
-		throws IOException
-	{
+	public void writeFromInterviewDirectoryToFile(File interviewDirectory, File outputCSV) throws IOException {
 		FileWriter fw = new FileWriter(outputCSV);
 		writeInterviewsAsCSV(
 				InterviewDataWritingUtil.interviewsInDirectory(study,interviewDirectory),

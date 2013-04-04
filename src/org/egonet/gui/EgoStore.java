@@ -20,7 +20,6 @@ import org.egonet.io.StatisticsFileWriter;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.io.VnaInterviewWriter;
-import org.egonet.util.DirList;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.Tuple;
@@ -550,6 +549,12 @@ public class EgoStore {
 			}
 		}
 	}
+		public static File getLibraryDirectory()
+		{
+			return new File("./lib/");
+		}
+
+	
 
 	/************************************************************************************************************************************************************
 	 * Select a question file to use for custom questions
@@ -558,7 +563,7 @@ public class EgoStore {
 		JFileChooser jNewStudyChooser = new JFileChooser();
 		File newFile;
 
-		jNewStudyChooser.setCurrentDirectory(DirList.getLibraryDirectory());
+		jNewStudyChooser.setCurrentDirectory(getLibraryDirectory());
 		jNewStudyChooser.addChoosableFileFilter(readQuestionFilter);
 		jNewStudyChooser.setDialogTitle("Select Custom Questions File");
 
