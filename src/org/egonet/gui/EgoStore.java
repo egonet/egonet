@@ -11,6 +11,7 @@ import net.sf.functionalj.Function0;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.EgonetException;
+import org.egonet.exceptions.StudyIdMismatchException;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.InterviewWriter;
@@ -147,18 +148,22 @@ public class EgoStore {
 		this.parent = parent;
 	}
 
+	public Interview readInterview(File interviewFile) throws CorruptedInterviewException, IOException {
+		return readInterview(interviewFile, false);
+	}
+	
 	/***************************************************************************
 	 * Reads in study information from an XML like input file Includes files
 	 * paths and arrays of question orders
 	 * 
-	 * @return interview structure derived from file
+	 * @return interview structure derived from file 
 	 */
-	public Interview readInterview(File interviewFile)
+	public Interview readInterview(File interviewFile, boolean ignoreStudyIdMismatch)
 			throws CorruptedInterviewException, IOException {
 		try {
 			InterviewReader ir = new InterviewReader(currentStudy.second(),
 					interviewFile);
-			Interview interview = ir.getInterview();
+			Interview interview = ir.getInterview(ignoreStudyIdMismatch);
 
 			if (!interview.isComplete()
 					&& InterviewReader.checkForCompleteness(interview)) {
@@ -801,12 +806,27 @@ public class EgoStore {
 							try {
 								InterviewReader sr = new InterviewReader(getStudy(), f);
 								complete = sr.getInterview().isComplete();
+							} catch (StudyIdMismatchException ex) {
+								int confirm = JOptionPane.showConfirmDialog(parent, "Study file and interview file don't match. Do you wish to override? (This may not work)", "", JOptionPane.YES_NO_OPTION);
+								if(confirm != JOptionPane.YES_OPTION) {
+									complete = false;
+									throw new RuntimeException(ex);
+								}
+								try {
+									InterviewReader sr = new InterviewReader(getStudy(), f);
+									complete = sr.getInterview(true).isComplete();
+								}
+								catch (Exception ex2) {
+									complete = false;
+									throw new RuntimeException(ex2);
+								}
+								
 							} catch (Exception ex) {
 								complete = false;
 								throw new RuntimeException(ex);
 							}
 
-							readInterview(f);
+							readInterview(f, true);
 							if (complete == false) {
 								JOptionPane
 										.showMessageDialog(

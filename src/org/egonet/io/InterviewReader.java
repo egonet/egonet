@@ -3,6 +3,7 @@ package org.egonet.io;
 import java.io.File;
 import java.util.Arrays;
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.exceptions.StudyIdMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +59,21 @@ public class InterviewReader {
 	}
 	
 	public Interview getInterview() throws CorruptedInterviewException {
+		return getInterview(false);
+	}
+	
+	public Interview getInterview(boolean ignoreStudyId) throws CorruptedInterviewException {
 		String studyId = "";
 		try {
 			Document document = new Document(interviewFile);
 			studyId = document.getRoot().getAttribute("StudyId");
 			 
-			if (!studyId.equals(study.getStudyId()))
-				throw (new CorruptedInterviewException("study ID in study doesn't match study ID in interview file"));
+			if (!studyId.equals(study.getStudyId())) {
+				if(ignoreStudyId)
+					document.getRoot().setAttribute(study.getStudyId(), studyId);
+				else
+					throw (new StudyIdMismatchException("study ID in study doesn't match study ID in interview file"));
+			}
 			Interview interview = readInterview(study, document.getRoot(), interviewFile.getName().replace(".int", ""));
 			logger.info("Completely parsed interview with study ID " + studyId + " and interview " + interview);
 			return interview;
