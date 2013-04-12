@@ -62,7 +62,7 @@ public class Interview implements Comparable<Interview> {
 
 	private int _numAnswers;
 
-	private int _numAlters;
+	//private int _numAlters;
 	
 	private final String sIntName;
 	

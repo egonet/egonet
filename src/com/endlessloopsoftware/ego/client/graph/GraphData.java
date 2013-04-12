@@ -71,10 +71,12 @@ public class GraphData {
 	public GraphData(EgoClient egoClient) {
 		this.egoClient=egoClient;
 		
-		int x = egoClient.getInterview().getStudy().getNumAlters();
+		interview = egoClient.getInterview();
+		
+		int x = interview.getAlterList().length;
 		adjacencyMatrix = new int[x][x];
 		
-		interview = egoClient.getInterview();
+		
 		completeAlterNameList = egoClient.getInterview().getStats().alterList;
 		adjacencyMatrix = interview.getStats().adjacencyMatrix;
 		interviewAlterQuestionList = new ArrayList<Question>();

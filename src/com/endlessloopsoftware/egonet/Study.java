@@ -38,12 +38,14 @@ public class Study extends Observable implements Comparable<Study>
 {
 	private String              _uniqueId       = "";
    private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
-   private int               _numAlters      = 40;
    private boolean           _studyDirty     = false;
    private boolean           _compatible     = true;
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
    private boolean			skipQuestions = false;
+   
+   private int               _minAlters      = 40;
+   private int               _maxAlters      = 40;
    
    private Map<QuestionType,List<Long>> _questionOrder  = new HashMap<QuestionType,List<Long>>();
    
@@ -93,16 +95,6 @@ public class Study extends Observable implements Comparable<Study>
 	public String getStudyName()
 	{
 		return (_studyName);
-	}
-
-	/***************************************************************************
-	 * Returns number of alters for which to prompt
-	 * 
-	 * @return numAlters number of alters for which to prompt
-	 */
-	public int getNetworkSize()
-	{
-		return (_numAlters);
 	}
 
 	/**
@@ -210,21 +202,6 @@ public class Study extends Observable implements Comparable<Study>
 		if (!_studyName.equals(name))
 		{
 			_studyName = name;
-			setModified(true);
-		}
-	}
-
-	/***************************************************************************
-	 * Sets numAlters variable and notifies observers of change to study
-	 * 
-	 * @param n
-	 *            number of alters for which to elicit
-	 */
-	public void setNetworkSize(int n)
-	{
-		if (_numAlters != n)
-		{
-			_numAlters = n;
 			setModified(true);
 		}
 	}
@@ -733,15 +710,35 @@ public class Study extends Observable implements Comparable<Study>
 	public void setAlterSamplingParameter(Integer alterSamplingParameter) {
 		this.alterSamplingParameter = alterSamplingParameter;
 	}
+	
+	public void setMinimumNumberOfAlters(int n) {
+		if(n != _minAlters)
+			setModified(true);
+		_minAlters=n;
+	}
+	
+	public int getMinimumNumberOfAlters() {
+		return _minAlters;
+	}
 
-    public int getNumAlters()
+	public void setMaximumNumberOfAlters(int n) {
+		if(n != _maxAlters)
+			setModified(true);
+		_maxAlters=n;
+	}
+	
+	public int getMaximumNumberOfAlters() {
+		return _maxAlters;
+	}
+	
+    public int getExpectedNumberOfAlters(int collectedAlters)
     {
         if(alterSamplingModel.equals(AlterSamplingModel.RANDOM_SUBSET))
             return alterSamplingParameter;
         else if(alterSamplingModel.equals(AlterSamplingModel.NTH_ALTER))
-            return getNetworkSize()/alterSamplingParameter;
+            return collectedAlters/alterSamplingParameter;
         else
-            return getNetworkSize();
+            return collectedAlters;
     }
 
 	public int compareTo(Study o) {

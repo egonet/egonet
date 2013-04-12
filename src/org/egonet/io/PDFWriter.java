@@ -127,7 +127,8 @@ public class PDFWriter {
 				}
 			}
 			else {
-				for(int i = 0; i < study.getNumAlters(); i++) {
+				// we don't know the list yet
+				for(int i = 0; i < study.getMaximumNumberOfAlters(); i++) {
 					String entry = "("+(i+1)+") ";
 					while(entry.length() < 25) entry += " ";
 					
