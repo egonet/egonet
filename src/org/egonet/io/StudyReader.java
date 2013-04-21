@@ -68,8 +68,23 @@ public class StudyReader {
 			study.setStudyName(root.getTextString("name"));
 		}
 	
-		if (root.getElement("numalters") != null) {
-			study.setNetworkSize(root.getInt("numalters"));
+		// if either new XML alters element is missing, default back to numalters
+		if(root.getElement("minalters") == null || root.getElement("maxalters") == null) {
+			if (root.getElement("numalters") != null) {
+				int i = root.getInt("numalters");
+				study.setMinimumNumberOfAlters(i);
+				study.setMaximumNumberOfAlters(i);
+			}
+		}
+		
+		if (root.getElement("minalters") != null) {
+			int i = root.getInt("minalters");
+			study.setMinimumNumberOfAlters(i);
+		}
+		
+		if (root.getElement("maxalters") != null) {
+			int i = root.getInt("maxalters");
+			study.setMaximumNumberOfAlters(i);
 		}
 	
 		if(root.getElement("altersamplingmodel") != null) {

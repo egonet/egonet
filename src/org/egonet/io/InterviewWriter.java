@@ -34,38 +34,37 @@ public class InterviewWriter {
 
 			interviewDocument.setAttribute("StudyId", study.getStudyId());
 			interviewDocument.setAttribute("StudyName", study.getStudyName());
-			interviewDocument.setAttribute("NumAlters", Integer.toString(study.getNetworkSize()));
+			
+			// smithmb -- appears to be a duplicate with numalters and NumAlters, removing this one
+			//interviewDocument.setAttribute("NumAlters", Integer.toString(study.getNetworkSize()));
+			
 			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
 
-			writeInterview(interviewDocument, interview);
+			Element alterListElem = interviewDocument.addElement("AlterList");
+			Element answerListElem = interviewDocument.addElement("AnswerList");
+
+			// smithmb - 2013-04-21 - Removed this as we count num alters by the actual alter list now,
+			// 		no need for a separate parameter 
+			// interviewDocument.setInt("numalters", study.getNetworkSize());
+			
+			interviewDocument.addElement("Complete").setBoolean(interview.isComplete());
+			interviewDocument.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
+			
+			String[] _alterList = interview.getAlterList();
+			for (int i = 0; i < _alterList.length; i++) {
+				alterListElem.addElement("Name").setText(_alterList[i]);
+			}
+			
+			Answer[] _answers = interview.get_answers();
+			for (int i = 0; i < _answers.length; i++) {
+				writeAnswer(answerListElem, interview.getQuestion(i), interview, _answers[i]);
+			}
+			
+			interviewDocument.addElement("notes").setString(interview.getNotes());
+
+			
 			document.write(interviewFile);
 		}
-	}
-	
-	public void writeInterviewStudy(Element e)
-	{
-		e.setInt("numalters", study.getNetworkSize());
-	}
-	
-	private void writeInterview(Element e, Interview interview) {
-		Element alterListElem = e.addElement("AlterList");
-		Element answerListElem = e.addElement("AnswerList");
-
-		writeInterviewStudy(e);
-		e.addElement("Complete").setBoolean(interview.isComplete());
-		e.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
-		
-		String[] _alterList = interview.getAlterList();
-		for (int i = 0; i < _alterList.length; i++) {
-			alterListElem.addElement("Name").setText(_alterList[i]);
-		}
-		
-		Answer[] _answers = interview.get_answers();
-		for (int i = 0; i < _answers.length; i++) {
-			writeAnswer(answerListElem, interview.getQuestion(i), interview, _answers[i]);
-		}
-		
-		e.addElement("notes").setString(interview.getNotes());
 	}
 	
 	public void writeAnswer(Element e, Question question, Interview interview, Answer answer) {

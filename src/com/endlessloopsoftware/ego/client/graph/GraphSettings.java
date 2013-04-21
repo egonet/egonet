@@ -116,7 +116,7 @@ public class GraphSettings {
 	}
 
 	private void init() {
-		int noOfAlters = egoClient.getInterview().getNumAlters();
+		int noOfAlters = egoClient.getInterview().getNumberAlters();
 		
 		String[] renderAlterList = renderer.getAlterList();
 		if(renderAlterList.length < 1)
@@ -543,7 +543,7 @@ public class GraphSettings {
 	}
 
 	private String getAlterInfo(int alterIndex, boolean detail) {
-		String[] alterToolTip = new String[egoClient.getInterview().getNumAlters()];
+		String[] alterToolTip = new String[egoClient.getInterview().getNumberAlters()];
 		for (int i = 0; i < alterToolTip.length; i++) {
 			alterToolTip[i] = "<html>" + egoClient.getInterview().getAlterList()[i]
 					+ "<br>";

@@ -95,14 +95,8 @@ public class InterviewReader {
 			interview.setAlterList(lAlterList);
 
 			/* Read answers */
-			
-			if (e.getElement("numalters") != null)
-			{
-				int numAlters = e.getInt("numalters");
-				if(numAlters != study.getNetworkSize())
-					throw new CorruptedInterviewException("Study expected " + study.getNetworkSize() + " but interview file had " + numAlters + " alters");
-				
-			}
+			if(lAlterList.length < study.getMinimumNumberOfAlters() || lAlterList.length > study.getMaximumNumberOfAlters())
+				throw new CorruptedInterviewException("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + lAlterList.length + " alters");
 			
 			interview.setComplete(e.getBoolean("Complete"));
 			try {

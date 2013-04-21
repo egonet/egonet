@@ -223,7 +223,7 @@ public class NodeLabelPanel extends JPanel {
 
 	private void updateNodeLabels(boolean defaultNames) {
 		if (defaultNames) {
-			int noOfAlters = egoClient.getInterview().getNumAlters();
+			int noOfAlters = egoClient.getInterview().getNumberAlters();
 			for (int i = 0; i < noOfAlters; i++) {
 				String alterName = egoClient.getInterview().getAlterList()[i];
 				graphRenderer.updateGraphSettings(alterName, i, 1);

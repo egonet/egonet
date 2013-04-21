@@ -18,7 +18,7 @@
  */
 package org.egonet.exceptions;
 
-public class EgonetException extends Exception
+public class EgonetException extends RuntimeException
 {
 	public EgonetException()
 	{

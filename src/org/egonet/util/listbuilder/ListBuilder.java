@@ -77,7 +77,7 @@ public class ListBuilder extends JPanel implements Observer {
 	 * allowed to add items up to the max size of the list.
 	 */
 	private int maxSize = -1;
-
+	
 	private String elementName = "";
 
 	private String title = "";
@@ -187,6 +187,9 @@ public class ListBuilder extends JPanel implements Observer {
 				String firstStr = "";
 				String lastStr = "";
 				if (isNameList()) {
+					if(selection.getString() == null) // really unexpected/broken
+						return;
+					
 					String[] parts = selection.getString().split(", ");
 					if (parts.length != 2) {
 						// TODO: warn person
@@ -405,8 +408,7 @@ public class ListBuilder extends JPanel implements Observer {
 			}
 			jList.updateUI();
 		} else if (!itemSelectedFromList) {
-			// NEW item -- don't do anything until they hit enter on the LAST
-			// field
+			// NEW item -- don't do anything until they hit enter on the LAST field
 			if (enterPressed && shouldBlank) {
 				Selection selection = new Selection();
 				try {
@@ -478,7 +480,7 @@ public class ListBuilder extends JPanel implements Observer {
 		ButtonBarBuilder builder = new ButtonBarBuilder();
 
 		buttonAdd = new JButton("Add to list");
-		buttonAdd.setEnabled(false);
+		buttonAdd.setEnabled(true);
 		buttonAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				// simulate enter key being pressed at last name
@@ -587,23 +589,28 @@ public class ListBuilder extends JPanel implements Observer {
 		this.elementName = elementName;
 	}
 
-	public int getMaxListSize() {
-		return maxSize;
-	}
-
 	public void setMaxListSize(int maxSize) {
 		this.maxSize = maxSize;
 		build();
+	}
+	
+	public int getMaxListSize() {
+		return maxSize;
 	}
 
 	public Selection[] getSelections() {
 		
 		List<Selection> selectionList = new ArrayList<Selection>();
-		for(int i = 0 ; i < elementList.size() && ((maxSize != -1 && i < maxSize) || maxSize == -1); i++)
+	
+		for(int i = 0 ; i < elementList.size(); i++)
 		{
 			Object o = elementList.get(i);
 			if (o.getClass().equals(Selection.class))
 				selectionList.add((Selection)o);
+			
+			// escape loop if maxSize is set and we're at it 
+			if(maxSize != -1 && selectionList.size() == maxSize)
+				break;
 		}
 
 		int i = 0;

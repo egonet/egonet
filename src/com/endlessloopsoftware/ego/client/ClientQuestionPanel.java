@@ -49,6 +49,7 @@ import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.util.CardPanel;
 import org.egonet.util.CatchingAction;
 
@@ -505,6 +506,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	 * question
 	 */
 	public void fillPanel() {
+		logger.info("Filling question panel with values...");
 		if (question == null)
 			return; // danger will robinson!
 
@@ -535,11 +537,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if ((question.questionType == Shared.QuestionType.ALTER_PROMPT)
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
-			String qs = "Enter the names of "
-				+ egoClient.getStudy().getNetworkSize() + " people. ";
+			
+			Study study = egoClient.getStudy();
+			String qs = "";
+			if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
+				qs = "Enter the names of " + study.getMaximumNumberOfAlters() + " people. ";
+			else
+				qs = "Enter the names of at least " + study.getMinimumNumberOfAlters() + " people, up to " + study.getMaximumNumberOfAlters() + " people. ";
 
 			if (egoClient.getInterview().isLastAlterPrompt()) {
-				qs += "After entering " + egoClient.getStudy().getNetworkSize()
+				qs += "After entering " + egoClient.getStudy().getMinimumNumberOfAlters()
 				+ " names you can continue.";
 			} else {
 				qs += "";
@@ -549,7 +556,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(ALTER_CARD);
-			alterList.setMaxListSize(egoClient.getStudy().getNetworkSize());
+			alterList.setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());
 			alterList.setDescription(qs);
 			alterList.setElementName("Name: ");
 			alterList.setPresetListsActive(false);
@@ -709,8 +716,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	 * Figure out the question type and the answer type, and store the
 	 * appropriate data. Most controls that could provide selection of a
 	 * particular answer have a listener that calls this method.
+	 * @throws CorruptedInterviewException 
 	 */
-	private void fillAnswer(Answer answer) {
+	private void fillAnswer(Answer answer) throws CorruptedInterviewException {
 		// Don't touch values if we are just viewing interview
 		// if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 		// return;
@@ -726,10 +734,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			// value starts at zero, so add one to compare to # alters needed
 			// TODO: make sure answer.getValue matches number of alters created
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
-			answer.setValue(7);
+			answer.setValue(egoClient.getInterview().getNumberAlters());
+			
+			
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
-			boolean maxAlters = answer.getValue()+1 >= study.getNumAlters();
-			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getNetworkSize());
+			boolean maxAlters = answer.getValue()+1 >= study.getMaximumNumberOfAlters();
+			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
 			answer.setAnswered(morePrompts || maxAlters);
 			
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
@@ -747,10 +757,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				
 				java.util.List<String> newAlterList = new ArrayList<String>();
 				
-				int nthParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNetworkSize();
+				int nthParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getMaximumNumberOfAlters();
 				for(int i = 0; i < oldAlterList.length; i++)
 				{
-					if(i + 1 % nthParameter == 0)
+					if(i + 1 % nthParameter == 0 && i < oldAlterList.length)
 						newAlterList.add(oldAlterList[i]);
 				}
 				
@@ -763,7 +773,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 				java.util.List<String> newAlterList = new ArrayList<String>();
 				
-				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getNetworkSize();
+				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getMaximumNumberOfAlters();
 				for(int i = 0; i < subsampleParameter && i < oldAlterList.size()-1; i++)
 						newAlterList.add(oldAlterList.get(i));
 				
@@ -1029,9 +1039,16 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
-			boolean maxAlters = ! (alterList.getListStrings().length < egoClient.getStudy().getNumAlters());
-			question.getAnswer().setAnswered(maxAlters || morePrompts);
-				
+			
+			boolean bWithinRequiredAlterRange =
+					(alterList.getListStrings().length >= egoClient.getStudy().getMinimumNumberOfAlters())
+				&&  (alterList.getListStrings().length <= egoClient.getStudy().getMaximumNumberOfAlters());
+			
+			
+			// consider question answered if we hit alter threshold or have more prompts coming
+			question.getAnswer().setAnswered(bWithinRequiredAlterRange || morePrompts);
+			
+			// enable next button if question is answered
 			questionButtonNext.setEnabled(question.getAnswer().isAnswered());
 			questionButtonNext.setText("Next Question");
 		} else {

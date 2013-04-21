@@ -42,7 +42,7 @@ public class Interview implements Comparable<Interview> {
 
 	final private static Logger logger = LoggerFactory.getLogger(Interview.class);
 	
-	private final Answer[] _answers;
+	private Answer[] _answers;
 
 	private final Study _study;
 
@@ -54,11 +54,11 @@ public class Interview implements Comparable<Interview> {
 	
 	private boolean _complete;
 
-	private String[] _alterList = new String[0];
+	private String[] _alterList = new String[0]; // so alter pair is at least stateable
 
 	private int _qIndex = 0;
 
-	private final int _numAlterPairs;
+	private int _numAlterPairs;
 
 	private int _numAnswers;
 
@@ -93,32 +93,39 @@ public class Interview implements Comparable<Interview> {
 	 *             if unable to read interview
 	 */
 	public Interview(Study study, String sIntName) throws CorruptedInterviewException {
-		/* Locals */
-		int j, k;
-		Iterator questions;
 
 		this.sIntName = sIntName;
-		
-		/* Calculate some interview values */
 		_study = study;
-		_numAlters = study.getNumAlters();
+
+		//_alterList = new String[]{null};
+		
+		reinitializeAlterData();
+	}
+	
+	/**
+	 * This method resets many data structures that are dependent on the number of alters. This used to happen
+	 * in a constructor, but now that alter lists have a min and max number of elements, we need to resize these
+	 * data on the fly.
+	 * @throws CorruptedInterviewException 
+	 */
+	public void reinitializeAlterData() throws CorruptedInterviewException {
+		/* Calculate some interview values */
+		int _numAlters = _alterList.length;
 		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		set_numAnswers(study.getQuestionOrder(Shared.QuestionType.EGO)
-				.size()
-				+ study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
+		set_numAnswers(_study.getQuestionOrder(Shared.QuestionType.EGO).size()
+				+ _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
 						.size()
-				+ (_numAlters * study.getQuestionOrder(
+				+ (_numAlters * _study.getQuestionOrder(
 						Shared.QuestionType.ALTER).size())
-				+ (_numAlterPairs * study.getQuestionOrder(
+				+ (_numAlterPairs * _study.getQuestionOrder(
 						Shared.QuestionType.ALTER_PAIR).size()));
 		_answers = new Answer[get_numAnswers()];
 
 		/* Generate answer instances */
-		_qIndex = 0;
+		int counter = 0;
 
 		/* Ego Questions */
-		questions = study.getQuestionOrder(Shared.QuestionType.EGO)
-				.iterator();
+		Iterator questions = _study.getQuestionOrder(Shared.QuestionType.EGO).iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
 			Question question = _study.getQuestions().getQuestion(questionId);
@@ -126,13 +133,12 @@ public class Interview implements Comparable<Interview> {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId);
+				_answers[counter++] = new Answer(question.UniqueId);
 			}
 		}
 
 		/* Alter Prompt Questions */
-		questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
-				.iterator();
+		questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
 			Question question = _study.getQuestions().getQuestion(questionId);
@@ -140,23 +146,23 @@ public class Interview implements Comparable<Interview> {
 			if (question == null) {
 				throw new CorruptedInterviewException();
 			} else {
-				_answers[_qIndex++] = new Answer(question.UniqueId);
+				_answers[counter++] = new Answer(question.UniqueId);
 			}
 		}
-
+		
+		int j,k;
+		
 		/* Alter Questions */
 		for (j = 0; j < _numAlters; j++) {
-			questions = study.getQuestionOrder(
-					Shared.QuestionType.ALTER).iterator();
+			questions = _study.getQuestionOrder(Shared.QuestionType.ALTER).iterator();
 			int[] alter = { j };
 			while (questions.hasNext()) {
 				Long questionId = (Long) questions.next();
-				Question question = _study.getQuestions().getQuestion(
-						questionId);
+				Question question = _study.getQuestions().getQuestion(questionId);
 				if (question == null) {
 					throw new CorruptedInterviewException();
 				} else {
-					_answers[_qIndex++] = new Answer(question.UniqueId, alter);
+					_answers[counter++] = new Answer(question.UniqueId, alter);
 				}
 			}
 		}
@@ -164,25 +170,37 @@ public class Interview implements Comparable<Interview> {
 		/* Alter Pair Questions */
 		for (k = 0; k < _numAlters; k++) {
 			for (j = (k + 1); j < _numAlters; j++) {
-				questions = study.getQuestionOrder(
-						Shared.QuestionType.ALTER_PAIR).iterator();
+				questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
 				int[] alters = { k, j };
 				while (questions.hasNext()) {
-					Question question = _study.getQuestions().getQuestion(
-							(Long) questions.next());
+					Question question = _study.getQuestions().getQuestion((Long) questions.next());
 
 					if (question == null) {
 						throw new CorruptedInterviewException();
 					} else {
-						if (question.isStatable()) {
-							_statisticsAvailable = true;
-						}
+//						if (question.isStatable()) {
+//							_statisticsAvailable = true;
+//						}
 
-						_answers[_qIndex++] = new Answer(question.UniqueId, alters);
+						_answers[counter++] = new Answer(question.UniqueId, alters);
 					}
 				}
 			}
 		}
+		
+		// really shouldn't make stats available depend on alter answers
+		questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+		while (questions.hasNext()) {
+			Question question = _study.getQuestions().getQuestion((Long) questions.next());
+			if (question == null) {
+				throw new CorruptedInterviewException();
+			} else {
+				if (question.isStatable()) {
+					_statisticsAvailable = true;
+				}
+			}
+		}
+		
 	}
 
 	/***************************************************************************
@@ -262,9 +280,11 @@ public class Interview implements Comparable<Interview> {
 	 * 
 	 * @param s
 	 *            String Array of alters
+	 * @throws CorruptedInterviewException 
 	 */
-	public void setAlterList(String[] s) {
+	public void setAlterList(String[] s) throws CorruptedInterviewException {
 		_alterList = s;
+		reinitializeAlterData();
 	}
 
 	/***************************************************************************
@@ -462,7 +482,6 @@ public class Interview implements Comparable<Interview> {
 	 */
 	public boolean hasNext() {
 		int checkIndex = nextValidAnswer(_qIndex + 1, true);
-
 		return (checkIndex != -1);
 	}
 
@@ -554,10 +573,18 @@ public class Interview implements Comparable<Interview> {
 	public boolean isLastAlterPrompt() {
 		boolean b = false;
 		
-		b = (getQuestion(_qIndex).questionType == Shared.QuestionType.ALTER_PROMPT)
-				&& hasNext()
-				&& (getQuestion(_qIndex + 1).questionType != Shared.QuestionType.ALTER_PROMPT);
+		logger.info("Current question type: " + getQuestion(_qIndex).questionType);
+		logger.info("hasNext: " + hasNext());
+		
+		if(_qIndex+1 >= _answers.length) // if there are no more questions, this is *definitely* the last alter prompt :)
+			return true;
+		logger.info("Next question type: " + getQuestion(_qIndex + 1).questionType);
+		
+		b = 		(getQuestion(_qIndex).questionType == Shared.QuestionType.ALTER_PROMPT) // current question is alter prompt
+				&& 	hasNext() // there IS a next question
+				&& 	(getQuestion(_qIndex + 1).questionType != Shared.QuestionType.ALTER_PROMPT); // next question is alter prompt
 
+		logger.info("-> isLastAlterPrompt = " + b);
 		return (b);
 	}
 
@@ -741,8 +768,8 @@ public class Interview implements Comparable<Interview> {
 	 * 
 	 * @return _numAlters
 	 */
-	public int getNumAlters() {
-		return (_numAlters);
+	public int getNumberAlters() {
+		return _alterList.length;
 	}
 
 	/***************************************************************************
@@ -789,6 +816,7 @@ public class Interview implements Comparable<Interview> {
 	public int[][] generateAdjacencyMatrix(Question q, boolean weighted) throws MissingPairException {
 	    
 	    //logger.info("Adjacency matrix ("+(weighted ? "" : "non-")+"weighted) : ");
+		int _numAlters = _alterList.length;
 	    
 		if (_study.getUIType().equals(Shared.TRADITIONAL_QUESTIONS)) {
 			int[][] m = new int[_numAlters][_numAlters];

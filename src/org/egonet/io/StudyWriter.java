@@ -91,9 +91,12 @@ public class StudyWriter {
 			Element study = document.addElement("Study");
 
 			study.addElement("name").setText(studyObject.getStudyName());
-			study.addElement("numalters").setInt(studyObject.getNetworkSize());
+			
+			study.addElement("minalters").setInt(studyObject.getMinimumNumberOfAlters());
+			study.addElement("maxalters").setInt(studyObject.getMaximumNumberOfAlters());
+			
 			study.addElement("altersamplingmodel").setInt(studyObject.getAlterSamplingModel().ordinal());
-			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? studyObject.getNetworkSize() : studyObject.getAlterSamplingParameter());
+			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? 0 : studyObject.getAlterSamplingParameter());
 			study.addElement("alternamemodel").setInt(studyObject.getAlterNameModel().ordinal());
 			study.addElement("allowskipquestions").setBoolean(studyObject.getAllowSkipQuestions());
 			

@@ -96,7 +96,7 @@ public class Statistics
     {
         Statistics stats = new Statistics(interview);
         
-        int      numAlters = stats.getInterview().getNumAlters();
+        int      numAlters = stats.getInterview().getNumberAlters();
         //int numAlters = 2;
         int      alterindex;
         float    maxfloat, meanfloat;

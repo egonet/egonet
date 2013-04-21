@@ -57,8 +57,13 @@ public class StudyPanel extends JPanel
 	private final JLabel				study_path_field			= new JLabel("< none selected >");
 	private final JLabel				study_name_label			= new JLabel("Study Name:");
 	private final JTextField		study_name_field			= new JTextField("< none selected >");
-	private final JLabel				study_num_alters_label	= new JLabel("Number of Alters:");
-	private final JTextField		study_num_alters_field	= new JTextField();
+	
+	private final JLabel				study_min_num_alters_label	= new JLabel("Minimum Number of Alters:");
+	private final JTextField		study_min_num_alters_field	= new JTextField();
+
+	private final JLabel				study_max_num_alters_label	= new JLabel("Maximum Number of Alters:");
+	private final JTextField		study_max_num_alters_field	= new JTextField();
+
 	
 	private JLabel lblAlterModel = new JLabel("Alter Sampling Method");
 	private ButtonGroup alterSampleGroup = new ButtonGroup();
@@ -81,7 +86,9 @@ public class StudyPanel extends JPanel
 	
 	private final JLabel				titleLabel					= new JLabel("EgoCentric Network Study Configuration");
 	private final JTextPane			instructionPane			= new JTextPane();
-	private final Document			altersDocument				= new WholeNumberDocument();
+	
+	private final Document			minAltersDocument				= new WholeNumberDocument();
+	private final Document			maxAltersDocument				= new WholeNumberDocument();
 
 	private final String[]			instructionStrings		= {
 			"Start by selecting a study or choosing \"New Study\" from the file menu.", "Please name the study.",
@@ -100,7 +107,10 @@ public class StudyPanel extends JPanel
 	public StudyPanel(EgoNet egoNet) throws Exception
 	{
 		this.egoNet = egoNet;
-		study_num_alters_field.setName("study_num_alters_field");
+		
+		study_min_num_alters_field.setName("study_min_num_alters_field");
+		study_max_num_alters_field.setName("study_max_num_alters_field");
+		
 		btnAlterModelRandomSubset.setName("btnAlterModelRandomSubset");
 		txtAlterModelRandomSubset.setName("txtAlterModelRandomSubset");
 		jbInit();
@@ -114,7 +124,9 @@ public class StudyPanel extends JPanel
 		this.setLayout(study_layout);
 		this.setMinimumSize(new Dimension(300, 200));
 		this.setPreferredSize(new Dimension(500, 500));
-		study_num_alters_field.setDocument(altersDocument);
+		
+		study_min_num_alters_field.setDocument(minAltersDocument);
+		study_max_num_alters_field.setDocument(maxAltersDocument);
 		
 		alterNameActionListener = new ActionListener()
 		{
@@ -205,27 +217,32 @@ public class StudyPanel extends JPanel
 		add(study_name_field, 			new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
 		add(study_path_label, 			new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_path_field, 			new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
-		add(study_num_alters_label, 	new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_num_alters_field, 	new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+		
+		add(study_min_num_alters_label, 	new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_min_num_alters_field, 	new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+
+		add(study_max_num_alters_label, 	new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_max_num_alters_field, 	new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
 
 		
-		add(lblAlterNames, 				new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
-		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
 		
-		add(lblAlterModel, 				new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-
-		add(btnAlterModelAll, 			new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(lblAlterNames, 				new GridBagConstraints(0, 6, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
+		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
 		
-		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(lblAlterModel, 				new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAlterModelNth, 			new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelNth, 			new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-
-		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 13, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelAll, 			new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(instructionPane,            new GridBagConstraints(0, 15, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
+		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+
+		add(btnAlterModelNth, 			new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelNth, 			new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+
+		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 14, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		
+		add(instructionPane,            new GridBagConstraints(0, 16, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
 
 		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
@@ -238,10 +255,16 @@ public class StudyPanel extends JPanel
 			public void changedUpdate(DocumentEvent e) { studyNameTextEvent(); }
 			public void removeUpdate(DocumentEvent e) { studyNameTextEvent(); }});
 
-		study_num_alters_field.getDocument().addDocumentListener(new DocumentListener() {
-			public void insertUpdate(DocumentEvent e) { studyAltersTextEvent(); }
-			public void changedUpdate(DocumentEvent e) { studyAltersTextEvent(); }
-			public void removeUpdate(DocumentEvent e) { studyAltersTextEvent(); }});
+		study_min_num_alters_field.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) { studyMinAltersTextEvent(); }
+			public void changedUpdate(DocumentEvent e) { studyMinAltersTextEvent(); }
+			public void removeUpdate(DocumentEvent e) { studyMinAltersTextEvent(); }});
+
+		study_max_num_alters_field.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) { studyMaxAltersTextEvent(); }
+			public void changedUpdate(DocumentEvent e) { studyMaxAltersTextEvent(); }
+			public void removeUpdate(DocumentEvent e) { studyMaxAltersTextEvent(); }});
+
 		
 	      txtAlterModelRandomSubset.getDocument().addDocumentListener(new DocumentListener() {
 	            public void insertUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }
@@ -279,8 +302,14 @@ public class StudyPanel extends JPanel
 		
 			study_name_field.			setEnabled(hasStudy);
 			study_name_label.			setEnabled(hasStudy);
-			study_num_alters_label.	setEnabled(hasStudy);
-			study_num_alters_field.	setEnabled(hasStudy);
+			
+			study_min_num_alters_label.	setEnabled(hasStudy);
+			study_min_num_alters_field.	setEnabled(hasStudy);
+
+			study_max_num_alters_label.	setEnabled(hasStudy);
+			study_max_num_alters_field.	setEnabled(hasStudy);
+
+			
 			study_path_label.			setEnabled(hasStudy);
 			study_path_field.			setEnabled(hasStudy);
 
@@ -292,7 +321,9 @@ public class StudyPanel extends JPanel
 			btnAllowQuestionSkip.setSelected(hasStudy && study.getAllowSkipQuestions());
 			
 			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
-			study_num_alters_field.setText(Integer.toString(egoNet.getStudy().getNetworkSize()));
+			
+			study_min_num_alters_field.setText(Integer.toString(egoNet.getStudy().getMinimumNumberOfAlters()));
+			study_max_num_alters_field.setText(Integer.toString(egoNet.getStudy().getMaximumNumberOfAlters()));
 			
 			lblAlterNames.setEnabled(hasStudy);
 			btnAlterNamesFirstLast.setEnabled(hasStudy);
@@ -377,9 +408,9 @@ public class StudyPanel extends JPanel
         studyAltersSamplingParams(s);
     }
 
-	private void studyAltersTextEvent()
+	private void studyMinAltersTextEvent()
 	{
-		String 	s = study_num_alters_field.getText();
+		String 	s = study_min_num_alters_field.getText();
 		int 		i = 0;
 		
 		if (!s.equals(""))
@@ -387,9 +418,25 @@ public class StudyPanel extends JPanel
 			i = Integer.parseInt(s);
 		}
 		
-		if (i != egoNet.getStudy().getNetworkSize())
+		if (i != egoNet.getStudy().getMinimumNumberOfAlters())
 		{
-			egoNet.getStudy().setNetworkSize(i);
+			egoNet.getStudy().setMinimumNumberOfAlters(i);
+		}
+	}
+	
+	private void studyMaxAltersTextEvent()
+	{
+		String 	s = study_max_num_alters_field.getText();
+		int 		i = 0;
+		
+		if (!s.equals(""))
+		{
+			i = Integer.parseInt(s);
+		}
+		
+		if (i != egoNet.getStudy().getMaximumNumberOfAlters())
+		{
+			egoNet.getStudy().setMaximumNumberOfAlters(i);
 		}
 	}
 	
