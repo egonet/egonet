@@ -14,6 +14,10 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.endlessloopsoftware.ego.client.ClientPanel;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
@@ -117,6 +121,9 @@ public class InterviewDataWritingUtil {
 	}
 	
 	private static class InterviewIterable implements Iterable<Interview> {
+		
+		final private static Logger logger = LoggerFactory.getLogger(InterviewIterable.class);
+		
 		private final Study study;
 		final File interviewDirectory;
 		
@@ -134,20 +141,20 @@ public class InterviewDataWritingUtil {
 			final String[] interviewFilenames =  interviewDirectory.list();
 			
 			for(int i = 0; i < interviewFilenames.length; i++) {
-				String intFileName = interviewFilenames[i++];
+				String intFileName = interviewFilenames[i];
 				File intFile = new File(interviewDirectory, intFileName);
 				InterviewReader intReader = new InterviewReader(study, intFile);
 				try {
 					Interview interview = intReader.getInterview();
 					foundInterviews.add(interview);
 				} catch(CorruptedInterviewException ex) {
+					String err = "Unable to read interview file, skipping in iterator";
+					if(intFile != null)
+						err += " "+ intFile.getName();
 					
-					// eat silently
-					
-					//String err = "Unable to read interview file, skipping in iterator "+ intFile.getName();
-					//if(ex.getMessage() != null)
-					// err += ": " + ex.getMessage();
-					//logger.debug(err, ex);
+					if(ex.getMessage() != null)
+					 err += ": " + ex.getMessage();
+					logger.info(err, ex);
 				}
 			}
 
