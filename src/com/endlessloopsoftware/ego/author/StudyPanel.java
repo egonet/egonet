@@ -52,19 +52,26 @@ import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
  */
 public class StudyPanel extends JPanel
 {
-	private final GridBagLayout	study_layout				= new GridBagLayout();
-	private final JLabel				study_path_label			= new JLabel("Study Path:");
-	private final JLabel				study_path_field			= new JLabel("< none selected >");
-	private final JLabel				study_name_label			= new JLabel("Study Name:");
-	private final JTextField		study_name_field			= new JTextField("< none selected >");
+	private final GridBagLayout             study_layout	= new GridBagLayout();
+	private final JLabel			study_path_label= new JLabel("Study Path:");
+	private final JLabel			study_path_field= new JLabel("< none selected >");
+	private final JLabel			study_name_label= new JLabel("Study Name:");
+	private final JTextField		study_name_field= new JTextField("< none selected >");
 	
-	private final JLabel				study_min_num_alters_label	= new JLabel("Minimum Number of Alters:");
-	private final JTextField		study_min_num_alters_field	= new JTextField();
-
-	private final JLabel				study_max_num_alters_label	= new JLabel("Maximum Number of Alters:");
+        
+        
+	private final JLabel			study_min_num_alters_label= new JLabel("Minimum Number of Alters:");
+        private final JTextField		study_min_num_alters_field= new JTextField();
+                        
+	private final JLabel                    study_max_num_alters_label	= new JLabel("Maximum Number of Alters:");
 	private final JTextField		study_max_num_alters_field	= new JTextField();
-
-	
+        
+	private JRadioButton btnUnlimitedMode = new JRadioButton("Unlimited mode");
+        private JRadioButton btnLimitedMode   = new JRadioButton("Limited mode");
+        
+        private JLabel lblAlterMode = new JLabel("Alters number mode: ");
+        private ButtonGroup alterMode = new ButtonGroup();
+        
 	private JLabel lblAlterModel = new JLabel("Alter Sampling Method");
 	private ButtonGroup alterSampleGroup = new ButtonGroup();
 	
@@ -82,13 +89,14 @@ public class StudyPanel extends JPanel
 	private JRadioButton btnAlterNamesFirstLast = new JRadioButton("Ask for separate first and last names");
 	private JRadioButton btnAlterNamesSingle = new JRadioButton("Ask for name as a single field");
 
-	private JCheckBox btnAllowQuestionSkip = new JCheckBox("Always allow 'Next' button for skipping questions");
-	
+	private JCheckBox btnAllowQuestionSkip = new JCheckBox("Always allow 'Next' button for skipping questions"); 	 	
+        
 	private final JLabel				titleLabel					= new JLabel("EgoCentric Network Study Configuration");
 	private final JTextPane			instructionPane			= new JTextPane();
 	
 	private final Document			minAltersDocument				= new WholeNumberDocument();
 	private final Document			maxAltersDocument				= new WholeNumberDocument();
+        private final Document			altersDocument				= new WholeNumberDocument(); 
 
 	private final String[]			instructionStrings		= {
 			"Start by selecting a study or choosing \"New Study\" from the file menu.", "Please name the study.",
@@ -98,6 +106,7 @@ public class StudyPanel extends JPanel
 	private final EgoNet egoNet;
 	private ActionListener alterModelGroupActionListener;
 	private ActionListener alterNameActionListener;
+        private ActionListener alterModeActionListener;
 	private ActionListener allowSkipListener;
 	
 	/**
@@ -110,7 +119,7 @@ public class StudyPanel extends JPanel
 		
 		study_min_num_alters_field.setName("study_min_num_alters_field");
 		study_max_num_alters_field.setName("study_max_num_alters_field");
-		
+                
 		btnAlterModelRandomSubset.setName("btnAlterModelRandomSubset");
 		txtAlterModelRandomSubset.setName("txtAlterModelRandomSubset");
 		jbInit();
@@ -127,6 +136,9 @@ public class StudyPanel extends JPanel
 		
 		study_min_num_alters_field.setDocument(minAltersDocument);
 		study_max_num_alters_field.setDocument(maxAltersDocument);
+                
+                this.setMinimumSize(new Dimension(320, 200)); 
+                this.setPreferredSize(new Dimension(500, 590)); 
 		
 		alterNameActionListener = new ActionListener()
 		{
@@ -141,6 +153,24 @@ public class StudyPanel extends JPanel
 			}
 		};
 		
+                alterModeActionListener = new ActionListener()
+                {
+                        public void actionPerformed(ActionEvent e)  {
+                            
+                                Study study = egoNet.getStudy();
+                                if(btnUnlimitedMode.isSelected())
+                                {
+                                    study_max_num_alters_field.setEnabled(false);                            
+                                    study.setUnlimitedAlterMode(true);
+                                }else
+                                {
+                                    study_max_num_alters_field.setEnabled(true);
+                                    study.setUnlimitedAlterMode(false);
+                                }
+                        }
+                };
+                
+                
 		allowSkipListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -196,8 +226,11 @@ public class StudyPanel extends JPanel
 		btnAlterModelAll.setEnabled(false);
 		btnAlterModelRandomSubset.setEnabled(false);
 		btnAlterModelNth.setEnabled(false);
-		
-		
+          
+
+                alterMode.add(btnLimitedMode); btnLimitedMode.addActionListener(alterModeActionListener);
+                alterMode.add(btnUnlimitedMode); btnUnlimitedMode.addActionListener(alterModeActionListener);
+                    
 		alternamesGroup.add(btnAlterNamesFirstLast); btnAlterNamesFirstLast.addActionListener(alterNameActionListener);
 		alternamesGroup.add(btnAlterNamesSingle);btnAlterNamesSingle.addActionListener(alterNameActionListener);
 
@@ -212,37 +245,39 @@ public class StudyPanel extends JPanel
 		instructionPane.setText(instructionStrings[0]);
 		
 		                                                 //    x  y  w  h  weightx/y                    anchor                     fill        insets                     padx/y
-		add(titleLabel, 				new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		add(titleLabel, 			new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		add(study_name_label, 			new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_name_field, 			new GridBagConstraints(1, 1, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 6));
 		add(study_path_label, 			new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
 		add(study_path_field, 			new GridBagConstraints(1, 2, 2, 1, 0.33, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
 		
-		add(study_min_num_alters_label, 	new GridBagConstraints(0, 4, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_min_num_alters_field, 	new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+                add(lblAlterMode,                       new GridBagConstraints(0, 3, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
+                add(btnUnlimitedMode,                   new GridBagConstraints(0, 4, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));
+                add(btnLimitedMode,                     new GridBagConstraints(1, 4, 1, 1, 0.0, 0.1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 4));       
+                        
+		add(study_min_num_alters_label, 	new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_min_num_alters_field, 	new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
 
-		add(study_max_num_alters_label, 	new GridBagConstraints(0, 5, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(study_max_num_alters_field, 	new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
+		add(study_max_num_alters_label, 	new GridBagConstraints(0, 6, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(study_max_num_alters_field, 	new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 50, 8));
 
+		add(lblAlterNames, 				new GridBagConstraints(0, 7, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
+		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
 		
-		
-		add(lblAlterNames, 				new GridBagConstraints(0, 6, 2, 1, 0.0,	0.1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		add(btnAlterNamesFirstLast, 	new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
-		add(btnAlterNamesSingle, 		new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 50, 8));
-		
-		add(lblAlterModel, 				new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(lblAlterModel, 				new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAlterModelAll, 			new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelAll, 			new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelRandomSubset, 	new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelRandomSubset, 	new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAlterModelNth, 			new GridBagConstraints(0, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
-		add(txtAlterModelNth, 			new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAlterModelNth, 			new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(txtAlterModelNth, 			new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 
-		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 14, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
+		add(btnAllowQuestionSkip,       new GridBagConstraints(0, 15, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 8));
 		
-		add(instructionPane,            new GridBagConstraints(0, 16, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
+		add(instructionPane,            new GridBagConstraints(0, 17, 4, 1, 1.0, 0.15, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 4));
 
 		/***********************************************************************
 		 * Action Listeners for buttons and other UI elements
@@ -302,7 +337,11 @@ public class StudyPanel extends JPanel
 		
 			study_name_field.			setEnabled(hasStudy);
 			study_name_label.			setEnabled(hasStudy);
-			
+		
+                        lblAlterMode.setEnabled(hasStudy);
+                        btnUnlimitedMode.setEnabled(hasStudy);
+                        btnLimitedMode.setEnabled(hasStudy);
+                                                
 			study_min_num_alters_label.	setEnabled(hasStudy);
 			study_min_num_alters_field.	setEnabled(hasStudy);
 
