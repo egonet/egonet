@@ -136,7 +136,7 @@ public class StudyPanel extends JPanel
 		
 		study_min_num_alters_field.setDocument(minAltersDocument);
 		study_max_num_alters_field.setDocument(maxAltersDocument);
-                
+                                
                 this.setMinimumSize(new Dimension(320, 200)); 
                 this.setPreferredSize(new Dimension(500, 590)); 
 		
@@ -152,25 +152,7 @@ public class StudyPanel extends JPanel
 				}
 			}
 		};
-		
-                alterModeActionListener = new ActionListener()
-                {
-                        public void actionPerformed(ActionEvent e)  {
-                            
-                                Study study = egoNet.getStudy();
-                                if(btnUnlimitedMode.isSelected())
-                                {
-                                    study_max_num_alters_field.setEnabled(false);                            
-                                    study.setUnlimitedAlterMode(true);
-                                }else
-                                {
-                                    study_max_num_alters_field.setEnabled(true);
-                                    study.setUnlimitedAlterMode(false);
-                                }
-                        }
-                };
-                
-                
+		              
 		allowSkipListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -181,6 +163,26 @@ public class StudyPanel extends JPanel
 			}
 		};
 		
+                alterModeActionListener = new ActionListener()
+                {
+                  public void actionPerformed(ActionEvent e)
+                  {
+                      if (btnUnlimitedMode.isSelected())
+                      {
+                          egoNet.getStudy().setUnlimitedMode(true);
+                          study_max_num_alters_field.setEnabled(false);
+                          study_max_num_alters_label.setEnabled(false);
+                          
+                      }
+                      if (btnLimitedMode.isSelected())
+                      {
+                          egoNet.getStudy().setUnlimitedMode(false);
+                          study_max_num_alters_field.setEnabled(true);
+                          study_max_num_alters_label.setEnabled(true);
+                      }
+                  }
+                };
+                
 		alterModelGroupActionListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -301,6 +303,8 @@ public class StudyPanel extends JPanel
 			public void removeUpdate(DocumentEvent e) { studyMaxAltersTextEvent(); }});
 
 		
+                
+                
 	      txtAlterModelRandomSubset.getDocument().addDocumentListener(new DocumentListener() {
 	            public void insertUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }
 	            public void changedUpdate(DocumentEvent e) { studyAltersParamTextEventRandom(); }
@@ -341,13 +345,16 @@ public class StudyPanel extends JPanel
                         lblAlterMode.setEnabled(hasStudy);
                         btnUnlimitedMode.setEnabled(hasStudy);
                         btnLimitedMode.setEnabled(hasStudy);
-                                                
+                        
+                        btnUnlimitedMode.setSelected(hasStudy && study.isUnlimitedAlterMode());
+                        btnLimitedMode.setSelected(hasStudy && !study.isUnlimitedAlterMode());
+                        
 			study_min_num_alters_label.	setEnabled(hasStudy);
 			study_min_num_alters_field.	setEnabled(hasStudy);
 
-			study_max_num_alters_label.	setEnabled(hasStudy);
-			study_max_num_alters_field.	setEnabled(hasStudy);
-
+			study_max_num_alters_label.	setEnabled(hasStudy && !study.isUnlimitedAlterMode());
+			study_max_num_alters_field.	setEnabled(hasStudy && !study.isUnlimitedAlterMode());
+                            
 			
 			study_path_label.			setEnabled(hasStudy);
 			study_path_field.			setEnabled(hasStudy);
@@ -361,6 +368,8 @@ public class StudyPanel extends JPanel
 			
 			study_path_field.			setText(filename(egoNet.getStorage().getStudyFile()));
 			
+                        
+                        
 			study_min_num_alters_field.setText(Integer.toString(egoNet.getStudy().getMinimumNumberOfAlters()));
 			study_max_num_alters_field.setText(Integer.toString(egoNet.getStudy().getMaximumNumberOfAlters()));
 			
@@ -383,6 +392,7 @@ public class StudyPanel extends JPanel
 			else if(hasStudy && study.getAlterNameModel().equals(AlterNameModel.SINGLE)) {
 				alterSampleGroup.setSelected(btnAlterNamesSingle.getModel(), true);
 			}
+                   
 			
 			if(hasStudy && study.getAlterSamplingModel().equals(AlterSamplingModel.RANDOM_SUBSET)) {
 				alterSampleGroup.setSelected(btnAlterModelRandomSubset.getModel(), true);

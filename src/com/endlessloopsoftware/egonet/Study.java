@@ -768,8 +768,13 @@ public class Study extends Observable implements Comparable<Study>
 		return skipQuestions;
 	}
         
-        public void setUnlimitedAlterMode(boolean unlimitedMode)
+        public void setUnlimitedMode(boolean unlimitedMode)
         {   
                this.unlimitedMode = unlimitedMode;
+        }
+        
+        public boolean isUnlimitedAlterMode()
+        {
+            return this.unlimitedMode;
         }
 }
