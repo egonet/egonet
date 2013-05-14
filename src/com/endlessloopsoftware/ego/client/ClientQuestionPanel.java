@@ -328,14 +328,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					.toString(i + 1), numKey[i],
 					JComponent.WHEN_IN_FOCUSED_WINDOW);
 		}
-		this.registerKeyboardAction(keyActionListener, Integer.toString(0),
-				enter, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		numericalTextField.registerKeyboardAction(keyActionListener, Integer
-				.toString(0), enter, JComponent.WHEN_FOCUSED);
-		answerTextField.registerKeyboardAction(keyActionListener, Integer
-				.toString(0), enter, JComponent.WHEN_FOCUSED);
-		answerMenu.registerKeyboardAction(keyActionListener, Integer
-				.toString(0), enter, JComponent.WHEN_FOCUSED);
+		this.registerKeyboardAction(keyActionListener, Integer.toString(0), enter, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		numericalTextField.registerKeyboardAction(keyActionListener, Integer.toString(0), enter, JComponent.WHEN_FOCUSED);
+		answerTextField.registerKeyboardAction(keyActionListener, Integer.toString(0), enter, JComponent.WHEN_FOCUSED);
+		answerMenu.registerKeyboardAction(keyActionListener, Integer.toString(0), enter, JComponent.WHEN_FOCUSED);
 
 		alterList.addListObserver(this);
 
@@ -582,6 +578,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			answerTextField.setDocument(plainDocument);
 			answerTextField.requestFocus();
 
+			logger.info("Setting question is answered? " + question.getAnswer().isAnswered() + "="+ question.getAnswer().string);
 			if (question.getAnswer().isAnswered()) {
 				answerTextField.setText(question.getAnswer().string);
 			} else {
@@ -814,6 +811,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.setAnswered((answer.getValue() != 0));
+				logger.info("Recorded textual answer " + answer.string);
 			} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
 				
 				// option items
@@ -1080,7 +1078,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void answerTextEvent(DocumentEvent e) {
-		logger.debug("answerTextEvent " + e.toString());
+		logger.info("answerTextEvent " + e.toString());
 		fillAnswer(question.getAnswer());
 		setButtonNextState();
 	}

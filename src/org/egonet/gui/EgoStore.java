@@ -90,6 +90,7 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
+		logger.info("Writing current interview called on EgoStore");
 		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
@@ -114,7 +115,7 @@ public class EgoStore {
 	public boolean continueInterview(File fInterview) throws IOException, CorruptedInterviewException {
 		logger.info("Saving on top of an existing file");
 		setCurrentInterview(readInterview(fInterview), fInterview);
-
+		
 		setCurrentInterview(currentInterview.second(), fInterview);
 		writeCurrentInterview();
 		return true;

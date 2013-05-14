@@ -204,15 +204,6 @@ public class Interview implements Comparable<Interview> {
 	}
 
 	/***************************************************************************
-	 * Called when user shutting down program
-	 */
-	public void exit() throws Exception {
-		if (!_complete) {
-				
-		}
-	}
-
-	/***************************************************************************
 	 * Searches question list for all questions and places them in list
 	 * 
 	 * @param dlm
