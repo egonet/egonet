@@ -105,6 +105,12 @@ public class Interview implements Comparable<Interview> {
 		reinitializeAlterData();
 	}
 	
+	/**
+	 * Helps us find old answers based on question ID
+	 * @param haystack old array of answers
+	 * @param needle unique id to find
+	 * @return the answer that matches in the array
+	 */
 	Answer findUniqueQuestion(Answer[] haystack, long needle) {
 		Answer ret = null;
 		for(Answer possible : haystack) {
@@ -189,6 +195,7 @@ public class Interview implements Comparable<Interview> {
 				if (question == null) {
 					throw new CorruptedInterviewException();
 				}
+				
 				_answers[counter++] = new Answer(question.UniqueId, alter);
 				
 			}
