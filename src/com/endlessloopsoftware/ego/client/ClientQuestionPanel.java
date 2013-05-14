@@ -910,8 +910,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (egoClient.getInterview().hasNext()) {
 			question = egoClient.getInterview().next();
 			
-			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
-			{
+			// write interview data on every NEXT button
+			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) {
 			    egoClient.getStorage().writeCurrentInterview();
 			}
 

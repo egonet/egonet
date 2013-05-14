@@ -90,7 +90,11 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
-		logger.info("Writing current interview called on EgoStore");
+		StackTraceElement[] ste = new Throwable().getStackTrace();
+		logger.info("Writing current interview called on EgoStore instance "+this.toString());
+		if(ste.length >= 2)
+			logger.info("Called from " + ste[1].toString());
+		logger.info("Being asked to write interview: " + currentInterview.second().dump());
 		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
@@ -168,14 +172,11 @@ public class EgoStore {
 
 			if (!interview.isComplete()
 					&& InterviewReader.checkForCompleteness(interview)) {
-				String msg = interviewFile.getName()
-						+ " does not indicate a completed interview, but Egonet has determined that all questions have been answered. Would you like to mark it completed now and save it?";
-				int choice = JOptionPane.showConfirmDialog(parent, msg,
-						"Read Interview Error", JOptionPane.YES_NO_OPTION);
+				String msg = interviewFile.getName() + " does not indicate a completed interview, but Egonet has determined that all questions have been answered. Would you like to mark it completed now and save it?";
+				int choice = JOptionPane.showConfirmDialog(parent, msg, "Read Interview Error", JOptionPane.YES_NO_OPTION);
 				if (choice == JOptionPane.YES_OPTION) {
 					interview.setComplete(true);
-					InterviewWriter iw = new InterviewWriter(currentStudy
-							.second(), interviewFile);
+					InterviewWriter iw = new InterviewWriter(currentStudy.second(), interviewFile);
 					iw.setInterview(interview);
 				}
 			}
