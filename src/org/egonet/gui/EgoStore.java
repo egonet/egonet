@@ -90,6 +90,11 @@ public class EgoStore {
 	}
 
 	public void writeCurrentInterview() throws IOException {
+		StackTraceElement[] ste = new Throwable().getStackTrace();
+		logger.info("Writing current interview called on EgoStore instance "+this.toString());
+		if(ste.length >= 2)
+			logger.info("Called from " + ste[1].toString());
+		logger.info("Being asked to write interview: " + currentInterview.second().dump());
 		InterviewWriter iw = new InterviewWriter(currentStudy.second(), currentInterview.first());
 		iw.setInterview(currentInterview.second());
 	}
@@ -114,7 +119,7 @@ public class EgoStore {
 	public boolean continueInterview(File fInterview) throws IOException, CorruptedInterviewException {
 		logger.info("Saving on top of an existing file");
 		setCurrentInterview(readInterview(fInterview), fInterview);
-
+		
 		setCurrentInterview(currentInterview.second(), fInterview);
 		writeCurrentInterview();
 		return true;
@@ -167,14 +172,11 @@ public class EgoStore {
 
 			if (!interview.isComplete()
 					&& InterviewReader.checkForCompleteness(interview)) {
-				String msg = interviewFile.getName()
-						+ " does not indicate a completed interview, but Egonet has determined that all questions have been answered. Would you like to mark it completed now and save it?";
-				int choice = JOptionPane.showConfirmDialog(parent, msg,
-						"Read Interview Error", JOptionPane.YES_NO_OPTION);
+				String msg = interviewFile.getName() + " does not indicate a completed interview, but Egonet has determined that all questions have been answered. Would you like to mark it completed now and save it?";
+				int choice = JOptionPane.showConfirmDialog(parent, msg, "Read Interview Error", JOptionPane.YES_NO_OPTION);
 				if (choice == JOptionPane.YES_OPTION) {
 					interview.setComplete(true);
-					InterviewWriter iw = new InterviewWriter(currentStudy
-							.second(), interviewFile);
+					InterviewWriter iw = new InterviewWriter(currentStudy.second(), interviewFile);
 					iw.setInterview(interview);
 				}
 			}

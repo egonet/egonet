@@ -62,16 +62,16 @@ public class Interview implements Comparable<Interview> {
 
 	private int _numAnswers;
 
-	//private int _numAlters;
+	public boolean _statisticsAvailable = false;
 	
 	private final String sIntName;
 	
-	public String getIntName() {
-		return sIntName;
-	}
-
 	private boolean followup = false;
 
+	
+	
+	
+	
 	public boolean isFollowup() {
 		return followup;
 	}
@@ -79,9 +79,12 @@ public class Interview implements Comparable<Interview> {
 	public void setFollowup(boolean followup) {
 		this.followup = followup;
 	}
-	
-	public boolean _statisticsAvailable = false;
 
+	public String getIntName() {
+		return sIntName;
+	}
+
+	
 	/***************************************************************************
 	 * Create interview from question list
 	 * 
@@ -103,6 +106,22 @@ public class Interview implements Comparable<Interview> {
 	}
 	
 	/**
+	 * Helps us find old answers based on question ID
+	 * @param haystack old array of answers
+	 * @param needle unique id to find
+	 * @return the answer that matches in the array
+	 */
+	Answer findUniqueQuestion(Answer[] haystack, long needle) {
+		Answer ret = null;
+		for(Answer possible : haystack) {
+			if(possible.questionId == needle)
+				ret = possible;
+		}
+		
+		return ret;
+	}
+	
+	/**
 	 * This method resets many data structures that are dependent on the number of alters. This used to happen
 	 * in a constructor, but now that alter lists have a min and max number of elements, we need to resize these
 	 * data on the fly.
@@ -119,6 +138,12 @@ public class Interview implements Comparable<Interview> {
 						Shared.QuestionType.ALTER).size())
 				+ (_numAlterPairs * _study.getQuestionOrder(
 						Shared.QuestionType.ALTER_PAIR).size()));
+		
+		// we need to preserve old data, so hold on to any interesting questions (avoid null _answers)
+		Answer [] _oldanswers = new Answer[_answers != null ? _answers.length : 0];
+		if(_answers != null)
+			System.arraycopy(_answers, 0, _oldanswers, 0, _answers.length);
+		
 		_answers = new Answer[get_numAnswers()];
 
 		/* Generate answer instances */
@@ -132,9 +157,17 @@ public class Interview implements Comparable<Interview> {
 
 			if (question == null) {
 				throw new CorruptedInterviewException();
-			} else {
-				_answers[counter++] = new Answer(question.UniqueId);
 			}
+			
+			
+			int newindex = counter++;
+			Answer oldAnswer = findUniqueQuestion(_oldanswers, question.UniqueId);
+			
+			// if no previous, new, otherwise try to keep
+			if(oldAnswer == null)
+				_answers[newindex] = new Answer(question.UniqueId);
+			else
+				_answers[newindex] = oldAnswer;
 		}
 
 		/* Alter Prompt Questions */
@@ -145,9 +178,9 @@ public class Interview implements Comparable<Interview> {
 
 			if (question == null) {
 				throw new CorruptedInterviewException();
-			} else {
-				_answers[counter++] = new Answer(question.UniqueId);
 			}
+			_answers[counter++] = new Answer(question.UniqueId);
+			
 		}
 		
 		int j,k;
@@ -161,9 +194,10 @@ public class Interview implements Comparable<Interview> {
 				Question question = _study.getQuestions().getQuestion(questionId);
 				if (question == null) {
 					throw new CorruptedInterviewException();
-				} else {
-					_answers[counter++] = new Answer(question.UniqueId, alter);
 				}
+				
+				_answers[counter++] = new Answer(question.UniqueId, alter);
+				
 			}
 		}
 
@@ -177,13 +211,9 @@ public class Interview implements Comparable<Interview> {
 
 					if (question == null) {
 						throw new CorruptedInterviewException();
-					} else {
-//						if (question.isStatable()) {
-//							_statisticsAvailable = true;
-//						}
-
-						_answers[counter++] = new Answer(question.UniqueId, alters);
 					}
+
+					_answers[counter++] = new Answer(question.UniqueId, alters);
 				}
 			}
 		}
@@ -201,15 +231,6 @@ public class Interview implements Comparable<Interview> {
 			}
 		}
 		
-	}
-
-	/***************************************************************************
-	 * Called when user shutting down program
-	 */
-	public void exit() throws Exception {
-		if (!_complete) {
-				
-		}
 	}
 
 	/***************************************************************************
@@ -905,5 +926,32 @@ public class Interview implements Comparable<Interview> {
 	
 	public String toString() {
 		return sIntName;
+	}
+	
+	public String dump() {
+		StringBuilder sb = new StringBuilder();
+		
+/*		private Answer[] ;
+		private String[]  = new String[0]; // so alter pair is at least stateable
+		*/
+		
+		sb.append("Name: " + sIntName + "\n");
+		sb.append("_statisticsAvailable: " + _statisticsAvailable + "\n");
+		sb.append("_complete: " + _complete + "\n");
+		sb.append("_qIndex: " + _qIndex + "\n");
+		sb.append("_numAlterPairs: " + _numAlterPairs + "\n");
+		sb.append("followup: " + followup + "\n");
+		sb.append("_numAnswers: " + _numAnswers + "\n");
+		sb.append("notes: " + notes + "\n");
+		sb.append("_study: " + _study + "\n");
+		sb.append("_alterList: " + Arrays.toString(_alterList) + "\n");
+		
+		for(int i = 0; i < _answers.length; i++) {
+			Answer a = _answers[i];
+			
+			sb.append("Answer "+i+", instance "+a.hashCode()+": " + a.getString() + "\n");
+		}
+		
+		return sb.toString();
 	}
 }

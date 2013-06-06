@@ -96,7 +96,7 @@ public class InterviewReader {
 
 			/* Read answers */
 			if(lAlterList.length < study.getMinimumNumberOfAlters() || lAlterList.length > study.getMaximumNumberOfAlters())
-				throw new CorruptedInterviewException("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + lAlterList.length + " alters");
+				logger.warn("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + lAlterList.length + " alters");
 			
 			interview.setComplete(e.getBoolean("Complete"));
 			try {

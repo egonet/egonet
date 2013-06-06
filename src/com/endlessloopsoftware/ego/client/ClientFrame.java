@@ -255,9 +255,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 		if (egoClient.getInterview() != null) {
 			try {
 				egoClient.getStorage().writeCurrentInterview();
-				if(egoClient.getInterview().isComplete()) {
-					egoClient.getInterview().exit();
-				}
+				egoClient.getInterview().isComplete();
 			} catch (Exception e1) {
 				throw new RuntimeException(e1);
 			}
