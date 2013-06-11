@@ -79,10 +79,10 @@ public class StudyReader {
 		
                 if (root.getElement("altermodeunlimited") != null)
                 {
-                        boolean v = root.getBoolean("altermodeunlimited");
-                        study.setUnlimitedMode(v); 
+                        boolean b = root.getBoolean("altermodeunlimited");
+                        study.setUnlimitedMode(b); 
                 }
-                
+                               
 		if (root.getElement("minalters") != null) {
 			int i = root.getInt("minalters");
 			study.setMinimumNumberOfAlters(i);

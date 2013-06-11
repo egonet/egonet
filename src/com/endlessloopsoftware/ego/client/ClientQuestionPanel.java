@@ -536,11 +536,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			
 			Study study = egoClient.getStudy();
 			String qs = "";
-			if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
-				qs = "Enter the names of " + study.getMaximumNumberOfAlters() + " people. ";
-			else
-				qs = "Enter the names of at least " + study.getMinimumNumberOfAlters() + " people, up to " + study.getMaximumNumberOfAlters() + " people. ";
-
+                        if(!study.isUnlimitedAlterMode())
+                            if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
+                                    qs = "Enter the names of " + study.getMaximumNumberOfAlters() + " people. ";
+                            else
+                                    qs = "Enter the names of at least " + study.getMinimumNumberOfAlters() + " people, up to " + study.getMaximumNumberOfAlters() + " people. ";
+                        else
+                            qs = "Enter the names of at least " +study.getMinimumNumberOfAlters() +" people. You have no limit of alters.";
+                        
 			if (egoClient.getInterview().isLastAlterPrompt()) {
 				qs += "After entering " + egoClient.getStudy().getMinimumNumberOfAlters()
 				+ " names you can continue.";
@@ -552,7 +555,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			questionText.setCaretPosition(0);
 
 			answerPanel.showCard(ALTER_CARD);
-			alterList.setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());
+			
+                        /*If study is in limited mode we must set the maximum size.
+                          If study is in unlimited mode there is no limit of alters. 
+                          By default, the listBuilder does not have limit. */
+                        if(!egoClient.getStudy().isUnlimitedAlterMode())
+                        {
+                            alterList.setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());
+                        }
 			alterList.setDescription(qs);
 			alterList.setElementName("Name: ");
 			alterList.setPresetListsActive(false);
