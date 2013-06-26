@@ -91,10 +91,16 @@ public class StudyWriter {
 			Element study = document.addElement("Study");
 
 			study.addElement("name").setText(studyObject.getStudyName());
-			
+			study.addElement("altermodeunlimited").setBoolean(studyObject.isUnlimitedAlterMode());
+                        
 			study.addElement("minalters").setInt(studyObject.getMinimumNumberOfAlters());
-			study.addElement("maxalters").setInt(studyObject.getMaximumNumberOfAlters());
-			
+                        
+                        //Only adds max alters if study is in limited mode.
+                        if(!studyObject.isUnlimitedAlterMode())
+                        {
+                            study.addElement("maxalters").setInt(studyObject.getMaximumNumberOfAlters());
+                        }
+                        
 			study.addElement("altersamplingmodel").setInt(studyObject.getAlterSamplingModel().ordinal());
 			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? 0 : studyObject.getAlterSamplingParameter());
 			study.addElement("alternamemodel").setInt(studyObject.getAlterNameModel().ordinal());
