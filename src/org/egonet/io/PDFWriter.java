@@ -127,15 +127,20 @@ public class PDFWriter {
 				}
 			}
 			else {
-				// we don't know the list yet
-				for(int i = 0; i < study.getMaximumNumberOfAlters(); i++) {
-					String entry = "("+(i+1)+") ";
-					while(entry.length() < 25) entry += " ";
-					
-					Paragraph p = new Paragraph(entry);
-					Font f = p.getFont(); f.setStyle(Font.UNDERLINE); p.setFont(f);
-					document.add(p);
-				}
+				// we don't know the list yet, but the study is 
+                                // in limited mode, so we know how many alters 
+                                // we will have as maximum.
+                                if(!study.isUnlimitedAlterMode())
+                                {
+                                    for(int i = 0; i < study.getMaximumNumberOfAlters(); i++) {
+                                            String entry = "("+(i+1)+") ";
+                                            while(entry.length() < 25) entry += " ";
+
+                                            Paragraph p = new Paragraph(entry);
+                                            Font f = p.getFont(); f.setStyle(Font.UNDERLINE); p.setFont(f);
+                                            document.add(p);
+                                    }
+                                }   
 			}
 			
 			return;

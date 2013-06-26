@@ -745,9 +745,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			
 			
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
-			boolean maxAlters = answer.getValue()+1 >= study.getMaximumNumberOfAlters();
-			logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
-			answer.setAnswered(morePrompts || maxAlters);
+			if(!study.isUnlimitedAlterMode())
+                        {
+                            boolean maxAlters = answer.getValue()+1 >= study.getMaximumNumberOfAlters();
+                            logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
+                            answer.setAnswered(morePrompts || maxAlters);
+                        }else
+                        {
+                            
+                            logger.info("There is no limit of alters.  " +" (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
+                            answer.setAnswered(morePrompts);
+                        }
 			
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
@@ -1047,11 +1055,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		
 		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
-			
-			boolean bWithinRequiredAlterRange =
+			boolean bWithinRequiredAlterRange;
+                        
+                        //Depending on study mode, the range of valid number of alters changes.
+                        if(egoClient.getStudy().isUnlimitedAlterMode())
+                        {
+                                bWithinRequiredAlterRange =
+                                        (alterList.getListStrings().length >= egoClient.getStudy().getMinimumNumberOfAlters());
+                        }else
+                        {
+                                bWithinRequiredAlterRange =
 					(alterList.getListStrings().length >= egoClient.getStudy().getMinimumNumberOfAlters())
 				&&  (alterList.getListStrings().length <= egoClient.getStudy().getMaximumNumberOfAlters());
-			
+                        }
 			
 			// consider question answered if we hit alter threshold or have more prompts coming
 			question.getAnswer().setAnswered(bWithinRequiredAlterRange || morePrompts);

@@ -95,7 +95,8 @@ public class InterviewReader {
 			interview.setAlterList(lAlterList);
 
 			/* Read answers */
-			if(lAlterList.length < study.getMinimumNumberOfAlters() || lAlterList.length > study.getMaximumNumberOfAlters())
+			if((lAlterList.length < study.getMinimumNumberOfAlters() || lAlterList.length > study.getMaximumNumberOfAlters())
+                            && !study.isUnlimitedAlterMode())
 				logger.warn("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + lAlterList.length + " alters");
 			
 			interview.setComplete(e.getBoolean("Complete"));
