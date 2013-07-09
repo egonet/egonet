@@ -43,6 +43,7 @@ public class Study extends Observable implements Comparable<Study>
    private boolean           _inUse          = false;
    private String            _studyName      = "New Study";
    private boolean			skipQuestions = false;
+ 
    
    private int               _minAlters      = 40;
    private int               _maxAlters      = 40;
@@ -56,7 +57,7 @@ public class Study extends Observable implements Comparable<Study>
    private AlterSamplingModel alterSamplingModel = AlterSamplingModel.ALL;
    private AlterNameModel alterNameModel = AlterNameModel.FIRST_LAST;
    private Integer alterSamplingParameter = null; 
-   
+   private boolean unlimitedMode = false;
    
    /**
    * Instantiates Default Study
@@ -766,4 +767,14 @@ public class Study extends Observable implements Comparable<Study>
 	public boolean getAllowSkipQuestions() {
 		return skipQuestions;
 	}
+        
+        public void setUnlimitedMode(boolean unlimitedMode)
+        {   
+               this.unlimitedMode = unlimitedMode;
+        }
+        
+        public boolean isUnlimitedAlterMode()
+        {
+            return this.unlimitedMode;
+        }
 }
