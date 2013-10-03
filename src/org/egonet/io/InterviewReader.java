@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
@@ -89,15 +90,21 @@ public class InterviewReader {
 			Element alterListElem = e.getElement("AlterList");
 			Element answerListElem = e.getElement("AnswerList");
 			
-			/* Read alter list so we can size interview record */
-			String[] lAlterList = readAlters(alterListElem);
+                        /* Read the multiple alter list */
+			String[][] multipleAlterList = readAlters(alterListElem, study);
 			Interview interview = new Interview(study, name);
-			interview.setAlterList(lAlterList);
-
+                       
+                        interview.setAlterQuestionPromptAnswers(multipleAlterList);
+                        
+                        /* Get a list with no alter repetitions (repetitions 
+                           come from the apperance of alters in diferent questions)*/
+                        String[] alterList = interview.getUnifiedAlterList();
+                        interview.setAlterList(alterList);
+                        
 			/* Read answers */
-			if((lAlterList.length < study.getMinimumNumberOfAlters() || lAlterList.length > study.getMaximumNumberOfAlters())
+			if((alterList.length < study.getMinimumNumberOfAlters() || alterList.length > study.getMaximumNumberOfAlters())
                             && !study.isUnlimitedAlterMode())
-				logger.warn("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + lAlterList.length + " alters");
+				logger.warn("Study expected between " + study.getMinimumNumberOfAlters() + " and " +study.getMaximumNumberOfAlters() + " but interview file had " + alterList.length + " alters");
 			
 			interview.setComplete(e.getBoolean("Complete"));
 			try {
@@ -152,19 +159,50 @@ public class InterviewReader {
 		return all;
 	}
 
-	private static String[] readAlters(Element alterListElem) throws CorruptedInterviewException{
-		Elements alterIter = alterListElem.getElements("Name");
-		String[] lAlterList;
-		int lNumAlters;
-		int index = 0;
+	private static String[][] readAlters(Element alterListElem, Study study) throws CorruptedInterviewException{
+            
+                Elements alterPromptIter = alterListElem.getElements("QuestionPrompt");    
+                String[][] lAlterList = null;
+                
+                //New Egonet interviews, with multiple prompt questions
+                if(alterPromptIter.size() != 0)
+                {
+                    int lNumPrompt;
+                    int questionIndex = 0;
+                    int alterIndex = 0;
 
-		lNumAlters = alterIter.size();
-		lAlterList = new String[lNumAlters];
+                    lNumPrompt = study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+                    
+                    lAlterList = new String[lNumPrompt][];
+                    
+                    while (alterPromptIter.hasMoreElements()) {
 
-		while (alterIter.hasMoreElements()) {
-			lAlterList[index++] = alterIter.next().getTextString();
-		}
+                            Elements alterNames = alterPromptIter.next().getElements("Name");
+                            int sizePromptQuestion = alterNames.size();
+                            lAlterList[questionIndex] = new String[sizePromptQuestion];
+                            alterIndex = 0;
 
+                            while(alterNames.hasMoreElements()){
+                                lAlterList[questionIndex][alterIndex] = alterNames.next().getTextString(); 
+                                alterIndex++;
+                            }  
+                            questionIndex++;
+                    }
+                }
+                //Old Egonet inteviews format, with only one alter question prompt.
+                else
+                {
+                    
+                    Elements alterNames = alterListElem.getElements("Name");
+                    lAlterList = new String[1][alterNames.size()];
+                    int index = 0;
+                    
+                    while(alterNames.hasMoreElements()){
+                        lAlterList[0][index] = alterNames.next().getTextString();
+                        index++;
+                    }
+                    
+                }
 		return (lAlterList);
 	}		
 	
