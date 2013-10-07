@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
+import java.util.HashMap;
 
 public class Interview implements Comparable<Interview> {
 
@@ -1046,26 +1047,69 @@ public class Interview implements Comparable<Interview> {
             return unknownAlterList;
         }
         
-        
-        /*
-         * Returns an array containing the alters that NOT contains
-         * the global alter list, but it does the passed string array.
-         */
-        public String[] getUnknownAlters(String[] stringArray)
+        //Remove an alter or a collection of alters from the globl alter list.
+        public void removeAlters(ArrayList <String> list)
         {
-            ArrayList <String> tempList = new ArrayList <String>();
-            List <String> knownAlters = Arrays.asList(_alterList);
-            
-            for (int i = 0; i < stringArray.length; i++)
+            ArrayList <String> alterList = new ArrayList<String>(Arrays.asList(_alterList));
+            alterList.removeAll(list);
+            String[] newAlterList = new String[alterList.size()];
+            newAlterList = alterList.toArray(newAlterList);
+            setAlterList(newAlterList);
+        }
+        
+        //Returns a hashmap containing for every alter, how many times appears.
+        public HashMap getAlterHashmap()
+        {
+            HashMap<String, Integer> alterCounter = new HashMap <String, Integer>();
+            ArrayList <String> alterList = new ArrayList<String>(Arrays.asList(_alterList));
+
+            for(int i = 0; i < _alterQuestionPromptList.length; i++)
             {
-                if(!knownAlters.contains(stringArray[i]))
+                for(int j = 0; j <_alterQuestionPromptList[i].length; j++)
                 {
-                    tempList.add(stringArray[i]);
+                    if(alterList.contains(_alterQuestionPromptList[i][j]))
+                    {
+                        int counter;
+                         
+                        if(alterCounter.get(_alterQuestionPromptList[i][j]) == null)
+                        {
+                            counter = 1;
+                        }else
+                        {
+                            counter = alterCounter.get(_alterQuestionPromptList[i][j])+1;
+                        }
+                        alterCounter.put(_alterQuestionPromptList[i][j], counter);
+                    }
                 }
             }
-            String[] unknownAlterList = new String[tempList.size()];
-            unknownAlterList = tempList.toArray(unknownAlterList);
+
             
-            return unknownAlterList;
+            return alterCounter;
         }
+        
+        //Generates a matrix containing the relation/appearence between every alter prompt question
+        //and all the alters.
+        public int[][] generateAlterByAlterPromptMatrix()
+        {
+            
+            int numPrompts = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+            int matrix [][] = new int[_alterList.length][numPrompts];
+             
+             for (int i = 0; i < _alterList.length; i++) {
+               
+                for (int j = 0; j < numPrompts; j++){
+                       
+                      if (Arrays.asList(_alterQuestionPromptList[j]).contains(_alterList[i]) ){
+                          
+                          matrix[i][j] = 1;   
+                          
+                      } else
+                      {
+                          matrix[i][j] = 0; 
+                      }
+                }
+            }
+             return matrix;
+        }
+        
 }

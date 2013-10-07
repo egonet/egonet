@@ -50,9 +50,16 @@ public class InterviewWriter {
 			interviewDocument.addElement("Complete").setBoolean(interview.isComplete());
 			interviewDocument.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
 			
-			String[] _alterList = interview.getAlterList();
-			for (int i = 0; i < _alterList.length; i++) {
-				alterListElem.addElement("Name").setText(_alterList[i]);
+			String[][] _alterLists = interview.getAlterQuestionPromptAnswers();
+                        
+			for (int i = 0; i < _alterLists.length; i++) 
+                        {
+				Element questionPrompt = alterListElem.addElement("QuestionPrompt");
+                                
+                                for(int j = 0; j < _alterLists[i].length; j++)
+                                {
+                                    questionPrompt.addElement("Name").setText(_alterLists[i][j]);
+                                }
 			}
 			
 			Answer[] _answers = interview.get_answers();

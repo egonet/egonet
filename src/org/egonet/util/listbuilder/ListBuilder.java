@@ -24,12 +24,17 @@ import javax.swing.event.*;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 
+
 import com.endlessloopsoftware.ego.author.CategoryInputPane;
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
+import java.awt.Color;
+import java.awt.Dimension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -85,6 +90,10 @@ public class ListBuilder extends JPanel implements Observer {
 	private String description = "";
 
 	private JList<Selection> jList = null;;
+        
+        private JList knownAltersForm;
+        
+        private HashMap knownAltersList = null;
 
 	private JScrollPane jScrollPane = null;
 
@@ -114,10 +123,15 @@ public class ListBuilder extends JPanel implements Observer {
 			.getPresets();
 
 	private static final String CHOOSE_PRESET_INSTRUCTION = "Choose from preset options";
-
+        
+        private ArrayList <String> altersToRemove = new ArrayList <String>(); 
+        
+        private boolean isTypedAlter = false;
+        
 	public ListBuilder() {
 		super();
 		elementList = new ObservableList<Selection>();
+                
 		build();
 		addListObserver(this);
 	}
@@ -241,7 +255,7 @@ public class ListBuilder extends JPanel implements Observer {
 		labelDescription.setEditable(false);
 		labelDescription.setLineWrap(true);
 		labelDescription.setWrapStyleWord(true);
-		//labelDescription.setRows(5); labelDescription.setColumns(30);
+		//labelDescription.setRows(10); labelDescription.setColumns(30);
 		
 		JScrollPane sp = new JScrollPane(labelDescription);
 		panelTopRight.add(sp, constraints.xy(2, 4));
@@ -284,12 +298,13 @@ public class ListBuilder extends JPanel implements Observer {
 		formBuilder.setLeadingColumnOffset(1);
 
 		firstName = new JTextField(); firstName.setName("firstName");
-		lastName = new JTextField(); lastName.setName("lastName");
+		lastName =new JTextField(); lastName.setName("lastName");
 		itemName = new JTextField(); itemName.setName("itemName");
 		value = new JTextField(); value.setName("itemName");
-		
+		                
 		firstName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
+                            isTypedAlter = true;
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -304,6 +319,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 		lastName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
+                                isTypedAlter = true;
 				buttonAdd.setEnabled(true);
 			}
 
@@ -321,6 +337,8 @@ public class ListBuilder extends JPanel implements Observer {
 
 		itemName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
+                                buttonAdd.setEnabled(true);
+                                isTypedAlter = true;
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -354,8 +372,9 @@ public class ListBuilder extends JPanel implements Observer {
 						itemName.grabFocus();
 				}
 			}
+                      
 		});
-
+               
 		// couple different configurations here
 		if (alterNameModel != null && alterNameModel.equals(AlterNameModel.FIRST_LAST)) {
 			formBuilder.append("First Name: ", firstName, false);
@@ -368,6 +387,27 @@ public class ListBuilder extends JPanel implements Observer {
 		if (letUserPickValues)
 			formBuilder.append("Value: ", value, true);
 
+                //Build known alters list form. 
+                knownAltersForm = new JList();    
+                if(knownAltersList != null)
+                {
+                    knownAltersForm.setListData(knownAltersList.keySet().toArray());
+                }
+                //knownAltersForm.setBorder(BorderFactory.createLineBorder(Color.gray) ); 
+                knownAltersForm.setVisibleRowCount(-1);
+                JScrollPane knownAltersScrollBar = new JScrollPane(knownAltersForm);
+                knownAltersScrollBar.setPreferredSize(new Dimension(200,80));
+
+                formBuilder.append("Or select someone already known: ", knownAltersScrollBar, false);
+
+                   
+                knownAltersForm.addListSelectionListener(new ListSelectionListener(){
+                        public void valueChanged(ListSelectionEvent e){
+                            buttonAdd.setEnabled(true);
+                        }
+                });
+
+                    
 		return formBuilder.getPanel();
 	}
 
@@ -419,11 +459,11 @@ public class ListBuilder extends JPanel implements Observer {
 							"Value problem", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
-				if(maxSize != -1 && elementList.size() + 1 > maxSize)
+				//we can't add unknown alters. we can add known alters.
+				if(maxSize != -1 && knownAltersList.size() + 1 > maxSize && !knownAltersList.containsKey(selection.getString()))
 				{
 					JOptionPane.showMessageDialog(this,
-							"You cannot add any more alters!",
+							"You cannot add new alters! Select someone already known or proceed to the next question.",
 							"Maximum alter limit reached", JOptionPane.ERROR_MESSAGE);
 				} else if(selection.getString() == null || 
 						selection.getString().trim().isEmpty()) 
@@ -437,10 +477,15 @@ public class ListBuilder extends JPanel implements Observer {
 							"Identical alter won't be added", JOptionPane.ERROR_MESSAGE);
 				} else {
 					elementList.add(selection);
+                                        addConcurrence(selection);
 					// someone HAS pressed enter
 					jList.clearSelection();
-					clearTextFields();
+                                        knownAltersForm.clearSelection();                                        
 				}
+                                
+                                clearTextFields();
+                                buttonAdd.setEnabled(false);
+                                isTypedAlter = false;
 			}
 		}
 	}
@@ -452,8 +497,12 @@ public class ListBuilder extends JPanel implements Observer {
 			int intVal = Integer.parseInt(value.getText());
 			selection.setValue(intVal);
 		}
-
-		if (isNameList()) {
+                //If there is some known alter selected sets selection to this alter.
+                if (!knownAltersForm.isSelectionEmpty())
+                {
+                        selection.setString(knownAltersForm.getSelectedValue().toString());
+                }
+                else if (isNameList()) {
 			// selection.setString(lastName.getText() + ", " +
 			// firstName.getText());
 			selection.setString(firstName.getText() + " " + lastName.getText());
@@ -480,7 +529,7 @@ public class ListBuilder extends JPanel implements Observer {
 		ButtonBarBuilder builder = new ButtonBarBuilder();
 
 		buttonAdd = new JButton("Add to list");
-		buttonAdd.setEnabled(true);
+		buttonAdd.setEnabled(false);
 		buttonAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				// simulate enter key being pressed at last name
@@ -501,6 +550,7 @@ public class ListBuilder extends JPanel implements Observer {
 							// eat failure, keypress simulation failed
 						}
 					}
+                                
 			}
 		});
 
@@ -509,7 +559,31 @@ public class ListBuilder extends JPanel implements Observer {
 			public void actionPerformed(ActionEvent actionEvent) {
 				Object[] selections = jList.getSelectedValues();
 				for (Object o : selections)
-					elementList.remove(o);
+                                {
+                                    /*if(knownAltersList.get(o.toString()) != null)
+                                    {*/
+                                        //if the alter to remove has only 1 concurrence
+                                        //we must remove it from the global alter list.
+                                        int concurrences = (int) knownAltersList.get(o.toString());
+                                        concurrences--;
+                                        if( concurrences == 0)
+                                        {
+                                            altersToRemove.add(o.toString());
+                                            knownAltersList.remove(o.toString());
+                                        }
+                                        //else, update the concurrence value.
+                                        else
+                                        {
+                                            knownAltersList.put(o.toString(),concurrences);
+                                        }
+                                   /* }else
+                                    {
+                                         altersToRemove.add(o.toString());
+                                    }*/
+                                    
+                                    elementList.remove(o);
+                                    
+                                }                                         
 				jList.clearSelection();
 			}
 		});
@@ -608,9 +682,15 @@ public class ListBuilder extends JPanel implements Observer {
 			if (o.getClass().equals(Selection.class))
 				selectionList.add((Selection)o);
 			
+                        /* Since alter question prompt can contain an alter
+                         * from a previous question, we can't break the loop, 
+                         * because we don't want to count this repeated alters.
+                           Break the loop may cause some new alters don't be counted*/
+                        
 			// escape loop if maxSize is set and we're at it 
-			if(maxSize != -1 && selectionList.size() == maxSize)
-				break;
+			/*if(maxSize != -1 && selectionList.size() == maxSize)
+				break;*/
+                        
 		}
 
 		int i = 0;
@@ -727,5 +807,43 @@ public class ListBuilder extends JPanel implements Observer {
 		
 		return false;
 	}
-
+        
+        //Sets the known alter hashmap. <Alter, number of concurrences>
+        public void setKnownAlters(HashMap list){
+            knownAltersList = list;
+        }
+                       
+        //Return a list with the alters to be removed.
+        public ArrayList <String> getAltersToRemove()
+        {
+            return altersToRemove;
+        }
+        
+        //Is there some named typed in the input fields?        
+        public boolean isTypedAlter()
+        {
+            return isTypedAlter;
+        }
+        
+        
+        //Adds a concurrence for the alter "o" into knownAlters hashmap. We add the concurrence manually
+        //because generating the full hashmap everytime the user inputs an alter, could have
+        //high computacional cost, and could decrease the performance.
+        private void addConcurrence(Selection o)
+        {
+            int value;
+            
+            if(knownAltersList.containsKey(o.getString()))
+            {
+                value = (int) knownAltersList.get(o.getString());
+                value++;
+                knownAltersList.put(o.getString(), value);
+            }
+            else
+            {
+                value = 1;
+                knownAltersList.put(o.getString(), value);
+            }
+        }
+                
 }
