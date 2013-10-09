@@ -180,17 +180,27 @@ public class Interview implements Comparable<Interview> {
 
 		/* Alter Prompt Questions */
 		questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).iterator();
-		while (questions.hasNext()) {
-			Long questionId = (Long) questions.next();
-			Question question = _study.getQuestions().getQuestion(questionId);
+                
+                    while (questions.hasNext()) {
+                            Long questionId = (Long) questions.next();
+                            Question question = _study.getQuestions().getQuestion(questionId);
 
-			if (question == null) {
-				throw new CorruptedInterviewException();
-			}
-			_answers[counter++] = new Answer(question.UniqueId);
-			
-		}
-		
+                            if (question == null) {
+                                    throw new CorruptedInterviewException();
+                            }
+                            Answer oldAnswer = findUniqueQuestion(_oldanswers, question.UniqueId);
+                            int newindex = counter++;
+                           
+                            // if no previous, new, otherwise try to keep
+                            if(oldAnswer == null)
+                                _answers[newindex] = new Answer(question.UniqueId);
+                            else
+                                _answers[newindex] = oldAnswer;
+                            //_answers[counter++] = new Answer(question.UniqueId);
+                           
+                            
+                           
+                }
 		int j,k;
 		
 		/* Alter Questions */

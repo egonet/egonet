@@ -884,6 +884,10 @@ public class EgoStore {
 			File statFile = interviewStatisticsFile(statdir, name);
 			writeStatisticsFile(statFile, stats);
 
+                        File altByAltFile = createFileWithNewEndingFromDot(statdir, name, "_alter_by_alter_prompt_Matrix.csv");
+                        PrintWriter pwABAP = new PrintWriter(altByAltFile);
+			stats.writeAlterByPromptFile(pwABAP, name);
+                        
 			File adjFile = createFileWithNewEndingFromDot(statdir,name,"_matrix.csv");
 			PrintWriter pwNA = new PrintWriter(adjFile);
 			stats.writeAdjacencyFile(pwNA, name, false);

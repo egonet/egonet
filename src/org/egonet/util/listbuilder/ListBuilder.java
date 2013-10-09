@@ -175,12 +175,12 @@ public class ListBuilder extends JPanel implements Observer {
 		// is editable, so we start using subpanels for layouts
 		FormLayout mainLayout = new FormLayout(
 				"2dlu, fill:min(pref;300dlu):grow, 2dlu",
-				"2dlu, fill:pref:grow, 2dlu, fill:min(pref;2dlu):grow, 2dlu");
+				"2dlu, fill:pref:grow, 2dlu, fill:pref:grow, 2dlu");
 		setLayout(mainLayout);
 
 		// combine top and bottom panels
 		add(buildTop(), constraints.xy(2, 2));
-		add(buildBottom(), constraints.xy(2, 4));
+		add(buildBottom(), constraints.xy(2,4));
 
 		// mainLayout.invalidateLayout(this);
 		// when the list selection is changed
@@ -227,7 +227,7 @@ public class ListBuilder extends JPanel implements Observer {
 		panelTopHalf = new JPanel();
 		FormLayout topHalfLayout = new FormLayout(
 				"2dlu, fill:145dlu:grow, 2dlu, fill:145dlu:grow, 2dlu",
-				"2dlu, fill:min(pref;150dlu):grow, 2dlu");
+				"2dlu, fill:pref:grow, 2dlu");
 		panelTopHalf.setLayout(topHalfLayout);
 		
 		listCounter = new JLabel();
@@ -289,22 +289,26 @@ public class ListBuilder extends JPanel implements Observer {
 
 	private JComponent buildInputPanel() {
 		final String colspec = "2dlu, fill:pref:grow,  2dlu";
-
+                
 		FormLayout inputLayout = new FormLayout(colspec);
+                
 		DefaultFormBuilder formBuilder = new DefaultFormBuilder(inputLayout);
 
 		formBuilder.append("");
 		formBuilder.nextRow();
 		formBuilder.setLeadingColumnOffset(1);
+                
 
 		firstName = new JTextField(); firstName.setName("firstName");
 		lastName =new JTextField(); lastName.setName("lastName");
 		itemName = new JTextField(); itemName.setName("itemName");
 		value = new JTextField(); value.setName("itemName");
-		                
+		
+                //formBuilder.nextRow();
+                
 		firstName.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent keyEvent) {
-                            isTypedAlter = true;
+                                isTypedAlter = true;
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -339,6 +343,7 @@ public class ListBuilder extends JPanel implements Observer {
 			public void keyTyped(KeyEvent keyEvent) {
                                 buttonAdd.setEnabled(true);
                                 isTypedAlter = true;
+                                
 			}
 
 			public void keyPressed(KeyEvent keyEvent) {
@@ -387,20 +392,19 @@ public class ListBuilder extends JPanel implements Observer {
 		if (letUserPickValues)
 			formBuilder.append("Value: ", value, true);
 
-                //Build known alters list form. 
+                  //Build known alters list form. 
                 knownAltersForm = new JList();    
                 if(knownAltersList != null)
-                {
                     knownAltersForm.setListData(knownAltersList.keySet().toArray());
-                }
+                
                 //knownAltersForm.setBorder(BorderFactory.createLineBorder(Color.gray) ); 
                 knownAltersForm.setVisibleRowCount(-1);
                 JScrollPane knownAltersScrollBar = new JScrollPane(knownAltersForm);
                 knownAltersScrollBar.setPreferredSize(new Dimension(200,80));
 
-                formBuilder.append("Or select someone already known: ", knownAltersScrollBar, false);
-
-                   
+                formBuilder.append("Or select someone already known: ", knownAltersScrollBar, true);
+        
+                
                 knownAltersForm.addListSelectionListener(new ListSelectionListener(){
                         public void valueChanged(ListSelectionEvent e){
                             buttonAdd.setEnabled(true);

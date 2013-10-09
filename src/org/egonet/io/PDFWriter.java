@@ -24,7 +24,8 @@ public class PDFWriter {
 	private Interview interview;
 	
 	final private static Logger logger = LoggerFactory.getLogger(PDFWriter.class);
-	
+	private int indexPromptQuestion = 0;
+        
 	public PDFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super();
 		this.study = study;
@@ -113,12 +114,17 @@ public class PDFWriter {
 		}
 		else if(question.questionType == QuestionType.ALTER_PROMPT) {
 			
-			String[] alterList = interview.getAlterList();
-			
-			// we have a list of alters
+			String[] alterList = interview.getAlterQuestionPromptAnswers()[indexPromptQuestion];
+						
+                        Paragraph p1 = new Paragraph("Title: " + question.title);
+                        Font f1 = p1.getFont(); f1.setStyle(Font.UNDERLINE); p1.setFont(f1);
+                        document.add(p1);
+                        indexPromptQuestion++;
+                        
+                        // we have a list of alters
 			if(alterList.length > 0) {
 				for(int i = 0; i < alterList.length ;i++) {
-					String entry = "("+(i+1)+") " + interview.getAlterList()[i] + " ";
+					String entry = "("+(i+1)+") " + alterList[i] + " ";
 					while(entry.length() < 25) entry += " "; // pad
 					
 					Paragraph p = new Paragraph(entry);

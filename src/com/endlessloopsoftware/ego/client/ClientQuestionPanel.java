@@ -215,7 +215,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		question = egoClient.getInterview().setInterviewIndex(egoClient.getInterview()
 				.getFirstUnansweredQuestion(), false);
 
-		this.setMinimumSize(new Dimension(330,330));
+		this.setSize(new Dimension(330,330));
 		this.setLayout(new GridLayout());
 
                 //Initiliaze all jBuilders we will need in the interview.
@@ -432,7 +432,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// upon which the size of everything else is constrained in this frame!
 		Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
 		questionTextScrollPane.setMaximumSize(new Dimension((int)(ss.width*0.4),(int)(ss.height*0.4)));
-
+                
 		/* Set up answer panel cards */
 		//answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
                
@@ -557,16 +557,22 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			Study study = egoClient.getStudy();
 			String qs = "";
+                          int altersRemain = (study.getMinimumNumberOfAlters() - egoClient.getInterview().getAlterList().length);
+                          if(altersRemain < 0)
+                            altersRemain = 0;
+                          
                         if(!study.isUnlimitedAlterMode())
+                        
                             if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
-                                    qs = "Enter the names of " + study.getMaximumNumberOfAlters() + " people. ";
+                                    qs = "Enter the names of " + altersRemain + " people. ";
                             else
-                                    qs = "Enter the names of at least " + study.getMinimumNumberOfAlters() + " people, up to " + study.getMaximumNumberOfAlters() + " people. ";
+                                    qs = "Enter the names of at least " + altersRemain + " people, up to " + 
+                                            (study.getMaximumNumberOfAlters()-egoClient.getInterview().getAlterList().length)+ " people. ";
                         else
-                            qs = "Enter the names of at least " +study.getMinimumNumberOfAlters() +" people. You have no limit of names.";
+                            qs = "Enter the names of at least " +altersRemain +" people. You have no limit of names.";
                         
 			if (egoClient.getInterview().isLastAlterPrompt()) {
-				qs += "After entering " + egoClient.getStudy().getMinimumNumberOfAlters()
+				qs += "After entering " + altersRemain
 				+ " names you can continue.";
 			} else {
 				qs += "";

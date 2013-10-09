@@ -59,6 +59,7 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
+import java.awt.Dimension;
 
 
 // implement MdiChildFrame and molest the public menu!
@@ -97,6 +98,8 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
 
 	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
+        
+        public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
 
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
@@ -290,6 +293,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			jMenuFile.add(saveTextSummary);
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
+                        jMenuFile.add(saveAlterByAlterPromptMatrix);
 
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
@@ -582,7 +586,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         StartPanel sp = new StartPanel(egoClient);
         setContentPane(sp);
         pack();
-        setSize(350, 350);
+        setSize(500, 350);
         setVisible(true);
 
     }

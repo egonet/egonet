@@ -220,7 +220,7 @@ public class InterviewReader {
 				Answer newAnswer = readAnswer(study, answerElement);
 				
 				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
-					interview.set_answerElement(index++, newAnswer);
+                                        interview.set_answerElement(index++, newAnswer);
 				} else {
 					throw (new CorruptedInterviewException("mismatch question and answer id in datafile"));
 				}
