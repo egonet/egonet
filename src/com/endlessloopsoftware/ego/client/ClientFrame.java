@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.client;
 
 import javax.swing.JCheckBoxMenuItem;
+
 import java.awt.AWTEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +45,7 @@ import org.egonet.gui.MDIChildFrame;
 import org.egonet.io.EdgeListWriter;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.EgonetAnalytics;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
@@ -189,6 +191,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
+				EgonetAnalytics.track("save interview"); // track!
 			}
 		});
 		

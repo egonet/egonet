@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.author;
 
 import org.egonet.gui.EgoStore;
+import org.egonet.util.EgonetAnalytics;
 
 import com.endlessloopsoftware.egonet.Study;
 
@@ -29,6 +30,7 @@ public class EgoNet
 	private final EgoFrame	frame;
 	
 	public EgoNet() {
+		EgonetAnalytics.track("authoring client startup"); // track!
 		storage	= new EgoStore(null);
 		storage.createNewStudy();
 		

@@ -44,6 +44,7 @@ import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -365,6 +366,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	private void jMenuFileSave_actionPerformed(ActionEvent e) throws IOException {
+		EgonetAnalytics.track("save study"); // track!
 		if (egoNet.getStorage().getStudyFile() == null) {
 			jMenuFileSaveAs_actionPerformed(e);
 		} else {

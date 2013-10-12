@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.client;
 
 import org.egonet.gui.EgoStore;
+import org.egonet.util.EgonetAnalytics;
 
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
@@ -39,12 +40,14 @@ public class EgoClient {
 
 	// Construct the application
 	public EgoClient() {
+		EgonetAnalytics.track("interviewing client startup"); // track!
+		
 		storage = new EgoStore(null);
 		frame = new ClientFrame(this);
 
 		frame.gotoSourceSelectPanel();
 		frame.setVisible(true);
-
+		
 	}
 
 	// Main method
