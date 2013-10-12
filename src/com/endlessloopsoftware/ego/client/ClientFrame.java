@@ -59,7 +59,7 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import java.awt.Dimension;
+
 
 
 // implement MdiChildFrame and molest the public menu!

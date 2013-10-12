@@ -93,7 +93,7 @@ public class ListBuilder extends JPanel implements Observer {
         
         private JList knownAltersForm;
         
-        private HashMap knownAltersList = null;
+        private HashMap <String, Integer> knownAltersList = null;
 
 	private JScrollPane jScrollPane = null;
 
