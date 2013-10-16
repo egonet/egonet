@@ -215,7 +215,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		question = egoClient.getInterview().setInterviewIndex(egoClient.getInterview()
 				.getFirstUnansweredQuestion(), false);
 
-		this.setSize(new Dimension(330,330));
+		this.setMinimumSize(new Dimension(330,330));
 		this.setLayout(new GridLayout());
 
                 //Initiliaze all jBuilders we will need in the interview.

@@ -481,7 +481,7 @@ public class ListBuilder extends JPanel implements Observer {
 							"Identical alter won't be added", JOptionPane.ERROR_MESSAGE);
 				} else {
 					elementList.add(selection);
-                                        addConcurrence(selection);
+                                        addAlterAppearance(selection);
 					// someone HAS pressed enter
 					jList.clearSelection();
                                         knownAltersForm.clearSelection();                                        
@@ -566,19 +566,19 @@ public class ListBuilder extends JPanel implements Observer {
                                 {
                                     /*if(knownAltersList.get(o.toString()) != null)
                                     {*/
-                                        //if the alter to remove has only 1 concurrence
+                                        //if the alter to remove has only 1 appearance
                                         //we must remove it from the global alter list.
-                                        int concurrences = (int) knownAltersList.get(o.toString());
-                                        concurrences--;
-                                        if( concurrences == 0)
+                                        int appearances = (int) knownAltersList.get(o.toString());
+                                        appearances--;
+                                        if( appearances == 0)
                                         {
                                             altersToRemove.add(o.toString());
                                             knownAltersList.remove(o.toString());
                                         }
-                                        //else, update the concurrence value.
+                                        //else, update the appearance value.
                                         else
                                         {
-                                            knownAltersList.put(o.toString(),concurrences);
+                                            knownAltersList.put(o.toString(),appearances);
                                         }
                                    /* }else
                                     {
@@ -812,8 +812,8 @@ public class ListBuilder extends JPanel implements Observer {
 		return false;
 	}
         
-        //Sets the known alter hashmap. <Alter, number of concurrences>
-        public void setKnownAlters(HashMap list){
+        //Sets the known alter hashmap. <Alter, number of appearances>
+        public void setKnownAlters(HashMap <String, Integer> list){
             knownAltersList = list;
         }
                        
@@ -830,10 +830,10 @@ public class ListBuilder extends JPanel implements Observer {
         }
         
         
-        //Adds a concurrence for the alter "o" into knownAlters hashmap. We add the concurrence manually
+        //Adds a appearance for the alter "o" into knownAlters hashmap. We add the appearance manually
         //because generating the full hashmap everytime the user inputs an alter, could have
         //high computacional cost, and could decrease the performance.
-        private void addConcurrence(Selection o)
+        private void addAlterAppearance(Selection o)
         {
             int value;
             

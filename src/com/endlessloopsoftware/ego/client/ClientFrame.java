@@ -586,7 +586,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         StartPanel sp = new StartPanel(egoClient);
         setContentPane(sp);
         pack();
-        setSize(500, 350);
+        setSize(350, 350);
         setVisible(true);
 
     }

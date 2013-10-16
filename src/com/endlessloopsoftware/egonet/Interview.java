@@ -1068,7 +1068,7 @@ public class Interview implements Comparable<Interview> {
         }
         
         //Returns a hashmap containing for every alter, how many times appears.
-        public HashMap getAlterHashmap()
+        public HashMap <String, Integer> getAlterHashmap()
         {
             HashMap<String, Integer> alterCounter = new HashMap <String, Integer>();
             ArrayList <String> alterList = new ArrayList<String>(Arrays.asList(_alterList));
