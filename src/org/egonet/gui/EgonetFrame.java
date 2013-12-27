@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 
 import org.egonet.mdi.*;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,8 @@ public class EgonetFrame extends JFrame  {
 						frame.dispose();
 					}
 				}
+				
+				EgonetAnalytics.track("application shutdown"); // track!
 				System.exit(0);
 			}
 		});

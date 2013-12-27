@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class EgonetRunner {
 		
 		Logger logger = LoggerFactory.getLogger(EgonetRunner.class);
 		
-		
+		EgonetAnalytics.track("application startup"); // track!
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.client;
 
 import javax.swing.JCheckBoxMenuItem;
+
 import java.awt.AWTEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +45,7 @@ import org.egonet.gui.MDIChildFrame;
 import org.egonet.io.EdgeListWriter;
 import org.egonet.mdi.MDIContext;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.EgonetAnalytics;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.ImageFilter;
@@ -59,7 +61,6 @@ import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-
 
 
 // implement MdiChildFrame and molest the public menu!
@@ -98,9 +99,9 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	public final JMenuItem saveTextSummary = new JMenuItem("Save Text Answer Summary");
 
 	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
-        
-        public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
 
+        public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
+        
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
 
@@ -192,6 +193,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
+				EgonetAnalytics.track("save interview"); // track!
 			}
 		});
 		
@@ -294,7 +296,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
                         jMenuFile.add(saveAlterByAlterPromptMatrix);
-
+                        
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(applyGraphSettings);

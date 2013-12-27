@@ -21,6 +21,7 @@ package com.endlessloopsoftware.ego.client;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -37,6 +38,7 @@ import net.sf.functionalj.FunctionException;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.EgoStore;
 import org.egonet.util.CatchingAction;
+import org.egonet.util.EgonetAnalytics;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.SwingWorker;
 import org.egonet.wholenet.gui.InterviewFileSelectionFrame;
@@ -192,6 +194,8 @@ public class ClientPanel
 
 	private void doStartInterview(ActionEvent e) throws Exception
 	{
+		EgonetAnalytics.track("start interview"); // track!
+		
       egoClient.setUiPath(ClientFrame.DO_INTERVIEW);
       egoClient.getStorage().setPackageInUse();
 		try
