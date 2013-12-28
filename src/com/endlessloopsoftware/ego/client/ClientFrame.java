@@ -100,12 +100,11 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	public final JMenuItem saveAdjacencyMatrix = new JMenuItem("Save Adjacency Matrix");
 
-        public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
-        
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
-
-	public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
+        public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
+	
+        public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 	public final JMenuItem applyGraphSettings = new JMenuItem("Load/Apply graph settings");
 	public final JCheckBoxMenuItem detailedTooltips = new JCheckBoxMenuItem("Show extended node tooltips");
 	
