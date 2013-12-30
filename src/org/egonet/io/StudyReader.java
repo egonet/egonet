@@ -68,6 +68,29 @@ public class StudyReader {
 			study.setStudyName(root.getTextString("name"));
 		}
 	
+                //Retrocompatibility for old versions of Egonet. Some studies had 
+                //alternumberfixed meaning limited mode, and numalters as the min/max alters.
+                //If alternumberfixed were false meant that there weren't max number of alters.
+                if(root.getElement("alternumberfixed") != null)
+                {
+                    boolean limitedMode = root.getBoolean("alternumberfixed");
+                   
+                    study.setUnlimitedMode(!limitedMode);                    
+                    
+                    if(root.getElement("numalters") != null)
+                    {
+                        if(limitedMode)
+                        {
+                          
+                            study.setMaximumNumberOfAlters(root.getInt("numalters"));
+                        }
+                        
+                        study.setMinimumNumberOfAlters(root.getInt("numalters"));
+                    }
+                }
+                
+                
+                
 		// if either new XML alters element is missing, default back to numalters
 		if(root.getElement("minalters") == null || root.getElement("maxalters") == null) {
 			if (root.getElement("numalters") != null) {

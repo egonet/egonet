@@ -27,7 +27,7 @@ public class RawDataCSVWriter {
 	final protected static Logger logger = LoggerFactory.getLogger(RawDataCSVWriter.class);
 	private Study study;
 	
-	// obtain study with EgoClient.getStudy()
+            // obtain study with EgoClient.getStudy()
 	public RawDataCSVWriter(Study study) {
 		this.study = study;
 	}

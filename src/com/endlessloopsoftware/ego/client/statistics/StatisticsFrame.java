@@ -165,6 +165,15 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
+                                
+				removeAllActionListeners(egoClient.getFrame().saveAlterByAlterPromptMatrix);
+				egoClient.getFrame().saveAlterByAlterPromptMatrix
+						.addActionListener(new CatchingAction("saveAlterByAlterPromptMatrix") {
+						    public void safeActionPerformed(ActionEvent e) throws Exception {
+							    saveAlterByAlterPromptMatrix_actionPerformed(e);
+							}
+						});
+                                
 				removeAllActionListeners(egoClient.getFrame().saveAdjacencyMatrix);
 				egoClient.getFrame().saveAdjacencyMatrix
 						.addActionListener(new CatchingAction("saveAdjacencyMatrix") {
@@ -273,6 +282,15 @@ public class StatisticsFrame extends JPanel {
 	    
 	    stats.writeAdjacencyFile(w, egoClient.getStorage().getInterviewFile().getName().replace(".int", ""), weighted);
 	}
+        
+        void saveAlterByAlterPromptMatrix_actionPerformed(ActionEvent e) throws IOException
+        {
+            String filename = egoClient.getStorage().getInterviewFile().getName() + ("_alter_by_alter_prompt");
+            
+            PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
+            
+            stats.writeAlterByPromptFile(w, filename);
+        }
 
 	void close_actionPerformed(ActionEvent e) {
 		//logger.info("Return");
