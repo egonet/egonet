@@ -39,7 +39,6 @@ import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
 import com.endlessloopsoftware.ego.author.EgoFrame;
 import com.endlessloopsoftware.ego.author.EgoNet;
 import com.endlessloopsoftware.ego.author.PromptPanel;
-import com.endlessloopsoftware.ego.client.EgoClient;
 
 
 public class DesignStudy {
