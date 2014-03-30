@@ -23,7 +23,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.endlessloopsoftware.ego.client.ClientFrame;
+import com.endlessloopsoftware.ego.client.EgoClient;
+
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -51,7 +55,14 @@ public class DoInterview {
 	{
 		studyFile = new File(location);
 		
-		window = new FrameFixture((JFrame)null); //EgoClient.getInstance().getFrame());
+		ClientFrame f = new EgoClient().getFrame();
+		Frame of = new java.awt.Frame();
+		of.add(f);
+		
+		of.show();
+		
+		
+		window = new FrameFixture(of); //;
 		window.show(); // shows the frame to test
 	}
 
