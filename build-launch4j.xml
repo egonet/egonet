@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Enet" default="compile" basedir=".">
+
+	<description>
+		Egonet
+	</description>
+
+	<!-- Global Properties-->
+	<property name="dir.lib.Enet" location="lib" />
+	<property name="dir.src.Egonet" location="src" />
+	<property name="dir.test.Egonet" location="test" />
+	<property name="dir.build.Egonet" location="build" />
+	<property name="dir.dist.Egonet" location="dist" />
+
+	<!--specifying the main classes to be executed -->
+	<property name="main.class.Egonet" value="org.egonet.gui.EgonetRunner" />
+
+	<property name="launch4j.dir" location="lib/launch4j" />
+	
+	<taskdef name="launch4j"
+		classname="net.sf.launch4j.ant.Launch4jTask"
+		classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+	
+	<target name="compile" description="Create Windows-compatible executables from the built Jar files">
+		<launch4j configFile="winwrap.xml" />
+	</target>
+
+</project>
+
