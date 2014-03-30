@@ -21,6 +21,7 @@ import org.egonet.io.StatisticsFileWriter;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.io.VnaInterviewWriter;
+import org.egonet.model.question.Question;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.Tuple;

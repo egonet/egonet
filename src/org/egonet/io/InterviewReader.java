@@ -2,15 +2,16 @@ package org.egonet.io;
 
 import java.io.File;
 import java.util.Arrays;
+
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.StudyIdMismatchException;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
@@ -171,7 +172,7 @@ public class InterviewReader {
                     int questionIndex = 0;
                     int alterIndex = 0;
 
-                    lNumPrompt = study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+                    lNumPrompt = study.getQuestionOrder(AlterPromptQuestion.class).size();
                     
                     lAlterList = new String[lNumPrompt][];
                     

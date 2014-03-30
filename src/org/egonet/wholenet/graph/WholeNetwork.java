@@ -12,14 +12,14 @@ import net.sf.functionalj.Function2;
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.wholenet.graph.WholeNetworkTie.DiscrepancyStrategy;
 import org.egonet.wholenet.gui.NameMapperFrame.NameMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.google.common.collect.Sets;
 
@@ -126,7 +126,7 @@ public class WholeNetwork {
 			}
 
 			// tie adjacent alters together
-			Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+			Iterator<Long> questions = study.getQuestionOrder(AlterPairQuestion.class).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				if(q.determinesAdjacency()) {

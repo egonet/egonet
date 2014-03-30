@@ -16,18 +16,58 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.egonet;
+package org.egonet.model.question;
 import java.util.Date;
 
+import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.util.listbuilder.Selection;
 
+import com.endlessloopsoftware.egonet.Answer;
+import com.endlessloopsoftware.egonet.QuestionLink;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 /*******************************************************************************
  * Routines for creating and handling atomic question elements
+ * 
+ * 
+ * 	
+	public enum QuestionType {
+	    QuestionType(String niceName, String title)
+	    {
+	        this.niceName = niceName;
+	        this.title = title;
+	    }
+	}
+ * 
+ * 
  */
-public class Question implements Cloneable {
+public abstract class Question implements Cloneable {
+	
+	public static String getNiceName(Class<? extends Question> clazz) {
+		try {
+			Question instance = clazz.newInstance();
+			return instance.getNiceName();
+		} 
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	public static String getTitle(Class<? extends Question> clazz) {
+		try {
+			Question instance = clazz.newInstance();
+			return instance.getNiceName();
+		} 
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	
+	public abstract String getNiceName();
+	public abstract String getTitle();
+	
 	public boolean centralMarker = false;
 
 	private boolean statable = false;
@@ -43,8 +83,6 @@ public class Question implements Cloneable {
 	}
 
 	public Long UniqueId = new Long(new Date().getTime());
-
-	public QuestionType questionType = QuestionType.EGO;
 
 	public String title = "";
 
@@ -159,7 +197,7 @@ public class Question implements Cloneable {
 
 	public String getString() {
 		String str = "";
-		str = "ID : " + UniqueId + ", Qtype="+questionType+",Atype="+answerType+", Title : " + title + " text : " + text
+		str = "ID : " + UniqueId + ", Qtype="+getClass().getSimpleName()+",Atype="+answerType+", Title : " + title + " text : " + text
 				+ "\nAnswer : " + getAnswer().getString();
 		return str;
 	}
@@ -186,5 +224,37 @@ public class Question implements Cloneable {
 
 	public void setStatable(boolean statable) {
 		this.statable = statable;
+	}
+
+	public static Question newInstance(String questionType) {
+		try {
+			Class<? extends Question> clazz = asSubclass(questionType);
+
+			return newInstance(clazz);
+		} 
+		catch (Exception ex) {
+			throw new MalformedQuestionException(ex);
+		}
+	}
+	
+	public static Question newInstance(Class<? extends Question> clazz) {
+		try {
+			return clazz.newInstance();
+		} 
+		catch (Exception ex) {
+			throw new MalformedQuestionException(ex);
+		}
+	}
+	
+	public static Class<? extends Question> asSubclass(String questionType) {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Question> clazz = (Class<? extends Question>)Class.forName(questionType);
+
+			return clazz;
+		} 
+		catch (Exception ex) {
+			throw new MalformedQuestionException(ex);
+		}
 	}
 }

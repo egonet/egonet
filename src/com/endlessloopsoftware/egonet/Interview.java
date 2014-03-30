@@ -27,9 +27,15 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.DefaultListModel;
+
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.gui.EgoStore;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.EgoQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.ELSMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
+
 import java.util.HashMap;
 
 public class Interview implements Comparable<Interview> {
@@ -105,7 +112,7 @@ public class Interview implements Comparable<Interview> {
 		_study = study;
 
                 //Initializes the
-                _alterQuestionPromptList = new String[_study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size()][0];
+                _alterQuestionPromptList = new String[_study.getQuestionOrder(AlterPromptQuestion.class).size()][0];
 		//_alterList = new String[]{null};
 		
 		reinitializeAlterData();
@@ -138,13 +145,13 @@ public class Interview implements Comparable<Interview> {
                 /* Calculate some interview values */
 		int _numAlters = _alterList.length;
 		_numAlterPairs = ELSMath.summation(_numAlters - 1);
-		set_numAnswers(_study.getQuestionOrder(Shared.QuestionType.EGO).size()
-				+ _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT)
+		set_numAnswers(_study.getQuestionOrder(EgoQuestion.class).size()
+				+ _study.getQuestionOrder(AlterPromptQuestion.class)
 						.size()
 				+ (_numAlters * _study.getQuestionOrder(
-						Shared.QuestionType.ALTER).size())
+						AlterQuestion.class).size())
 				+ (_numAlterPairs * _study.getQuestionOrder(
-						Shared.QuestionType.ALTER_PAIR).size()));
+						AlterPairQuestion.class).size()));
 		
           
 		// we need to preserve old data, so hold on to any interesting questions (avoid null _answers)
@@ -158,7 +165,7 @@ public class Interview implements Comparable<Interview> {
 		int counter = 0;
 
 		/* Ego Questions */
-		Iterator questions = _study.getQuestionOrder(Shared.QuestionType.EGO).iterator();
+		Iterator questions = _study.getQuestionOrder(EgoQuestion.class).iterator();
 		while (questions.hasNext()) {
 			Long questionId = (Long) questions.next();
 			Question question = _study.getQuestions().getQuestion(questionId);
@@ -179,7 +186,7 @@ public class Interview implements Comparable<Interview> {
 		}
 
 		/* Alter Prompt Questions */
-		questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).iterator();
+		questions = _study.getQuestionOrder(AlterPromptQuestion.class).iterator();
                 
                     while (questions.hasNext()) {
                             Long questionId = (Long) questions.next();
@@ -205,7 +212,7 @@ public class Interview implements Comparable<Interview> {
 		
 		/* Alter Questions */
 		for (j = 0; j < _numAlters; j++) {
-			questions = _study.getQuestionOrder(Shared.QuestionType.ALTER).iterator();
+			questions = _study.getQuestionOrder(AlterQuestion.class).iterator();
 			int[] alter = { j };
 			while (questions.hasNext()) {
 				Long questionId = (Long) questions.next();
@@ -222,7 +229,7 @@ public class Interview implements Comparable<Interview> {
 		/* Alter Pair Questions */
 		for (k = 0; k < _numAlters; k++) {
 			for (j = (k + 1); j < _numAlters; j++) {
-				questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+				questions = _study.getQuestionOrder(AlterPairQuestion.class).iterator();
 				int[] alters = { k, j };
 				while (questions.hasNext()) {
 					Question question = _study.getQuestions().getQuestion((Long) questions.next());
@@ -237,7 +244,7 @@ public class Interview implements Comparable<Interview> {
 		}
 		
 		// really shouldn't make stats available depend on alter answers
-		questions = _study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+		questions = _study.getQuestionOrder(AlterPairQuestion.class).iterator();
 		while (questions.hasNext()) {
 			Question question = _study.getQuestions().getQuestion((Long) questions.next());
 			if (question == null) {
@@ -257,7 +264,7 @@ public class Interview implements Comparable<Interview> {
 	 * @param dlm
 	 *            list model to use in inserting questions
 	 */
-	public void fillList(DefaultListModel<String> dlm) {
+	public void fillList(DefaultListModel<Question> dlm) {
 		dlm.removeAllElements();
 
 		for (int i = 0; i < get_numAnswers(); i++) {
@@ -265,24 +272,12 @@ public class Interview implements Comparable<Interview> {
 
 			Question q = _study.getQuestions().getQuestion(_answers[i].questionId);
 
-			if (q.questionType == Shared.QuestionType.ALTER_PAIR
+			if (q instanceof AlterPairQuestion
 					&& (_study.getUIType().equals(Shared.PAIR_ELICITATION) || _study
 							.getUIType().equals(Shared.THREE_STEP_ELICITATION))) {
 				/* Skip Alter Pair Questions for Interactive Linking Studies */
 			} else {
-				String s = q.toString();
-
-				if (q.questionType == Shared.QuestionType.ALTER) {
-					s = s + "; " + _answers[i].firstAlter();
-				} else if (q.questionType == Shared.QuestionType.ALTER_PAIR) {
-					s = s + "; "
-							+ _answers[i].firstAlter() + " & "
-							+ _answers[i].secondAlter();
-				}
-
-				s = q.questionType.niceName + ": " + s;
-
-				dlm.addElement(s);
+				dlm.addElement(q);
 			}
 		}
 	}
@@ -355,7 +350,7 @@ public class Interview implements Comparable<Interview> {
 		int index = 0;
 		Question q = _study.getQuestions().getQuestion(_answers[index].questionId);
 
-		while (q.questionType == Shared.QuestionType.EGO) {
+		while (q instanceof EgoQuestion) {
 			l.add(_answers[index]);
 			q = _study.getQuestions().getQuestion(_answers[++index].questionId);
 		}
@@ -373,7 +368,7 @@ public class Interview implements Comparable<Interview> {
 
 		Collection<Question> questionList = _study.getQuestions().values();
 		for (Question q : questionList) {
-			if (q.questionType != Shared.QuestionType.ALTER)
+			if (!(q instanceof AlterQuestion))
 				continue;
 
 			l.add(q);
@@ -612,16 +607,16 @@ public class Interview implements Comparable<Interview> {
 	public boolean isLastAlterPrompt() {
 		boolean b = false;
 		
-		logger.info("Current question type: " + getQuestion(_qIndex).questionType);
+		logger.info("Current question type: " + getQuestion(_qIndex).getClass().getSimpleName());
 		logger.info("hasNext: " + hasNext());
 		
 		if(_qIndex+1 >= _answers.length) // if there are no more questions, this is *definitely* the last alter prompt :)
 			return true;
-		logger.info("Next question type: " + getQuestion(_qIndex + 1).questionType);
+		logger.info("Next question type: " + getQuestion(_qIndex + 1).getClass().getSimpleName());
 		
-		b = 		(getQuestion(_qIndex).questionType == Shared.QuestionType.ALTER_PROMPT) // current question is alter prompt
+		b = 		(getQuestion(_qIndex) instanceof AlterPromptQuestion) // current question is alter prompt
 				&& 	hasNext() // there IS a next question
-				&& 	(getQuestion(_qIndex + 1).questionType != Shared.QuestionType.ALTER_PROMPT); // next question is alter prompt
+				&& 	(!(getQuestion(_qIndex + 1) instanceof AlterPromptQuestion)); // next question is alter prompt
 
 		logger.info("-> isLastAlterPrompt = " + b);
 		return (b);
@@ -967,7 +962,7 @@ public class Interview implements Comparable<Interview> {
          */
         public int getCurrentAlterQuestionPrompt(){
 
-            int egoQuestions = _study.getQuestionOrder(Shared.QuestionType.EGO).size();
+            int egoQuestions = _study.getQuestionOrder(EgoQuestion.class).size();
             int currentQuestion = getQuestionIndex()-egoQuestions;
             
             if (currentQuestion < 0)
@@ -1102,7 +1097,7 @@ public class Interview implements Comparable<Interview> {
         public int[][] generateAlterByAlterPromptMatrix()
         {
             
-            int numPrompts = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+            int numPrompts = _study.getQuestionOrder(AlterPromptQuestion.class).size();
             int matrix [][] = new int[_alterList.length][numPrompts];
              
              for (int i = 0; i < _alterList.length; i++) {

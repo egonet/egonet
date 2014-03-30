@@ -1,11 +1,11 @@
 package org.egonet.io;
 
+
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
 import com.lowagie.text.*;
 import com.lowagie.text.List;
 import com.lowagie.text.pdf.*;
@@ -15,9 +15,11 @@ import java.io.*;
 import java.util.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.egonet.model.question.*;
 
 public class PDFWriter {
 	private Study study;
@@ -78,8 +80,8 @@ public class PDFWriter {
 		document.add(new Paragraph(study.getStudyName()));
 		writeLine(document);
 		
-		for(QuestionType qT : QuestionType.values()) {
-			document.add(new Paragraph("Questions of type: " + qT.niceName));
+		for(Class<? extends Question> qT : Shared.questionClasses) {
+			document.add(new Paragraph("Questions of type: " + Question.getNiceName(qT)));
 			writeLine(document);
 			
 			Iterator<Long> it = study.getQuestionIterator(qT);
@@ -106,13 +108,13 @@ public class PDFWriter {
 	}
 	
 	private void writeQuestion(Document document, Question question) throws DocumentException {
-		if(question.questionType == QuestionType.ALTER) {
+		if(question instanceof AlterQuestion) {
 			
 		}
-		else if(question.questionType == QuestionType.ALTER_PAIR) {
+		else if(question instanceof AlterPairQuestion) {
 			
 		}
-		else if(question.questionType == QuestionType.ALTER_PROMPT) {
+		else if(question instanceof AlterPromptQuestion) {
 			
 			String[] alterList = interview.getAlterQuestionPromptAnswers()[indexPromptQuestion];
 						
@@ -151,7 +153,7 @@ public class PDFWriter {
 			
 			return;
 		}
-		else if(question.questionType == QuestionType.EGO) {
+		else if(question instanceof EgoQuestion) {
 			
 		}
 		

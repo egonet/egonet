@@ -30,16 +30,18 @@ import java.awt.Dimension;
 import java.util.*;
 import java.awt.event.*;
 
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.LabelTableModel;
 import org.egonet.util.table.LabelRenderer;
+
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 public class NodeLabelPanel extends JPanel {
 
@@ -82,8 +84,7 @@ public class NodeLabelPanel extends JPanel {
 		
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			QuestionType questionType = currentQuestion.questionType;
-			if (questionType == Shared.QuestionType.ALTER) {
+			if (currentQuestion instanceof AlterQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
 				if (currentQuestion.answerType == Shared.AnswerType.CATEGORICAL
@@ -232,8 +233,7 @@ public class NodeLabelPanel extends JPanel {
 			Question question = (Question) questionCombo.getSelectedItem();
 			if (question.answerType == Shared.AnswerType.CATEGORICAL) {
 				for (Selection selection : question.getSelections()) {
-					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-							selection, Shared.QuestionType.ALTER);
+					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 					NodeProperty nodeProperty = new NodeProperty();
 					nodeProperty.setLabel(selection.getString());
 					nodeProperty.setProperty(NodeProperty.NodePropertyType.Label);
@@ -246,8 +246,7 @@ public class NodeLabelPanel extends JPanel {
 					NodeProperty nodeProperty = new NodeProperty();
 					nodeProperty.setLabel(selection.getString());
 					nodeProperty.setProperty(NodeProperty.NodePropertyType.Label);
-					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-							selection, Shared.QuestionType.ALTER);
+					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();
 				}

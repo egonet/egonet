@@ -32,15 +32,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.*;
 
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 public class EdgeShapePanel extends JPanel {
 
@@ -89,8 +89,7 @@ public class EdgeShapePanel extends JPanel {
 
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			QuestionType questionType = currentQuestion.questionType;
-			if (questionType == Shared.QuestionType.ALTER_PAIR) {
+			if (currentQuestion instanceof AlterPairQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
 				if (currentQuestion.getSelections().length >= 1)
@@ -199,8 +198,7 @@ public class EdgeShapePanel extends JPanel {
 				+ selectedQuestionIndex + " " + question.toString());
 		for (int i = 0; i < question.getSelections().length; i++) {
 			Selection selection = question.getSelections()[i];
-			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(
-					question, selection, Shared.QuestionType.ALTER_PAIR);
+			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 			if (((Boolean) table.getValueAt(i, 0)) == true) {
 
 				EdgeProperty edgeProperty = new EdgeProperty();

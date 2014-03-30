@@ -34,11 +34,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
+import org.egonet.util.listbuilder.Selection;
 
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 
 /**
@@ -77,7 +80,7 @@ public class QuestionLinkDialog extends JDialog
    private final JLabel              textAnswerLabel      = new JLabel("Answer: ");
    private final JLabel              menuAnswerLabel      = new JLabel("Answer: ");
    private final JLabel              radioAnswerLabel     = new JLabel("Answer: ");
-   private final JComboBox           answerMenu           = new JComboBox();
+   private final JComboBox<Selection>           answerMenu           = new JComboBox<Selection>();
    private final JCheckBox           allAdjacentCheck     = new JCheckBox("All Adjacent Selections");
 
    private final ButtonGroup         answerButtonGroup    = new ButtonGroup();
@@ -272,7 +275,7 @@ public class QuestionLinkDialog extends JDialog
 
 		// Question vars
 		questionList.setModel(new DefaultListModel<Question>());
-		egoNet.getStudy().fillList((DefaultListModel) questionList.getModel(), q.UniqueId);
+		egoNet.getStudy().fillList((DefaultListModel<Question>) questionList.getModel(), q.UniqueId);
 
 		// Set Selection
 		if (baseQuestion.link.isActive())
@@ -368,7 +371,7 @@ public class QuestionLinkDialog extends JDialog
 			answerPanel.setVisible(false);
 			answerPanel.removeAll();
 			questionText.setText("Please select a question and an answer which will trigger the inclusion of the current question");
-			if (question.questionType == Shared.QuestionType.ALTER_PROMPT)
+			if (question instanceof AlterPromptQuestion)
 			{
 				// Should never be here
 				//assert(false);
@@ -406,7 +409,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else if (question.getSelections().length <= 5)
 			{
-				allAdjacentCheck.setVisible(question.questionType == Shared.QuestionType.ALTER_PAIR);
+				allAdjacentCheck.setVisible(question instanceof AlterPairQuestion);
 				questionText.setText(question.text);
 
 				answerPanel.add(radioPanel);
@@ -443,13 +446,13 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else
 			{
-				allAdjacentCheck.setVisible(question.questionType == Shared.QuestionType.ALTER_PAIR);
+				allAdjacentCheck.setVisible(question instanceof AlterPairQuestion);
 				questionText.setText(question.text);
 				answerPanel.add(menuPanel);
 
 				answerMenu.removeAllItems();
 
-				answerMenu.addItem("Select an answer");
+				answerMenu.addItem(new Selection("Select an answer"));
 				for (int i = 0; i < question.getSelections().length; i++)
 				{
 					answerMenu.addItem(question.getSelections()[i]);

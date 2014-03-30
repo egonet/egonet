@@ -33,6 +33,13 @@ public class Selection {
 		this.index = -1;
 		this.adjacent = false;
 	}
+	
+	public Selection(String str) {
+		this.string = str;
+		this.value = -1;
+		this.index = -1;
+		this.adjacent = false;
+	}
 
 	public Selection(String string, int value, int index, boolean adjacent) {
 		this.string = string;

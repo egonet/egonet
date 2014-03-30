@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.client.graph;
 
+
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -31,17 +32,17 @@ import java.util.*;
 import org.jdesktop.layout.GroupLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 public class NodeColorPanel extends JPanel {
 
@@ -87,8 +88,7 @@ public class NodeColorPanel extends JPanel {
 		
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			QuestionType questionType = currentQuestion.questionType;
-			if (questionType == Shared.QuestionType.ALTER) {
+			if (currentQuestion instanceof AlterQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
 				if (currentQuestion.answerType == Shared.AnswerType.CATEGORICAL
@@ -284,8 +284,7 @@ public static Color get(float x) {
 			for (int i = 0; i < question.getSelections().length; i++) {
 				Selection selection = question.getSelections()[i];
 
-				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-						selection, Shared.QuestionType.ALTER);
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,selection);
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setColor((Color) table.getValueAt(i, 1));
 				nodeProperty.setProperty(NodeProperty.NodePropertyType.Color);
@@ -299,8 +298,7 @@ public static Color get(float x) {
 				NodeProperty nodeProperty = new NodeProperty();
 				nodeProperty.setColor((Color) table.getValueAt(i, 1));
 				nodeProperty.setProperty(NodeProperty.NodePropertyType.Color);
-				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,
-						selection, Shared.QuestionType.ALTER);
+				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}

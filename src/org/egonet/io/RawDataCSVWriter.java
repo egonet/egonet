@@ -2,14 +2,12 @@ package org.egonet.io;
 
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Answer;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.io.FileWriter;
-
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -17,6 +15,7 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.io.InterviewDataWritingUtil.StudyQuestionsByCategoryAndId;
+import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -36,11 +36,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 
 import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 /**
  * Generic Panel creation and handling routines for question editing
@@ -62,7 +62,7 @@ public class PromptPanel extends EgoQPanel
     private final JTextField question_title_field = new JTextField();
     private final JButton question_new_button = new JButton("New");
     private final JButton question_preview_button = new JButton("Preview");
-    private final JComboBox question_follows_menu = new JComboBox();
+    private final JComboBox<Question> question_follows_menu = new JComboBox<Question>();
     private final JButton question_delete_button = new JButton("Delete");
     private final Border listBorder;
 
@@ -74,7 +74,7 @@ public class PromptPanel extends EgoQPanel
      * @param type Type of questions on Page (e.g. Alter Questions)
      * @param parent parent frame for referencing composed objects
      */
-    public PromptPanel(EgoNet egoNet, QuestionType type) throws Exception
+    public PromptPanel(EgoNet egoNet, Class<? extends Question> type) throws Exception
     {
         super(type);
         this.egoNet = egoNet;
@@ -86,7 +86,7 @@ public class PromptPanel extends EgoQPanel
 
 		listBorder 		= BorderFactory.createCompoundBorder(
 			new TitledBorder(new EtchedBorder(EtchedBorder.RAISED,Color.white,new Color(178, 178, 178)),
-			        questionType.niceName),
+			        Question.getNiceName(questionType)),
 			BorderFactory.createEmptyBorder(10,10,10,10));
 
         jbInit();
@@ -119,7 +119,7 @@ public class PromptPanel extends EgoQPanel
         question_list_scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         question_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        question_list.setCellRenderer(new QuestionListCellRenderer());
+        question_list.setCellRenderer(new QuestionListCellRenderer<Question>());
 
         // Configure question fields
         question_panel_right.setLayout(new GridBagLayout());
@@ -177,8 +177,7 @@ public class PromptPanel extends EgoQPanel
 
         question_new_button.addActionListener(new java.awt.event.ActionListener()
         {
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 question_new_button_actionPerformed(e);
             }
         });
@@ -189,7 +188,7 @@ public class PromptPanel extends EgoQPanel
             {
             	ClientQuestionPanel.showPreview(
             			question_title_field.getText(),question_question_field.getText(),
-            			Shared.QuestionType.ALTER_PROMPT,null,null);
+            			AlterPromptQuestion.class,null,null);
             }
         });
 
@@ -305,7 +304,7 @@ public class PromptPanel extends EgoQPanel
         if (questionType == egoNet.getFrame().curTab)
         {
             ((DefaultListModel) question_list.getModel()).removeAllElements();
-            egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
+            egoNet.getStudy().fillList(questionType, (DefaultListModel<Question>)question_list.getModel());
         }
 
         inUpdate = false;
@@ -316,8 +315,7 @@ public class PromptPanel extends EgoQPanel
         inUpdate = true;
 
         /** @todo Use List Data Listener? */
-        if (questionType == egoNet.getFrame().curTab)
-        {
+        if (questionType.equals(egoNet.getFrame().curTab)) {
             int index = question_list.getSelectedIndex();
             if ((question_list.getModel().getSize() > 0) && (index == -1))
             {
@@ -441,11 +439,10 @@ public class PromptPanel extends EgoQPanel
         }
     }
 
-    void question_new_button_actionPerformed(ActionEvent e)
-    {
-        Question q = new Question();
-
-        q.questionType = questionType;
+    void question_new_button_actionPerformed(ActionEvent e) {
+    	
+        Question q;
+        try { q = questionType.newInstance(); } catch (Exception ex) { throw new RuntimeException(ex); }
         q.title = new String("Untitled Question");
 
         try

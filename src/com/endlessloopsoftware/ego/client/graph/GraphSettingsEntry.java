@@ -79,7 +79,7 @@ public class GraphSettingsEntry {
 		selectionElement.setAttribute("text", graphQuestion.getSelection().getString());
 		// Type
 		Element categoryElement = doc.createElement("Category");
-		String category = graphQuestion.getCategory().ordinal()+"";
+		String category = graphQuestion.getCategory().getSimpleName()+"";
 		categoryElement.setAttribute("category", category);
 		// Append all three to graphQuestion Element
 		graphQuestionElement.appendChild(questionElement);

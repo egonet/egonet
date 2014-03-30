@@ -23,12 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.event.*;
+
 import javax.swing.*;
 
+import org.egonet.model.question.Question;
+import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.listbuilder.Selection;
 
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
+
 
 import java.awt.*;
 
@@ -103,7 +106,7 @@ public class StructuralMeasuresPanel extends JPanel {
 	private void addStructuralElement(StructuralMeasures measure,
 			NodeProperty.NodePropertyType property) {
 
-		Question question = new Question("Structural_Properties");
+		Question question = new StudyQuestion("Structural_Properties");
 		Selection selection = null;
 		switch (measure) {
 		case BetweennessCentrality:
@@ -115,7 +118,7 @@ public class StructuralMeasuresPanel extends JPanel {
 		}
 		// the 3rd argument to constructor is 0 to say that it is a structural
 		// question
-		GraphQuestionSelectionPair gq = new GraphQuestionSelectionPair(question, selection, QuestionType.STUDY_CONFIG);
+		GraphQuestionSelectionPair gq = new GraphQuestionSelectionPair(question, selection);
 		NodeProperty nodeProperty = new NodeProperty();
 		nodeProperty.setColor(Color.BLACK);
 		nodeProperty.setSize(15);

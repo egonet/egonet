@@ -20,6 +20,7 @@ package com.endlessloopsoftware.ego.client.graph;
 
 
 import com.endlessloopsoftware.ego.client.graph.GraphSettingsEntry.GraphSettingType;
+
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.List;
@@ -31,6 +32,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 import org.apache.commons.collections15.Transformer;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
+import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +43,6 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
-
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -524,7 +525,7 @@ public class GraphRenderer /*implements
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
 			GraphQuestionSelectionPair graphQuestion = entry.getGraphQuestion();
-			if ((graphQuestion.getCategory() == Shared.QuestionType.ALTER)
+			if ((graphQuestion.getCategory().equals(AlterQuestion.class))
 					&& (entry.getType() == GraphSettingType.Node)) {
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
 				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
@@ -555,7 +556,7 @@ public class GraphRenderer /*implements
 					}
 					break;
 				}
-			} else if (graphQuestion.getCategory() == QuestionType.STUDY_CONFIG) // structural
+			} else if (graphQuestion.getCategory().equals(StudyQuestion.class)) // structural
 			// measure
 			{
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
@@ -581,7 +582,7 @@ public class GraphRenderer /*implements
 				}
 			}
 			// Edge property manipulation
-			else if ((graphQuestion.getCategory() == Shared.QuestionType.ALTER_PAIR)
+			else if ((graphQuestion.getCategory().equals(AlterPairQuestion.class))
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();

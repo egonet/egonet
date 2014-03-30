@@ -24,13 +24,13 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-public class SelectionListCellRenderer implements ListCellRenderer
+public class SelectionListCellRenderer implements ListCellRenderer<Selection>
 {
 	protected final DefaultListCellRenderer renderer = new DefaultListCellRenderer();
 	
 	public Component getListCellRendererComponent(
 	        JList list,
-	        Object value,
+	        Selection value,
 	        int index,
 	        boolean isSelected,
 	        boolean cellHasFocus)

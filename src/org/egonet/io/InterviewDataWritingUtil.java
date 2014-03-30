@@ -1,8 +1,5 @@
 package org.egonet.io;
 
-import static com.endlessloopsoftware.egonet.Shared.QuestionType.ALTER;
-import static com.endlessloopsoftware.egonet.Shared.QuestionType.ALTER_PAIR;
-import static com.endlessloopsoftware.egonet.Shared.QuestionType.EGO;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,12 +11,15 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.EgoQuestion;
+import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -82,13 +82,12 @@ public class InterviewDataWritingUtil {
 	public static StudyQuestionsByCategoryAndId studyQuestionsByCategoryAndId(Study study) {
 		StudyQuestionsByCategoryAndId result = new StudyQuestionsByCategoryAndId();
 		for(Question question : study.getQuestions().values()) {
-			Shared.QuestionType type = question.questionType;
 			TreeMap<Long,Question> qIdToTitle;
-			if(type.equals(ALTER_PAIR)) {
+			if(question instanceof AlterPairQuestion) {
 				qIdToTitle = result.linkQuestions;
-			} else if(type.equals(EGO)) {
+			} else if(question instanceof EgoQuestion) {
 				qIdToTitle = result.egoQuestions;
-			} else if(type.equals(ALTER)) {
+			} else if(question instanceof AlterQuestion) {
 				qIdToTitle = result.alterQuestions;
 			} else {
 				qIdToTitle = null;

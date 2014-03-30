@@ -9,12 +9,13 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.EgonetException;
+import org.egonet.model.question.Question;
+import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.DateUtils;
 
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
+import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -106,10 +107,10 @@ public class StudyWriter {
 			study.addElement("alternamemodel").setInt(studyObject.getAlterNameModel().ordinal());
 			study.addElement("allowskipquestions").setBoolean(studyObject.getAllowSkipQuestions());
 			
-			for (QuestionType type : QuestionType.values())
+			for (Class<? extends Question> type : Shared.questionClasses)
 			{
 			    
-			    if(type.equals(QuestionType.STUDY_CONFIG))
+			    if(type.equals(StudyQuestion.class))
 			        continue;
 			    
 				Element qorder = new Element("questionorder");
@@ -117,7 +118,7 @@ public class StudyWriter {
 
 				if (it.hasNext())
 				{
-					study.addElement(qorder).setAttribute("questiontype", Integer.toString(type.ordinal()));
+					study.addElement(qorder).setAttribute("questiontype", type.getSimpleName());
 					while (it.hasNext())
 					{
 						qorder.addElement("id").setLong(((Long) it.next()).longValue());
@@ -146,7 +147,7 @@ public class StudyWriter {
 		}
 
 		e.addElement("Id").setLong(q.UniqueId.longValue());
-		e.addElement("QuestionType").setInt(q.questionType.ordinal());
+		e.addElement("QuestionType").setString(q.getClass().getCanonicalName());
 		e.addElement("AnswerType").setInt(q.answerType.ordinal());
 		e.addElement("FollowUpOnly").setBoolean(q.followupOnly);
 

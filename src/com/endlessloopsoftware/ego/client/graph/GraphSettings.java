@@ -30,19 +30,17 @@ import java.util.List;
 import java.awt.*;
 import java.io.*;
 
-
 import com.endlessloopsoftware.ego.client.*;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodePropertyType;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgePropertyType;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.QuestionList;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -313,8 +311,8 @@ public class GraphSettings {
 						.getElementsByTagName("Question").item(0);
 				Element selectionElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Selection").item(0);
-				Element categoryElement = (Element) graphQuestionSelectionElement
-						.getElementsByTagName("Category").item(0);
+				
+				//Element categoryElement = (Element) graphQuestionSelectionElement.getElementsByTagName("Category").item(0);
 
 				Element propertyElement = (Element) entryElement
 						.getElementsByTagName("Property").item(0);
@@ -322,17 +320,14 @@ public class GraphSettings {
 				Element visibleElement = (Element) propertyElement
 						.getElementsByTagName("Visible").item(0);
 
-				Question question = questionList.get(Long
-						.parseLong(questionElement.getAttribute("id")));
-				QuestionType category = QuestionType.values()[Integer.parseInt(categoryElement.getAttribute("category"))];
-
+				Question question = questionList.get(Long.parseLong(questionElement.getAttribute("id")));
+				
 				for (int j = 0; j < question.getSelections().length; j++) {
 					Selection selection = question.getSelections()[j];
 
 					if (selection.getString().equals(
 							selectionElement.getAttribute("text"))) {
-						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(
-								question, selection, category);
+						GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 
 						if (propertyElement.getAttribute("type").equals("Edge")) {
 
@@ -553,7 +548,7 @@ public class GraphSettings {
 			String questionTitle = "";
 			String answerString = "";
 			Question question = egoClient.getStudy().getQuestion(answer.questionId);
-			if (question.questionType == Shared.QuestionType.ALTER) {
+			if (question instanceof AlterQuestion) {
 				questionTitle = question.title;
 				answerString = answer.string + " " + (detail ? "(index="+answer.getIndex()+",value="+answer.getValue()+")" : "");
 				for (int alter : answer.getAlters()) {

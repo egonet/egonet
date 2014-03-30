@@ -3,9 +3,10 @@ package org.egonet.io;
 import java.io.File;
 import java.io.IOException;
 
+import org.egonet.model.question.Question;
+
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;

@@ -32,11 +32,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
 
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 
 public class CategoryInputPane extends JDialog {
@@ -184,7 +186,7 @@ public class CategoryInputPane extends JDialog {
 		listBuilder
 				.setDescription("Enter possible answers to this question below. Press Return to add the option "
 						+ "to the options list. Press OK to set options or Cancel to undo changes.");
-		if(q.questionType == Shared.QuestionType.ALTER_PROMPT)
+		if(q instanceof AlterPromptQuestion)
 			listBuilder.setNameModel(egoNet.getStudy().getAlterNameModel());
 		listBuilder.setLetUserPickValues(true);
 		listBuilder.setPresetListsActive(q.answerType == Shared.AnswerType.CATEGORICAL);
@@ -192,7 +194,7 @@ public class CategoryInputPane extends JDialog {
 //		boolean preset = (q.answerType == Shared.AnswerType.CATEGORICAL) ? true : false;
 //		logger.info("Is question categorical? " + preset);
 //		
-		listBuilder.setAdjacencyActive(q.questionType == Shared.QuestionType.ALTER_PAIR);
+		listBuilder.setAdjacencyActive(q instanceof AlterPairQuestion);
 
 		this.setSize(500, 400); // width, height
 		

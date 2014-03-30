@@ -19,6 +19,9 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.apache.commons.collections15.Transformer;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.endlessloopsoftware.ego.client.EgoClient;
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -37,11 +39,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.geom.Point2D;
+
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+
 import javax.imageio.ImageIO;
 
 public class GraphData {
@@ -114,9 +118,9 @@ public class GraphData {
 				.removeAll(interviewAlterPairQuestionList);
 		while (interview.hasNext()) {
 			question = interview.next();
-			if (question.questionType == Shared.QuestionType.ALTER) {
+			if (question instanceof AlterQuestion) {
 				interviewAlterQuestionList.add(question);
-			} else if (question.questionType == Shared.QuestionType.ALTER_PAIR) {
+			} else if (question instanceof AlterPairQuestion) {
 				interviewAlterPairQuestionList.add(question);
 			}
 		}
@@ -140,7 +144,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory() == Shared.QuestionType.ALTER) {
+		if (graphQuestion.getCategory().equals(AlterQuestion.class)) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();
@@ -205,7 +209,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory() == Shared.QuestionType.ALTER) {
+		if (graphQuestion.getCategory().equals(AlterQuestion.class)) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();

@@ -28,6 +28,9 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.FileHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +39,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -719,7 +721,7 @@ public class Statistics
      */
     private void generateAlterStatArray()
     {
-        List<Long> qList = _study.getQuestionOrder(Shared.QuestionType.ALTER);
+        List<Long> qList = _study.getQuestionOrder(AlterQuestion.class);
         Iterator<Long> qIt = qList.iterator();
         int index = 0;
 
@@ -840,7 +842,7 @@ public class Statistics
         
         List <String> columnNames = new ArrayList<String>();
         columnNames.add(name);
-        int numPrompts = _study.getQuestionOrder(Shared.QuestionType.ALTER_PROMPT).size();
+        int numPrompts = _study.getQuestionOrder(AlterPromptQuestion.class).size();
        
         for (int i = 0; i < numPrompts; ++i)
         {
@@ -853,7 +855,7 @@ public class Statistics
          for (int i = 0; i < alterList.length; i++)
          {
              List<String> row = new ArrayList<String>();  
-             //_study.getQuestionIterator(Shared.QuestionType.ALTER_PROMPT);
+             //_study.getQuestionIterator(AlterPromptQuestion.class);
              row.add(FileHelpers.formatForCSV(alterList[i]));
              
              for (int j = 0; j < numPrompts ; ++j)
@@ -964,7 +966,7 @@ public class Statistics
             }
         }
 
-        qList = _study.getQuestionOrder(Shared.QuestionType.ALTER);
+        qList = _study.getQuestionOrder(AlterQuestion.class);
         qIt = qList.iterator();
         while (qIt.hasNext())
         {

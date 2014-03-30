@@ -20,9 +20,7 @@ package com.endlessloopsoftware.ego.client.graph;
 
 import java.util.*;
 
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
-
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 
 public class GraphQuestionSelectionPair {
@@ -35,13 +33,10 @@ public class GraphQuestionSelectionPair {
 	//used only for ALTER QUESTIONS
 	private List<Integer> alterList = new ArrayList<Integer>();
 	
-	private Shared.QuestionType category;
-	
 	private boolean showLabel = false; 
 
-	public GraphQuestionSelectionPair(Question question, Selection selection, Shared.QuestionType category) {
+	public GraphQuestionSelectionPair(Question question, Selection selection) {
 		this.question = question;
-		this.category = category;
 		this.selection = selection;
 	}
 	
@@ -63,8 +58,8 @@ public class GraphQuestionSelectionPair {
 		this.selection = selection;
 	}
 
-	public Shared.QuestionType getCategory() {
-		return category;
+	public Class<? extends Question> getCategory() {
+		return question.getClass();
 	}
 
 	public Question getQuestion() {
@@ -86,12 +81,12 @@ public class GraphQuestionSelectionPair {
 		GraphQuestionSelectionPair gq = (GraphQuestionSelectionPair)obj;
 		return (this.question.equals(gq.question)
 				&& this.selection.equals(gq.selection)
-				&& this.category == gq.category);
+				&& this.getClass().equals(gq.getClass()));
 	}
 	
 	public int hashCode()
 	{
-		return this.question.hashCode() + this.selection.hashCode() + category.hashCode();
+		return this.question.hashCode() + this.selection.hashCode() + getClass().hashCode();
 	}
 
 	public List<Integer> getAlterList() {

@@ -3,7 +3,7 @@ package org.egonet.io;
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,14 @@ import java.util.List;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -136,11 +138,10 @@ public class StudyReader {
 		}
 		
 		Elements elements = root.getElements("questionorder");
-		while (elements.hasMoreElements())
-		{
+		while (elements.hasMoreElements()) {
 			Element element = elements.next();
-			int qOrderId = Integer.parseInt(element.getAttribute("questiontype"));
-			QuestionType qType = QuestionType.values()[qOrderId];
+			String questionType = element.getAttribute("questiontype");
+			Class<? extends Question> qType = Question.asSubclass(questionType);
 			List<Long> questionOrder = study.getQuestionOrder(qType);
 	
 			Elements ids = element.getElements("id");
@@ -211,7 +212,9 @@ public class StudyReader {
 	
 	public static Question readQuestion(Element question) throws MalformedQuestionException
 	{
-		Question q = new Question();
+		String questionType = question.getString("QuestionType");
+		Question q = Question.newInstance(questionType);
+		
 		
 		if(question.getElement("QuestionTitle") == null) {
 			q.title = "";
@@ -234,18 +237,16 @@ public class StudyReader {
 		}
 
 		q.UniqueId = new Long(question.getLong("Id"));
-		q.questionType = QuestionType.values()[question.getInt("QuestionType")];
 		q.answerType = AnswerType.values()[question.getInt("AnswerType")];
 
-		if (q.questionType == QuestionType.ALTER_PROMPT) {
+		if (q instanceof AlterPromptQuestion) {
 			q.answerType = Shared.AnswerType.TEXT;
 		}
 
 		if (question.getAttribute("CentralityMarker") != null) {
 			boolean centrality = question.getAttribute("CentralityMarker").equals("true");
 
-			if (centrality
-					&& (q.questionType != Shared.QuestionType.ALTER_PAIR)) {
+			if (centrality && (!(q instanceof AlterPairQuestion))) {
 				//logger.info("ID:" + q.UniqueId + " title:"+ q.title);
 				throw (new MalformedQuestionException("Centrality marker on non-alter pair question"));
 			}

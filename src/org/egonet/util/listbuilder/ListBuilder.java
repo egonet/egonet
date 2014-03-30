@@ -29,11 +29,9 @@ import com.endlessloopsoftware.ego.author.CategoryInputPane;
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
-import java.awt.Color;
 import java.awt.Dimension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
@@ -91,9 +89,9 @@ public class ListBuilder extends JPanel implements Observer {
 
 	private JList<Selection> jList = null;;
         
-        private JList knownAltersForm;
+	private JList<String> knownAltersForm;
         
-        private HashMap <String, Integer> knownAltersList = null;
+    private HashMap <String, Integer> knownAltersList = null;
 
 	private JScrollPane jScrollPane = null;
 
@@ -393,9 +391,9 @@ public class ListBuilder extends JPanel implements Observer {
 			formBuilder.append("Value: ", value, true);
 
                   //Build known alters list form. 
-                knownAltersForm = new JList();    
+                knownAltersForm = new JList<String>();    
                 if(knownAltersList != null)
-                    knownAltersForm.setListData(knownAltersList.keySet().toArray());
+                    knownAltersForm.setListData(knownAltersList.keySet().toArray(new String[0]));
                 
                 //knownAltersForm.setBorder(BorderFactory.createLineBorder(Color.gray) ); 
                 knownAltersForm.setVisibleRowCount(-1);

@@ -23,6 +23,7 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Window;
 import java.io.Serializable;
+
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,6 +34,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.egonet.model.question.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,21 +54,14 @@ public class Shared
 	    INFORMATIONAL,
 	}
 
-	/* Constants */
-	public enum QuestionType {
-	    STUDY_CONFIG("Study", "Study questions"),
-	    EGO("Ego", "Questions About You"),
-	    ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
-	    ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
-	    ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
-	    ;
-	    public final String niceName, title;
-	    QuestionType(String niceName, String title)
-	    {
-	        this.niceName = niceName;
-	        this.title = title;
-	    }
-	}
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends Question> questionClasses[] = new Class[]{
+			StudyQuestion.class,
+			EgoQuestion.class,
+			AlterQuestion.class,
+			AlterPromptQuestion.class,
+			AlterPairQuestion.class
+	}; 
 	
 	   public enum AlterSamplingModel
 	   {

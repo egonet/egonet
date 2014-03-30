@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.author;
 
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -35,14 +36,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.model.question.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 /**
  * Generic Panel creation and handling routines for question editing
@@ -61,14 +62,14 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_question_label = new JLabel("Question:");
     private final JLabel question_citation_label = new JLabel("Citation:");
     private final JLabel question_type_label = new JLabel("Question Type:");
-    private final JComboBox<QuestionType> question_type_menu = new JComboBox<QuestionType>();
+    private final JComboBox<Class<? extends Question>> question_type_menu = new JComboBox<Class<? extends Question>>();
     private final JLabel question_answer_type_label = new JLabel("Answer Type:");
     private final JButton question_answer_type_button = new JButton("Selections");
     private final JLabel question_link_label = new JLabel("Question Link:");
     private final JLabel question_link_field = new JLabel("None");
     private final JLabel question_follows_label = new JLabel("Follows Question:");
     private final JComboBox question_answer_type_menu = new JComboBox<AnswerType>(AnswerType.values());
-    private final JComboBox question_follows_menu = new JComboBox();
+    private final JComboBox<Question> question_follows_menu = new JComboBox<Question>();
 
     private final JLabel question_followup_only_label = new JLabel("Follow up protocols only:");
     private final JCheckBox question_followup_only_combo = new JCheckBox();
@@ -94,15 +95,15 @@ public class AuthoringQuestionPanel extends EgoQPanel
      * @param type Type of questions on Page (e.g. Alter Questions)
      * @param parent parent frame for referencing composed objects
      */
-    public AuthoringQuestionPanel(EgoNet egoNet, Shared.QuestionType type) throws Exception
+    public AuthoringQuestionPanel(EgoNet egoNet, Class<? extends Question> type) throws Exception
     {
         super(type);
         this.egoNet = egoNet;
         
-        DefaultComboBoxModel<QuestionType> model = new DefaultComboBoxModel<QuestionType>();
-        for(QuestionType qType : QuestionType.values())
+        DefaultComboBoxModel<Class<? extends Question>> model = new DefaultComboBoxModel<Class<? extends Question>>();
+        for(Class<? extends Question> qType : Shared.questionClasses)
         {
-        	if(qType.equals(QuestionType.STUDY_CONFIG))
+        	if(qType.equals(StudyQuestion.class))
         		continue;
         	
         	model.addElement(qType);
@@ -119,7 +120,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
         question_answer_type_menu.setName("question_answer_type_menu");
 
         listBorder = BorderFactory.createCompoundBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED, Color.white,
-                new Color(178, 178, 178)), questionType.niceName), BorderFactory.createEmptyBorder(10,
+                new Color(178, 178, 178)), Question.getNiceName(questionType)), BorderFactory.createEmptyBorder(10,
                 10, 10, 10));
 
         jbInit();
@@ -469,13 +470,13 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
         if (questionType == egoNet.getFrame().curTab)
         {
-        	DefaultListModel listModel = ((DefaultListModel) question_list.getModel());
+        	DefaultListModel<Question> listModel = ((DefaultListModel<Question>) question_list.getModel());
         	
             Object o = question_list.getSelectedValue();
             int selectedIndex = question_list.getSelectedIndex();
             
             listModel.removeAllElements();
-            egoNet.getStudy().fillList(questionType, (DefaultListModel) question_list.getModel());
+            egoNet.getStudy().fillList(questionType, (DefaultListModel<Question>) question_list.getModel());
             
             /* Goal below is to stay near the previously selected element, somehow */
             // if the previously selected element is still in the model
@@ -544,7 +545,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_followup_only_combo.setSelected(q.followupOnly);
 
                 question_type_menu.setEnabled(true);
-                question_answer_type_menu.setEnabled(q.questionType != Shared.QuestionType.ALTER_PROMPT);
+                question_answer_type_menu.setEnabled(!(q instanceof AlterPromptQuestion));
 
                 question_answer_type_button.setEnabled(q.answerType == Shared.AnswerType.CATEGORICAL);
                 question_question_field.setEditable(true);
@@ -564,7 +565,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                         question_central_label.setForeground(Color.red);
                         question_central_label.setVisible(true);
                     }
-                    else if (questionType == Shared.QuestionType.ALTER_PAIR)
+                    else if (questionType == AlterPairQuestion.class)
                     {
                         question_central_label.setText("No Adjacency Selections");
                         question_central_label.setForeground(Color.red);
@@ -711,13 +712,11 @@ public class AuthoringQuestionPanel extends EgoQPanel
     {
         if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
         {
-            Question q = new Question();
+            Question q = Question.newInstance(questionType);
 
-            q.questionType = questionType;
-            q.title = new String(questionType.niceName + ":Untitled Question");
+            q.title = new String(Question.getNiceName(questionType) + ":Untitled Question");
 
-            if (q.questionType == Shared.QuestionType.ALTER_PROMPT)
-            {
+            if (q instanceof AlterPromptQuestion) {
                 q.answerType = Shared.AnswerType.TEXT;
             }
 
@@ -782,10 +781,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
         if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
         {
-            Question q = new Question();
-
-            q.questionType = q_old.questionType;
-            q.title = new String((questionType.niceName) + ": " + q_old.title
+            Question q = Question.newInstance(q_old.getClass());
+            
+            q.title = new String((Question.getNiceName(questionType)) + ": " + q_old.title
                     + (q_old.title != null && q_old.title.endsWith("Duplicate Question") ? "" : " (Duplicate Question)"));
             q.answerType = q_old.answerType;
             q.citation = q_old.citation;
@@ -834,12 +832,12 @@ public class AuthoringQuestionPanel extends EgoQPanel
      */
     void question_type_menu_actionPerformed(ActionEvent e)
     {
-        if (!inUpdate)
-        {
-            if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
-            {
+        if (!inUpdate) {
+            if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
                 Question q = (Question) question_list.getSelectedValue();
-                QuestionType type = (QuestionType)question_type_menu.getSelectedItem();
+                
+                @SuppressWarnings("unchecked")
+				Class<? extends Question> type = (Class<? extends Question>)question_type_menu.getSelectedItem();
 
                 try {
                 	egoNet.getStudy().changeQuestionType(q, type);
@@ -953,7 +951,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
         egoNet.getStudy().setCentralQuestion(q);
     }
 
-    public QuestionType getQuestionType()
+    public Class<? extends Question> getQuestionType()
     {
         return questionType;
     }

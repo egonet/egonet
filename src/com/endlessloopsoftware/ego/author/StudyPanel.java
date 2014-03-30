@@ -96,7 +96,7 @@ public class StudyPanel extends JPanel
 	
 	private final Document			minAltersDocument				= new WholeNumberDocument();
 	private final Document			maxAltersDocument				= new WholeNumberDocument();
-        private final Document			altersDocument				= new WholeNumberDocument(); 
+	//private final Document			altersDocument				= new WholeNumberDocument(); 
 
 	private final String[]			instructionStrings		= {
 			"Start by selecting a study or choosing \"New Study\" from the file menu.", "Please name the study.",

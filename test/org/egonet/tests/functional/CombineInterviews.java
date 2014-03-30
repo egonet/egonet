@@ -16,6 +16,8 @@ import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +25,6 @@ import com.endlessloopsoftware.ego.client.graph.ELSFRLayout2;
 import com.endlessloopsoftware.ego.client.graph.Edge;
 import com.endlessloopsoftware.ego.client.graph.Vertex;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -88,7 +88,7 @@ public class CombineInterviews
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			alterList.addAll(Arrays.asList(interview.getAlterList()));
 
-			Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+			Iterator<Long> questions = study.getQuestionOrder(AlterPairQuestion.class).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				adj = interview.generateAdjacencyMatrix(q, false);

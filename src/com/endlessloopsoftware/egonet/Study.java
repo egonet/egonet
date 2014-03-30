@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.egonet;
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -26,10 +27,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.Question;
 
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
+import org.egonet.model.question.*;
 
 /*******************************************************************************
  * Stores basic configuration data for the study including question order lists
@@ -48,9 +52,8 @@ public class Study extends Observable implements Comparable<Study>
    private int               _minAlters      = 40;
    private int               _maxAlters      = 40;
    
-   private Map<QuestionType,List<Long>> _questionOrder  = new HashMap<QuestionType,List<Long>>();
+   private Map<Class<? extends Question>,List<Long>> _questionOrder  = new HashMap<Class<? extends Question>,List<Long>>();
    
-   private Question          _firstQuestion  = new Question("none");
    private QuestionList      _questions      = new QuestionList();
 
    /* Added for UNC */
@@ -65,7 +68,7 @@ public class Study extends Observable implements Comparable<Study>
 	public Study()
 	{
 		this._questions.clear();
-		for(QuestionType type : QuestionType.values())
+		for(Class<? extends Question> type : Shared.questionClasses)
 		    _questionOrder.put(type, new ArrayList<Long>());
 	}
 	
@@ -120,7 +123,7 @@ public class Study extends Observable implements Comparable<Study>
 	 */
 	public Question getFirstQuestion()
 	{
-		return _firstQuestion;
+		return _questions.values().iterator().next();
 	}
 
 	/***************************************************************************
@@ -132,7 +135,7 @@ public class Study extends Observable implements Comparable<Study>
 	 * @throws NoSuchElementException
 	 *             for category out of range
 	 */
-	public List<Long> getQuestionOrder(QuestionType category) throws NoSuchElementException
+	public List<Long> getQuestionOrder(Class<? extends Question> category) throws NoSuchElementException
 	{
 		return _questionOrder.get(category);
 	}
@@ -149,7 +152,7 @@ public class Study extends Observable implements Comparable<Study>
 		/**
 		 * Try to find one all alters answer
 		 */
-		 Iterator<Long> questions = getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+		 Iterator<Long> questions = getQuestionOrder(AlterPairQuestion.class).iterator();
 		while (questions.hasNext())
 		{
 			Question q = (Question) _questions.getQuestion(questions.next());
@@ -166,7 +169,7 @@ public class Study extends Observable implements Comparable<Study>
 		 */
 		if (statable == null)
 		{
-			questions = getQuestionOrder(Shared.QuestionType.ALTER).iterator();
+			questions = getQuestionOrder(AlterQuestion.class).iterator();
 			while (questions.hasNext())
 			{
 				Question q = (Question) _questions.getQuestion(questions.next());
@@ -317,9 +320,9 @@ public class Study extends Observable implements Comparable<Study>
 		setModified(true);
 		
 		/* If not in appropriate array list, add to that list too */
-		if (!_questionOrder.get(q.questionType).contains(q.UniqueId))
+		if (!_questionOrder.get(q.getClass()).contains(q.UniqueId))
 		{
-		    _questionOrder.get(q.questionType).add(q.UniqueId);
+		    _questionOrder.get(q.getClass()).add(q.UniqueId);
 		}
 	}
 
@@ -335,18 +338,17 @@ public class Study extends Observable implements Comparable<Study>
 	{
 		int followloc;
 
-		if (_questionOrder.get(q.questionType).contains(follow.UniqueId) || (follow == _firstQuestion))
+		if (_questionOrder.get(q.getClass()).contains(follow.UniqueId) || (follow.equals(getFirstQuestion())))
 		{
-			_questionOrder.get(q.questionType).remove(q.UniqueId);
+			_questionOrder.get(q.getClass()).remove(q.UniqueId);
 
-			if (follow == _firstQuestion)
-			{
-				_questionOrder.get(q.questionType).add(0, q.UniqueId);
+			if (follow.equals(getFirstQuestion())) {
+				_questionOrder.get(q.getClass()).add(0, q.UniqueId);
 			}
 			else
 			{
-				followloc = _questionOrder.get(q.questionType).indexOf(follow.UniqueId);
-				_questionOrder.get(q.questionType).add(followloc + 1, q.UniqueId);
+				followloc = _questionOrder.get(q.getClass()).indexOf(follow.UniqueId);
+				_questionOrder.get(q.getClass()).add(followloc + 1, q.UniqueId);
 			}
 
 			if (q.link.isActive())
@@ -361,11 +363,21 @@ public class Study extends Observable implements Comparable<Study>
 		}
 	}
 
-	public void changeQuestionType(Question q, QuestionType type) throws DuplicateQuestionException
+	public void changeQuestionType(Question oldQ, Class<? extends Question> newType) throws DuplicateQuestionException
 	{
-		removeQuestion(q);
-		q.questionType = type;
-		addQuestion(q);
+		if(oldQ.getClass().equals(newType))
+			return;
+		
+		removeQuestion(oldQ);
+		Question newQ = Question.newInstance(newType);
+		
+		// TODO: can be *way* improved
+		newQ.title = newQ.title;
+		newQ.text = oldQ.text;
+		newQ.citation = oldQ.citation;
+		newQ.answerType = oldQ.answerType;
+		
+		addQuestion(newQ);
 		setModified(true);
 	}
 
@@ -380,7 +392,7 @@ public class Study extends Observable implements Comparable<Study>
 	 */
 	public void setCentralQuestion(Question q)
 	{
-		Iterator<Long> i = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
+		Iterator<Long> i = _questionOrder.get(AlterPairQuestion.class).iterator();
 
 		while (i.hasNext())
 		{
@@ -422,7 +434,7 @@ public class Study extends Observable implements Comparable<Study>
 	public void validateQuestions()
 	{
 		boolean foundCentral = false;
-		Iterator<Long> it = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
+		Iterator<Long> it = _questionOrder.get(AlterPairQuestion.class).iterator();
 
 		while (it.hasNext())
 		{
@@ -446,7 +458,7 @@ public class Study extends Observable implements Comparable<Study>
 		if (!foundCentral)
 		{
 			/* Tag first Alter pair categorical question */
-			Iterator<Long> it2 = _questionOrder.get(Shared.QuestionType.ALTER_PAIR).iterator();
+			Iterator<Long> it2 = _questionOrder.get(AlterPairQuestion.class).iterator();
 
 			while (it2.hasNext() && !foundCentral)
 			{
@@ -463,7 +475,7 @@ public class Study extends Observable implements Comparable<Study>
 	}
 
 	/***************************************************************************
-	 * Searches question list for all questions of a given tpe, places them in
+	 * Searches question list for all questions of a given type, places them in
 	 * list
 	 * 
 	 * @param questionType
@@ -471,9 +483,9 @@ public class Study extends Observable implements Comparable<Study>
 	 * @param dlm
 	 *            list model to use in inserting questions
 	 */
-	public void fillList(QuestionType questionType, DefaultListModel<Question> dlm)
+	public void fillList(Class<? extends Question> questionType, DefaultListModel<Question> dlm)
 	{
-        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
         {
             if(!entry.getKey().equals(questionType))
                 continue;
@@ -495,13 +507,13 @@ public class Study extends Observable implements Comparable<Study>
      * @param dlm
      *            list model to use in inserting questions
      */
-    public void fillList(DefaultListModel dlm)
+    public void fillList(DefaultListModel<Question> dlm)
     {
-        Set<Entry<QuestionType, List<Long>>> entries = _questionOrder.entrySet();
+        Set<Entry<Class<? extends Question>, List<Long>>> entries = _questionOrder.entrySet();
         
-        for(Map.Entry<QuestionType,List<Long>> entry : entries)
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : entries)
         {
-            if(entry.getKey().equals(QuestionType.ALTER_PROMPT))
+            if(entry.getKey().equals(AlterPromptQuestion.class))
                 continue;
             
             List<Long> questions = entry.getValue();
@@ -524,11 +536,11 @@ public class Study extends Observable implements Comparable<Study>
      * @param endId
      *            question list end, stop when you see this question
      */
-    public void fillList(DefaultListModel dlm, Long endId)
+    public void fillList(DefaultListModel<Question> dlm, Long endId)
     {
-        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
         {
-            if(entry.getKey().equals(QuestionType.ALTER_PROMPT))
+            if(entry.getKey().equals(AlterPromptQuestion.class))
                 continue;
             
             for(Long id : entry.getValue())
@@ -552,9 +564,9 @@ public class Study extends Observable implements Comparable<Study>
 	 * @param endId
 	 *            question list end, stop when you see this question
 	 */
-	public void fillList(QuestionType questionType, DefaultListModel dlm, Long endId)
+	public void fillList(Class<? extends Question> questionType, DefaultListModel<Question> dlm, Long endId)
 	{
-        for(Map.Entry<QuestionType,List<Long>> entry : _questionOrder.entrySet())
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
         {
             if(!entry.getKey().equals(questionType))
                 continue;
@@ -579,9 +591,9 @@ public class Study extends Observable implements Comparable<Study>
 	 */
 	public boolean doesQuestionPreceed(Long q1, Long q2)
 	{
-		for(QuestionType qT : QuestionType.values())
+		for(Class<? extends Question> qT : Shared.questionClasses)
 		{
-		    if(qT.equals(QuestionType.STUDY_CONFIG))
+		    if(qT.equals(StudyQuestion.class))
 		        continue;
 		    
 		    List<Long> questionList = _questionOrder.get(qT);
@@ -606,7 +618,7 @@ public class Study extends Observable implements Comparable<Study>
 	 */
 	public void verifyStudy()
 	{
-	    for (QuestionType type : QuestionType.values())
+	    for (Class<? extends Question> type : Shared.questionClasses)
         {
             Iterator<Long> it = getQuestionIterator(type);
 
@@ -629,7 +641,7 @@ public class Study extends Observable implements Comparable<Study>
 	 *            category of question
 	 * @return iterator list iterator or questions
 	 */
-	public ListIterator<Long> getQuestionIterator(QuestionType category)
+	public ListIterator<Long> getQuestionIterator(Class<? extends Question> category)
 	{
 		return (_questionOrder.get(category).listIterator());
 	}

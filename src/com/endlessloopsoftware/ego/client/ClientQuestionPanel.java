@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego.client;
+
+import org.egonet.model.question.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,9 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.List;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -41,20 +45,18 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.question.Question;
 import org.egonet.util.CardPanel;
 import org.egonet.util.CatchingAction;
-
 import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
@@ -64,6 +66,10 @@ import org.slf4j.LoggerFactory;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+
+
+
 
 //import java.text.*;
 import java.util.Date;
@@ -113,7 +119,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	};
 
-	private final String ALTER_CARD = "ALTER";
+	// private final String ALTER_CARD = "ALTER";
 
 	private final String TEXT_CARD = "TEXT";
 
@@ -147,7 +153,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private JProgressBar questionProgress;
 
-	private final JComboBox answerMenu = new JComboBox();
+	private final JComboBox<Selection> answerMenu = new JComboBox<Selection>();
 
 	private final ListBuilder alterList = new ListBuilder();
 
@@ -158,7 +164,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	/* Containers */
 	private final JSplitPane questionSplit = new JSplitPane();
 
-	private final JList questionList = new JList();
+	private final JList<Question> questionList = new JList<Question>();
 
 	private CardPanel answerPanel = new CardPanel();
 
@@ -219,7 +225,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		this.setLayout(new GridLayout());
 
                 //Initiliaze all jBuilders we will need in the interview.
-                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(AlterPromptQuestion.class).size();
                 for (int i=0; i< numQuestionPrompt; i++)
                 {
                     alterLists.add(new ListBuilder());
@@ -352,13 +358,45 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
 		questionProgress.setStringPainted(true);
 
-		questionList.setModel(new DefaultListModel());
-		egoClient.getInterview().fillList((DefaultListModel) questionList.getModel());
+		questionList.setModel(new DefaultListModel<Question>());
+		questionList.setCellRenderer(new QuestionListCellRenderer(egoClient.getInterview()));
+		
+		egoClient.getInterview().fillList((DefaultListModel<Question>) questionList.getModel());
 
 		if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
 			questionList.setSelectedIndex(0);
 
 		fillPanel();
+	}
+	
+	class QuestionListCellRenderer extends DefaultListCellRenderer {
+		private Interview interview;
+		
+		public QuestionListCellRenderer(Interview interview) {
+			this.interview = interview;
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList list, Object arg1, int index, boolean isSelected, boolean cellHasFocus) {
+			
+			Question q = (Question)arg1;
+			Answer[] _answers = interview.get_answers();
+			List<Answer> lAnswers = Arrays.asList(_answers);
+			
+			String s = q.toString();
+			int i = lAnswers.indexOf(q.getAnswer());
+
+			if (q instanceof AlterQuestion) {
+				s = s + "; " + _answers[i].firstAlter();
+			} else if (q instanceof AlterPairQuestion) {
+				s = s + "; "
+					+ _answers[i].firstAlter() + " & "
+					+ _answers[i].secondAlter();
+			}
+
+			s = q.getNiceName() + ": " + s;
+			return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
+		}
 	}
 
 	private JComponent getLeftPanel() {
@@ -437,7 +475,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		//answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
                
                 //Set up answer panels for alter question prompt questions.
-                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(AlterPromptQuestion.class).size();
                 
                 for (int i = 0; i< numQuestionPrompts; i++){
                       answerPanel.add(new JScrollPane(alterLists.get(i)), "ALTER"+i);
@@ -539,7 +577,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionButtonPrevious.setEnabled(egoClient.getInterview().hasPrevious());
 
 
-		String strTitle = question.questionType.title;
+		String strTitle = question.getTitle();
 		if(strTitle.contains("$$1"))
 		    strTitle = strTitle.replace("$$1", alterNames[0]);
 		if(strTitle.contains("$$2"))
@@ -551,7 +589,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		titleText.setText(strTitle);
 
 		answerPanel.setVisible(false);
-		if ((question.questionType == Shared.QuestionType.ALTER_PROMPT)
+		if ((question instanceof AlterPromptQuestion)
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
 
@@ -713,7 +751,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 				answerMenu.setActionCommand("Initialization"); // suspend the answer listener while we mess w/ the box
 				answerMenu.removeAllItems();
-				answerMenu.addItem("Select an answer");
+				answerMenu.addItem(new Selection("Select an answer"));
 
 				for (int i = 0; i < question.getSelections().length; i++) {
 					answerMenu.addItem(question.getSelections()[i]);
@@ -768,7 +806,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                 Interview interview = egoClient.getInterview();
                 int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
                 
-		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
+		if (question instanceof AlterPromptQuestion) {
 			answer.string = "Egonet - University of Florida";
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
 			logger.info("More prompts? " + morePrompts);
@@ -984,7 +1022,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
             //If we are at question prompt question, check if there is some input field 
             //typed. If there is some name, we must allow the user to add it in the list, 
             //so we won't proceed to the next question.
-            if ((question.questionType == Shared.QuestionType.ALTER_PROMPT))
+            if ((question instanceof AlterPromptQuestion))
             {
                 int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
                 nameTyped = alterLists.get(currentQuestionPrompt).isTypedAlter();
@@ -1004,7 +1042,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                             }
 
                             if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-                                            && (question.questionType == Shared.QuestionType.ALTER_PAIR)) {
+                                            && (question instanceof AlterPairQuestion)) {
                                     setDefaultAnswer();
                             }
 
@@ -1061,7 +1099,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-					&& (question.questionType == Shared.QuestionType.ALTER_PAIR)) {
+					&& (question instanceof AlterPairQuestion)) {
 				setDefaultAnswer();
 			}
 
@@ -1125,7 +1163,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
                 Interview interview = egoClient.getInterview();
                 
-		if (question.questionType == Shared.QuestionType.ALTER_PROMPT) {
+		if (question instanceof AlterPromptQuestion) {
 			boolean morePrompts = !interview.isLastAlterPrompt();
 			boolean bWithinRequiredAlterRange;
                         
@@ -1340,18 +1378,18 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	public static void showPreview(String questionTitle, String questionText, 
-			Shared.QuestionType questionType, Shared.AnswerType answerType, Selection[] selections) 
+			Class<? extends Question> questionType, Shared.AnswerType answerType, Selection[] selections) 
 	{
 
 		JDialog dialog = new JDialog(null,"Preview of "+questionTitle,Dialog.ModalityType.APPLICATION_MODAL);
 		MigLayout layout = new MigLayout("", "[grow]");
 		JPanel panel = new JPanel();
 		panel.setLayout(layout);
-		panel.add(new JLabel(questionType.title.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
+		panel.add(new JLabel(Question.getTitle(questionType).replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
 		panel.add(new JLabel(questionText.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
 		panel.add(new JLabel(""), "growx, wrap");
 
-		if(questionType.equals(QuestionType.ALTER_PROMPT)) {
+		if(questionType.equals(AlterPromptQuestion.class)) {
 			panel.add(new JLabel(""), "growx, wrap");
 			panel.add(new JLabel("(Alter entry not yet implemented in alter prompt preview)"), "growx, wrap");
 		} else if(answerType.equals(AnswerType.TEXT)) {
@@ -1377,7 +1415,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					}
 				} else {
 					panel.add(new JLabel("Menu Answer:"),"growx,wrap");
-					JComboBox box = new JComboBox();
+					JComboBox<String> box = new JComboBox<String>();
 					box.addItem("Select an answer");
 					for(Selection selection : selections) {
 						box.addItem(selection.getString());

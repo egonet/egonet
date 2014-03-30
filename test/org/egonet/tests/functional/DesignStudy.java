@@ -12,6 +12,10 @@ import javax.swing.JTextField;
 
 import junit.framework.Assert;
 
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.EgoQuestion;
+import org.egonet.model.question.Question;
 import org.fest.swing.core.ComponentFinder;
 import org.fest.swing.core.NameMatcher;
 import org.fest.swing.core.Robot;
@@ -32,7 +36,7 @@ import org.junit.Test;
 
 import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
 import com.endlessloopsoftware.ego.author.PromptPanel;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
 
 public class DesignStudy {
 	
@@ -72,7 +76,7 @@ public class DesignStudy {
 		// ego questions
 		tabs.selectTab("Ego");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), QuestionType.EGO);
+		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), EgoQuestion.class);
 		JPanelFixture egoPanel = new JPanelFixture(window.robot, egoPanel0);
 		
 		createPlainQuestion(egoPanel, AnswerType.CATEGORICAL);
@@ -88,7 +92,7 @@ public class DesignStudy {
 		
 		// alter
 		tabs.selectTab("Alter");
-		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER);
+		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), AlterQuestion.class);
 		JPanelFixture alterPanel = new JPanelFixture(window.robot, alterPanel0);
 		
 		createPlainQuestion(alterPanel, AnswerType.CATEGORICAL);
@@ -99,7 +103,7 @@ public class DesignStudy {
 		// alter pair
 		tabs.selectTab("Alter Pair");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER_PAIR);
+		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), AlterPairQuestion.class);
 		JPanelFixture alterPairPanel = new JPanelFixture(window.robot, alterPairPanel0);
 		
 		createPlainQuestion(alterPairPanel, AnswerType.CATEGORICAL, true);
@@ -180,7 +184,7 @@ public class DesignStudy {
 		dialog.button(withText("OK")).click();
 	}
 	
-	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, QuestionType type)
+	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, Class<? extends Question> type)
 	{
 		Collection<Component> questionpanels = finder.findAll(new TypeMatcher(AuthoringQuestionPanel.class, false));
 		for(Component c : questionpanels)

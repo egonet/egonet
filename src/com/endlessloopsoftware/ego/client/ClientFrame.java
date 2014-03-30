@@ -44,6 +44,8 @@ import org.egonet.gui.EgoStore;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.io.EdgeListWriter;
 import org.egonet.mdi.MDIContext;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.EgonetAnalytics;
 import org.egonet.util.ExtensionFileFilter;
@@ -58,8 +60,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.endlessloopsoftware.ego.client.graph.*;
 import com.endlessloopsoftware.ego.client.statistics.StatRecord;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 
@@ -406,7 +406,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				
 				String [] thisInterviewAlterlist = interview.getAlterList();
 
-				Iterator<Long> questions = study.getQuestionOrder(Shared.QuestionType.ALTER_PAIR).iterator();
+				Iterator<Long> questions = study.getQuestionOrder(AlterPairQuestion.class).iterator();
 				while (questions.hasNext()) {
 					Question q = study.getQuestion((Long) questions.next());
 					int[][] adj = interview.generateAdjacencyMatrix(q, true);

@@ -17,7 +17,10 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+
 import org.egonet.io.InterviewReader;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.Name;
@@ -33,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
-
 import net.miginfocom.swing.MigLayout;
 import net.sf.functionalj.Function2;
 import net.sf.functionalj.Function2Impl;
@@ -43,9 +45,7 @@ import net.sf.functionalj.tuple.Triple;
 
 import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Question;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -221,7 +221,7 @@ public class NameMapperFrame extends JFrame {
 			questionInterviewAlterToAnswer = new TreeMap<Triple<Long,String,Integer>,Answer>();
 			
 			for(Question question : study.getQuestions().values()) {
-				if(question.questionType.equals(QuestionType.ALTER)) {
+				if(question instanceof AlterQuestion) {
 					alterQuestions.add(question);
 					alterQuestionIds.add(question.UniqueId);
 				}

@@ -18,7 +18,9 @@
  */
 package com.endlessloopsoftware.ego.author;
 
+import org.egonet.model.question.*;
 import java.awt.AWTEvent;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -43,23 +45,25 @@ import javax.swing.text.DefaultEditorKit;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
+import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Shared.QuestionType;
+
+import org.egonet.model.question.StudyQuestion;
 
 public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameListener {
 	
 	final private static Logger logger = LoggerFactory.getLogger(EgoFrame.class);
 
-    Shared.QuestionType lastTab = Shared.QuestionType.STUDY_CONFIG;
     /**
      * Changes based on jTabbedPane_stateChanged, which is activated when tabs are clicked
      */
-	Shared.QuestionType curTab = Shared.QuestionType.STUDY_CONFIG;
+    Class<? extends Question> curTab = StudyQuestion.class;
+    Class<? extends Question> lastTab = StudyQuestion.class;
 
 	private final EgoNet egoNet;
 	private JPanel contentPane;
@@ -89,7 +93,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	private final StudyPanel study_panel;
 
-	private final Map<QuestionType,EgoQPanel> questionPanel;
+	private final Map<Class<? extends Question>,EgoQPanel> questionPanel;
 	
 	// Construct the frame
 	public EgoFrame(EgoNet egoNet)
@@ -98,11 +102,11 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 			this.egoNet = egoNet;
 			study_panel = new StudyPanel(egoNet);
 			
-			questionPanel = new HashMap<QuestionType,EgoQPanel>();
-			questionPanel.put(QuestionType.EGO, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.EGO));
-			questionPanel.put(QuestionType.ALTER_PROMPT, new PromptPanel(egoNet, Shared.QuestionType.ALTER_PROMPT));
-			questionPanel.put(Shared.QuestionType.ALTER, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER));
-			questionPanel.put(Shared.QuestionType.ALTER_PAIR, new AuthoringQuestionPanel(egoNet, Shared.QuestionType.ALTER_PAIR));
+			questionPanel = new HashMap<Class<? extends Question>,EgoQPanel>();
+			questionPanel.put(EgoQuestion.class, new AuthoringQuestionPanel(egoNet, EgoQuestion.class));
+			questionPanel.put(AlterPromptQuestion.class, new PromptPanel(egoNet, AlterPromptQuestion.class));
+			questionPanel.put(AlterQuestion.class, new AuthoringQuestionPanel(egoNet, AlterQuestion.class));
+			questionPanel.put(AlterPairQuestion.class, new AuthoringQuestionPanel(egoNet, AlterPairQuestion.class));
 			
 			enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 			jbInit();
@@ -178,10 +182,12 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		jTabbedPane.setTabPlacement(JTabbedPane.TOP);
 		jTabbedPane.add(study_panel, "Study");
 
-		for (QuestionType qT : QuestionType.values()) {
-		    if(qT.equals(QuestionType.STUDY_CONFIG))
+		
+		for (Class<? extends Question> qT : Shared.questionClasses) {
+		    if(qT.equals(StudyQuestion.class))
 		        continue;
-			jTabbedPane.add(questionPanel.get(qT), qT.niceName);
+		    
+			jTabbedPane.add(questionPanel.get(qT), Question.getNiceName(qT));
 		}
 		contentPane.add(jTabbedPane);
 
@@ -431,7 +437,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		boolean sd = egoNet.getStudy().isModified();
 		boolean sc = egoNet.getStudy().isCompatible();
 
-		if (curTab == Shared.QuestionType.STUDY_CONFIG) {
+		if (curTab == StudyQuestion.class) {
 			study_panel.fillPanel();
 		} else {
 			questionPanel.get(curTab).fillPanel();
@@ -444,7 +450,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	public void fillStudyPanel() throws IOException {
 		boolean sd = egoNet.getStudy().isModified();
 
-		if (curTab == Shared.QuestionType.STUDY_CONFIG) {
+		if (curTab == StudyQuestion.class) {
 			study_panel.fillPanel();
 		}
 
@@ -457,16 +463,16 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		Component selectedTab = jTabbedPane.getSelectedComponent();
 		if(selectedTab instanceof StudyPanel)
 		{
-		    curTab = Shared.QuestionType.STUDY_CONFIG;
+		    curTab = StudyQuestion.class;
 		} else {
 		    curTab = ((EgoQPanel)selectedTab).questionType;
 		}
 
-		if ((lastTab == Shared.QuestionType.STUDY_CONFIG) && (curTab != lastTab)) {
+		if ((lastTab == StudyQuestion.class) && (curTab != lastTab)) {
 			egoNet.getStudy().validateQuestions();
 		}
 
-		if (curTab == Shared.QuestionType.STUDY_CONFIG) {
+		if (curTab == StudyQuestion.class) {
             study_panel.fillPanel();
         } else {
 			questionPanel.get(curTab).fillPanel();
