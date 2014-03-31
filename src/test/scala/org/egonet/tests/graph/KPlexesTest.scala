@@ -8,6 +8,7 @@ import java.util.Set
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import org.egonet.graph.KPlexes
+import org.egonet.tests.EgonetSpec
 
 class KPlexesTest extends EgonetSpec {
 

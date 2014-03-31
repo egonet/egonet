@@ -1,5 +1,10 @@
 package org.egonet.tests.graph
+
 import java.util.Random
+
+import org.egonet.tests.EgonetSpec
+import org.egonet.graph.Graph
+import scala.math.abs
 
 class GraphTest extends EgonetSpec {
 
@@ -15,7 +20,10 @@ class GraphTest extends EgonetSpec {
 			
 			var calculatedDensity = graph.density()
 			if(i > 50) {
-				assert(round(100*expectedDensity)/100 == round(100*calculatedDensity)/100);
+			  var diff = abs(calculatedDensity - expectedDensity)
+			  
+			  if(diff > 0.1)
+			    assert(expectedDensity == calculatedDensity)
 			}
   	    
   	  }
