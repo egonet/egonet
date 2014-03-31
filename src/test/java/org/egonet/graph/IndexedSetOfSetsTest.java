@@ -1,4 +1,4 @@
-package org.egonet.tests.graph;
+package org.egonet.graph;
 
 import static org.junit.Assert.*;
 

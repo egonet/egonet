@@ -31,9 +31,9 @@ import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JPanelFixture;
 import org.fest.swing.fixture.JTabbedPaneFixture;
 import org.fest.swing.fixture.JTextComponentFixture;
-import org.junit.After;
+/*import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Test;*/
 
 import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
 import com.endlessloopsoftware.ego.author.EgoFrame;

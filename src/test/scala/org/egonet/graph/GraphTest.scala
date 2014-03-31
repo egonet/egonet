@@ -1,10 +1,8 @@
-package org.egonet.tests.graph
+package org.egonet.graph
 
 import java.util.Random
-
-import org.egonet.tests.EgonetSpec
-import org.egonet.graph.Graph
 import scala.math.abs
+import org.egonet.EgonetSpec
 
 class GraphTest extends EgonetSpec {
 

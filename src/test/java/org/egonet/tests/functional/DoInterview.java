@@ -16,10 +16,10 @@ import org.fest.swing.fixture.JComboBoxFixture;
 import org.fest.swing.fixture.JFileChooserFixture;
 import org.fest.swing.fixture.JPanelFixture;
 import org.fest.swing.fixture.JTextComponentFixture;
-import org.junit.After;
 import org.junit.Assert;
+/*import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Test;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.egonet.tests;
+package org.egonet;
 
 import org.scalatest.FlatSpec;
 
