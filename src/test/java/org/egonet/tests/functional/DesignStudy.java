@@ -48,7 +48,7 @@ public class DesignStudy {
 	
 	private FrameFixture window;
 
-	@Before
+	//@Before
 	public void setUp() throws Exception
 	{
 		EgoNet client = new EgoNet();
@@ -61,13 +61,13 @@ public class DesignStudy {
 		window.show(); // shows the frame to test
 	}
 
-	@After
+	//@After
 	public void tearDown()
 	{
 		window.cleanUp();
 	}
 
-	@Test
+	//@Test
 	public void fullStudyDesign() throws Exception {
 	    Assert.assertTrue("Location must exist: " + location, new File(location).exists());
 	    //Thread.sleep(1000*10);

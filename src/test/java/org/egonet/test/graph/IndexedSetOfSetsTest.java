@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Set;
 
 import org.junit.*;
+
 import junit.framework.JUnit4TestAdapter;
 
 import org.egonet.graph.IndexedSetOfSets;
@@ -12,6 +13,10 @@ import org.egonet.graph.IndexedSetOfSets;
 import com.google.common.collect.Sets;
 
 public class IndexedSetOfSetsTest {
+	/*@Test
+	public void fail() {
+		assertEquals("1!=2",1,2);
+	}*/
 
 	private Set<String> item1() {
 		Set<String> item = Sets.newHashSet();

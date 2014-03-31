@@ -49,7 +49,7 @@ public class DoInterview {
 	private static final String studyName = DesignStudy.studyName;
 	private static final String location = DesignStudy.location + File.separator + studyName + File.separator + studyName + ".ego";
 	
-	@Before
+	//@Before
 	public void setUp() throws Exception
 	{
 		studyFile = new File(location);
@@ -65,13 +65,13 @@ public class DoInterview {
 		window.show(); // shows the frame to test
 	}
 
-	@After
+	//@After
 	public void tearDown()
 	{
 		window.cleanUp();
 	}
 	
-	@Test
+	//@Test
 	public void fullInterview() throws Exception
 	{
 		window.button(withText("Select Study")).click();

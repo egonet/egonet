@@ -1,4 +1,4 @@
-package org.egonet.tests.functional;
+package org.egonet.tests.broken;
 
 import java.io.*;
 
