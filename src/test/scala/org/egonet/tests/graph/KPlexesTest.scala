@@ -1,4 +1,4 @@
-package org.egonet.test.graph
+package org.egonet.tests.graph
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -7,7 +7,6 @@ import java.util.Random
 import java.util.Set
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
-import org.egonet.test.EgonetSpec;
 import org.egonet.graph.KPlexes
 
 class KPlexesTest extends EgonetSpec {

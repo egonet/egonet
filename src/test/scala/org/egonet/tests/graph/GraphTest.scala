@@ -1,9 +1,5 @@
-package org.egonet.test.graph
-
-import org.egonet.test.EgonetSpec
+package org.egonet.tests.graph
 import java.util.Random
-import java.lang.Math.round
-import org.egonet.graph.Graph
 
 class GraphTest extends EgonetSpec {
 
