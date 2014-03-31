@@ -6,6 +6,8 @@ assemblySettings
 
 name := "egonet"
 
+libraryDependencies += "junit" % "junit" % "4.3.1"
+
 libraryDependencies += "net.sf.jung" % "jung-api" % "2.0.1"
 
 libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"
@@ -38,13 +40,13 @@ libraryDependencies += "com.lowagie" % "itext" % "2.1.5"
 
 libraryDependencies += "com.lowagie" % "itext-rtf" % "2.1.5"
 
-libraryDependencies += "junit" % "junit" % "4.3.1"
-
 libraryDependencies += "commons-codec" % "commons-codec" % "1.3"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.5.6"
 
 libraryDependencies += "org.slf4j" % "slf4j-jdk14" % "1.5.6"
+
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
 
 mainClass in (Compile, run) := Some("org.egonet.gui.EgonetRunner")
 
