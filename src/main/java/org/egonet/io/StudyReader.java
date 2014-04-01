@@ -224,6 +224,7 @@ public class StudyReader {
 	    }
 	}
 	
+	@SuppressWarnings({"deprecation"})
 	public static Question readQuestion(Element question) throws MalformedQuestionException
 	{
 		Question q;
