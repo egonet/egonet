@@ -240,9 +240,16 @@ public abstract class Question implements Cloneable {
 			return clazz.newInstance();
 		} 
 		catch (Exception ex) {
-			throw new MalformedQuestionException(ex);
+			throw new MalformedQuestionException("could not instantiate an instance of class " + clazz.getCanonicalName(),ex);
 		}
 	}
+	
+	/**
+	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
+	 * 
+	 * @param questionType type of question subclass
+	 * @return a class object representing that type
+	 */
 	
 	public static Class<? extends Question> asSubclass(String questionType) {
 		try {

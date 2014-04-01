@@ -1,6 +1,11 @@
 package org.egonet.model.question;
 
 public class AlterPromptQuestion extends Question {
+	
+	public AlterPromptQuestion() {
+		super();
+	}
+	
 	@Override
 	public String getNiceName() {
 		return "Alter Prompt";

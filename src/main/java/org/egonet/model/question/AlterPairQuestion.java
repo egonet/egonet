@@ -1,6 +1,10 @@
 package org.egonet.model.question;
 
 public class AlterPairQuestion extends Question {
+	
+	public AlterPairQuestion() {
+		super();
+	}
 
 	@Override
 	public String getNiceName() {

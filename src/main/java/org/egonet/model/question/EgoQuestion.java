@@ -1,6 +1,10 @@
 package org.egonet.model.question;
 
 public class EgoQuestion extends Question {
+	public EgoQuestion() {
+		super();
+	}
+	
 	@Override
 	public String getNiceName() {
 		return "Ego";
