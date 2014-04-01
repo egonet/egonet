@@ -92,8 +92,6 @@ public abstract class Question implements Cloneable {
 	
 	public AnswerType answerType = AnswerType.TEXT;
 
-	public int numQAlters = -1;
-
 	public QuestionLink link = new QuestionLink();
 
 	private Selection[] selections = new Selection[0];
