@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.text.*;
 
 public class Answer implements Cloneable {
@@ -59,6 +60,12 @@ public class Answer implements Cloneable {
     public static final int NO_ANSWER = -1;
     public static final int ALL_ADJACENT = -2;
 
+    private static Random generator = new Random(System.currentTimeMillis());
+    
+    public Answer() {
+    	this((long)generator.nextInt());
+    }
+    
     public Answer(Long Id) {
         this(Id, null);
     }
