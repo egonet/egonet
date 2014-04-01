@@ -9,6 +9,7 @@ import java.util.Set
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import org.egonet.EgonetSpec
+import org.egonet.EgonetSpec
 
 class KPlexesTest extends EgonetSpec {
 
@@ -56,28 +57,28 @@ class KPlexesTest extends EgonetSpec {
     true
   }
 
-  "testConnectionsByNode" should "answer equals calculated" in {
+  "KPlexes" should "testConnectionsByNode answer equals calculated" in {
     var calculations: Map[Integer, Integer] = kp.connectionsByNode(graphWithThreeCliques());
     var answers = List(3, 3, 4, 2, 3, 2, 2, 2, 1);
 
     assert(matchMapToList(answers, calculations))
   }
 
-  "testConnectednessByNode" should "answer has expected connectednes" in {
+  it should "testConnectednessByNode answer has expected connectednes" in {
     var calculations: Map[Integer, Integer] = kp.connectednessByNode(graphWithThreeCliques());
     var answers = List(2, 2, 3, 2, 2, 2, 2, 1, 1);
 
     assert(matchMapToList(answers, calculations))
   }
 
-  "testConnectionsWithinSubgroup" should "have expected subgroup values" in {
+  it should "testConnectionsWithinSubgroup have expected subgroup values" in {
     var calculations: Map[Integer, Integer] = kp.connectionsWithinSubgroup(graphWithThreeCliques(), intSet(1, 2, 3, 4));
     var answers = List(2, 3, 3, 2, 1, 0, 0, 1, 0);
 
     assert(matchMapToList(answers, calculations))
   }
 
-  "testCriticalNodes" should "be critical in a 1-plex" in {
+  it should "testCriticalNodes be critical in a 1-plex" in {
     var calculations: Set[Integer] = kp.criticalNodesInKPlex(
       graphWithThreeCliques(),
       intSet(7),
@@ -88,7 +89,7 @@ class KPlexesTest extends EgonetSpec {
     assert(answers == calculations)
   }
 
-  "testSubgraphBoundingFinalKPlex" should "boundsKPlex" in {
+  it should "subgraphBoundingFinalKPlex boundsKPlex" in {
     var finalKPlex = intSet(5, 6, 7);
     var subgraph =
       kp.subgraphBoundingFinalKPlex(graphWithThreeCliques(), intSet(7), 1, 3);
@@ -96,17 +97,17 @@ class KPlexesTest extends EgonetSpec {
     assert(boundsKPlex.containsAll(finalKPlex));
   }
 
-  "testGrowClique" should "Expect {7} to grow into 1-plex of {5,6,7}" in {
+  it should "growKPlex expect {7} to grow into 1-plex of {5,6,7}" in {
     var clique = kp.growKPlex(graphWithThreeCliques(), intSet(7), 1, 3);
     assert(intSet(5, 6, 7) == clique);
   }
 
-  "testCliqueSearch" should "Find a clique of size three, because all three cliques have size three." in {
+  it should "findLargeKPlex find a clique of size three, because all three cliques have size three." in {
     var clique = kp.findLargeKPlex(graphWithThreeCliques(), 1);
     assert(3 == clique.size());
   }
 
-  "testKPlexSearch" should "find a 2-plex of size 4" in {
+  it should "testKPlexSearch find a 2-plex of size 4" in {
     assert(intSet(1, 2, 3, 4) == kp.findLargeKPlex(graphWithThreeCliques(), 2));
   }
 

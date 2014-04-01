@@ -2,11 +2,7 @@ import AssemblyKeys._
 import Keys._
 import sbtassembly.Plugin._
 
-assemblySettings
-
 name := "egonet"
-
-// libraryDependencies += "junit" % "junit" % "4.3.1"
 
 libraryDependencies += "net.sf.jung" % "jung-api" % "2.0.1"
 
@@ -63,3 +59,7 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
     case x => old(x)
   }
 }
+
+
+assemblySettings
+

@@ -44,7 +44,6 @@ public class StudyWriter {
 	      writeAllQuestionData(studyElement, study.getQuestions());
 
 	      document.write(studyFile);
-		
 	}
 	
 	public void setStudyInUse(boolean inUse) throws IOException, EgonetException {
