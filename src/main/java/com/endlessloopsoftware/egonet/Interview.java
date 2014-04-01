@@ -31,6 +31,7 @@ import javax.swing.DefaultListModel;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.MissingPairException;
 import org.egonet.gui.EgoStore;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.AlterQuestion;
@@ -127,7 +128,7 @@ public class Interview implements Comparable<Interview> {
 	Answer findUniqueQuestion(Answer[] haystack, long needle) {
 		Answer ret = null;
 		for(Answer possible : haystack) {
-			if(possible.questionId == needle)
+			if(possible.getQuestionId().equals(needle))
 				ret = possible;
 		}
 		
@@ -179,8 +180,11 @@ public class Interview implements Comparable<Interview> {
 			Answer oldAnswer = findUniqueQuestion(_oldanswers, question.UniqueId);
 			
 			// if no previous, new, otherwise try to keep
-			if(oldAnswer == null)
-				_answers[newindex] = new Answer(question.UniqueId);
+			if(oldAnswer == null) {
+            	Answer a = Answer.newInstance(question.answerType);
+            	a.setQuestionId(question.UniqueId);
+				_answers[newindex] = a;
+			}
 			else
 				_answers[newindex] = oldAnswer;
 		}
@@ -199,8 +203,11 @@ public class Interview implements Comparable<Interview> {
                             int newindex = counter++;
                            
                             // if no previous, new, otherwise try to keep
-                            if(oldAnswer == null)
-                                _answers[newindex] = new Answer(question.UniqueId);
+                            if(oldAnswer == null) {
+                            	Answer a = Answer.newInstance(question.answerType);
+                            	a.setQuestionId(question.UniqueId);
+                                _answers[newindex] = a;
+                            }
                             else
                                 _answers[newindex] = oldAnswer;
                             //_answers[counter++] = new Answer(question.UniqueId);
@@ -221,7 +228,9 @@ public class Interview implements Comparable<Interview> {
 					throw new CorruptedInterviewException();
 				}
 				
-				_answers[counter++] = new Answer(question.UniqueId, alter);
+				Answer answer = Answer.newInstance(question.answerType);
+				answer.setQuestionId(question.UniqueId); answer.setAlters(alter);
+				_answers[counter++] = answer;
 				
 			}
 		}
@@ -237,8 +246,10 @@ public class Interview implements Comparable<Interview> {
 					if (question == null) {
 						throw new CorruptedInterviewException();
 					}
-
-					_answers[counter++] = new Answer(question.UniqueId, alters);
+					Answer answer = Answer.newInstance(question.answerType);
+					answer.setQuestionId(question.UniqueId);
+					answer.setAlters(alters);
+					_answers[counter++] = answer;
 				}
 			}
 		}
@@ -270,7 +281,7 @@ public class Interview implements Comparable<Interview> {
 		for (int i = 0; i < get_numAnswers(); i++) {
 			// Question q = getQuestion(i);
 
-			Question q = _study.getQuestions().getQuestion(_answers[i].questionId);
+			Question q = _study.getQuestions().getQuestion(_answers[i].getQuestionId());
 
 			if (q instanceof AlterPairQuestion
 					&& (_study.getUIType().equals(Shared.PAIR_ELICITATION) || _study
@@ -332,7 +343,7 @@ public class Interview implements Comparable<Interview> {
 		Set<Answer> s = new HashSet<Answer>(_numAlterPairs);
 
 		for (int i = 0; i < _answers.length; i++) {
-			if (_answers[i].questionId.equals(qId)) {
+			if (_answers[i].getQuestionId().equals(qId)) {
 				s.add(_answers[i]);
 			}
 		}
@@ -348,11 +359,11 @@ public class Interview implements Comparable<Interview> {
 	public List<Answer> getEgoAnswers() {
 		List<Answer> l = new ArrayList<Answer>();
 		int index = 0;
-		Question q = _study.getQuestions().getQuestion(_answers[index].questionId);
+		Question q = _study.getQuestions().getQuestion(_answers[index].getQuestionId());
 
 		while (q instanceof EgoQuestion) {
 			l.add(_answers[index]);
-			q = _study.getQuestions().getQuestion(_answers[++index].questionId);
+			q = _study.getQuestions().getQuestion(_answers[++index].getQuestionId());
 		}
 
 		return (l);
@@ -444,7 +455,7 @@ public class Interview implements Comparable<Interview> {
 		int i;
 
 		for (i = (startIndex - 1); i >= 0; i--) {
-			if (_answers[i].questionId.equals(id))
+			if (_answers[i].getQuestionId().equals(id))
 				break;
 		}
 
@@ -469,7 +480,7 @@ public class Interview implements Comparable<Interview> {
 
 		if (q.link.isActive()) {
 			//logger.info("Link active!");
-			Answer a = getPriorQuestionInstance(index, q.link.getAnswer().questionId);
+			Answer a = getPriorQuestionInstance(index, q.link.getAnswer().getQuestionId());
 
 			if (a != null) {
 				//logger.info("\tLink is tied to an answer -- ");
@@ -654,7 +665,7 @@ public class Interview implements Comparable<Interview> {
 		int length = _answers.length;
 		if(index > -1 && index < length) {
 			Answer result = _answers[index];
-			return _study.getQuestion(result.questionId);
+			return _study.getQuestion(result.getQuestionId());
 		}
 		
 		throw new RuntimeException("Requested a question at index " + index + " but there are only " + length + " questions!");
@@ -663,7 +674,7 @@ public class Interview implements Comparable<Interview> {
 	public List<Answer> getAnswersByUniqueId(long id) {
 		List<Answer> list = new ArrayList<Answer>();
 		for(Answer answer : _answers) {
-			if(answer.questionId == id)
+			if(answer.getQuestionId().equals(id))
 				list.add(answer);
 		}
 		
@@ -785,11 +796,11 @@ public class Interview implements Comparable<Interview> {
 
 			if (answer.isAnswered()) {
 				egoAnswers[index++] = new EgoAnswer(_study
-						.getQuestions().getQuestion(answer.questionId).title,
+						.getQuestions().getQuestion(answer.getQuestionId()).title,
 						answer.string, answer.getValue());
 			} else {
 				egoAnswers[index++] = new EgoAnswer(_study
-						.getQuestions().getQuestion(answer.questionId).title,
+						.getQuestions().getQuestion(answer.getQuestionId()).title,
 						"N/A", Answer.NO_ANSWER);
 			}
 		}

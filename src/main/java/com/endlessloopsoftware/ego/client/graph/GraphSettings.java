@@ -35,10 +35,10 @@ import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodePropertyType;
 import com.endlessloopsoftware.ego.client.graph.NodeProperty.NodeShape;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgePropertyType;
 import com.endlessloopsoftware.ego.client.graph.EdgeProperty.EdgeShape;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.QuestionList;
 import com.endlessloopsoftware.egonet.Study;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
@@ -547,7 +547,7 @@ public class GraphSettings {
 		for (Answer answer : answers) {
 			String questionTitle = "";
 			String answerString = "";
-			Question question = egoClient.getStudy().getQuestion(answer.questionId);
+			Question question = egoClient.getStudy().getQuestion(answer.getQuestionId());
 			if (question instanceof AlterQuestion) {
 				questionTitle = question.title;
 				answerString = answer.string + " " + (detail ? "(index="+answer.getIndex()+",value="+answer.getValue()+")" : "");

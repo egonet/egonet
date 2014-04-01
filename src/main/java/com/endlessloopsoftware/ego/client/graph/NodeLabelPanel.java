@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.util.*;
 import java.awt.event.*;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
@@ -37,9 +38,7 @@ import org.egonet.util.table.LabelTableModel;
 import org.egonet.util.table.LabelRenderer;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.QuestionList;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 
@@ -87,8 +86,8 @@ public class NodeLabelPanel extends JPanel {
 			if (currentQuestion instanceof AlterQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.answerType == Shared.AnswerType.CATEGORICAL
-						|| currentQuestion.answerType == Shared.AnswerType.TEXT)
+				if (currentQuestion.answerType.equals(CategoricalAnswer.class)
+						|| currentQuestion.answerType.equals(TextAnswer.class))
 					qList.add(currentQuestion);
 			}
 		}
@@ -152,7 +151,7 @@ public class NodeLabelPanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 		// logger.info("Question examining:" + question.UniqueId);
 
-		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
+		if (question.answerType.equals(CategoricalAnswer.class)) {
 			int noOfRows = question.getSelections().length;
 			Selection[] rowData = new Selection[noOfRows];
 			/* change the list of selections based on the selected question */
@@ -176,7 +175,7 @@ public class NodeLabelPanel extends JPanel {
 			for (int i = 0; i < answers.length; i++) {
 				// logger.info("Question examining:"
 				// + answers[i].questionId + "," + question.UniqueId);
-				if (answers[i].questionId.equals(question.UniqueId)) {
+				if (answers[i].getQuestionId().equals(question.UniqueId)) {
 
 					if (answers[i].string == null
 							|| isPresentInSelectionList(answers[i].string)) {
@@ -231,7 +230,7 @@ public class NodeLabelPanel extends JPanel {
 			}
 		} else {
 			Question question = (Question) questionCombo.getSelectedItem();
-			if (question.answerType == Shared.AnswerType.CATEGORICAL) {
+			if (question.answerType.equals(CategoricalAnswer.class)) {
 				for (Selection selection : question.getSelections()) {
 					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 					NodeProperty nodeProperty = new NodeProperty();
@@ -240,7 +239,7 @@ public class NodeLabelPanel extends JPanel {
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();
 				}
-			} else if (question.answerType == Shared.AnswerType.TEXT) {
+			} else if (question.answerType.equals(TextAnswer.class)) {
 				logger.info("Applying labels for text questions");
 				for (Selection selection : selectionList) {
 					NodeProperty nodeProperty = new NodeProperty();

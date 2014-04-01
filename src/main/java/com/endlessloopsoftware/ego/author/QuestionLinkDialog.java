@@ -34,15 +34,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
 import org.egonet.util.listbuilder.Selection;
-
-import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Shared;
 
 /**
  * Generic Panel creation and handling routines for question editing
@@ -51,7 +49,7 @@ public class QuestionLinkDialog extends JDialog
 		implements Observer
 {
 	private Question                  baseQuestion;
-   private Answer                    linkAnswer           = new Answer(new Long(-1));
+   private Answer                    linkAnswer           = new TextAnswer(new Long(-1));
 
    /* Containers */
    private final JSplitPane          questionSplit        = new JSplitPane();
@@ -280,7 +278,7 @@ public class QuestionLinkDialog extends JDialog
 		// Set Selection
 		if (baseQuestion.link.isActive())
 		{
-			Question selected = egoNet.getStudy().getQuestions().getQuestion(baseQuestion.link.getAnswer().questionId);
+			Question selected = egoNet.getStudy().getQuestions().getQuestion(baseQuestion.link.getAnswer().getQuestionId());
 			questionList.setSelectedValue(selected, true);
 		}
 
@@ -294,9 +292,11 @@ public class QuestionLinkDialog extends JDialog
 
 		if (question != null)
 		{
-			linkAnswer = new Answer(question.UniqueId);
+			
+			linkAnswer = Answer.newInstance(question.answerType);
+			linkAnswer.setQuestionId(question.UniqueId);
 
-			if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().questionId)))
+			if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().getQuestionId())))
 			{
 				linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
 				linkAnswer.string  	= baseQuestion.link.getAnswer().string;
@@ -338,11 +338,11 @@ public class QuestionLinkDialog extends JDialog
 		{
 			question = (Question) questionList.getSelectedValue();
 
-			if (question != null)
-			{
-				linkAnswer          = new Answer(question.UniqueId);
+			if (question != null) {
+				linkAnswer = Answer.newInstance(question.answerType);
+				linkAnswer.setQuestionId(question.UniqueId);
 
-				if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().questionId)))
+				if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().getQuestionId())))
 				{
 					linkAnswer.setValue(baseQuestion.link.getAnswer().getValue());
 					linkAnswer.setIndex(baseQuestion.link.getAnswer().getIndex());
@@ -376,7 +376,7 @@ public class QuestionLinkDialog extends JDialog
 				// Should never be here
 				//assert(false);
 			}
-			else if (question.answerType == Shared.AnswerType.TEXT)
+			else if (question.answerType.equals(TextAnswer.class))
 			{
 				answerPanel.add(textPanel);
 				answerPanel.validate();
@@ -392,7 +392,7 @@ public class QuestionLinkDialog extends JDialog
 					answerTextField.setText("");
 				}
 			}
-			else if (question.answerType == Shared.AnswerType.NUMERICAL)
+			else if (question.answerType.equals(InformationalAnswer.class))
 			{
 				answerPanel.add(textPanel);
 				answerTextField.setDocument(wholeNumberDocument);
@@ -499,7 +499,7 @@ public class QuestionLinkDialog extends JDialog
 	{
 		linkAnswer.string = null;
 
-		if(question.answerType.equals(Shared.AnswerType.NUMERICAL)) {
+		if(question.answerType.equals(NumericalAnswer.class)) {
 			if (answerTextField.getText().length() > 0)
 			{
 				linkAnswer.string   	= answerTextField.getText();
@@ -511,15 +511,15 @@ public class QuestionLinkDialog extends JDialog
 				linkAnswer.setValue(Answer.NO_ANSWER);
 				linkAnswer.setAnswered(false);
 			}
-		} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
+		} else if(question.answerType.equals(TextAnswer.class)) {
 			linkAnswer.string   		= answerTextField.getText();
 			linkAnswer.setValue(linkAnswer.string.length());
 			linkAnswer.setAnswered((linkAnswer.getValue() != 0));
-		} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
+		} else if(question.answerType.equals(InformationalAnswer.class)) {
 			linkAnswer.string = "informational";
 			linkAnswer.setValue(1);
 			linkAnswer.setAnswered(true);
-		} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
+		} else if(question.answerType.equals(CategoricalAnswer.class)) {
 			
 			// option/radio buttons
 			if (question.getSelections().length <= 5) {

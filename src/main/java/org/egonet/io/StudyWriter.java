@@ -147,7 +147,7 @@ public class StudyWriter {
 
 		e.addElement("Id").setLong(q.UniqueId.longValue());
 		e.addElement("QuestionType").setString(q.getClass().getCanonicalName());
-		e.addElement("AnswerType").setInt(q.answerType.ordinal());
+		e.addElement("AnswerType").setString(q.answerType.getCanonicalName());
 		e.addElement("FollowUpOnly").setBoolean(q.followupOnly);
 
 		if ((q.title != null) && (!q.title.equals(""))) {
@@ -179,7 +179,7 @@ public class StudyWriter {
 
 		if (q.link.isActive()) {
 			Element link = e.addElement("Link");
-			link.addElement("Id").setLong(q.link.getAnswer().questionId);
+			link.addElement("Id").setLong(q.link.getAnswer().getQuestionId());
 			link.addElement("value").setInt(q.link.getAnswer().getValue());
 			link.addElement("string").setText(q.link.getAnswer().string);
 		}

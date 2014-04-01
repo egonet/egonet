@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.endlessloopsoftware.egonet;
+package org.egonet.model.answer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,20 +24,39 @@ import java.util.List;
 import java.util.Random;
 import java.text.*;
 
-public class Answer implements Cloneable {
+import org.egonet.exceptions.MalformedQuestionException;
+
+public abstract class Answer implements Cloneable {
     /**
      * Unique ID for every question
      */
-    public Long questionId;
+    private Long questionId;
 
-    /**
+    public Long getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(Long questionId) {
+		this.questionId = questionId;
+	}
+
+	/**
      * Represents the alter or alter pair that this answer is about. It may be a
      * single alter for alter questions, or two alters for an alter pair
      * question.
      */
     private List<Integer> alters;
 
-    private boolean _answered = false;
+    public void setAlters(List<Integer> alters) {
+		this.alters = alters;
+	}
+    
+    public void setAlters(int [] alters) {
+		this.alters = new ArrayList<Integer>();
+		for(int i : alters) this.alters.add(i);
+	}
+
+	private boolean _answered = false;
 
     public boolean isAnswered() {
 		return _answered;
@@ -139,8 +158,46 @@ public class Answer implements Cloneable {
         return index;
     }
 
-    public List<Integer> getAlters()
-    {
+    public List<Integer> getAlters() {
         return Collections.unmodifiableList(alters);
     }
+    
+	/**
+	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
+	 * 
+	 * @param questionType type of question subclass
+	 * @return a class object representing that type
+	 */
+	
+	public static Class<? extends Answer> asSubclass(String answerType) {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Answer> clazz = (Class<? extends Answer>)Class.forName(answerType);
+
+			return clazz;
+		} 
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	public static Answer newInstance(String answerType) {
+		try {
+			Class<? extends Answer> clazz = asSubclass(answerType);
+
+			return newInstance(clazz);
+		} 
+		catch (Exception ex) {
+			throw new MalformedQuestionException(ex);
+		}
+	}
+	
+	public static Answer newInstance(Class<? extends Answer> clazz) {
+		try {
+			return clazz.newInstance();
+		} 
+		catch (Exception ex) {
+			throw new MalformedQuestionException("could not instantiate an instance of class " + clazz.getCanonicalName(),ex);
+		}
+	}
 }

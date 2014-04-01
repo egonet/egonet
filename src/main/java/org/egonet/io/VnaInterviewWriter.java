@@ -11,9 +11,9 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.io.InterviewDataWritingUtil.StudyQuestionsByCategoryAndId;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.Question;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 import com.google.common.base.Joiner;

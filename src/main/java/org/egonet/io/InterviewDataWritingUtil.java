@@ -11,6 +11,7 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.EgoQuestion;
@@ -18,21 +19,19 @@ import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 public class InterviewDataWritingUtil {
 
 	public static boolean showableAsText(Question question) {
-		return question.answerType.equals(Shared.AnswerType.TEXT)
-			|| question.answerType.equals(Shared.AnswerType.CATEGORICAL);
+		return question.answerType.equals(TextAnswer.class)
+			|| question.answerType.equals(CategoricalAnswer.class);
 	}
 	
 	public static boolean showableAsNumber(Question question) {
-		return question.answerType.equals(Shared.AnswerType.NUMERICAL)
-			|| question.answerType.equals(Shared.AnswerType.CATEGORICAL);
+		return question.answerType.equals(NumericalAnswer.class)
+			|| question.answerType.equals(CategoricalAnswer.class);
 	}
 	
 	public static String showAsText(Answer answer) {
@@ -47,8 +46,8 @@ public class InterviewDataWritingUtil {
 		InterviewAnswers result = new InterviewAnswers();
 		StudyQuestionsByCategoryAndId studyQuestions = studyQuestionsByCategoryAndId(study);
 		for(Answer answer : interview.get_answers()) {
-			Long qId = answer.questionId;
-			if(null != studyQuestions.egoQuestions.get(answer.questionId)) { // answer to ego question
+			Long qId = answer.getQuestionId();
+			if(null != studyQuestions.egoQuestions.get(answer.getQuestionId())) { // answer to ego question
 				result.egoQuestionToAnswer.put(
 						qId, 
 						answer);

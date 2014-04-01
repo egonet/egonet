@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.ego.client;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.*;
 
 import java.awt.*;
@@ -44,12 +45,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
-import com.endlessloopsoftware.egonet.Shared.AnswerType;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -66,6 +65,7 @@ import org.slf4j.LoggerFactory;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
 
 
 
@@ -584,7 +584,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
             strTitle = strTitle.replace("$$2", alterNames[1]);
 
 		// for informational answers, don't show "Questions about $$1" -- they may not always apply.
-		if(question.answerType.equals(AnswerType.INFORMATIONAL))
+		if(question.answerType.equals(InformationalAnswer.class))
 			strTitle = "Informational Item";
 		titleText.setText(strTitle);
 
@@ -647,10 +647,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
 			alterLists.get(currentQuestionPrompt).requestFocusOnFirstVisibleComponent();
-		} else if (question.answerType == Shared.AnswerType.INFORMATIONAL) {
+		} else if (question.answerType.equals(InformationalAnswer.class)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
-		} else if (question.answerType == Shared.AnswerType.TEXT) {
+		} else if (question.answerType.equals(TextAnswer.class)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
@@ -671,7 +671,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			answerTextField.requestFocusInWindow();
-		} else if (question.answerType == Shared.AnswerType.NUMERICAL) {
+		} else if (question.answerType.equals(NumericalAnswer.class)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
@@ -699,7 +699,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			numericalTextField.requestFocusInWindow();
-		} else if(question.answerType == Shared.AnswerType.CATEGORICAL) {
+		} else if(question.answerType.equals(CategoricalAnswer.class)) {
 
 			logger.info("Displaying CATEGORICAL question: " + question.text);
 			setQuestionText(question.text);
@@ -892,7 +892,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		} else {
 
-			if(question.answerType.equals(Shared.AnswerType.NUMERICAL)) {
+			if(question.answerType.equals(NumericalAnswer.class)) {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
@@ -910,17 +910,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.setValue((Answer.NO_ANSWER));
 					answer.setAnswered(false);
 				}
-			} else if(question.answerType.equals(Shared.AnswerType.INFORMATIONAL)) {
+			} else if(question.answerType.equals(InformationalAnswer.class)) {
 				answer.setValue(1);
 				answer.setAnswered(true);
-			} else if(question.answerType.equals(Shared.AnswerType.TEXT)) {
+			} else if(question.answerType.equals(TextAnswer.class)) {
 				answer.timestamp = generateTimeStamp();
 				//logger.info("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.setAnswered((answer.getValue() != 0));
 				logger.info("Recorded textual answer " + answer.string);
-			} else if(question.answerType.equals(Shared.AnswerType.CATEGORICAL)) {
+			} else if(question.answerType.equals(CategoricalAnswer.class)) {
 
 				// option items
 				if (question.getSelections().length <= answerButtons.length) {
@@ -997,7 +997,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (key == -1 && questionButtonNext.isEnabled())
 			questionButtonNext_actionPerformed(e);
 
-		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
+		if (question.answerType.equals(CategoricalAnswer.class)) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
 				// logger.info("Selection value :" +sel.getValue());
@@ -1199,7 +1199,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				questionButtonNext.setEnabled(skip || question.getAnswer().isAnswered());
 			}
 		}
-		if(question.answerType == Shared.AnswerType.INFORMATIONAL) {
+		if(question.answerType.equals(InformationalAnswer.class)) {
 			questionButtonNext.setEnabled(true);
 		}
 
@@ -1256,7 +1256,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void setDefaultAnswer() {
 		if (!question.getAnswer().isAnswered()
-				&& (question.answerType == Shared.AnswerType.CATEGORICAL)
+				&& (question.answerType.equals(CategoricalAnswer.class))
 				&& (question.getAnswer().secondAlter() > (question.getAnswer()
 						.firstAlter() + 1))) {
 			int defaultAnswer = -1;
@@ -1378,7 +1378,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	public static void showPreview(String questionTitle, String questionText, 
-			Class<? extends Question> questionType, Shared.AnswerType answerType, Selection[] selections) 
+			Class<? extends Question> questionType, Class<? extends Answer> answerType, Selection[] selections) 
 	{
 
 		JDialog dialog = new JDialog(null,"Preview of "+questionTitle,Dialog.ModalityType.APPLICATION_MODAL);
@@ -1392,18 +1392,18 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if(questionType.equals(AlterPromptQuestion.class)) {
 			panel.add(new JLabel(""), "growx, wrap");
 			panel.add(new JLabel("(Alter entry not yet implemented in alter prompt preview)"), "growx, wrap");
-		} else if(answerType.equals(AnswerType.TEXT)) {
+		} else if(answerType.equals(TextAnswer.class)) {
 			panel.add(new JLabel("Textual Answer:"),"growx,wrap");
 			JTextArea textArea = new JTextArea();
 			textArea.setRows(5);
 			panel.add(textArea,"growx,wrap"); 
-		} else if(answerType.equals(AnswerType.NUMERICAL)) {
+		} else if(answerType.equals(NumericalAnswer.class)) {
 			panel.add(new JLabel("Numerical Answer:"),"growx,wrap");
 			JTextField numberField = new JTextField();
 			numberField.setFont(new java.awt.Font("SansSerif", 0, 14));
 			panel.add(numberField,"growx,wrap"); // TODO: needs to be like numericalTextField 
 			                                     // I wonder how it prevents typing letters
-		} else if(answerType.equals(AnswerType.CATEGORICAL)) {
+		} else if(answerType.equals(CategoricalAnswer.class)) {
 			if(selections != null) {
 				if(selections.length < 10) {
 					panel.add(new JLabel("List-item Answer:"),"growx,wrap");

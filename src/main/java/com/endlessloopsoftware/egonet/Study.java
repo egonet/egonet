@@ -18,6 +18,7 @@
  */
 package com.endlessloopsoftware.egonet;
 
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -27,13 +28,11 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.DuplicateQuestionException;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.Question;
+import org.egonet.model.answer.*;
+import org.egonet.model.question.*;
 
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
-
-import org.egonet.model.question.*;
 
 /*******************************************************************************
  * Stores basic configuration data for the study including question order lists
@@ -353,7 +352,7 @@ public class Study extends Observable implements Comparable<Study>
 
 			if (q.link.isActive())
 			{
-				if (!doesQuestionPreceed(q.link.getAnswer().questionId, q.UniqueId))
+				if (!doesQuestionPreceed(q.link.getAnswer().getQuestionId(), q.UniqueId))
 				{
 					q.link.setAnswer(null);
 				}
@@ -465,7 +464,7 @@ public class Study extends Observable implements Comparable<Study>
 				Long key = it2.next();
 				Question q = this._questions.getQuestion(key);
 
-				if ((q != null) && (q.answerType == Shared.AnswerType.CATEGORICAL))
+				if ((q != null) && (q.answerType.equals(CategoricalAnswer.class)))
 				{
 					q.centralMarker = true;
 					foundCentral = true;
@@ -701,7 +700,7 @@ public class Study extends Observable implements Comparable<Study>
 		{
 			Question q = (Question) i.next();
 
-			if (q.link.isActive() && (q.link.getAnswer().questionId.equals(lq.UniqueId)))
+			if (q.link.isActive() && (q.link.getAnswer().getQuestionId().equals(lq.UniqueId)))
 			{
 				q.link.setAnswer(null);
 			}

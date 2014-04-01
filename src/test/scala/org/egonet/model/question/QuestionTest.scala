@@ -5,8 +5,9 @@ import org.scalatest.Args
 import org.egonet.EgonetSpec
 import org.egonet.exceptions.MalformedQuestionException
 import com.endlessloopsoftware.egonet.Shared
-import com.endlessloopsoftware.egonet.Answer
 import org.egonet.util.listbuilder.Selection
+import org.egonet.model.answer.Answer
+import org.egonet.model.answer.CategoricalAnswer
 
 class QuestionTest extends EgonetSpec {
 
@@ -27,7 +28,7 @@ class QuestionTest extends EgonetSpec {
     
     "Question getters and setters" should "set and get the same values" in {
       
-      assert(new StudyQuestion().getTitle() == "Study questions")
+      assert(new StudyQuestion().getTitle() == "Study questions")     
       assert(new EgoQuestion().getTitle() == "Questions About You")
       assert(new AlterQuestion().getTitle() == "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>")
       assert(new AlterPromptQuestion().getTitle() == "Whom do you know?")
@@ -44,7 +45,7 @@ class QuestionTest extends EgonetSpec {
     	  assert(q.isStatable == t)
     	})
     	
-    	val a = new Answer()
+    	val a = new CategoricalAnswer()
     	q.setAnswer(a)
     	assert(q.getAnswer() == a)
     	

@@ -3,7 +3,6 @@ package org.egonet.io;
 
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
-import com.endlessloopsoftware.egonet.Shared.AnswerType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,13 +11,12 @@ import java.util.List;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.*;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.endlessloopsoftware.egonet.Answer;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
@@ -224,6 +222,22 @@ public class StudyReader {
 	    }
 	}
 	
+	@Deprecated
+	private enum AnswerType {
+
+		CATEGORICAL(CategoricalAnswer.class.getCanonicalName()),
+	    NUMERICAL(NumericalAnswer.class.getCanonicalName()),
+	    TEXT(TextAnswer.class.getCanonicalName()),
+	    INFORMATIONAL(InformationalAnswer.class.getCanonicalName()),
+		
+		;
+	    public final String className;
+	    AnswerType(String className) {
+	        this.className = className;
+	    }
+	}
+	
+	
 	@SuppressWarnings({"deprecation"})
 	public static Question readQuestion(Element question) throws MalformedQuestionException
 	{
@@ -258,9 +272,43 @@ public class StudyReader {
 			}
 			questionType = clazz;
 		}
-		
 		q = Question.newInstance(questionType);	
 		
+		String answerType = question.getString("AnswerType");
+		if(!answerType.toLowerCase().contains(".class".toLowerCase())) {
+			int intAnswerType = -1; 
+			try {
+				intAnswerType = Integer.parseInt(answerType);
+			}
+			catch (Exception ex) {
+				throw new MalformedQuestionException("Question's AnswerType did not contain canonical name, but I couldn't parse an integer");
+			}
+			
+			String clazz = null;
+			AnswerType [] types = {
+					AnswerType.CATEGORICAL,
+					AnswerType.NUMERICAL,
+					AnswerType.TEXT,
+					AnswerType.INFORMATIONAL
+			};
+			
+			for(AnswerType t : types) {
+				if(t.ordinal() == intAnswerType) {
+					clazz = t.className;
+				}
+			}
+			if(clazz == null) {
+				throw new MalformedQuestionException("Question's AnswerType did not contain canonical name or integer");
+			}
+			answerType = clazz;
+		}
+		
+		q.answerType = Answer.asSubclass(answerType);
+		// force alter prompt to be a text answer?
+		if (q instanceof AlterPromptQuestion) {
+			q.answerType = TextAnswer.class;
+		}
+
 		if(question.getElement("QuestionTitle") == null) {
 			q.title = "";
 		} else if(question.getElement("QuestionText") == null) {
@@ -282,11 +330,6 @@ public class StudyReader {
 		}
 
 		q.UniqueId = new Long(question.getLong("Id"));
-		q.answerType = AnswerType.values()[question.getInt("AnswerType")];
-
-		if (q instanceof AlterPromptQuestion) {
-			q.answerType = Shared.AnswerType.TEXT;
-		}
 
 		if (question.getAttribute("CentralityMarker") != null) {
 			boolean centrality = question.getAttribute("CentralityMarker").equals("true");
@@ -299,7 +342,9 @@ public class StudyReader {
 
 		Element link = question.getElement("Link");
 		if (link != null) {
-			q.link.setAnswer(new Answer(new Long(link.getLong("Id"))));
+			Answer answer = Answer.newInstance(q.answerType);
+			answer.setQuestionId(link.getLong("Id"));
+			q.link.setAnswer(answer);
 			q.link.getAnswer().setValue(link.getInt("value"));
 
 			/* Only support questions with single answers for link */
@@ -307,7 +352,7 @@ public class StudyReader {
 		}
 		
 
-		if (q.answerType == Shared.AnswerType.CATEGORICAL) {
+		if (q.answerType.equals(CategoricalAnswer.class)) {
 			Element answerList = question.getElement("Answers");
 
 			if (answerList != null) {

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.endlessloopsoftware.ego.client.statistics;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
@@ -37,9 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 public class Statistics
@@ -732,7 +732,7 @@ public class Statistics
         {
             Question q = _study.getQuestions().getQuestion((Long) qIt.next());
 
-            if ((q.answerType == Shared.AnswerType.CATEGORICAL) || (q.answerType == Shared.AnswerType.NUMERICAL))
+            if ((q.answerType.equals(CategoricalAnswer.class)) || (q.answerType.equals(NumericalAnswer.class)))
                 index++;
         }
 
@@ -754,7 +754,7 @@ public class Statistics
             Long qId = (Long) qIt.next();
             Question q = _study.getQuestions().getQuestion(qId);
 
-            if ((q.answerType == Shared.AnswerType.CATEGORICAL) || (q.answerType == Shared.AnswerType.NUMERICAL))
+            if ((q.answerType.equals(CategoricalAnswer.class)) || (q.answerType.equals(NumericalAnswer.class)))
             {
                 Set<Answer> answerSet = _interview.getAnswerSubset(qId);
                 Iterator<Answer> aIt = answerSet.iterator();
@@ -763,12 +763,12 @@ public class Statistics
                 alterStatArray[index].qTitle = q.title;
                 alterStatArray[index].answerType = q.answerType;
 
-                if (q.answerType == Shared.AnswerType.NUMERICAL)
+                if (q.answerType.equals(NumericalAnswer.class))
                 {
                     alterStatArray[index].answerText = new String[] { "Mean" };
                     alterStatArray[index].answerTotals = new int[1];
                 }
-                else if (q.answerType == Shared.AnswerType.CATEGORICAL)
+                else if (q.answerType.equals(CategoricalAnswer.class))
                 {
                     alterStatArray[index].answerTotals = new int[q.getSelections().length];
                     alterStatArray[index].answerText = new String[q.getSelections().length];
@@ -789,7 +789,7 @@ public class Statistics
                         {
                             alterSummary[a.firstAlter()][index] = new Integer(a.getValue());
 
-                            if (q.answerType == Shared.AnswerType.NUMERICAL)
+                            if (q.answerType.equals(NumericalAnswer.class))
                             {
                                 if (a.getValue() != -1)
                                 {
@@ -797,7 +797,7 @@ public class Statistics
                                     alterStatArray[index].answerCount++;
                                 }
                             }
-                            else if (q.answerType == Shared.AnswerType.CATEGORICAL)
+                            else if (q.answerType.equals(CategoricalAnswer.class))
                             {
                                 alterStatArray[index].answerTotals[a.getIndex()] += 1;
                                 alterStatArray[index].answerCount++;
@@ -953,9 +953,9 @@ public class Statistics
         while (qIt.hasNext())
         {
             Answer answer = (Answer) qIt.next();
-            Question q = _study.getQuestions().getQuestion(answer.questionId);
+            Question q = _study.getQuestions().getQuestion(answer.getQuestionId());
 
-            if (q.answerType == Shared.AnswerType.TEXT)
+            if (q.answerType.equals(TextAnswer.class))
             {
                 if (answer.isAnswered())
                 {
@@ -973,7 +973,7 @@ public class Statistics
             Long qId = (Long) qIt.next();
             Question q = _study.getQuestions().getQuestion(qId);
 
-            if (q.answerType == Shared.AnswerType.TEXT)
+            if (q.answerType.equals(TextAnswer.class))
             {
                 w.println("Alter Question: " + q.title);
                 w.println("Text: " + q.text);

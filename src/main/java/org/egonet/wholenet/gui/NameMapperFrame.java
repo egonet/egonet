@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.egonet.io.InterviewReader;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
@@ -43,7 +44,6 @@ import net.sf.functionalj.Functions;
 import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 import com.google.common.collect.Lists;
@@ -242,10 +242,10 @@ public class NameMapperFrame extends JFrame {
 					
 				}
 				for(Answer answer : interview.get_answers()) {
-					if(alterQuestionIds.contains(answer.questionId)) {
+					if(alterQuestionIds.contains(answer.getQuestionId())) {
 						questionInterviewAlterToAnswer.put(
 								new Triple<Long,String,Integer>(
-										answer.questionId,
+										answer.getQuestionId(),
 										interview.toString(),
 										answer.firstAlter()),
 								answer);

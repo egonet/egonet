@@ -19,6 +19,7 @@
 package com.endlessloopsoftware.ego.client.graph;
 
 import org.apache.commons.collections15.Transformer;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
@@ -27,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;

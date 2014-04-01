@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.egonet.model.answer.*;
+
 import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -61,7 +62,7 @@ public class StatisticsFileWriter {
 				aElement.addElement("Title")
 						.setString(
 								study.getQuestions().getQuestion(
-										answer.questionId).title);
+										answer.getQuestionId()).title);
 
 				if (answer.isAnswered()) {
 					aElement.addElement("Answer").setString(answer.string);

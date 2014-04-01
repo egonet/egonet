@@ -32,14 +32,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.egonet.model.answer.CategoricalAnswer;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.listbuilder.ListBuilder;
 import org.egonet.util.listbuilder.Selection;
-
-import com.endlessloopsoftware.egonet.Shared;
 
 public class CategoryInputPane extends JDialog {
 	
@@ -189,9 +188,9 @@ public class CategoryInputPane extends JDialog {
 		if(q instanceof AlterPromptQuestion)
 			listBuilder.setNameModel(egoNet.getStudy().getAlterNameModel());
 		listBuilder.setLetUserPickValues(true);
-		listBuilder.setPresetListsActive(q.answerType == Shared.AnswerType.CATEGORICAL);
+		listBuilder.setPresetListsActive(q.answerType.equals(CategoricalAnswer.class));
 		
-//		boolean preset = (q.answerType == Shared.AnswerType.CATEGORICAL) ? true : false;
+//		boolean preset = (q.answerType.equals(CategoricalAnswer.class)) ? true : false;
 //		logger.info("Is question categorical? " + preset);
 //		
 		listBuilder.setAdjacencyActive(q instanceof AlterPairQuestion);

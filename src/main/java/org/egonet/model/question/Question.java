@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.egonet.model.question;
+
 import java.util.Date;
 
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.answer.*;
 import org.egonet.util.listbuilder.Selection;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.QuestionLink;
-import com.endlessloopsoftware.egonet.Shared.AnswerType;
 
 
 /*******************************************************************************
@@ -90,13 +90,13 @@ public abstract class Question implements Cloneable {
 
 	public String citation = "";
 	
-	public AnswerType answerType = AnswerType.TEXT;
+	public Class<? extends Answer> answerType = TextAnswer.class;
 
 	public QuestionLink link = new QuestionLink();
 
 	private Selection[] selections = new Selection[0];
 
-	private Answer answer = new Answer(new Long(-1));
+	private Answer answer = Answer.newInstance(TextAnswer.class);
 
 	public static final int MAX_CATEGORICAL_CHOICES = 9;
 

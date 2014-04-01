@@ -34,6 +34,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +46,6 @@ import org.slf4j.LoggerFactory;
 public class Shared
 {
 	final private static Logger logger = LoggerFactory.getLogger(Shared.class);
-	
-	public enum AnswerType
-	{
-	    CATEGORICAL,
-	    NUMERICAL,
-	    TEXT,
-	    INFORMATIONAL,
-	}
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends Question> questionClasses[] = new Class[]{
@@ -61,6 +54,14 @@ public class Shared
 			AlterQuestion.class,
 			AlterPromptQuestion.class,
 			AlterPairQuestion.class
+	}; 
+	
+	@SuppressWarnings("unchecked")
+	public final static Class<? extends Answer> answerClasses[] = new Class[]{
+			CategoricalAnswer.class,
+			TextAnswer.class,
+			NumericalAnswer.class,
+			InformationalAnswer.class,
 	}; 
 	
 	   public enum AlterSamplingModel

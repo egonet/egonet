@@ -32,15 +32,14 @@ import java.util.*;
 import org.jdesktop.layout.GroupLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.egonet.util.table.*;
 
 import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.QuestionList;
-import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
 
 
@@ -91,8 +90,8 @@ public class NodeColorPanel extends JPanel {
 			if (currentQuestion instanceof AlterQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.answerType == Shared.AnswerType.CATEGORICAL
-						|| currentQuestion.answerType == Shared.AnswerType.TEXT)
+				if (currentQuestion.answerType.equals(CategoricalAnswer.class)
+						|| currentQuestion.answerType.equals(TextAnswer.class))
 					qList.add(currentQuestion);
 			}
 		}
@@ -134,7 +133,7 @@ public class NodeColorPanel extends JPanel {
 
 		// logger.info("Question examining:" + question.UniqueId);
 
-		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
+		if (question.answerType.equals(CategoricalAnswer.class)) {
 			int noOfRows = question.getSelections().length;
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
@@ -164,7 +163,7 @@ public class NodeColorPanel extends JPanel {
 			for (int i = 0; i < answers.length; i++) {
 				// logger.info("Question examining:"
 				// + answers[i].questionId + "," + question.UniqueId);
-				if (answers[i].questionId.equals(question.UniqueId)) {
+				if (answers[i].getQuestionId().equals(question.UniqueId)) {
 
 					if (answers[i].string == null
 							|| isPresentInSelectionList(answers[i].string)) {
@@ -280,7 +279,7 @@ public static Color get(float x) {
 		Question question = (Question) questionCombo.getSelectedItem();
 		logger.info("Question combo" +question.UniqueId);
 		
-		if (question.answerType == Shared.AnswerType.CATEGORICAL) {
+		if (question.answerType.equals(CategoricalAnswer.class)) {
 			for (int i = 0; i < question.getSelections().length; i++) {
 				Selection selection = question.getSelections()[i];
 
@@ -291,7 +290,7 @@ public static Color get(float x) {
 				graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 				graphRenderer.updateGraphSettings();
 			}
-		}else if (question.answerType == Shared.AnswerType.TEXT) {
+		}else if (question.answerType.equals(TextAnswer.class)) {
 			logger.info("Applying labels for text questions");
 			for (int i =0;i < selectionList.size() ; i++) {
 				Selection selection = selectionList.get(i);

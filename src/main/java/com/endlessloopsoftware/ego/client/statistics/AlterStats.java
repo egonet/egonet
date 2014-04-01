@@ -18,12 +18,12 @@
  */
 package com.endlessloopsoftware.ego.client.statistics;
 
-import com.endlessloopsoftware.egonet.Shared;
+import org.egonet.model.answer.Answer;
 
 public class AlterStats
 {
 	public String 	qTitle;
-	public Shared.AnswerType answerType;
+	public Class<? extends Answer> answerType;
 	public Long 	questionId;
 	public int 		answerCount;
 	public String[]	answerText;

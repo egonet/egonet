@@ -5,12 +5,12 @@ import java.util.Arrays;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.StudyIdMismatchException;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -138,7 +138,7 @@ public class InterviewReader {
 			//logger.info("Found answer " + answer.getString());
 
 			// can't correctly find the linked question???
-			Question question = interview.getStudy().getQuestion(answer.questionId);
+			Question question = interview.getStudy().getQuestion(answer.getQuestionId());
 			//logger.info("\tFound question by answer " + question.getString());
 			
 			if(!answer.isAnswered() && question.link.isActive()) { // if there's a real possibility this is linked
@@ -220,7 +220,7 @@ public class InterviewReader {
 				Answer oldAnswer = interview.get_answerElement(index);
 				Answer newAnswer = readAnswer(study, answerElement);
 				
-				if (oldAnswer.questionId.equals(newAnswer.questionId)) {
+				if (oldAnswer.getQuestionId().equals(newAnswer.getQuestionId())) {
                                         interview.set_answerElement(index++, newAnswer);
 				} else {
 					throw (new CorruptedInterviewException("mismatch question and answer id in datafile"));
@@ -243,7 +243,9 @@ public class InterviewReader {
             }
         }
 
-        Answer r = new Answer(qId, qAlters);
+        
+        Answer r = Answer.newInstance(q.answerType);
+        r.setQuestionId(qId); r.setAlters(qAlters);
 
         r.setAnswered(e.getBoolean("Answered"));
 

@@ -1,11 +1,9 @@
 package org.egonet.io;
 
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Shared;
 import com.endlessloopsoftware.egonet.Study;
-import com.endlessloopsoftware.egonet.Shared.AnswerType;
 import com.lowagie.text.*;
 import com.lowagie.text.List;
 import com.lowagie.text.pdf.*;
@@ -15,6 +13,7 @@ import java.io.*;
 import java.util.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.answer.*;
 import org.egonet.model.question.Question;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
@@ -203,13 +202,13 @@ public class PDFWriter {
 			
 			document.add(new Paragraph("Text: " + qText));
 			
-			if(question.answerType == AnswerType.NUMERICAL) {
+			if(question.answerType.equals(NumericalAnswer.class)) {
 				if(answer.isAnswered() && answer.getValue() != -1)
 					document.add(new Paragraph("Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex()));
 				else
 					document.add(new Paragraph("Answer Value: _________________ "));
 			}
-			else if(question.answerType == AnswerType.TEXT) {
+			else if(question.answerType.equals(TextAnswer.class)) {
 				if(answer.isAnswered() && answer.string != null && !answer.string.equals(""))
 					document.add(new Paragraph("String answer: " + answer.string));
 				else {
@@ -219,7 +218,7 @@ public class PDFWriter {
 					document.add(new Paragraph(""));
 				}
 			}
-			else if(question.answerType == AnswerType.CATEGORICAL) {
+			else if(question.answerType.equals(CategoricalAnswer.class)) {
 				if(answer.isAnswered() && answer.getIndex() > -1) {
 					Selection sel = question.getSelections()[answer.getIndex()];
 					document.add(new Paragraph(sel.getString() + " (Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex() + ")"));

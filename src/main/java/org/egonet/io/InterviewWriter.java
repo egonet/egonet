@@ -3,9 +3,9 @@ package org.egonet.io;
 import java.io.File;
 import java.io.IOException;
 
+import org.egonet.model.answer.*;
 import org.egonet.model.question.Question;
 
-import com.endlessloopsoftware.egonet.Answer;
 import com.endlessloopsoftware.egonet.Interview;
 import com.endlessloopsoftware.egonet.Study;
 
@@ -84,11 +84,11 @@ public class InterviewWriter {
             answerElement.addComment("Corresp question: " + question.getString());
         
         
-        answerElement.addElement("QuestionId").setLong(answer.questionId.longValue());
+        answerElement.addElement("QuestionId").setLong(answer.getQuestionId().longValue());
         answerElement.addElement("Answered").setBoolean(answer.isAnswered());
 
         if (answer.isAnswered()) {
-            if(answer.questionId.equals(1205185478364L)) System.err.println("Printed a value into the XML file that was zero: " + answer.getString());
+            if(answer.getQuestionId().equals(1205185478364L)) System.err.println("Printed a value into the XML file that was zero: " + answer.getString());
             answerElement.addElement("Value").setInt(answer.getValue());
             answerElement.addElement("Index").setInt(answer.getIndex());
             answerElement.addElement("Adjacent").setBoolean(answer.adjacent);

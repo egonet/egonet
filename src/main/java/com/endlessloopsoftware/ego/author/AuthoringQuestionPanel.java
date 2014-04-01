@@ -36,13 +36,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.model.answer.Answer;
+import org.egonet.model.answer.CategoricalAnswer;
+import org.egonet.model.answer.TextAnswer;
 import org.egonet.model.question.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.endlessloopsoftware.ego.client.ClientQuestionPanel;
 import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Shared.AnswerType;
 
 
 /**
@@ -68,7 +70,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
     private final JLabel question_link_label = new JLabel("Question Link:");
     private final JLabel question_link_field = new JLabel("None");
     private final JLabel question_follows_label = new JLabel("Follows Question:");
-    private final JComboBox question_answer_type_menu = new JComboBox<AnswerType>(AnswerType.values());
+    private final JComboBox<Class<? extends Answer>> question_answer_type_menu = new JComboBox<Class<? extends Answer>>(Shared.answerClasses);
     private final JComboBox<Question> question_follows_menu = new JComboBox<Question>();
 
     private final JLabel question_followup_only_label = new JLabel("Follow up protocols only:");
@@ -299,8 +301,10 @@ public class AuthoringQuestionPanel extends EgoQPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-            	AnswerType answerType = 
-            		(AnswerType)question_answer_type_menu.getSelectedItem(); 
+            	@SuppressWarnings("unchecked")
+				Class<? extends Answer> answerType = 
+            		(Class<? extends Answer>)question_answer_type_menu.getSelectedItem();
+            	
             	Question question = getSelectedQuestion(); 
             	ClientQuestionPanel.showPreview(
             			question_title_field.getText(),question_question_field.getText(),
@@ -547,7 +551,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_type_menu.setEnabled(true);
                 question_answer_type_menu.setEnabled(!(q instanceof AlterPromptQuestion));
 
-                question_answer_type_button.setEnabled(q.answerType == Shared.AnswerType.CATEGORICAL);
+                question_answer_type_button.setEnabled(q.answerType.equals(CategoricalAnswer.class));
                 question_question_field.setEditable(true);
                 question_citation_field.setEditable(true);
                 question_title_field.setEditable(true);
@@ -557,7 +561,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
 
                 /* Box only appears on alter pair page */
                 question_central_label.setVisible(false);
-                if (q.answerType == Shared.AnswerType.CATEGORICAL)
+                if (q.answerType.equals(CategoricalAnswer.class))
                 {
                     if (q.getSelections().length == 0)
                     {
@@ -586,7 +590,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 /* Fill in link field */
                 if (q.link.isActive())
                 {
-                    Question linkQuestion = egoNet.getStudy().getQuestions().getQuestion(q.link.getAnswer().questionId);
+                    Question linkQuestion = egoNet.getStudy().getQuestions().getQuestion(q.link.getAnswer().getQuestionId());
 
                     if (linkQuestion == null)
                     {
@@ -717,7 +721,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
             q.title = new String(Question.getNiceName(questionType) + ":Untitled Question");
 
             if (q instanceof AlterPromptQuestion) {
-                q.answerType = Shared.AnswerType.TEXT;
+                q.answerType = TextAnswer.class;
             }
 
             try
@@ -862,17 +866,15 @@ public class AuthoringQuestionPanel extends EgoQPanel
      */
     void question_answer_type_menu_actionPerformed(ActionEvent e)
     {
-        if (!inUpdate)
-        {
-            if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame()))
-            {
-                AnswerType i = (AnswerType)question_answer_type_menu.getSelectedItem();
+        if (!inUpdate) {
+            if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
+                @SuppressWarnings("unchecked")
+				Class<? extends Answer> i = (Class<? extends Answer>)question_answer_type_menu.getSelectedItem();
+                
                 Question q = (Question) question_list.getSelectedValue();
 
-                if (q != null)
-                {
-                    if (q.answerType != i)
-                    {
+                if (q != null) {
+                    if (q.answerType.equals(i)) {
                         q.answerType = i;
                         egoNet.getStudy().setModified(true);
                         egoNet.getStudy().setCompatible(false);
