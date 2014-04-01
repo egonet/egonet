@@ -1,7 +1,6 @@
 package org.egonet.graph
 
 
-import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import java.util.Map
 import java.util.Random
