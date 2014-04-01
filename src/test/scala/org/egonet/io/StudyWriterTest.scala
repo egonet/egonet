@@ -11,7 +11,7 @@ class StudyWriterTest extends EgonetSpec {
   // some variables we need to setup the test
   val tmpDir = System.getProperty("java.io.tmpdir")
   val tmpFile = JFile.createTempFile(this.getClass.getSimpleName, ".ego")
-  println(tmpFile.getAbsolutePath())
+  //println(tmpFile.getAbsolutePath())
   tmpFile.deleteOnExit()
   
   // create the relevant study and writer
