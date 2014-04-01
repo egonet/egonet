@@ -95,7 +95,7 @@ public class EdgeSizePanel extends JPanel {
 			if (currentQuestion instanceof AlterPairQuestion) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.getSelections().length >= 1)
+				if (currentQuestion.getSelections().size() >= 1)
 					qList.add(currentQuestion);
 			}
 		}
@@ -131,9 +131,9 @@ public class EdgeSizePanel extends JPanel {
 		});
 
 		Question question = (Question) questionCombo.getSelectedItem();
-		edgesSelected = new boolean[qList.size()][question.getSelections().length];
+		edgesSelected = new boolean[qList.size()][question.getSelections().size()];
 		for(int i = 0; i<qList.size(); i++) {
-			for (int j =0; j<question.getSelections().length;j++) {
+			for (int j =0; j<question.getSelections().size();j++) {
 				edgesSelected[i][j] = false;
 			}
 		}
@@ -145,7 +145,7 @@ public class EdgeSizePanel extends JPanel {
 
 	private void createTable() {
 		Question question = (Question) questionCombo.getSelectedItem();
-		int noOfRows = question.getSelections().length;
+		int noOfRows = question.getSelections().size();
 		Object[][] rowData = new Object[noOfRows][3];
 		/* change the list of selections based on the selected question */
 		if (!selectionList.isEmpty()) {
@@ -160,7 +160,7 @@ public class EdgeSizePanel extends JPanel {
 			rowData[i][1] = selectionList.get(i);
 		}
 		// populate the shapes
-		int noOfSizes = question.getSelections().length;
+		int noOfSizes = question.getSelections().size();
 		for (int i = 1; i <= noOfSizes; i++) {
 			if (i < sizes.length) {
 				String num = (new Integer(i)).toString();
@@ -199,8 +199,8 @@ public class EdgeSizePanel extends JPanel {
 		
 		logger.info("SizePanel:SelectedQuestionIndex:" + selectedQuestionIndex  + " " + question.toString());
 
-		for (int i = 0; i < question.getSelections().length; i++) {
-			Selection selection = question.getSelections()[i];
+		for (int i = 0; i < question.getSelections().size(); i++) {
+			Selection selection = question.getSelections().get(i);
 			GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,selection);
 
 			if (((Boolean) table.getValueAt(i, 0)) == true) {

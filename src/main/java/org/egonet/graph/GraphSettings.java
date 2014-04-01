@@ -320,8 +320,8 @@ public class GraphSettings {
 
 				Question question = questionList.get(Long.parseLong(questionElement.getAttribute("id")));
 				
-				for (int j = 0; j < question.getSelections().length; j++) {
-					Selection selection = question.getSelections()[j];
+				for (int j = 0; j < question.getSelections().size(); j++) {
+					Selection selection = question.getSelections().get(j);
 
 					if (selection.getString().equals(
 							selectionElement.getAttribute("text"))) {

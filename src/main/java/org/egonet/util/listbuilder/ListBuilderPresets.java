@@ -19,6 +19,7 @@
 package org.egonet.util.listbuilder;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -27,13 +28,13 @@ import org.egonet.model.question.Selection;
 
 public class ListBuilderPresets
 {
-	public static Map<String,Selection[]> getPresets()
+	public static Map<String,List<Selection>> getPresets()
 	{
-		Map<String,Selection[]> ret = new HashMap<String,Selection[]>();
-		ret.put("Yes/No", Arrays.copyOf(YES_NO, YES_NO.length));
-		ret.put("Gender", Arrays.copyOf(GENDER, GENDER.length));
-		ret.put("States", Arrays.copyOf(STATES, STATES.length));
-		ret.put("Kin", Arrays.copyOf(KIN, KIN.length));
+		Map<String,List<Selection>> ret = new HashMap<String,List<Selection>>();
+		ret.put("Yes/No", Arrays.asList(Arrays.copyOf(YES_NO, YES_NO.length)));
+		ret.put("Gender", Arrays.asList(Arrays.copyOf(GENDER, GENDER.length)));
+		ret.put("States", Arrays.asList(Arrays.copyOf(STATES, STATES.length)));
+		ret.put("Kin", Arrays.asList(Arrays.copyOf(KIN, KIN.length)));
 
 		return ret;
 	}

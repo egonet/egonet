@@ -220,7 +220,7 @@ public class PDFWriter {
 			}
 			else if(question.answerType.equals(CategoricalAnswer.class)) {
 				if(answer.isAnswered() && answer.getIndex() > -1) {
-					Selection sel = question.getSelections()[answer.getIndex()];
+					Selection sel = question.getSelections().get(answer.getIndex());
 					document.add(new Paragraph(sel.getString() + " (Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex() + ")"));
 				}
 				else {

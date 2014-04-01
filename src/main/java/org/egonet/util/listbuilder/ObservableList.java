@@ -34,14 +34,17 @@ public class ObservableList<T> extends Observable
 	
 	private List<T> list;
 	
-	public ObservableList()
-	{
-		list = Collections.synchronizedList(new ArrayList<T>());
+	public ObservableList()	{
+		this(new ArrayList<T>());
 	}
 	
-	public ObservableList(T [] array)
+	public ObservableList(T [] array) {
+		this(Arrays.asList(array));
+	}
+	
+	public ObservableList(List<T> array)
 	{
-		list = Collections.synchronizedList(new ArrayList<T>(Arrays.asList(array)));
+		list = Collections.synchronizedList(new ArrayList<T>(array));
 	}
 
 	public void add(T o)
@@ -56,9 +59,13 @@ public class ObservableList<T> extends Observable
 		super.setChanged(); super.notifyObservers(this);
 	}
 	
-	public void addAll(T [] o)
+	public void addAll(T [] o) {
+		addAll(java.util.Arrays.asList(o));	
+	}
+	
+	public void addAll(List<T> o)
 	{
-		list.addAll(java.util.Arrays.asList(o));
+		list.addAll(o);
 		super.setChanged(); super.notifyObservers(this);
 	}
 	

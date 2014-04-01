@@ -133,7 +133,7 @@ public class NodeColorPanel extends JPanel {
 		// logger.info("Question examining:" + question.UniqueId);
 
 		if (question.answerType.equals(CategoricalAnswer.class)) {
-			int noOfRows = question.getSelections().length;
+			int noOfRows = question.getSelections().size();
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
 			if (!selectionList.isEmpty()) {
@@ -145,7 +145,7 @@ public class NodeColorPanel extends JPanel {
 			for (int i = 0; i < noOfRows; i++) {
 				rowData[i][0] = selectionList.get(i);
 			}
-			int noOfColors = question.getSelections().length;
+			int noOfColors = question.getSelections().size();
 			List<Color> colors = pick(noOfColors);
 			
 			for (int i = 0; i < noOfColors; i++) {
@@ -279,8 +279,8 @@ public static Color get(float x) {
 		logger.info("Question combo" +question.UniqueId);
 		
 		if (question.answerType.equals(CategoricalAnswer.class)) {
-			for (int i = 0; i < question.getSelections().length; i++) {
-				Selection selection = question.getSelections()[i];
+			for (int i = 0; i < question.getSelections().size(); i++) {
+				Selection selection = question.getSelections().get(i);
 
 				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,selection);
 				NodeProperty nodeProperty = new NodeProperty();

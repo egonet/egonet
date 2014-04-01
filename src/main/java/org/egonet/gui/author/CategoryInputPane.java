@@ -25,6 +25,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -126,9 +127,9 @@ public class CategoryInputPane extends JDialog {
 		if (q != null) {
 			/* count choices */
 
-			Selection[] newSelections = listBuilder.getListSelections();
-
-			if (newSelections.length != q.getSelections().length) {
+			List<Selection> newSelections = listBuilder.getListSelections();
+			
+			if (newSelections.size() != q.getSelections().size()) {
 				if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
 					compatible = false;
 					changed = true;
@@ -146,10 +147,10 @@ public class CategoryInputPane extends JDialog {
 			}
 
 			// Trim the strings, check for changes
-			for (int i = 0; i < q.getSelections().length; i++) {
-				if (!q.getSelections()[i]
-						.equals(newSelections[i].getString().trim())) {
-					q.getSelections()[i].setString(newSelections[i].getString()
+			for (int i = 0; i < q.getSelections().size(); i++) {
+				if (!q.getSelections().get(i)
+						.equals(newSelections.get(i).getString().trim())) {
+					q.getSelections().get(i).setString(newSelections.get(i).getString()
 							.trim());
 					changed = true;
 				}

@@ -769,13 +769,13 @@ public class Statistics
                 }
                 else if (q.answerType.equals(CategoricalAnswer.class))
                 {
-                    alterStatArray[index].answerTotals = new int[q.getSelections().length];
-                    alterStatArray[index].answerText = new String[q.getSelections().length];
+                    alterStatArray[index].answerTotals = new int[q.getSelections().size()];
+                    alterStatArray[index].answerText = new String[q.getSelections().size()];
 
-                    for (int i = 0; i < q.getSelections().length; ++i)
+                    for (int i = 0; i < q.getSelections().size(); ++i)
                     {
                         //	alterStatArray[index].answerText[i] = q.selections[q.selections.length - (i + 1)].getString();
-                        alterStatArray[index].answerText[i] = q.getSelections()[i].getString();
+                        alterStatArray[index].answerText[i] = q.getSelections().get(i).getString();
                     }
                 }
 

@@ -24,8 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -562,7 +561,7 @@ public class AuthoringQuestionPanel extends EgoQPanel
                 question_central_label.setVisible(false);
                 if (q.answerType.equals(CategoricalAnswer.class))
                 {
-                    if (q.getSelections().length == 0)
+                    if (q.getSelections().size() == 0)
                     {
                         question_central_label.setText("No Selections");
                         question_central_label.setForeground(Color.red);
@@ -573,9 +572,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
                         question_central_label.setText("No Adjacency Selections");
                         question_central_label.setForeground(Color.red);
 
-                        for (int i = 0; i < q.getSelections().length; i++)
+                        for (int i = 0; i < q.getSelections().size(); i++)
                         {
-                            if (q.getSelections()[i].isAdjacent())
+                            if (q.getSelections().get(i).isAdjacent())
                             {
                                 question_central_label.setText("Adjacency Selections Set");
                                 question_central_label.setForeground(Color.black);
@@ -794,10 +793,9 @@ public class AuthoringQuestionPanel extends EgoQPanel
             q.text = q_old.text;
             q.followupOnly = q_old.followupOnly;
 
-            try
-            {
+            try {
                 egoNet.getStudy().addQuestion(q);
-                q.setSelections(Arrays.copyOf(q_old.getSelections(), q_old.getSelections().length));
+                q.setSelections(new ArrayList<Selection>(q_old.getSelections()));
             }
             catch (DuplicateQuestionException e1)
             {

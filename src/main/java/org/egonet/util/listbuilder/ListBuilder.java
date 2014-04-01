@@ -118,8 +118,7 @@ public class ListBuilder extends JPanel implements Observer {
 
 	private AlterNameModel alterNameModel = null;
 
-	private static final Map<String, Selection[]> presets = ListBuilderPresets
-			.getPresets();
+	private static final Map<String, List<Selection>> presets = ListBuilderPresets.getPresets();
 
 	private static final String CHOOSE_PRESET_INSTRUCTION = "Choose from preset options";
         
@@ -270,7 +269,7 @@ public class ListBuilder extends JPanel implements Observer {
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
 						Object item = e.getItem();
-						Selection[] options = presets.get(item);
+						List<Selection> options = presets.get(item);
 						if (options != null) {
 							setListSelections(options);
 							comboPresets.setSelectedIndex(0);
@@ -675,7 +674,7 @@ public class ListBuilder extends JPanel implements Observer {
 		return maxSize;
 	}
 
-	public Selection[] getSelections() {
+	public List<Selection> getSelections() {
 		
 		List<Selection> selectionList = new ArrayList<Selection>();
 	
@@ -696,25 +695,20 @@ public class ListBuilder extends JPanel implements Observer {
                         
 		}
 
-		int i = 0;
-		Selection[] arr = new Selection[selectionList.size()];
-		for (Selection sel : selectionList)
-				arr[i++] = sel;
-
-		return arr;
+		return selectionList;
 	}
 
-	public void setSelections(Selection[] selections) {
+	public void setSelections(List<Selection> selections) {
 		elementList.removeAll();
 		elementList.addAll(selections);
 		build();
 	}
 
-	public Selection[] getListSelections() {
+	public List<Selection> getListSelections() {
 		return getSelections();
 	}
 
-	public void setListSelections(Selection[] selections) {
+	public void setListSelections(List<Selection> selections) {
 		setSelections(selections);
 	}
 
@@ -756,10 +750,10 @@ public class ListBuilder extends JPanel implements Observer {
 		build();
 	}
 
-	public String[] getListStrings() {
+	public String [] getListStrings() {
 
-		Selection [] listSelections = getListSelections();
-		String[] listStrings = new String[listSelections.length];
+		List<Selection> listSelections = getListSelections();
+		String[] listStrings = new String[listSelections.size()];
 		
 		int i = 0;
 		for (Selection selection : listSelections)

@@ -18,7 +18,9 @@
  */
 package org.egonet.model.question;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.model.QuestionLink;
@@ -92,7 +94,7 @@ public abstract class Question implements Cloneable {
 
 	public QuestionLink link = new QuestionLink();
 
-	private Selection[] selections = new Selection[0];
+	private List<Selection> selections = new ArrayList<Selection>(0);
 
 	private Answer answer = Answer.newInstance(TextAnswer.class);
 
@@ -128,16 +130,16 @@ public abstract class Question implements Cloneable {
 	public boolean selectionAdjacent(int value) {
 		boolean rval = false;
 
-		if (this.getSelections().length > 0) {
-			int size = this.getSelections().length;
-
-			for (int i = 0; i < size; i++) {
-				if (value == this.getSelections()[i].getValue()) {
-					rval = this.getSelections()[i].isAdjacent();
-					break;
-				}
+		if(getSelections() == null || getSelections().size() <= 0)
+			return false;
+		
+		for (Selection sel : getSelections()) {
+			if (value == sel.getValue()) {
+				rval = sel.isAdjacent();
+				break;
 			}
 		}
+		
 		return rval;
 	}
 	
@@ -198,11 +200,11 @@ public abstract class Question implements Cloneable {
 		return str;
 	}
 
-	public void setSelections(Selection[] selections) {
+	public void setSelections(List<Selection> selections) {
 		this.selections = selections;
 	}
 
-	public Selection[] getSelections() {
+	public List<Selection> getSelections() {
 		return selections;
 	}
 

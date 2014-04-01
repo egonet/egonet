@@ -13,6 +13,7 @@ import org.egonet.model.QuestionList;
 import org.egonet.model.Shared;
 import org.egonet.model.Study;
 import org.egonet.model.question.Question;
+import org.egonet.model.question.Selection;
 import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.DateUtils;
 
@@ -161,18 +162,19 @@ public class StudyWriter {
 			e.addElement("Citation").setText(q.citation);
 		}
 
-		if (q.getSelections().length > 0) {
-			int size = q.getSelections().length;
+		if (q.getSelections().size() > 0) {
+			int size = q.getSelections().size();
 			Element selections = e.addElement("Answers");
 
 			for (int i = 0; i < size; i++) {
 				Element answer = selections.addElement("AnswerText");
-				answer.setText(q.getSelections()[i].getString());
+				
+				Selection ptr = q.getSelections().get(i);
+				
+				answer.setText(ptr.getString());
 				answer.setAttribute("index", Integer.toString(i));
-				answer.setAttribute("value", Integer
-						.toString(q.getSelections()[i].getValue()));
-				answer.setAttribute("adjacent",
-						q.getSelections()[i].isAdjacent() ? "true" : "false");
+				answer.setAttribute("value", Integer.toString(ptr.getValue()));
+				answer.setAttribute("adjacent", ptr.isAdjacent() ? "true" : "false");
 			}
 		}
 

@@ -151,7 +151,7 @@ public class NodeLabelPanel extends JPanel {
 		// logger.info("Question examining:" + question.UniqueId);
 
 		if (question.answerType.equals(CategoricalAnswer.class)) {
-			int noOfRows = question.getSelections().length;
+			int noOfRows = question.getSelections().size();
 			Selection[] rowData = new Selection[noOfRows];
 			/* change the list of selections based on the selected question */
 			if (!selectionList.isEmpty()) {

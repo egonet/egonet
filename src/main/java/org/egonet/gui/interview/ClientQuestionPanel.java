@@ -706,7 +706,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			questionText.setCaretPosition(0);
 
 			// can we do radio buttons or do we need the dropdown?
-			if (question.getSelections().length <= answerButtons.length) { // radio buttons!
+			if (question.getSelections().size() <= answerButtons.length) { // radio buttons!
 				logger.info(" -- doing radio buttons since there's room!");
 
 				for(int i = 0; i < answerButtons.length; i++)
@@ -717,9 +717,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerButtons[i].setActionCommand("User Input");
 				}
 
-				for (int i = 0; i < question.getSelections().length && i < answerButtons.length; i++) {
+				for (int i = 0; i < question.getSelections().size() && i < answerButtons.length; i++) {
 					answerButtons[i].setActionCommand("Initialization");
-					answerButtons[i].setText(question.getSelections()[i].getString() + " (" + question.getSelections()[i].getValue() + ")" );
+					answerButtons[i].setText(question.getSelections().get(i).getString() + " (" + question.getSelections().get(i).getValue() + ")" );
 					answerButtons[i].setVisible(true);
 					answerButtons[i].setEnabled((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW) || (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 					answerButtons[i].setActionCommand("User Input");
@@ -753,8 +753,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				answerMenu.removeAllItems();
 				answerMenu.addItem(new Selection("Select an answer"));
 
-				for (int i = 0; i < question.getSelections().length; i++) {
-					answerMenu.addItem(question.getSelections()[i]);
+				for (int i = 0; i < question.getSelections().size(); i++) {
+					answerMenu.addItem(question.getSelections().get(i));
 					// If question already answered, then select that answer
 					if(	i > 0 && 
 						question.getAnswer().getIndex() >= 0 &&
@@ -923,7 +923,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			} else if(question.answerType.equals(CategoricalAnswer.class)) {
 
 				// option items
-				if (question.getSelections().length <= answerButtons.length) {
+				if (question.getSelections().size() <= answerButtons.length) {
 					int buttonIndex = selectedButtonIndex(answerButtons);
 					answer.setAnswered((buttonIndex != -1));
 
@@ -931,13 +931,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.timestamp = generateTimeStamp();
 
 						int selectionIndex = buttonIndex;
-						logger.info("Selected button (index: " + buttonIndex + ") with selections ("+Arrays.asList(question.getSelections())+") of size " + question.getSelections().length);
-						answer.setValue((question.getSelections()[selectionIndex].getValue()));
+						logger.info("Selected button (index: " + buttonIndex + ") with selections ("+question.getSelections()+") of size " + question.getSelections().size());
+						answer.setValue((question.getSelections().get(selectionIndex).getValue()));
 						// added 11/27/2007
-						answer.setIndex(question.getSelections()[selectionIndex].getIndex());
+						answer.setIndex(question.getSelections().get(selectionIndex).getIndex());
 						// answer.index = question.selections.length - question.selections[button].getIndex();
-						answer.adjacent = question.getSelections()[selectionIndex].isAdjacent();
-						answer.string = question.getSelections()[selectionIndex].getString();
+						answer.adjacent = question.getSelections().get(selectionIndex).isAdjacent();
+						answer.string = question.getSelections().get(selectionIndex).getString();
 						//logger.info("Timestamp: " + answer.timestamp + ", answer = " + answer.getString());
 						// answer.timestamp = DateFormat.getDateInstance().format(new Date());
 					}
@@ -946,21 +946,21 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					// combo boxes
 					int selectionIndex = answerMenu.getSelectedIndex() - 1;
 
-					answer.setAnswered((selectionIndex >= 0) && (selectionIndex < question.getSelections().length+1));
+					answer.setAnswered((selectionIndex >= 0) && (selectionIndex < question.getSelections().size()+1));
 
 					if (answer.isAnswered()) {
 						answer.timestamp = generateTimeStamp();
 						//logger.info("Timestamp: " + answer.timestamp);
 
-						Selection sel = question.getSelections()[selectionIndex];
+						Selection sel = question.getSelections().get(selectionIndex);
 						answer.setValue(sel.getValue());
 
 						// added 11/27/2007
 						answer.setIndex(sel.getIndex());
 
-						answer.adjacent = question.getSelections()[selectionIndex]
+						answer.adjacent = question.getSelections().get(selectionIndex)
 						                                           .isAdjacent();
-						answer.string = question.getSelections()[selectionIndex]
+						answer.string = question.getSelections().get(selectionIndex)
 						                                         .getString();
 
 						logger.info("Answered: " + answer.getString());
@@ -1260,12 +1260,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				&& (question.getAnswer().secondAlter() > (question.getAnswer()
 						.firstAlter() + 1))) {
 			int defaultAnswer = -1;
-			if (!question.getSelections()[question.getSelections().length - 1]
-			                              .isAdjacent()) {
-				defaultAnswer = question.getSelections().length - 1;
+			if (!question.getSelections().get(question.getSelections().size() - 1).isAdjacent()) {
+				defaultAnswer = question.getSelections().size() - 1;
 			} else {
-				for (int i = 0; i < question.getSelections().length; i++) {
-					if (!question.getSelections()[i].isAdjacent()) {
+				for (int i = 0; i < question.getSelections().size(); i++) {
+					if (!question.getSelections().get(i).isAdjacent()) {
 						defaultAnswer = i;
 						break;
 					}
@@ -1273,12 +1272,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((defaultAnswer >= 0)
-					&& (defaultAnswer < question.getSelections().length)) {
-				question.getAnswer().setValue((question.getSelections()[defaultAnswer].getValue()));
-				question.getAnswer().setIndex(question.getSelections()[defaultAnswer].getIndex());
+					&& (defaultAnswer < question.getSelections().size())) {
+				question.getAnswer().setValue((question.getSelections().get(defaultAnswer).getValue()));
+				question.getAnswer().setIndex(question.getSelections().get(defaultAnswer).getIndex());
 
-				question.getAnswer().string = question.getSelections()[defaultAnswer]
-				                                                  .getString();
+				question.getAnswer().string = question.getSelections().get(defaultAnswer).getString();
 				question.getAnswer().adjacent = false;
 				question.getAnswer().setAnswered(true);
 			}
@@ -1378,7 +1376,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	public static void showPreview(String questionTitle, String questionText, 
-			Class<? extends Question> questionType, Class<? extends Answer> answerType, Selection[] selections) 
+			Class<? extends Question> questionType, Class<? extends Answer> answerType, List<Selection> selections) 
 	{
 
 		JDialog dialog = new JDialog(null,"Preview of "+questionTitle,Dialog.ModalityType.APPLICATION_MODAL);
@@ -1405,7 +1403,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			                                     // I wonder how it prevents typing letters
 		} else if(answerType.equals(CategoricalAnswer.class)) {
 			if(selections != null) {
-				if(selections.length < 10) {
+				if(selections.size() < 10) {
 					panel.add(new JLabel("List-item Answer:"),"growx,wrap");
 					ButtonGroup group = new ButtonGroup();
 					for(Selection selection : selections) {

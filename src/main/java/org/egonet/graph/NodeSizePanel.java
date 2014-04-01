@@ -141,7 +141,7 @@ public class NodeSizePanel extends JPanel {
 		// logger.info("Question examining:" + question.UniqueId);
 
 		if (question.answerType.equals(CategoricalAnswer.class)) {
-			int noOfRows = question.getSelections().length;
+			int noOfRows = question.getSelections().size();
 			Object[][] rowData = new Object[noOfRows][2];
 			/* change the list of selections based on the selected question */
 			if (!selectionList.isEmpty()) {
@@ -154,7 +154,7 @@ public class NodeSizePanel extends JPanel {
 				rowData[i][0] = selectionList.get(i);
 			}
 			// populate the shapes
-			int noOfSizes = question.getSelections().length;
+			int noOfSizes = question.getSelections().size();
 			for (int i = 1; i <= noOfSizes; i++) {
 				if (i < sizes.length) {
 					String num = (new Integer(i)).toString();
@@ -241,8 +241,8 @@ public class NodeSizePanel extends JPanel {
 	private void updateNodeSize() {
 		Question question = (Question) questionCombo.getSelectedItem();
 		if (question.answerType.equals(CategoricalAnswer.class)) {
-			for (int i = 0; i < question.getSelections().length; i++) {
-				Selection selection = question.getSelections()[i];
+			for (int i = 0; i < question.getSelections().size(); i++) {
+				Selection selection = question.getSelections().get(i);
 
 				GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question,selection);
 				NodeProperty nodeProperty = new NodeProperty();

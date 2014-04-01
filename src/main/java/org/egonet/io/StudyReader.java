@@ -366,30 +366,29 @@ public class StudyReader {
 				boolean adjacent = false;
 				boolean nonadjacent = false;
 
-				q.setSelections(new Selection[selections.size()]);
+				q.setSelections(new ArrayList<Selection>(selections.size()));
 
 				while (selections.hasMoreElements()) {
 
 					Element selection = selections.next();
 					int index = Integer.parseInt(selection.getAttributeValue("index"));
-
+					
+					Selection ptr = new Selection();
+					q.getSelections().set(index, ptr);
 					try {
-						q.getSelections()[index] = new Selection();
-						q.getSelections()[index].setString(selection.getTextString());
-						q.getSelections()[index]
-								.setValue(Integer.parseInt(selection.getAttributeValue("value")));
+						
+						ptr.setString(selection.getTextString());
+						ptr.setValue(Integer.parseInt(selection.getAttributeValue("value")));
 
-						q.getSelections()[index].setAdjacent(Boolean.valueOf(selection.getAttributeValue("adjacent")).booleanValue());
-						q.getSelections()[index].setIndex(index);
-
+						ptr.setAdjacent(Boolean.valueOf(selection.getAttributeValue("adjacent")).booleanValue());
+						ptr.setIndex(index);
 					} catch (NumberFormatException ex) {
 						//logger.info("Throwing exception");
-						q.getSelections()[index].setValue(selections.size()
-								- (index + 1));
-						q.getSelections()[index].setAdjacent(false);
+						ptr.setValue(selections.size() - (index + 1));
+						ptr.setAdjacent(false);
 					}
 
-					if (q.getSelections()[index].isAdjacent())
+					if (ptr.isAdjacent())
 						adjacent = true;
 					else
 						nonadjacent = true;
@@ -412,8 +411,8 @@ public class StudyReader {
 
 				/* Check to make sure all answers are contiguous */
 				for (int i = 0; i < selections.size(); i++) {
-					if (q.getSelections()[i] == null) {
-						throw (new MalformedQuestionException());
+					if (q.getSelections().get(i) == null) {
+						throw (new MalformedQuestionException("saved a null as a selection"));
 					}
 				}
 			}
