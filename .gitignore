@@ -159,6 +159,9 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+# gedit crap
+*.*~
+
 # Mac crap
 .DS_Store
 
