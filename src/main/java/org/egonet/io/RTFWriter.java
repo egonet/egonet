@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;

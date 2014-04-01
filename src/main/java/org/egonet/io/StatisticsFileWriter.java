@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 import org.egonet.model.answer.*;
-
-import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
+import org.egonet.statistics.Statistics;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -38,7 +37,7 @@ public class StatisticsFileWriter {
 		Element studyElement = document.setRoot("Statistics");
 
 		studyElement.setAttribute("StudyId", study.getStudyId());
-		studyElement.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
+		studyElement.setAttribute("Creator", org.egonet.model.Shared.version);
 
 		writeStructuralStatistics(studyElement, interview, stats);
 		writeEgoAnswers(studyElement, interview);

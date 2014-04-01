@@ -1,0 +1,790 @@
+/***
+ * Copyright (c) 2008, Endless Loop Software, Inc.
+ * 
+ * This file is part of EgoNet.
+ * 
+ * EgoNet is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * EgoNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.egonet.model;
+
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+
+import org.egonet.exceptions.DuplicateQuestionException;
+import org.egonet.model.Shared.AlterNameModel;
+import org.egonet.model.Shared.AlterSamplingModel;
+import org.egonet.model.answer.*;
+import org.egonet.model.question.*;
+
+/*******************************************************************************
+ * Stores basic configuration data for the study including question order lists
+ */
+public class Study extends Observable implements Comparable<Study>
+{
+	private String              _uniqueId       = "";
+   private String            _uiType         = Shared.TRADITIONAL_QUESTIONS;
+   private boolean           _studyDirty     = false;
+   private boolean           _compatible     = true;
+   private boolean           _inUse          = false;
+   private String            _studyName      = "New Study";
+   private boolean			skipQuestions = false;
+ 
+   
+   private int               _minAlters      = 40;
+   private int               _maxAlters      = 40;
+   
+   private Map<Class<? extends Question>,List<Long>> _questionOrder  = new HashMap<Class<? extends Question>,List<Long>>();
+   
+   private QuestionList      _questions      = new QuestionList();
+
+   /* Added for UNC */
+   private AlterSamplingModel alterSamplingModel = AlterSamplingModel.ALL;
+   private AlterNameModel alterNameModel = AlterNameModel.FIRST_LAST;
+   private Integer alterSamplingParameter = null; 
+   private boolean unlimitedMode = false;
+   
+   /**
+   * Instantiates Default Study
+   */
+	public Study()
+	{
+		this._questions.clear();
+		for(Class<? extends Question> type : Shared.questionClasses)
+		    _questionOrder.put(type, new ArrayList<Long>());
+	}
+	
+	/***************************************************************************
+	 * Returns UniqueId of study read from file
+	 * 
+	 * @return long Unique Id of study
+	 */
+	public String getStudyId()
+	{
+		return (_uniqueId);
+	}
+
+	/***************************************************************************
+	 * Notifies observers that a field in the study has changed
+	 */
+	public void notifyObservers()
+	{
+		setChanged();
+		super.notifyObservers(this);
+	}
+
+	/***************************************************************************
+	 * Returns name of study
+	 * 
+	 * @return name name of study
+	 */
+	public String getStudyName()
+	{
+		return (_studyName);
+	}
+
+	/**
+	 * @return Returns the questions.
+	 */
+	public QuestionList getQuestions()
+	{
+		return _questions;
+	}
+
+   /**
+    * @return Returns the questions.
+    */
+   public Question getQuestion(Long id)
+   {
+      return _questions.getQuestion(id);
+   }
+
+
+	/**
+	 * @return Returns the firstQuestion.
+	 */
+	public Question getFirstQuestion()
+	{
+		return _questions.values().iterator().next();
+	}
+
+	/***************************************************************************
+	 * Returns array of questions for a specified category
+	 * 
+	 * @param category
+	 *            category of questions to return
+	 * @return questionOrder array of question Ids
+	 * @throws NoSuchElementException
+	 *             for category out of range
+	 */
+	public List<Long> getQuestionOrder(Class<? extends Question> category) throws NoSuchElementException
+	{
+		return _questionOrder.get(category);
+	}
+
+	/***************************************************************************
+	 * Working forward from beginning, find first unanswered question
+	 * 
+	 * @return index of first unanswered question
+	 */
+	public Question getFirstStatableQuestion()
+	{
+		Question statable = null;
+		
+		/**
+		 * Try to find one all alters answer
+		 */
+		 Iterator<Long> questions = getQuestionOrder(AlterPairQuestion.class).iterator();
+		while (questions.hasNext())
+		{
+			Question q = (Question) _questions.getQuestion(questions.next());
+
+			if (q.isStatable() && !q.link.isActive())
+			{
+				statable = q;
+				break;
+			}
+		}
+
+		/**
+		 * Settle for any statable
+		 */
+		if (statable == null)
+		{
+			questions = getQuestionOrder(AlterQuestion.class).iterator();
+			while (questions.hasNext())
+			{
+				Question q = (Question) _questions.getQuestion(questions.next());
+
+				if (q.isStatable())
+				{
+					statable = q;
+				}
+			}
+		}
+
+		return (statable);
+	}
+
+	/***************************************************************************
+	 * Returns UniqueId of study read from file
+	 * 
+	 * @param long
+	 *            Unique Id of study
+	 */
+	public void setStudyId(String id)
+	{
+		_uniqueId = id;
+	}
+
+	/***************************************************************************
+	 * Sets name of study
+	 * 
+	 * @param name
+	 *            name of study
+	 */
+	public void setStudyName(String name)
+	{
+		if (!_studyName.equals(name))
+		{
+			_studyName = name;
+			setModified(true);
+		}
+	}
+
+	/***************************************************************************
+	 * Sets study dirty flag; generally done when the study is written to a
+	 * file
+	 */
+	public void setModified(boolean dirty)
+	{
+		_studyDirty = dirty;
+		notifyObservers();
+	}
+
+	/***************************************************************************
+	 * gets dirty state of study
+	 * 
+	 * @return dirty
+	 */
+	public boolean isModified()
+	{
+		return (_studyDirty);
+	}
+
+	/**
+	 * @return Returns the compatible.
+	 */
+	public boolean isCompatible()
+	{
+		return _compatible;
+	}
+	
+	/**
+	 * @param compatible The compatible to set.
+	 */
+	public void setCompatible(boolean compatible)
+	{
+		this._compatible = compatible;
+		notifyObservers();
+	}
+	
+	/**
+	 * @return Returns the inUse.
+	 */
+	public boolean isInUse()
+	{
+		return _inUse;
+	}
+	
+	/**
+	 * @param inUse The inUse to set.
+	 */
+	public void setInUse(boolean inUse)
+	{
+		this._inUse = inUse;
+	}
+   
+   /**
+    * @return Returns the uiType
+    */
+   public String getUIType()
+   {
+      return _uiType;
+   }
+   
+   public boolean confirmIncompatibleChange(JInternalFrame frame)
+   {
+	   return confirmIncompatibleChange((JFrame)null);
+   }
+   
+	/**
+	 * Warn user this change will make study no longer compatible with previous interviews
+	 * @param q
+	 * @throws DuplicateQuestionException
+	 */
+	public boolean confirmIncompatibleChange(JFrame frame)
+	{
+		boolean ok = true;
+		if (isInUse() && isCompatible())
+		{
+         int confirm =
+            JOptionPane.showConfirmDialog(
+            		frame,
+            		"This study has already been used for at least one interview.\n" +
+						"If you make this change you will have to save this as a new study and will \n" +
+						"no longer be able to access prior interviews with this study.\n" +
+						"Do you still wish to make this change?",
+						"Incompatible Study Modification",
+						JOptionPane.OK_CANCEL_OPTION);
+
+         if (confirm != JOptionPane.OK_OPTION)
+         {
+            ok = false;
+         }
+		}
+		
+		return ok;
+	}
+	
+	/***************************************************************************
+	 * Adds a question to the full question list
+	 * 
+	 * @param q
+	 *            question to add
+	 */
+	public void addQuestion(Question q) throws DuplicateQuestionException
+	{
+		if (_questions.contains(q.UniqueId))
+			throw new DuplicateQuestionException("Question with uniqueId "+q.UniqueId+" already added to study: " + _questions.toString());
+		
+		_questions.addQuestion(q);
+		setModified(true);
+		
+		/* If not in appropriate array list, add to that list too */
+		if (!_questionOrder.get(q.getClass()).contains(q.UniqueId))
+		{
+		    _questionOrder.get(q.getClass()).add(q.UniqueId);
+		}
+	}
+
+	/***************************************************************************
+	 * Changes position of a question in an order list
+	 * 
+	 * @param q
+	 *            question to move
+	 * @param follow
+	 *            question q should follow
+	 */
+	public void moveQuestionAfter(Question q, Question follow)
+	{
+		int followloc;
+
+		if (_questionOrder.get(q.getClass()).contains(follow.UniqueId) || (follow.equals(getFirstQuestion())))
+		{
+			_questionOrder.get(q.getClass()).remove(q.UniqueId);
+
+			if (follow.equals(getFirstQuestion())) {
+				_questionOrder.get(q.getClass()).add(0, q.UniqueId);
+			}
+			else
+			{
+				followloc = _questionOrder.get(q.getClass()).indexOf(follow.UniqueId);
+				_questionOrder.get(q.getClass()).add(followloc + 1, q.UniqueId);
+			}
+
+			if (q.link.isActive())
+			{
+				if (!doesQuestionPreceed(q.link.getAnswer().getQuestionId(), q.UniqueId))
+				{
+					q.link.setAnswer(null);
+				}
+			}
+
+			setModified(true);
+		}
+	}
+
+	public void changeQuestionType(Question oldQ, Class<? extends Question> newType) throws DuplicateQuestionException
+	{
+		if(oldQ.getClass().equals(newType))
+			return;
+		
+		removeQuestion(oldQ);
+		Question newQ = Question.newInstance(newType);
+		
+		// TODO: can be *way* improved
+		newQ.title = newQ.title;
+		newQ.text = oldQ.text;
+		newQ.citation = oldQ.citation;
+		newQ.answerType = oldQ.answerType;
+		
+		addQuestion(newQ);
+		setModified(true);
+	}
+
+	/***************************************************************************
+	 * Go through question list making sure any interquestion dependencies are
+	 * met
+	 * 
+	 * @param q
+	 *            question to move
+	 * @param type
+	 *            new question type
+	 */
+	public void setCentralQuestion(Question q)
+	{
+		Iterator<Long> i = _questionOrder.get(AlterPairQuestion.class).iterator();
+
+		while (i.hasNext())
+		{
+			Long key = (Long) i.next();
+			Question listQ = this._questions.getQuestion(key);
+
+			if (listQ != null)
+			{
+				if (listQ.equals(q))
+				{
+					if (!listQ.centralMarker)
+					{
+						listQ.centralMarker = true;
+						setModified(true);
+					}
+				}
+				else
+				{
+					/* Only one centralMarker allowed */
+					if (listQ.centralMarker)
+					{
+						listQ.centralMarker = false;
+						setModified(true);
+					}
+				}
+			}
+		}
+	}
+
+	/***************************************************************************
+	 * Go through question list making sure any interquestion dependencies are
+	 * met
+	 * 
+	 * @param q
+	 *            question to move
+	 * @param type
+	 *            new question type
+	 */
+	public void validateQuestions()
+	{
+		boolean foundCentral = false;
+		Iterator<Long> it = _questionOrder.get(AlterPairQuestion.class).iterator();
+
+		while (it.hasNext())
+		{
+			Long key = it.next();
+			Question q = this._questions.getQuestion(key);
+
+			if (q != null)
+			{
+				if (!foundCentral && q.centralMarker)
+				{
+					foundCentral = true;
+				}
+				else
+				{
+					/* Only one centralMarker allowed */
+					q.centralMarker = false;
+				}
+			}
+		}
+
+		if (!foundCentral)
+		{
+			/* Tag first Alter pair categorical question */
+			Iterator<Long> it2 = _questionOrder.get(AlterPairQuestion.class).iterator();
+
+			while (it2.hasNext() && !foundCentral)
+			{
+				Long key = it2.next();
+				Question q = this._questions.getQuestion(key);
+
+				if ((q != null) && (q.answerType.equals(CategoricalAnswer.class)))
+				{
+					q.centralMarker = true;
+					foundCentral = true;
+				}
+			}
+		}
+	}
+
+	/***************************************************************************
+	 * Searches question list for all questions of a given type, places them in
+	 * list
+	 * 
+	 * @param questionType
+	 *            type filter for question list
+	 * @param dlm
+	 *            list model to use in inserting questions
+	 */
+	public void fillList(Class<? extends Question> questionType, DefaultListModel<Question> dlm)
+	{
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(!entry.getKey().equals(questionType))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
+            }
+        }
+	}
+	
+	   /***************************************************************************
+     * Searches question list for all questions, places them in
+     * list
+     * 
+     * @param questionType
+     *            type filter for question list
+     * @param dlm
+     *            list model to use in inserting questions
+     */
+    public void fillList(DefaultListModel<Question> dlm)
+    {
+        Set<Entry<Class<? extends Question>, List<Long>>> entries = _questionOrder.entrySet();
+        
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : entries)
+        {
+            if(entry.getKey().equals(AlterPromptQuestion.class))
+                continue;
+            
+            List<Long> questions = entry.getValue();
+            for(Long id : questions)
+            {
+                if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
+            }
+        }
+    }
+
+    /***************************************************************************
+     * Searches question list for all questions of a given tpe, places them in
+     * list until a given question is reached
+     * 
+     * @param questionType
+     *            type filter for question list
+     * @param dlm
+     *            list model to use in inserting questions
+     * @param endId
+     *            question list end, stop when you see this question
+     */
+    public void fillList(DefaultListModel<Question> dlm, Long endId)
+    {
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(entry.getKey().equals(AlterPromptQuestion.class))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(id.equals(endId))
+                    return;
+                else if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
+            }
+        }
+    }
+    
+	/***************************************************************************
+	 * Searches question list for all questions of a given tpe, places them in
+	 * list until a given question is reached
+	 * 
+	 * @param questionType
+	 *            type filter for question list
+	 * @param dlm
+	 *            list model to use in inserting questions
+	 * @param endId
+	 *            question list end, stop when you see this question
+	 */
+	public void fillList(Class<? extends Question> questionType, DefaultListModel<Question> dlm, Long endId)
+	{
+        for(Map.Entry<Class<? extends Question>,List<Long>> entry : _questionOrder.entrySet())
+        {
+            if(!entry.getKey().equals(questionType))
+                continue;
+            
+            for(Long id : entry.getValue())
+            {
+                if(id.equals(endId))
+                    return;
+                else if(_questions.contains(id))
+                    dlm.addElement(_questions.getQuestion(id));
+            }
+        }
+	}
+
+	/***************************************************************************
+	 * Returns true iff q1 preceeds q2 in study
+	 * 
+	 * @param q1
+	 *            Id of question which may preceed q2
+	 * @param q2
+	 *            Id of question which may be preceeded by q1
+	 */
+	public boolean doesQuestionPreceed(Long q1, Long q2)
+	{
+		for(Class<? extends Question> qT : Shared.questionClasses)
+		{
+		    if(qT.equals(StudyQuestion.class))
+		        continue;
+		    
+		    List<Long> questionList = _questionOrder.get(qT);
+		    for(Long key : questionList)
+		    {
+	              if (key.equals(q1))
+	                {
+	                    return true;
+	                }
+	                else if (key.equals(q2))
+	                {
+	                    return false;
+	                }
+		    }
+		}
+		
+		return false;
+	}
+
+	/***************************************************************************
+	 * Essentially makes sure order list matches question list
+	 */
+	public void verifyStudy()
+	{
+	    for (Class<? extends Question> type : Shared.questionClasses)
+        {
+            Iterator<Long> it = getQuestionIterator(type);
+
+			while (it.hasNext())
+			{
+				Long qid = (Long) it.next();
+
+				if (_questions.getQuestion(qid) == null)
+				{
+					it.remove();
+				}
+			}
+		}
+	}
+
+	/***************************************************************************
+	 * Returns a bi-directional list iterator of questions for a category
+	 * 
+	 * @param category
+	 *            category of question
+	 * @return iterator list iterator or questions
+	 */
+	public ListIterator<Long> getQuestionIterator(Class<? extends Question> category)
+	{
+		return (_questionOrder.get(category).listIterator());
+	}
+
+	/***************************************************************************
+	 * Remove all base or custom Questions from question list and order lists
+	 * 
+	 * @param base
+	 *            Remove questions from base file or custom file
+	 */
+	public void removeQuestions()
+	{
+		Question q;
+
+		Iterator i = this._questions.values().iterator();
+
+		while (i.hasNext())
+		{
+			q = (Question) i.next();
+
+			i.remove();
+			removeQuestion(q);
+		}
+	}
+
+	/***************************************************************************
+	 * Remove one Question from question map and order lists
+	 * 
+	 * @param q
+	 *            question to remove
+	 */
+	public void removeQuestion(Question q)
+	{
+		removeLinksToQuestion(q);
+
+		for (List<Long> orderList : _questionOrder.values())
+		    orderList.remove(q.UniqueId);
+
+		_questions.remove(q.UniqueId);
+		setModified(true);
+	}
+
+	/***************************************************************************
+	 * Searches question list for any questions linked to a question about to
+	 * be removed, and removes those question links.
+	 * 
+	 * @param questionType
+	 *            type filter for question list
+	 * @param dlm
+	 *            list model to use in inserting questions
+	 */
+	public void removeLinksToQuestion(Question lq)
+	{
+		Iterator<Question> i = this._questions.values().iterator();
+
+		while (i.hasNext())
+		{
+			Question q = (Question) i.next();
+
+			if (q.link.isActive() && (q.link.getAnswer().getQuestionId().equals(lq.UniqueId)))
+			{
+				q.link.setAnswer(null);
+			}
+		}
+	}
+
+	public AlterSamplingModel getAlterSamplingModel() {
+		return alterSamplingModel;
+	}
+
+	public void setAlterSamplingModel(AlterSamplingModel alterSamplingModel) {
+		this.alterSamplingModel = alterSamplingModel;
+	}
+
+	public Integer getAlterSamplingParameter() {
+		return alterSamplingParameter;
+	}
+
+	public void setAlterSamplingParameter(Integer alterSamplingParameter) {
+		this.alterSamplingParameter = alterSamplingParameter;
+	}
+	
+	public void setMinimumNumberOfAlters(int n) {
+		if(n != _minAlters)
+			setModified(true);
+		_minAlters=n;
+	}
+	
+	public int getMinimumNumberOfAlters() {
+		return _minAlters;
+	}
+
+	public void setMaximumNumberOfAlters(int n) {
+		if(n != _maxAlters)
+			setModified(true);
+		_maxAlters=n;
+	}
+	
+	public int getMaximumNumberOfAlters() {
+		return _maxAlters;
+	}
+	
+    public int getExpectedNumberOfAlters(int collectedAlters)
+    {
+        if(alterSamplingModel.equals(AlterSamplingModel.RANDOM_SUBSET))
+            return alterSamplingParameter;
+        else if(alterSamplingModel.equals(AlterSamplingModel.NTH_ALTER))
+            return collectedAlters/alterSamplingParameter;
+        else
+            return collectedAlters;
+    }
+
+	public int compareTo(Study o) {
+		return getStudyId().compareTo(o.getStudyId());
+	}
+
+	public AlterNameModel getAlterNameModel() {
+		return alterNameModel;
+	}
+
+	public void setAlterNameModel(AlterNameModel alterNameModel) {
+		this.alterNameModel = alterNameModel;
+	}
+	
+
+	public String toString() {
+		return getStudyName() + " (" + getStudyId() + ")";
+	}
+
+	public void setAllowSkipQuestions(boolean selected) {
+		this.skipQuestions = selected;
+		
+	}
+	
+	public boolean getAllowSkipQuestions() {
+		return skipQuestions;
+	}
+        
+        public void setUnlimitedMode(boolean unlimitedMode)
+        {   
+               this.unlimitedMode = unlimitedMode;
+        }
+        
+        public boolean isUnlimitedAlterMode()
+        {
+            return this.unlimitedMode;
+        }
+}

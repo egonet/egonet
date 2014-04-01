@@ -12,20 +12,19 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.egonet.graph.ELSFRLayout2;
+import org.egonet.graph.Edge;
+import org.egonet.graph.Vertex;
 import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.ego.client.graph.ELSFRLayout2;
-import com.endlessloopsoftware.ego.client.graph.Edge;
-import com.endlessloopsoftware.ego.client.graph.Vertex;
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.SparseGraph;

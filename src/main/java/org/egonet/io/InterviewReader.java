@@ -5,14 +5,13 @@ import java.util.Arrays;
 
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.StudyIdMismatchException;
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 import org.egonet.model.answer.*;
 import org.egonet.model.question.AlterPromptQuestion;
 import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;

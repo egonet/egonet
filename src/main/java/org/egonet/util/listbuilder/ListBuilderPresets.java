@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import org.egonet.model.question.Selection;
+
 public class ListBuilderPresets
 {
 	public static Map<String,Selection[]> getPresets()

@@ -3,11 +3,10 @@ package org.egonet.io;
 import java.io.File;
 import java.io.IOException;
 
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 import org.egonet.model.answer.*;
 import org.egonet.model.question.Question;
-
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -36,18 +35,11 @@ public class InterviewWriter {
 			interviewDocument.setAttribute("StudyId", study.getStudyId());
 			interviewDocument.setAttribute("StudyName", study.getStudyName());
 			
-			// smithmb -- appears to be a duplicate with numalters and NumAlters, removing this one
-			//interviewDocument.setAttribute("NumAlters", Integer.toString(study.getNetworkSize()));
-			
-			interviewDocument.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
+			interviewDocument.setAttribute("Creator", org.egonet.model.Shared.version);
 
 			Element alterListElem = interviewDocument.addElement("AlterList");
 			Element answerListElem = interviewDocument.addElement("AnswerList");
 
-			// smithmb - 2013-04-21 - Removed this as we count num alters by the actual alter list now,
-			// 		no need for a separate parameter 
-			// interviewDocument.setInt("numalters", study.getNetworkSize());
-			
 			interviewDocument.addElement("Complete").setBoolean(interview.isComplete());
 			interviewDocument.addElement("FollowUpProtocol").setBoolean(interview.isFollowup());
 			

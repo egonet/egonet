@@ -21,16 +21,17 @@ package org.egonet.util.listbuilder;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import org.egonet.gui.author.CategoryInputPane;
+import org.egonet.model.Shared.AlterNameModel;
+import org.egonet.model.question.Selection;
+
 import java.awt.BorderLayout;
 import java.awt.event.*;
 
-
-import com.endlessloopsoftware.ego.author.CategoryInputPane;
-import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.jgoodies.forms.layout.*;
 import com.jgoodies.forms.builder.*;
-import java.awt.Dimension;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

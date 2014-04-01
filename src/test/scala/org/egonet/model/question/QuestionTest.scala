@@ -5,7 +5,6 @@ import org.scalatest.Args
 import org.egonet.EgonetSpec
 import org.egonet.exceptions.MalformedQuestionException
 import com.endlessloopsoftware.egonet.Shared
-import org.egonet.util.listbuilder.Selection
 import org.egonet.model.answer.Answer
 import org.egonet.model.answer.CategoricalAnswer
 

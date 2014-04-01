@@ -13,6 +13,10 @@ import javax.swing.JTextField;
 
 import junit.framework.Assert;
 
+import org.egonet.gui.author.AuthoringQuestionPanel;
+import org.egonet.gui.author.EgoFrame;
+import org.egonet.gui.author.EgoNet;
+import org.egonet.gui.author.PromptPanel;
 import org.egonet.model.question.AlterPairQuestion;
 import org.egonet.model.question.AlterQuestion;
 import org.egonet.model.question.EgoQuestion;
@@ -35,10 +39,6 @@ import org.fest.swing.fixture.JTextComponentFixture;
 import org.junit.Before;
 import org.junit.Test;*/
 
-import com.endlessloopsoftware.ego.author.AuthoringQuestionPanel;
-import com.endlessloopsoftware.ego.author.EgoFrame;
-import com.endlessloopsoftware.ego.author.EgoNet;
-import com.endlessloopsoftware.ego.author.PromptPanel;
 
 
 public class DesignStudy {

@@ -1,8 +1,9 @@
 package org.egonet.io
 
+
 import org.egonet.EgonetSpec
-import com.endlessloopsoftware.egonet.Study
-import com.endlessloopsoftware.egonet.Shared._
+import org.egonet.model.Study
+import org.egonet.model.Shared._
 import java.io.{File => JFile}
 import java.util.UUID
 

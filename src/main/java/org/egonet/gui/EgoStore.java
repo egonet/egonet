@@ -12,6 +12,7 @@ import net.sf.functionalj.Function0;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.StudyIdMismatchException;
+import org.egonet.gui.interview.EgoClient;
 import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.InterviewWriter;
@@ -21,17 +22,15 @@ import org.egonet.io.StatisticsFileWriter;
 import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.io.VnaInterviewWriter;
+import org.egonet.model.*;
 import org.egonet.model.answer.*;
 import org.egonet.model.question.Question;
+import org.egonet.statistics.Statistics;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
 import org.egonet.util.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.ego.client.statistics.Statistics;
-import com.endlessloopsoftware.egonet.*;
 
 import javax.swing.*;
 

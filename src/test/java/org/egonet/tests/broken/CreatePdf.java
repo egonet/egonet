@@ -5,9 +5,8 @@ import java.io.*;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.PDFWriter;
 import org.egonet.io.StudyReader;
-
-import com.endlessloopsoftware.egonet.Interview;
-import com.endlessloopsoftware.egonet.Study;
+import org.egonet.model.Interview;
+import org.egonet.model.Study;
 
 public class CreatePdf {
 

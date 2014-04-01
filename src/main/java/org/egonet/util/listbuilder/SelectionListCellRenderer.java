@@ -24,6 +24,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import org.egonet.model.question.Selection;
+
 public class SelectionListCellRenderer implements ListCellRenderer<Selection>
 {
 	protected final DefaultListCellRenderer renderer = new DefaultListCellRenderer();

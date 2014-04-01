@@ -1,9 +1,6 @@
 package org.egonet.io;
 
 
-import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
-import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +8,13 @@ import java.util.List;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.Study;
+import org.egonet.model.Shared.AlterNameModel;
+import org.egonet.model.Shared.AlterSamplingModel;
 import org.egonet.model.answer.*;
 import org.egonet.model.question.*;
-import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -359,7 +356,7 @@ public class StudyReader {
 				Elements selections = answerList.getElements("AnswerText");
 
 				if (selections.size() == 0) {
-					throw (new MalformedQuestionException());
+					throw (new MalformedQuestionException("zero selections, impossible for a categorical question!"));
 				}
 
 				/*
@@ -374,8 +371,7 @@ public class StudyReader {
 				while (selections.hasMoreElements()) {
 
 					Element selection = selections.next();
-					int index = Integer.parseInt(selection
-							.getAttributeValue("index"));
+					int index = Integer.parseInt(selection.getAttributeValue("index"));
 
 					try {
 						q.getSelections()[index] = new Selection();

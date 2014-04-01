@@ -19,16 +19,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 
+import org.egonet.gui.author.EgoFrame;
+import org.egonet.gui.author.EgoNet;
+import org.egonet.gui.interview.EgoClient;
 import org.egonet.mdi.*;
+import org.egonet.model.Shared;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.ego.author.EgoFrame;
-import com.endlessloopsoftware.ego.author.EgoNet;
-import com.endlessloopsoftware.ego.client.EgoClient;
-import com.endlessloopsoftware.egonet.Shared;
 
 public class EgonetFrame extends JFrame  {
 	private final MDIDesktopPane desktop = new MDIDesktopPane();

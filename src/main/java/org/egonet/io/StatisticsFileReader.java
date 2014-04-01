@@ -2,11 +2,11 @@ package org.egonet.io;
 
 import java.io.File;
 
+import org.egonet.statistics.StatRecord;
+import org.egonet.statistics.StatRecord.AlterAnswer;
+import org.egonet.statistics.StatRecord.EgoAnswer;
 import org.egonet.util.Name;
 
-import com.endlessloopsoftware.ego.client.statistics.StatRecord;
-import com.endlessloopsoftware.ego.client.statistics.StatRecord.AlterAnswer;
-import com.endlessloopsoftware.ego.client.statistics.StatRecord.EgoAnswer;
 import electric.xml.Document;
 import electric.xml.Element;
 import electric.xml.Elements;

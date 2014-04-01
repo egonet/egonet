@@ -9,13 +9,12 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.EgonetException;
+import org.egonet.model.QuestionList;
+import org.egonet.model.Shared;
+import org.egonet.model.Study;
 import org.egonet.model.question.Question;
 import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.DateUtils;
-
-import com.endlessloopsoftware.egonet.QuestionList;
-import com.endlessloopsoftware.egonet.Shared;
-import com.endlessloopsoftware.egonet.Study;
 
 import electric.xml.Document;
 import electric.xml.Element;
@@ -37,7 +36,7 @@ public class StudyWriter {
 	      Element studyElement = document.setRoot("Package");
 	      studyElement.setAttribute("Id", ""+study.getStudyId());
 	      studyElement.setAttribute("InUse", study.isInUse() ? "Y" : "N");
-	      studyElement.setAttribute("Creator", com.endlessloopsoftware.egonet.Shared.version);
+	      studyElement.setAttribute("Creator", org.egonet.model.Shared.version);
 	      studyElement.setAttribute("Updated", DateUtils.getDateString(Calendar.getInstance().getTime(), "dd/MM/yyyy hh:mm a"));
 	      
 	      writeStudyData(studyElement, study);

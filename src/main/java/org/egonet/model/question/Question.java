@@ -21,10 +21,8 @@ package org.egonet.model.question;
 import java.util.Date;
 
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.QuestionLink;
 import org.egonet.model.answer.*;
-import org.egonet.util.listbuilder.Selection;
-
-import com.endlessloopsoftware.egonet.QuestionLink;
 
 
 /*******************************************************************************

@@ -6,9 +6,8 @@ import java.util.Map;
 
 import javax.swing.ProgressMonitor;
 
+import org.egonet.model.Study;
 import org.egonet.util.ExtensionFileFilter;
-
-import com.endlessloopsoftware.egonet.Study;
 
 /**
  * File filter to filter the interview files based on selected study The

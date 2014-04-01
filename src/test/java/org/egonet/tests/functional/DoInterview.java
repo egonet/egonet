@@ -3,6 +3,8 @@ package org.egonet.tests.functional;
 
 import static org.fest.swing.core.matcher.JButtonByTextMatcher.*;
 
+import org.egonet.gui.interview.ClientFrame;
+import org.egonet.gui.interview.EgoClient;
 import org.egonet.util.CardPanel;
 import org.fest.swing.core.KeyPressInfo;
 import org.fest.swing.core.NameMatcher;
@@ -22,9 +24,6 @@ import org.junit.Before;
 import org.junit.Test;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.endlessloopsoftware.ego.client.ClientFrame;
-import com.endlessloopsoftware.ego.client.EgoClient;
 
 import java.awt.Component;
 import java.awt.Frame;
