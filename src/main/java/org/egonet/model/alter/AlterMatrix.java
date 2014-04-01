@@ -59,12 +59,13 @@ public class AlterMatrix<T extends Comparable<T>> {
 		return s;
 	}
 	
-	// not sure we need these.
-	private boolean contains(AlterPair pair) {
+	@Deprecated
+	public boolean contains(AlterPair pair) {
 		return _matrix.containsKey(pair);
 	}
 	
-	private boolean contains(Alter first, Alter second) {
+	@Deprecated
+	public boolean contains(Alter first, Alter second) {
 		return _matrix.containsKey(new AlterPair(first, second));
 	}
 	
