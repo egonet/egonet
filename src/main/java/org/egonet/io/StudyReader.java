@@ -1,5 +1,6 @@
 package org.egonet.io;
 
+
 import com.endlessloopsoftware.egonet.Shared.AlterNameModel;
 import com.endlessloopsoftware.egonet.Shared.AlterSamplingModel;
 import com.endlessloopsoftware.egonet.Shared.AnswerType;
@@ -11,9 +12,7 @@ import java.util.List;
 import org.egonet.exceptions.DuplicateQuestionException;
 import org.egonet.exceptions.EgonetException;
 import org.egonet.exceptions.MalformedQuestionException;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.Question;
+import org.egonet.model.question.*;
 import org.egonet.util.listbuilder.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,12 +208,57 @@ public class StudyReader {
 
         return ((inUse != null) && inUse.equals("Y"));
     }
+
+	@Deprecated
+	private enum QuestionType {
+
+		STUDY_CONFIG(StudyQuestion.class.getCanonicalName()),
+		EGO(EgoQuestion.class.getCanonicalName()),
+		ALTER_PROMPT(AlterPromptQuestion.class.getCanonicalName()),
+		ALTER(AlterQuestion.class.getCanonicalName()),
+		ALTER_PAIR(AlterPairQuestion.class.getCanonicalName())
+		;
+	    public final String className;
+	    QuestionType(String className) {
+	        this.className = className;
+	    }
+	}
 	
 	public static Question readQuestion(Element question) throws MalformedQuestionException
 	{
-		String questionType = question.getString("QuestionType");
-		Question q = Question.newInstance(questionType);
+		Question q;
 		
+		String questionType = question.getString("QuestionType");
+		if(!questionType.toLowerCase().contains(".class".toLowerCase())) {
+			int intQuestiontype = -1; 
+			try {
+				intQuestiontype = Integer.parseInt(questionType);
+			}
+			catch (Exception ex) {
+				throw new MalformedQuestionException("QuestionType did not contain canonical name, but I couldn't parse an integer");
+			}
+			
+			String clazz = null;
+			QuestionType [] types = { 
+					QuestionType.STUDY_CONFIG,
+					QuestionType.EGO,
+					QuestionType.ALTER_PROMPT,
+					QuestionType.ALTER,
+					QuestionType.ALTER_PAIR
+			};
+			
+			for(QuestionType t : types) {
+				if(t.ordinal() == intQuestiontype) {
+					clazz = t.className;
+				}
+			}
+			if(clazz == null) {
+				throw new MalformedQuestionException("QuestionType did not contain canonical name or integer");
+			}
+			questionType = clazz;
+		}
+		
+		q = Question.newInstance(questionType);	
 		
 		if(question.getElement("QuestionTitle") == null) {
 			q.title = "";
