@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.egonet.util;
-public class Selection
-{
+public class Selection {
 	public String 	 string;
 	public int		 index;
 	public int		 value;
