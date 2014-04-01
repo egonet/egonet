@@ -20,25 +20,16 @@ package org.egonet.util.listbuilder;
 
 public class Selection {
 	private String string;
-
 	private int index;
-
-	private int value;
-
+	private Integer value;
 	private boolean adjacent;
 
 	public Selection() {
-		this.string = "";
-		this.value = -1;
-		this.index = -1;
-		this.adjacent = false;
+		this("");
 	}
 	
 	public Selection(String str) {
-		this.string = str;
-		this.value = -1;
-		this.index = -1;
-		this.adjacent = false;
+		this(str, -1, -1, false);
 	}
 
 	public Selection(String string, int value, int index, boolean adjacent) {
@@ -78,11 +69,11 @@ public class Selection {
 		this.string = string;
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
 
@@ -90,7 +81,8 @@ public class Selection {
 		if (this.adjacent == selection.adjacent
 				&& this.index == selection.index
 				&& this.string.equals(selection.string)
-				&& this.value == selection.value) {
+				&& this.value != null && selection.value != null
+				&& this.value.equals(selection.value)) {
 			return true;
 		}
 		return false;
