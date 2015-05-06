@@ -231,13 +231,11 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
         msg += "<p>Egonet is a tool for studying personal networks.</p>";
         
         msg += "<p>Thanks to:</p>";
-        msg += "<p>Dr. Chris McCarty <a href=\"mailto:ufchris@ufl.edu\">&lt;ufchris@ufl.edu&gt;</a>";
+        msg += "<p>Dr. Chris McCarty";
+        msg += "<br/><a href=\"mailto:ufchris@ufl.edu\">ufchris@ufl.edu</a>";
         msg += "<br/>University of Florida</p>";
 
-        msg += "<p>Egonet is hosted at SourceForge.net.";
-        msg += "<br/>To contribute code, report bugs, or get the latest version, visit:";
-        msg += "<br/><a href=\"http://egonet.sf.net\">http://egonet.sf.net</a></p>";
-        
+        msg += "<p>Egonet is hosted at SourceForge.net and Github.com.</p>";
         msg += "<p>&nbsp;</p>";
             
         JEditorPane editor = new JEditorPane();

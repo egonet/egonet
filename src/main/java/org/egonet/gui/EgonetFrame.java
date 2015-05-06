@@ -2,6 +2,7 @@ package org.egonet.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
+import java.net.URI;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -71,6 +73,23 @@ public class EgonetFrame extends JFrame  {
 		menuBar.add(helpMenu);
 
 		final Window me = this;
+
+		JMenuItem visitMenu = new JMenuItem("Visit website");
+		helpMenu.add(visitMenu);
+		visitMenu.addActionListener(new CatchingAction("jMenuHelpVisit") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				Desktop.getDesktop().browse(new URI("http://egonet.sf.net"));
+			}
+		});
+
+		JMenuItem reportMenu = new JMenuItem("Report an issue");
+		helpMenu.add(reportMenu);
+		reportMenu.addActionListener(new CatchingAction("jMenuHelpReport") {
+			public void safeActionPerformed(ActionEvent e) throws Exception {
+				Desktop.getDesktop().browse(new URI("http://github.com/egonet/egonet/issues"));
+			}
+		});
+
 		JMenuItem aboutMenu = new JMenuItem("About");
 		helpMenu.add(aboutMenu);
 		aboutMenu.addActionListener(new CatchingAction("jMenuHelpAbout") {
@@ -78,7 +97,6 @@ public class EgonetFrame extends JFrame  {
 				Shared.displayAboutBox(me);
 			}
 		});
-		
 		
 		
 		//fileMenu.add(newStudyMenu);
