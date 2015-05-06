@@ -52,17 +52,18 @@ class QuestionTest extends EgonetSpec {
       	sAdjacent.setAdjacent(true)
       	sAdjacent.setValue(12345)
       
+      	 import scala.collection.JavaConverters._
     	val selections = List(
     	    new Selection(),
     	    sAdjacent, // determinesAdjacency=true
     	    new Selection()
     	    )
-    	q.setSelections(selections.toArray)
+    	q.setSelections(selections.asJava)
     	
     	val rSelections = q.getSelections()
     	val zipped = selections.toArray.zipWithIndex
     	zipped.foreach({case (x,i) => {
-    	  assert(x == rSelections(i))
+    	  assert(x == rSelections.get(i))
     	}})
     	
     	assert(q.determinesAdjacency())
