@@ -38,9 +38,17 @@ libraryDependencies += "org.slf4j" % "slf4j-api" % "1.5.6"
 
 libraryDependencies += "org.slf4j" % "slf4j-jdk14" % "1.5.6"
 
+libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
 
-libraryDependencies += "com.novocode" % "junit-interface" % "0.9" % "test"
+libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+
+autoScalaLibrary := false
+
+crossPaths := false
+
+EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 
 mainClass in (Compile, run) := Some("org.egonet.gui.EgonetRunner")
 
