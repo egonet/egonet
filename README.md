@@ -1,7 +1,9 @@
 EgoNet
 =========
 
-Releases are located on SourceForge at http://egonet.sf.net.
+Check out downloads and more on SourceForge at http://egonet.sf.net.
+
+[![Download egonet](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/egonet/files/latest/download)
 
 To do
 =========
