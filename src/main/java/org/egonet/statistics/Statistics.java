@@ -386,6 +386,10 @@ public class Statistics
         return d;
     }
 
+    private float[] generateBetweennessArray() {
+    	return generateBetweennessArray(this.adjacencyMatrix);
+    }
+    
     /********
      * For a non-directional adjacency graph represented by the parameter matrix,
      * the "Betweenness" value for each alter. The betweenness is the percentage of
@@ -393,54 +397,48 @@ public class Statistics
      * Based on an algorithm by Ulrik Brandes (2001)
      * @return array of C(B) for each alter
      */
-    private float[] generateBetweennessArray()
+    public static float[] generateBetweennessArray(int [][] adjacencyMatrix)
     {
-        int size = this.adjacencyMatrix.length;
+        int size = adjacencyMatrix.length;
         float[] Cb = new float[size];
-        int s;
 
-        for (s = 0; s < size; ++s)
-        {
+        // for each vertex in graph
+        for (int s = 0; s < size; ++s) {
             Stack<Integer> S = new Stack<Integer>();
+            
             @SuppressWarnings({"unchecked"})
             java.util.List<Integer>[] P = new java.util.List[size];
+            
             LinkedList<Integer> Q = new LinkedList<Integer>();
             int[] spaths = new int[size];
             int[] distance = new int[size];
 
-            for (int w = 0; w < size; ++w)
-            {
+            for (int w = 0; w < size; ++w) {
                 P[w] = new LinkedList<Integer>();
                 distance[w] = -1;
             }
 
             spaths[s] = 1;
             distance[s] = 0;
-            Q.addLast(new Integer(s));
+            Q.addLast(s);
 
-            while (!Q.isEmpty())
-            {
-                Integer V = (Integer) Q.removeFirst();
-                int v = V.intValue();
+            while (!Q.isEmpty()) {
+                int v = Q.removeFirst();
 
-                S.push(V);
+                S.push(v);
 
-                for (int w = 0; w < size; ++w)
-                {
-                    if ((w != v) && (adjacencyMatrix[w][v] > 0))
-                    {
+                for (int w = 0; w < size; ++w) {
+                    if ((w != v) && (adjacencyMatrix[w][v] > 0)) {
                         // w found for first time?
-                        if (distance[w] < 0)
-                        {
-                            Q.addLast(new Integer(w));
+                        if (distance[w] < 0) {
+                            Q.addLast(w);
                             distance[w] = distance[v] + 1;
                         }
 
                         // shortest path to w via v?
-                        if (distance[w] == (distance[v] + 1))
-                        {
+                        if (distance[w] == (distance[v] + 1)) {
                             spaths[w] += spaths[v];
-                            P[w].add(new Integer(v));
+                            P[w].add(v);
                         }
                     }
                 }
@@ -448,25 +446,20 @@ public class Statistics
 
             // S returns vertices in order of non-increasing distance from s
             float[] dependency = new float[size];
-            while (!S.empty())
-            {
-                int w = ((Integer) S.pop()).intValue();
-
-                Iterator it = P[w].iterator();
-                while (it.hasNext())
-                {
-                    int v = ((Integer) it.next()).intValue();
+            while (!S.empty()) {
+                int w = S.pop();
+                
+                for(int v : P[w]) {
                     dependency[v] += (spaths[v] + (spaths[v] * dependency[w])) / spaths[w];
                 }
 
-                if (w != s)
-                {
+                if (w != s) {
                     Cb[w] += dependency[w];
                 }
             }
         }
 
-        return (Cb);
+        return Cb;
     }
 
     /********
