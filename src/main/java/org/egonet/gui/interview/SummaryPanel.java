@@ -128,6 +128,14 @@ public class SummaryPanel extends JPanel
 	{
 		File intPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Interviews/");
 		File istPath = new File(egoClient.getStorage().getStudyFile().getParent(), "/Statistics/");
+		
+		if(intPath == null || !intPath.exists()) {
+			throw new IllegalArgumentException(intPath.getPath() + " does not seem to exist");
+		}
+		else if(istPath == null || !istPath.exists()) {
+			throw new IllegalArgumentException(istPath.getPath() + " does not seem to exist");
+		}
+		
 		String[] intFiles = intPath.list();
 		Set<File> istFileSet = new HashSet<File>();
 		int i = 0, p = 0;
