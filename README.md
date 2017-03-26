@@ -38,6 +38,8 @@ $ sbt assembly
 [success] Total time: 3 s, completed Mar 26, 2017 1:48:08 PM
 ```
 
+`sbt build-launcher` can be used to build a Windows executable as well.
+
 ## To do
 - Write more unit tests for other features, specifically study and interview readers and writers
 - Convert ListBuilder to something with better editing w/ undelete, reorder, where GUID for a selection is preserved

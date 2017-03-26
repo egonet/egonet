@@ -1,5 +1,7 @@
 name := "egonet"
 
+version := "1.0"
+
 libraryDependencies += "net.sf.jung" % "jung-api" % "2.0.1"
 
 libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"
@@ -55,6 +57,8 @@ jacoco.settings
 mainClass in (Compile, run) := Some("org.egonet.gui.EgonetRunner")
 
 mainClass in assembly := Some("org.egonet.gui.EgonetRunner")
+
+mainClass in buildLauncher := Some("org.egonet.gui.EgonetRunner")
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
 {
