@@ -40,6 +40,10 @@ $ sbt assembly
 
 `sbt build-launcher` can be used to build a Windows executable as well.
 
+## Versions and Changes
+
+Before 2017, versions were based on dates. After that, we started using [semantic versioning](http://semver.org). We've gone back and retroactively assigned versions to all of the old date based releases, and added them to the [CHANGELOG](CHANGELOG.md) for easy reference. Please beware that matching dates to commits for the older revisions wasn't perfect, and may not match up exactly for the very, very old ones.
+
 ## To do
 - Write more unit tests for other features, specifically study and interview readers and writers
 - Convert ListBuilder to something with better editing w/ undelete, reorder, where GUID for a selection is preserved

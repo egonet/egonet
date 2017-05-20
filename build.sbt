@@ -1,6 +1,6 @@
 name := "egonet"
 
-version := "1.0"
+version := "1.0.0"
 
 libraryDependencies += "net.sf.jung" % "jung-api" % "2.0.1"
 
