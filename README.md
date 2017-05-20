@@ -2,14 +2,13 @@
 
 Check out downloads and more on SourceForge at http://egonet.sf.net.
 
-[!(https://circleci.com/gh/egonet/egonet.svg?style=shield&circle-token=f120f41c0d823f28fe3421ec4b92cb149af5c5e0)](https://circleci.com/gh/egonet/egonet)
-
 [![Download egonet](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/egonet/files/latest/download)
 
 ## Installing and building
 
 Egonet uses the Scala Build too; you'll need this installed to run tests, run development versions, and build artifacts to be used for releases.
 
+[![CircleCI Status Badge](https://circleci.com/gh/egonet/egonet.svg?style=shield&circle-token=f120f41c0d823f28fe3421ec4b92cb149af5c5e0)](https://circleci.com/gh/egonet/egonet)
 
 ## Running the project
 
