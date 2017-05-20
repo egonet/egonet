@@ -17,5 +17,5 @@ dependencies:
 test:
   post:
     - sbt assembly
-    - rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j
-    - ant -buildfile build-launch4j.xml
+    - rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
+    - cp target/*.exe target/*.jar $CIRCLE_ARTIFACTS/
