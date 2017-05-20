@@ -2,6 +2,8 @@ name := "egonet"
 
 version := "1.0.0"
 
+assemblyJarName in assembly := name.value + "-" + version.value + ".jar"
+
 libraryDependencies += "net.sf.jung" % "jung-api" % "2.0.1"
 
 libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"

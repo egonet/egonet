@@ -1,7 +1,7 @@
 <launch4jConfig>
 	<headerType>gui</headerType>
 	<outfile>target/egonet-1.0.0.exe</outfile>
-	<jar>target/egonet-assembly-1.0.0.jar</jar>
+	<jar>target/egonet-1.0.0.jar</jar>
 	<jre>
 		<minVersion>1.7.0</minVersion>
 		<initialHeapSize>256</initialHeapSize>
