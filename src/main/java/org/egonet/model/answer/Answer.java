@@ -25,6 +25,10 @@ import java.util.Random;
 import java.text.*;
 
 import org.egonet.exceptions.MalformedQuestionException;
+import org.egonet.model.question.AlterPairQuestion;
+import org.egonet.model.question.AlterPromptQuestion;
+import org.egonet.model.question.AlterQuestion;
+import org.egonet.model.question.EgoQuestion;
 
 public abstract class Answer implements Cloneable {
     /**
@@ -168,11 +172,27 @@ public abstract class Answer implements Cloneable {
 	 * @param questionType type of question subclass
 	 * @return a class object representing that type
 	 */
+    
+    private static String fromString(String s) {
+		if("1".equals(s)) {
+			s = CategoricalAnswer.class.getCanonicalName();
+		}
+		else if("2".equals(s)) {
+			s = NumericalAnswer.class.getCanonicalName();
+		}
+		else if("3".equals(s)) {
+			s = TextAnswer.class.getCanonicalName();
+		}
+		else if("4".equals(s)) {
+			s = InformationalAnswer.class.getCanonicalName();
+		}
+		return s;
+    }
 	
 	public static Class<? extends Answer> asSubclass(String answerType) {
 		try {
 			@SuppressWarnings("unchecked")
-			Class<? extends Answer> clazz = (Class<? extends Answer>)Class.forName(answerType);
+			Class<? extends Answer> clazz = (Class<? extends Answer>)Class.forName(fromString(answerType));
 
 			return clazz;
 		} 
@@ -183,7 +203,7 @@ public abstract class Answer implements Cloneable {
 	
 	public static Answer newInstance(String answerType) {
 		try {
-			Class<? extends Answer> clazz = asSubclass(answerType);
+			Class<? extends Answer> clazz = asSubclass(fromString(answerType));
 
 			return newInstance(clazz);
 		} 

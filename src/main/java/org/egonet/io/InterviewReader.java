@@ -241,7 +241,6 @@ public class InterviewReader {
                 qAlters[i] = alterElems.next().getInt();
             }
         }
-
         
         Answer r = Answer.newInstance(q.answerType);
         r.setQuestionId(qId); r.setAlters(qAlters);

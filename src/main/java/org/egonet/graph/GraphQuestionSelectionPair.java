@@ -25,7 +25,6 @@ import org.egonet.model.question.Selection;
 
 public class GraphQuestionSelectionPair {
 
-	// public static enum QuestionCategory { EGO, ALTER, ALTERPAIR }
 	private Question question;
 
 	private Selection selection;

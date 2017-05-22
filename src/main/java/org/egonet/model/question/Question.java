@@ -32,13 +32,6 @@ import org.egonet.model.answer.*;
  * 
  * 
  * 	
-	public enum QuestionType {
-	    QuestionType(String niceName, String title)
-	    {
-	        this.niceName = niceName;
-	        this.title = title;
-	    }
-	}
  * 
  * 
  */
@@ -253,6 +246,22 @@ public abstract class Question implements Cloneable {
 	
 	public static Class<? extends Question> asSubclass(String questionType) {
 		try {
+			if("0".equals(questionType)) {
+				questionType = StudyQuestion.class.getCanonicalName();
+			}			
+			else if("1".equals(questionType)) {
+				questionType = EgoQuestion.class.getCanonicalName();
+			}
+			else if("2".equals(questionType)) {
+				questionType = AlterPromptQuestion.class.getCanonicalName();
+			}
+			else if("3".equals(questionType)) {
+				questionType = AlterQuestion.class.getCanonicalName();
+			}
+			else if("4".equals(questionType)) {
+				questionType = AlterPairQuestion.class.getCanonicalName();
+			}
+			
 			@SuppressWarnings("unchecked")
 			Class<? extends Question> clazz = (Class<? extends Question>)Class.forName(questionType);
 
