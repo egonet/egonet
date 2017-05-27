@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,8 +34,6 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.egonet.model.answer.*;
-import org.egonet.model.question.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,23 +45,34 @@ public class Shared
 {
 	final private static Logger logger = LoggerFactory.getLogger(Shared.class);
 
-	@SuppressWarnings("unchecked")
-	public final static Class<? extends Question> questionClasses[] = new Class[]{
-			StudyQuestion.class,
-			EgoQuestion.class,
-			AlterQuestion.class,
-			AlterPromptQuestion.class,
-			AlterPairQuestion.class
-	}; 
-	
-	@SuppressWarnings("unchecked")
-	public final static Class<? extends Answer> answerClasses[] = new Class[]{
-			CategoricalAnswer.class,
-			TextAnswer.class,
-			NumericalAnswer.class,
-			InformationalAnswer.class,
-	}; 
-	
+	public static enum QuestionCategory { EGO, ALTER, ALTERPAIR }
+
+	public enum QuestionType {
+	   STUDY_CONFIG("Study", "Study questions"),
+	   EGO("Ego", "Questions About You"),
+	   ALTER_PROMPT("Alter Prompt", "Whom do you know?"),
+	   ALTER("Alter", "<html><p>Questions About <nobr><b>$$1</b></nobr></p></html>"),
+	   ALTER_PAIR("Alter Pair", "<html><p>Questions About <nobr><b>$$1</b></nobr> and <nobr><b>$$2</b></nobr></p></html>")
+	       ;
+	       public final String niceName, title;
+	       QuestionType(String niceName, String title)
+	       {
+	           this.niceName = niceName;
+	           this.title = title;
+	       }
+	   }
+	       public enum AnswerType
+	       {
+	           CATEGORICAL, // 1
+	           NUMERICAL, // 2
+	           TEXT, // 3
+	           INFORMATIONAL; // 4
+
+				public int getValue() {
+				    return ordinal() + 1;
+				}
+	       }
+
 	   public enum AlterSamplingModel
 	   {
 		   ALL,
@@ -75,10 +84,10 @@ public class Shared
 	   {
 		   FIRST_LAST,
 		   SINGLE;
-		   
+
 	   }
 
-	
+
 	/* Constants */
 	public static final int MIN_QUESTION_TYPE			= 1;
    public static final int ERROR                      = -1;
@@ -99,9 +108,9 @@ public class Shared
 	public static final int TEXT								= 2;
 	public static final int INFORMATIONAL						= 3;
 	public static final int MAX_ANSWER_TYPE 			= 3;
-	
+
 	public static final int 		   NO_ALTER				= -1;
-   
+
    /* UI Types */
    public final static String    TRADITIONAL_QUESTIONS  = "Traditional";
    public final static String    PAIR_ELICITATION       = "Applet Linking";
@@ -113,8 +122,7 @@ public class Shared
    public final static Long      GENERIC_APPLET_LINK    = new Long(54);
 
    /* For dynamic Alter Prompts */
-   public final static class AlterPromptType
-      implements Serializable
+   public final static class AlterPromptType implements Serializable
    {
       private final String _s;
       public AlterPromptType(String s) {_s = s;}
@@ -126,49 +134,49 @@ public class Shared
    public final static AlterPromptType LINK_TO_NEXT     = new AlterPromptType("Link To Next");
    public final static AlterPromptType LINK_TO_PRIOR    = new AlterPromptType("Link To Prior");
    public final static AlterPromptType LINK_PAIR        = new AlterPromptType("Link Pair");
-   
+
    public static String getTypeName(int type)
 	{
 		switch (type)
 		{
 			case EGO_QUESTION:
 				return "Ego";
-				
+
 			case ALTER_PROMPT:
 				return "Alter Prompt";
-				
+
 			case ALTER_QUESTION:
 				return "Alter Question";
-				
+
 			case ALTER_PAIR_QUESTION:
 				return "Alter Pair Question";
-				
+
          case CORRECTION:
             return "Correction Question";
-            
+
 			default:
 				return "Unknown " + type;
 		}
 	}
-	
+
 	public static int toInt(String s)
 	{
 		int n = -1;
-		try 
-		{ 
-			n = Integer.parseInt(s); 
-		} 
-		catch(NumberFormatException nfe){} 
-		
+		try
+		{
+			n = Integer.parseInt(s);
+		}
+		catch(NumberFormatException nfe){}
+
 		return n;
 	}
-   
+
    /* For Three Part Elicitations, determines next state machine state */
    public static AlterPromptType getNextPromptType(AlterPromptType type, String UIType)
    {
       AlterPromptType rval = Shared.NOT_ALTER_PROMPT;
       logger.info("getNextPromptType: " + type);
-      
+
       if (type.equals(Shared.LINK_TO_NEXT))
       {
          logger.info("equals " + Shared.LINK_TO_NEXT);
@@ -189,9 +197,9 @@ public class Shared
          logger.info("Fell through with " + type);
          rval = Shared.LINK_TO_NONE;
       }
-      
+
       logger.info("Returning: " + rval);
-      
+
       return rval;
    }
 
@@ -200,7 +208,7 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
 * Configures the UI; tries to set the system look on Mac,
 * <code>ExtWindowsLookAndFeel</code> on general Windows, and
 * <code>Plastic3DLookAndFeel</code> on Windows XP and all other OS.<p>
-* 
+*
 * The JGoodies Swing Suite's <code>ApplicationStarter</code>,
 * <code>ExtUIManager</code>, and <code>LookChoiceStrategies</code>
 * classes provide a much more fine grained algorithm to choose and
@@ -223,13 +231,13 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
             frame.getGlassPane().setVisible(false);
         }
     }
-    
+
     public static void displayAboutBox(Window parent)
     {
         String msg = "<html>";
-        
+
         msg += "<p>Egonet is a tool for studying personal networks.</p>";
-        
+
         msg += "<p>Thanks to:</p>";
         msg += "<p>Dr. Chris McCarty";
         msg += "<br/><a href=\"mailto:ufchris@ufl.edu\">ufchris@ufl.edu</a>";
@@ -237,27 +245,27 @@ public static final String 			version 	= "2.0 Beta 9 (7 Apr 2004)";
 
         msg += "<p>Egonet is hosted at SourceForge.net and Github.com.</p>";
         msg += "<p>&nbsp;</p>";
-            
+
         JEditorPane editor = new JEditorPane();
         editor.setEditorKit(new HTMLEditorKit());
         editor.setText(msg);
         editor.setEditable(false);
         editor.setOpaque(false);
         editor.setBorder(null);
-        
+
         // add a CSS rule to force body tags to use the default label font
         // instead of the value in javax.swing.text.html.default.csss
         Font font = UIManager.getFont("Label.font");
         String bodyRule = "body { font-family: " + font.getFamily() + "; " + "font-size: " + font.getSize() + "pt; }";
         ((HTMLDocument)editor.getDocument()).getStyleSheet().addRule(bodyRule);
-        
-        
+
+
         editor.addHyperlinkListener(new HyperlinkListener() {
                 public void hyperlinkUpdate(HyperlinkEvent e)
                 {
                     if(!e.getEventType().equals(EventType.ACTIVATED))
                         return;
-                    
+
                     try {
                         Desktop.getDesktop().browse(e.getURL().toURI());
                     } catch (Throwable cause) {}

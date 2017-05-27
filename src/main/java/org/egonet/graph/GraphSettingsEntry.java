@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +27,7 @@ public class GraphSettingsEntry {
     public enum GraphSettingType {
         Node, Edge
     }
-    
+
 	GraphQuestionSelectionPair graphQuestion = null;
 
 	GraphProperty property = null;
@@ -78,7 +78,7 @@ public class GraphSettingsEntry {
 		selectionElement.setAttribute("text", graphQuestion.getSelection().getString());
 		// Type
 		Element categoryElement = doc.createElement("Category");
-		String category = graphQuestion.getCategory().getSimpleName()+"";
+		String category = graphQuestion.getCategory().niceName+"";
 		categoryElement.setAttribute("category", category);
 		// Append all three to graphQuestion Element
 		graphQuestionElement.appendChild(questionElement);
@@ -88,7 +88,7 @@ public class GraphSettingsEntry {
 		// Record Property(Color Shape Size Label)
 		Element propertyElement = doc.createElement("Property");
 		propertyElement.setAttribute("type", type.toString());
-		
+
 		if (property instanceof NodeProperty) {
 			NodeProperty np = ((NodeProperty) property);
 			if(np.getProperty().equals(NodePropertyType.Color))
@@ -104,7 +104,7 @@ public class GraphSettingsEntry {
 				String size = ((Integer) property.getSize()).toString();
 				propertyElement.setAttribute("size", size);
 			}
-				
+
 			// no visible property on nodes
 		} else {
 
@@ -122,7 +122,7 @@ public class GraphSettingsEntry {
 				String size = ((Integer) property.getSize()).toString();
 				propertyElement.setAttribute("size", size);
 			}
-			
+
 			Element visibleElement = doc.createElement("Visible");
 			if (((EdgeProperty) property).isVisible())
 				visibleElement.setAttribute("visible", "true");
@@ -130,8 +130,8 @@ public class GraphSettingsEntry {
 				visibleElement.setAttribute("visible", "false");
 			propertyElement.appendChild(visibleElement);
 		}
-		
-		
+
+
 		entryElement.appendChild(graphQuestionElement);
 		entryElement.appendChild(propertyElement);
 

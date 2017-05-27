@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,8 +20,7 @@ package org.egonet.statistics.models;
 
 import javax.swing.JTable;
 
-import org.egonet.model.answer.CategoricalAnswer;
-import org.egonet.model.answer.NumericalAnswer;
+import org.egonet.model.Shared.AnswerType;
 import org.egonet.statistics.Statistics;
 
 public class QSummaryModel extends StatTableModel
@@ -73,13 +72,13 @@ public class QSummaryModel extends StatTableModel
 		}
 		else if (columnIndex <= stats.alterStatArray[rowIndex].answerTotals.length)
 		{
-			if ((stats.alterStatArray[rowIndex].answerType.equals(NumericalAnswer.class)) && (columnIndex == 1))
+			if ((stats.alterStatArray[rowIndex].answerType.equals(AnswerType.NUMERICAL)) && (columnIndex == 1))
 			{
 				return (
 					"Average: "
 						+ stats.alterStatArray[rowIndex].answerTotals[0] / stats.alterStatArray[rowIndex].answerCount);
 			}
-			else if (stats.alterStatArray[rowIndex].answerType.equals(CategoricalAnswer.class))
+			else if (stats.alterStatArray[rowIndex].answerType.equals(AnswerType.CATEGORICAL))
 			{
 				String s = null;
 				try

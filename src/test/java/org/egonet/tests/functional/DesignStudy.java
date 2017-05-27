@@ -17,10 +17,7 @@ import org.egonet.gui.author.AuthoringQuestionPanel;
 import org.egonet.gui.author.EgoFrame;
 import org.egonet.gui.author.EgoNet;
 import org.egonet.gui.author.PromptPanel;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.EgoQuestion;
-import org.egonet.model.question.Question;
+import org.egonet.model.Shared.QuestionType;
 import org.fest.swing.core.ComponentFinder;
 import org.fest.swing.core.NameMatcher;
 import org.fest.swing.core.Robot;
@@ -42,17 +39,17 @@ import org.junit.Test;*/
 
 
 public class DesignStudy {
-	
+
 	public final static String studyName = "Sample Egonet Study for Test";
 	public final static String location = System.getProperty("user.home") + File.separator+ "Desktop";
-	
+
 	private FrameFixture window;
 
 	//@Before
 	public void setUp() throws Exception
 	{
 		EgoNet client = new EgoNet();
-		
+
 		Frame f = new java.awt.Frame();
 		EgoFrame of = client.getFrame();
 		of.show();
@@ -75,19 +72,19 @@ public class DesignStudy {
 		JFileChooserFixture fileChooser = JFileChooserFinder.findFileChooser().using(window.robot);
 		fileChooser.fileNameTextBox().enterText(location + "/" + studyName);
 		fileChooser.approve();
-		
+
 		window.textBox("study_num_alters_field").deleteText().enterText("15");
 		window.radioButton("btnAlterModelRandomSubset").click();
 		window.textBox("txtAlterModelRandomSubset").deleteText().enterText("5");
-		
+
 		JTabbedPaneFixture tabs = window.tabbedPane();
 
 		// ego questions
 		tabs.selectTab("Ego");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), EgoQuestion.class);
+		AuthoringQuestionPanel egoPanel0 = findQPanel(window.robot.finder(), QuestionType.EGO);
 		JPanelFixture egoPanel = new JPanelFixture(window.robot, egoPanel0);
-		
+
 		createPlainQuestion(egoPanel, AnswerType.CATEGORICAL);
 		createPlainQuestion(egoPanel, AnswerType.NUMERICAL);
 		createPlainQuestion(egoPanel, AnswerType.TEXT);
@@ -96,28 +93,28 @@ public class DesignStudy {
 		tabs.selectTab("Alter Prompt");
 		PromptPanel alterpromptPanel0 = findPromptPanel(window.robot.finder());
 		JPanelFixture altrerpromptPanel = new JPanelFixture(window.robot, alterpromptPanel0);
-		
+
 		createQuestionTitleQuestionCitation(altrerpromptPanel);
-		
+
 		// alter
 		tabs.selectTab("Alter");
-		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), AlterQuestion.class);
+		AuthoringQuestionPanel alterPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER);
 		JPanelFixture alterPanel = new JPanelFixture(window.robot, alterPanel0);
-		
+
 		createPlainQuestion(alterPanel, AnswerType.CATEGORICAL);
 		createPlainQuestion(alterPanel, AnswerType.NUMERICAL);
 		createPlainQuestion(alterPanel, AnswerType.TEXT);
-		
-		
+
+
 		// alter pair
 		tabs.selectTab("Alter Pair");
 		window.robot.waitForIdle(); // there's some funky creation going on here
-		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), AlterPairQuestion.class);
+		AuthoringQuestionPanel alterPairPanel0 = findQPanel(window.robot.finder(), QuestionType.ALTER_PAIR);
 		JPanelFixture alterPairPanel = new JPanelFixture(window.robot, alterPairPanel0);
-		
+
 		createPlainQuestion(alterPairPanel, AnswerType.CATEGORICAL, true);
-		
-		
+
+
 		window.menuItemWithPath("File", "Quit").click();
 		DialogFixture dialog = WindowFinder.findDialog(DialogByTitleMatcher.withTitle("Save Study Changes")).withTimeout(5000).using(window.robot);
 		dialog.button(withText("Yes")).click();
@@ -136,64 +133,64 @@ public class DesignStudy {
 			fillInCategoricalQuestions(panel.robot);
 		} else if(alterPair) {
 			panel.button(withText("Selections")).click();
-			
+
 			 DialogFixture dialog = WindowFinder.findDialog("Category Options").withTimeout(10000).using(panel.robot);
 			JComboBoxFixture cmbF = dialog.comboBox();
 			cmbF.selectItem(2);
-			
+
 			dialog.list().selectItem(0);
 			dialog.button(withText("Mark selected item adjacent")).click();
-			
+
 			dialog.button(withText("OK")).click();
 
-			
-			
+
+
 		}
 	}
-	
+
 	private static void createPlainQuestion(JPanelFixture egoPanel, AnswerType type)
 	{
 		createPlainQuestion(egoPanel, type, false);
 	}
-	
+
 	private static void createQuestionTitleQuestionCitation(JPanelFixture fix)
 	{
 		createQuestionTitleQuestionCitation(fix, false);
 	}
-	
+
 	private static void createQuestionTitleQuestionCitation(JPanelFixture fix, boolean alterPair)
 	{
 		fix.button(withText("New")).click();
-		
+
 		NameMatcher titleFieldMatcher = new NameMatcher("question_title_field");
 		NameMatcher questionFieldMatcher = new NameMatcher("question_question_field");
 		NameMatcher citationFieldMatcher = new NameMatcher("question_citation_field");
-		
+
 		JTextComponentFixture titleText = new JTextComponentFixture(fix.robot, (JTextField)fix.robot.finder().find(fix.component(), titleFieldMatcher));
 		titleText.enterText("Question about " + randomString());
-		
+
 		JTextComponentFixture questionText = new JTextComponentFixture(fix.robot, (JTextArea)fix.robot.finder().find(fix.component(), questionFieldMatcher));
 		if(alterPair)
 			questionText.enterText("question - does $$1 " + randomString()+" with $$2?");
 		else
 			questionText.enterText("question - does " + randomString()+"?");
-		
+
 		JTextComponentFixture citationText = new JTextComponentFixture(fix.robot, (JTextArea)fix.robot.finder().find(fix.component(), citationFieldMatcher));
 		citationText.enterText(randomString(10));
 	}
-	
+
 	private static void fillInCategoricalQuestions(Robot robot)
 	{
 		 DialogFixture dialog = WindowFinder.findDialog("Category Options").withTimeout(10000).using(robot);
 		JComboBoxFixture cmbF = dialog.comboBox();
 		String [] poss = cmbF.contents();
-		
+
 		int sel = (int)(Math.random()*poss.length);
 		cmbF.selectItem(sel);
 		dialog.button(withText("OK")).click();
 	}
-	
-	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, Class<? extends Question> type)
+
+	private static AuthoringQuestionPanel findQPanel(ComponentFinder finder, QuestionType type)
 	{
 		Collection<Component> questionpanels = finder.findAll(new TypeMatcher(AuthoringQuestionPanel.class, false));
 		for(Component c : questionpanels)
@@ -203,10 +200,10 @@ public class DesignStudy {
 				return (AuthoringQuestionPanel)c;
 			}
 		}
-		
+
 		throw new RuntimeException("Couldn't find type " + type + " using finder " + finder);
 	}
-	
+
 	private static PromptPanel findPromptPanel(ComponentFinder finder)
 	{
 		Collection<Component> questionpanels = finder.findAll(new TypeMatcher(PromptPanel.class, false));
@@ -217,11 +214,11 @@ public class DesignStudy {
 				return (PromptPanel)c;
 			}
 		}
-		
+
 		throw new RuntimeException("Couldn't find type " + "prompt panel" + " using finder " + finder);
 	}
-	
-	
+
+
 	protected static String randomString()
 	{
 		return randomString(5);

@@ -18,9 +18,9 @@
  */
 package org.egonet.gui.table;
 
-import org.egonet.model.question.Selection;
-
 import javax.swing.table.AbstractTableModel;
+
+import org.egonet.model.Selection;
 
 public class ChoosablePropertyTableModel extends AbstractTableModel{
 

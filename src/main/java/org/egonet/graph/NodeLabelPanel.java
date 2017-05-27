@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,18 +33,19 @@ import java.awt.event.*;
 import org.egonet.gui.interview.EgoClient;
 import org.egonet.gui.table.LabelRenderer;
 import org.egonet.gui.table.LabelTableModel;
+import org.egonet.model.Answer;
+import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
 
 
 public class NodeLabelPanel extends JPanel {
 
 	final private static Logger logger = LoggerFactory.getLogger(NodeLabelPanel.class);
-	
+
 	private JComboBox<Question> questionCombo;
 
 	private JRadioButton questionRadio;
@@ -79,14 +80,14 @@ public class NodeLabelPanel extends JPanel {
 		List<Question> qList = new ArrayList<Question>();
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		
+
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			if (currentQuestion instanceof AlterQuestion) {
+			if (currentQuestion.questionType == QuestionType.ALTER) {
 				// populate the list box with only questions that have choices
 				// as answers
-				if (currentQuestion.answerType.equals(CategoricalAnswer.class)
-						|| currentQuestion.answerType.equals(TextAnswer.class))
+				if (currentQuestion.answerType.equals(AnswerType.CATEGORICAL)
+						|| currentQuestion.answerType.equals(AnswerType.TEXT))
 					qList.add(currentQuestion);
 			}
 		}
@@ -146,11 +147,11 @@ public class NodeLabelPanel extends JPanel {
 	private Selection[] getRowData() {
 		if(questionCombo.getSelectedIndex() == -1)
 			return new Selection[0];
-		
+
 		Question question = (Question) questionCombo.getSelectedItem();
 		// logger.info("Question examining:" + question.UniqueId);
 
-		if (question.answerType.equals(CategoricalAnswer.class)) {
+		if (question.answerType.equals(AnswerType.CATEGORICAL)) {
 			int noOfRows = question.getSelections().size();
 			Selection[] rowData = new Selection[noOfRows];
 			/* change the list of selections based on the selected question */
@@ -229,7 +230,7 @@ public class NodeLabelPanel extends JPanel {
 			}
 		} else {
 			Question question = (Question) questionCombo.getSelectedItem();
-			if (question.answerType.equals(CategoricalAnswer.class)) {
+			if (question.answerType.equals(AnswerType.CATEGORICAL)) {
 				for (Selection selection : question.getSelections()) {
 					GraphQuestionSelectionPair graphQuestion = new GraphQuestionSelectionPair(question, selection);
 					NodeProperty nodeProperty = new NodeProperty();
@@ -238,7 +239,7 @@ public class NodeLabelPanel extends JPanel {
 					graphRenderer.addQAsettings(graphQuestion, nodeProperty);
 					graphRenderer.updateGraphSettings();
 				}
-			} else if (question.answerType.equals(TextAnswer.class)) {
+			} else if (question.answerType.equals(AnswerType.TEXT)) {
 				logger.info("Applying labels for text questions");
 				for (Selection selection : selectionList) {
 					NodeProperty nodeProperty = new NodeProperty();

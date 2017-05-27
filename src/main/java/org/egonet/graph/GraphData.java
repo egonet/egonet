@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,14 +20,13 @@ package org.egonet.graph;
 
 import org.apache.commons.collections15.Transformer;
 import org.egonet.gui.interview.EgoClient;
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
 import org.egonet.model.Shared;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +49,13 @@ import javax.imageio.ImageIO;
 public class GraphData {
 
 	final private static Logger logger = LoggerFactory.getLogger(GraphData.class);
-	
+
 	private String[] completeAlterNameList;
 
 	private Interview interview;
 
 	private EgoClient egoClient;
-	
+
 	public int[][] adjacencyMatrix;
 
 	/**
@@ -69,17 +68,17 @@ public class GraphData {
 	 */
 	private List<Question> interviewAlterPairQuestionList;
 
-	
+
 
 	public GraphData(EgoClient egoClient) {
 		this.egoClient=egoClient;
-		
+
 		interview = egoClient.getInterview();
-		
+
 		int x = interview.getAlterList().length;
 		adjacencyMatrix = new int[x][x];
-		
-		
+
+
 		completeAlterNameList = egoClient.getInterview().getStats().alterList;
 		adjacencyMatrix = interview.getStats().adjacencyMatrix;
 		interviewAlterQuestionList = new ArrayList<Question>();
@@ -88,7 +87,7 @@ public class GraphData {
 
 	/**
 	 * Generates list of alter pairs about whom the graph question is.
-	 * 
+	 *
 	 * @param graphQuestion
 	 * @return Pair AlterPairList
 	 */
@@ -117,9 +116,9 @@ public class GraphData {
 				.removeAll(interviewAlterPairQuestionList);
 		while (interview.hasNext()) {
 			question = interview.next();
-			if (question instanceof AlterQuestion) {
+			if (question.questionType == QuestionType.ALTER) {
 				interviewAlterQuestionList.add(question);
-			} else if (question instanceof AlterPairQuestion) {
+			} else if (question.questionType == QuestionType.ALTER_PAIR) {
 				interviewAlterPairQuestionList.add(question);
 			}
 		}
@@ -128,7 +127,7 @@ public class GraphData {
 	/**
 	 * Given a graph question, this method returns the list of alters for whom
 	 * the question answer pair was provided.
-	 * 
+	 *
 	 * @param graphQuestion
 	 * @param category:
 	 *            ALTER_QUESTION or ALTER_PAIR_QUESTION
@@ -143,7 +142,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory().equals(AlterQuestion.class)) {
+		if (graphQuestion.getCategory().equals(QuestionType.ALTER)) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();
@@ -193,7 +192,7 @@ public class GraphData {
 	/**
 	 * Given a graph question, this method returns the list of alters for whom
 	 * the question answer pair was provided.
-	 * 
+	 *
 	 * @param graphQuestion
 	 * @param category:
 	 *            ALTER_QUESTION or ALTER_PAIR_QUESTION
@@ -208,7 +207,7 @@ public class GraphData {
 
 		populateQuestionLists();
 
-		if (graphQuestion.getCategory().equals(AlterQuestion.class)) {
+		if (graphQuestion.getCategory().equals(QuestionType.ALTER)) {
 			questionIterator = interviewAlterQuestionList.iterator();
 		} else { // if category is ALTER_PAIR_QUESTION
 			questionIterator = interviewAlterPairQuestionList.iterator();
@@ -223,7 +222,7 @@ public class GraphData {
 			}
 			if (interviewQuestion.UniqueId == QID) {
 			    if (interviewQuestion.getAnswer().getValue() == graphQuestion.getSelection().getValue()) {
-					
+
 					for (int alterNum : interviewQuestion.getAnswer().getAlters()) {
 						alterNames.add(completeAlterNameList[alterNum]);
 					}
@@ -285,28 +284,28 @@ public class GraphData {
 			logger.error(ex.toString());
 		}
 	}
-	
-	
+
+
 	public static void writeCoordinates(File dataFile) throws IOException {
 		VisualizationViewer<Vertex,Edge> vv = GraphRenderer.getVv();
 		Layout<Vertex,Edge> layout = vv.getGraphLayout();
 		Graph g = layout.getGraph();
 
 		FileWriter fw = new FileWriter(dataFile);
-		
+
 		@SuppressWarnings("unchecked")
 		Collection<Vertex> verts = g.getVertices();
 		for(Vertex v : verts)
 		{
-			
+
 			String nodeLabel = GraphRenderer.getGraphSettings().getNodeLabel(v);
-			
+
 			Point2D pt = layout.transform(v);
 			String line = ("\""+nodeLabel + "\"," + pt.getX() + "," + pt.getY() + "\n");
 			System.out.print(line);
 			fw.write(line);
 		}
-		
+
 		fw.close();
 	}
 
@@ -331,7 +330,7 @@ public class GraphData {
 				.getLayoutTransformer();
 		Graph graph = layout.getGraph();
 		StringLabeller labeller = getStringLabeller(GraphRenderer.getGraph());
-		
+
 		@SuppressWarnings({"unchecked"})
 		Set<Vertex> vertices = graph.getVertices();
 		Vertex mostRightVertex = vertices.iterator().next();

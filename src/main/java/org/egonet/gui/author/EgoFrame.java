@@ -1,26 +1,25 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.egonet.gui.author;
 
 import org.egonet.model.Shared;
-import org.egonet.model.question.*;
-
+import org.egonet.model.Shared.QuestionType;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -46,22 +45,20 @@ import javax.swing.text.DefaultEditorKit;
 import org.egonet.exceptions.CorruptedInterviewException;
 import org.egonet.gui.MDIChildFrame;
 import org.egonet.mdi.MDIContext;
-import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.EgonetAnalytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egonet.model.question.StudyQuestion;
 
 public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameListener {
-	
+
 	final private static Logger logger = LoggerFactory.getLogger(EgoFrame.class);
 
     /**
      * Changes based on jTabbedPane_stateChanged, which is activated when tabs are clicked
      */
-    Class<? extends Question> curTab = StudyQuestion.class;
-    Class<? extends Question> lastTab = StudyQuestion.class;
+    QuestionType curTab = QuestionType.STUDY_CONFIG;
+    QuestionType lastTab = QuestionType.STUDY_CONFIG;
 
 	private final EgoNet egoNet;
 	private JPanel contentPane;
@@ -74,12 +71,12 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	private final JMenuItem jMenuFileImport = new JMenuItem("Import Questions...");
 	private final JMenuItem jMenuFileExport = new JMenuItem("Export Questions...");
 	private final JMenuItem jMenuFileExportStudy = new JMenuItem("Export Study As...");
-	
+
 	private final JMenuItem jMenuFileSaveAs = new JMenuItem("Save Study As...");
 	private final JMenuItem jMenuFileSave = new JMenuItem("Save Study");
-	
-	
-	
+
+
+
 	private final JMenuItem jMenuFileExit = new JMenuItem("Quit");
 	private final JMenu jMenuEdit = new JMenu("Edit");
 	private final JMenuItem jMenuEditCut = new JMenuItem(new DefaultEditorKit.CutAction());
@@ -91,28 +88,28 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	private final StudyPanel study_panel;
 
-	private final Map<Class<? extends Question>,EgoQPanel> questionPanel;
-	
+	private final Map<QuestionType,EgoQPanel> questionPanel;
+
 	// Construct the frame
 	public EgoFrame(EgoNet egoNet)
 	{
 		try {
 			this.egoNet = egoNet;
 			study_panel = new StudyPanel(egoNet);
-			
-			questionPanel = new HashMap<Class<? extends Question>,EgoQPanel>();
-			questionPanel.put(EgoQuestion.class, new AuthoringQuestionPanel(egoNet, EgoQuestion.class));
-			questionPanel.put(AlterPromptQuestion.class, new PromptPanel(egoNet, AlterPromptQuestion.class));
-			questionPanel.put(AlterQuestion.class, new AuthoringQuestionPanel(egoNet, AlterQuestion.class));
-			questionPanel.put(AlterPairQuestion.class, new AuthoringQuestionPanel(egoNet, AlterPairQuestion.class));
-			
+
+			questionPanel = new HashMap<QuestionType,EgoQPanel>();
+			questionPanel.put(QuestionType.EGO, new AuthoringQuestionPanel(egoNet, QuestionType.EGO));
+			questionPanel.put(QuestionType.ALTER_PROMPT, new PromptPanel(egoNet, QuestionType.ALTER_PROMPT));
+			questionPanel.put(QuestionType.ALTER, new AuthoringQuestionPanel(egoNet, QuestionType.ALTER));
+			questionPanel.put(QuestionType.ALTER_PAIR, new AuthoringQuestionPanel(egoNet, QuestionType.ALTER_PAIR));
+
 			enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 			jbInit();
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
-		
+
 	}
 
 	// Component initialization
@@ -120,9 +117,9 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		// Listen for window closing
 		//this.addWindowListener(new CloseListener());
 		this.addInternalFrameListener(this);
-		
+
 		//fixme
-		
+
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setResizable(true);
 
@@ -180,12 +177,12 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		jTabbedPane.setTabPlacement(JTabbedPane.TOP);
 		jTabbedPane.add(study_panel, "Study");
 
-		
-		for (Class<? extends Question> qT : Shared.questionClasses) {
-		    if(qT.equals(StudyQuestion.class))
+
+		for (QuestionType qT : Shared.QuestionType.values()) {
+		    if(qT.equals(QuestionType.STUDY_CONFIG))
 		        continue;
-		    
-			jTabbedPane.add(questionPanel.get(qT), Question.getNiceName(qT));
+
+			jTabbedPane.add(questionPanel.get(qT), qT.niceName);
 		}
 		contentPane.add(jTabbedPane);
 
@@ -215,7 +212,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 				jMenuFileSave_actionPerformed(e);
 			}
 		});
-		
+
 		jMenuFileExportStudy.addActionListener(new CatchingAction("jMenuFileExportStudy") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				jMenuFileExportStudy_actionPerformed(e);
@@ -263,10 +260,10 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		/* Fill panel, initialize frame */
 		egoNet.getStorage().createNewStudy();
 		fillCurrentPanel();
-		
+
 		pack();
 		setMinimumSize(getPreferredSize());
-		
+
 		setMaximizable(true);
 		setIconifiable(true);
 		setClosable(true);
@@ -310,10 +307,10 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	// and a class of the UI
 	/**
 	 * New Study menu handler
-	 * 
+	 *
 	 * @param e
 	 *            Menu UI Event
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void jMenuFileNew_actionPerformed(ActionEvent e) throws IOException {
 		boolean ok = closeStudyFile();
@@ -330,10 +327,10 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	/***************************************************************************
 	 * Open Study menu handler
-	 * 
+	 *
 	 * @param e
 	 *            Menu UI Event
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void jMenuFileOpen_actionPerformed(ActionEvent e) throws IOException {
 		boolean ok = closeStudyFile();
@@ -353,7 +350,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 		if (ok) {
 			egoNet.getStorage().createNewStudy();
-			
+
 			fillCurrentPanel();
 			egoNet.getStudy().addObserver(this);
 			egoNet.getStudy().setModified(false);
@@ -378,11 +375,11 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 			egoNet.getStudy().setModified(false);
 		}
 	}
-	
+
 	private void jMenuFileExportStudy_actionPerformed(ActionEvent e) throws IOException, CorruptedInterviewException {
 		egoNet.getStorage().exportStudy(false);
 	}
-	
+
 	private void jMenuFileSaveAs_actionPerformed(ActionEvent e) throws IOException {
 		egoNet.getStorage().saveAsStudyFile();
 		fillStudyPanel();
@@ -393,7 +390,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	// File | Exit action performed
 	public void jMenuFileExit_actionPerformed(ActionEvent e) {
-		try { 
+		try {
 		boolean exit = closeStudyFile();
 
 		if (exit) {
@@ -406,9 +403,9 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	/**
 	 * Closes question file. If changes made gives user the option of saving.
-	 * 
+	 *
 	 * @return False iff user cancels save, True otherwise
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public boolean closeStudyFile() throws IOException {
 		boolean exit = true;
@@ -435,7 +432,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		boolean sd = egoNet.getStudy().isModified();
 		boolean sc = egoNet.getStudy().isCompatible();
 
-		if (curTab == StudyQuestion.class) {
+		if (curTab == QuestionType.STUDY_CONFIG) {
 			study_panel.fillPanel();
 		} else {
 			questionPanel.get(curTab).fillPanel();
@@ -448,7 +445,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	public void fillStudyPanel() throws IOException {
 		boolean sd = egoNet.getStudy().isModified();
 
-		if (curTab == StudyQuestion.class) {
+		if (curTab == QuestionType.STUDY_CONFIG) {
 			study_panel.fillPanel();
 		}
 
@@ -461,20 +458,20 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 		Component selectedTab = jTabbedPane.getSelectedComponent();
 		if(selectedTab instanceof StudyPanel)
 		{
-		    curTab = StudyQuestion.class;
+		    curTab = QuestionType.STUDY_CONFIG;
 		} else {
 		    curTab = ((EgoQPanel)selectedTab).questionType;
 		}
 
-		if ((lastTab == StudyQuestion.class) && (curTab != lastTab)) {
+		if ((lastTab == QuestionType.STUDY_CONFIG) && (curTab != lastTab)) {
 			egoNet.getStudy().validateQuestions();
 		}
 
-		if (curTab == StudyQuestion.class) {
+		if (curTab == QuestionType.STUDY_CONFIG) {
             study_panel.fillPanel();
         } else {
 			questionPanel.get(curTab).fillPanel();
-		} 
+		}
 	}
 
 	protected void setWaitCursor(boolean waitCursor) {
@@ -493,7 +490,7 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	class CloseListener extends WindowAdapter {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 		 */
 		public void windowClosing(WindowEvent arg0) {
@@ -509,21 +506,21 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	public void update(Observable o, Object arg) {
 		updateMenus();
 	}
-	
+
 	public void focusActivated() {
 		//logger.info(this.getTitle() + " activated");
-		
+
 	}
 
 	public void focusDeactivated() {
 		//logger.info(this.getTitle() + " deactivated");
-		
+
 	}
 
 	public JInternalFrame getInternalFrame() {
@@ -531,17 +528,17 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	public void setMdiContext(MDIContext context) {
-		
+
 	}
 
 	public void internalFrameActivated(InternalFrameEvent e) {
-		
-		
+
+
 	}
 
 	public void internalFrameClosed(InternalFrameEvent e) {
-		
-		
+
+
 	}
 
 	public void internalFrameClosing(InternalFrameEvent e) {
@@ -549,22 +546,22 @@ public class EgoFrame extends MDIChildFrame implements Observer, InternalFrameLi
 	}
 
 	public void internalFrameDeactivated(InternalFrameEvent e) {
-		
-		
+
+
 	}
 
 	public void internalFrameDeiconified(InternalFrameEvent e) {
-		
-		
+
+
 	}
 
 	public void internalFrameIconified(InternalFrameEvent e) {
-		
-		
+
+
 	}
 
 	public void internalFrameOpened(InternalFrameEvent e) {
-		
-		
+
+
 	}
 }

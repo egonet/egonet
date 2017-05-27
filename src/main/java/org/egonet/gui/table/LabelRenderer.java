@@ -21,9 +21,9 @@ package org.egonet.gui.table;
 import javax.swing.*;
 import javax.swing.table.*;
 
-import java.awt.Component;
+import org.egonet.model.Selection;
 
-import org.egonet.model.question.Selection;
+import java.awt.Component;
 
 /**
  * To Renderer the cell displaying selection 

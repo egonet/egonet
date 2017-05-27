@@ -18,8 +18,6 @@
  */
 package org.egonet.model;
 
-import org.egonet.model.answer.*;
-
 public class QuestionLink implements Cloneable
 {
 	private Answer	answer		= null;

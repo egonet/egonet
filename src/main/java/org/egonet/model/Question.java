@@ -1,70 +1,53 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.egonet.model.question;
+package org.egonet.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.egonet.exceptions.MalformedQuestionException;
-import org.egonet.model.QuestionLink;
-import org.egonet.model.answer.*;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 
 
 /*******************************************************************************
  * Routines for creating and handling atomic question elements
- * 
- * 
- * 	
- * 
- * 
+ *
+ *
+ *
+ *
+ *
  */
-public abstract class Question implements Cloneable {
-	
-	public static String getNiceName(Class<? extends Question> clazz) {
-		try {
-			Question instance = clazz.newInstance();
-			return instance.getNiceName();
-		} 
-		catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+public class Question implements Cloneable {
+
+	public String getNiceName() {
+		return questionType.niceName;
 	}
-	
-	public static String getTitle(Class<? extends Question> clazz) {
-		try {
-			Question instance = clazz.newInstance();
-			return instance.getNiceName();
-		} 
-		catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+	public String getTitle() {
+		return questionType.title;
 	}
 
-	
-	public abstract String getNiceName();
-	public abstract String getTitle();
-	
 	public boolean centralMarker = false;
 
 	private boolean statable = false;
-	
+
 	public boolean followupOnly = false;
 
 	public boolean isFollowupOnly() {
@@ -77,25 +60,27 @@ public abstract class Question implements Cloneable {
 
 	public Long UniqueId = new Long(new Date().getTime());
 
+	public QuestionType questionType = QuestionType.EGO;
+
 	public String title = "";
 
 	public String text = "";
 
 	public String citation = "";
-	
-	public Class<? extends Answer> answerType = TextAnswer.class;
+
+	public AnswerType answerType = AnswerType.TEXT;
 
 	public QuestionLink link = new QuestionLink();
 
 	private List<Selection> selections = new ArrayList<Selection>(0);
 
-	private Answer answer = Answer.newInstance(TextAnswer.class);
+	private Answer answer = new Answer();
 
 	public static final int MAX_CATEGORICAL_CHOICES = 9;
 
 	/***************************************************************************
 	 * Creates question
-	 * 
+	 *
 	 * @return question new question
 	 */
 	public Question() {
@@ -103,7 +88,7 @@ public abstract class Question implements Cloneable {
 
 	/***************************************************************************
 	 * Creates question with string as title
-	 * 
+	 *
 	 * @param s
 	 *            question title
 	 * @return question new question
@@ -112,11 +97,15 @@ public abstract class Question implements Cloneable {
 		this.title = s;
 	}
 
+	public Question(QuestionType t) {
+		this.questionType = t;
+	}
+
 
 	/***************************************************************************
 	 * Returns whether a given selection is adjacent based on the values stored
 	 * in the question. Is used to override value found in an interview file
-	 * 
+	 *
 	 * @param value
 	 * @return true iff that selection is marked as adjacent
 	 */
@@ -125,17 +114,17 @@ public abstract class Question implements Cloneable {
 
 		if(getSelections() == null || getSelections().size() <= 0)
 			return false;
-		
+
 		for (Selection sel : getSelections()) {
 			if (value == sel.getValue()) {
 				rval = sel.isAdjacent();
 				break;
 			}
 		}
-		
+
 		return rval;
 	}
-	
+
 	/**
 	 * Does the answer to this question determine whether alters are adjacent?
 	 */
@@ -150,20 +139,20 @@ public abstract class Question implements Cloneable {
 
 	/***************************************************************************
 	 * Overrides toString method for question, returns title
-	 * 
+	 *
 	 * @return String title of question
 	 */
 	public String toString() {
 		if (title == null) {
-			return (new String("Untitled"));
+			return new String("Untitled");
 		} else {
-			return (title);
+			return title;
 		}
 	}
 
 	/***************************************************************************
 	 * Implements Clone interface for conducting an interview and cloning the study question. The clone is attached to the interview.
-	 * 
+	 *
 	 * @return Clone of Question
 	 */
 	public Object clone() {
@@ -188,7 +177,7 @@ public abstract class Question implements Cloneable {
 
 	public String getString() {
 		String str = "";
-		str = "ID : " + UniqueId + ", Qtype="+getClass().getSimpleName()+",Atype="+answerType+", Title : " + title + " text : " + text
+		str = "ID : " + UniqueId + ", Qtype="+questionType+",Atype="+answerType+", Title : " + title + " text : " + text
 				+ "\nAnswer : " + getAnswer().getString();
 		return str;
 	}
@@ -217,56 +206,32 @@ public abstract class Question implements Cloneable {
 		this.statable = statable;
 	}
 
-	public static Question newInstance(String questionType) {
-		try {
-			Class<? extends Question> clazz = asSubclass(questionType);
-
-			return newInstance(clazz);
-		} 
-		catch (Exception ex) {
-			throw new MalformedQuestionException(ex);
-		}
-	}
-	
-	public static Question newInstance(Class<? extends Question> clazz) {
-		try {
-			return clazz.newInstance();
-		} 
-		catch (Exception ex) {
-			throw new MalformedQuestionException("could not instantiate an instance of class " + clazz.getCanonicalName(),ex);
-		}
-	}
-	
 	/**
 	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
-	 * 
+	 *
 	 * @param questionType type of question subclass
 	 * @return a class object representing that type
 	 */
-	
-	public static Class<? extends Question> asSubclass(String questionType) {
+
+	public static QuestionType asSubclass(String questionType) {
 		try {
 			if("0".equals(questionType)) {
-				questionType = StudyQuestion.class.getCanonicalName();
-			}			
+				return QuestionType.STUDY_CONFIG;
+			}
 			else if("1".equals(questionType)) {
-				questionType = EgoQuestion.class.getCanonicalName();
+				return QuestionType.EGO;
 			}
 			else if("2".equals(questionType)) {
-				questionType = AlterPromptQuestion.class.getCanonicalName();
+				return QuestionType.ALTER_PROMPT;
 			}
 			else if("3".equals(questionType)) {
-				questionType = AlterQuestion.class.getCanonicalName();
+				return QuestionType.ALTER;
 			}
 			else if("4".equals(questionType)) {
-				questionType = AlterPairQuestion.class.getCanonicalName();
+				return QuestionType.ALTER_PAIR;
 			}
-			
-			@SuppressWarnings("unchecked")
-			Class<? extends Question> clazz = (Class<? extends Question>)Class.forName(questionType);
-
-			return clazz;
-		} 
+			throw new RuntimeException("Unknown type " + questionType);
+		}
 		catch (Exception ex) {
 			throw new MalformedQuestionException(ex);
 		}

@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,9 +47,10 @@ import org.egonet.gui.MDIChildFrame;
 import org.egonet.io.EdgeListWriter;
 import org.egonet.mdi.MDIContext;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.Question;
+
 import org.egonet.statistics.StatRecord;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.EgonetAnalytics;
@@ -67,7 +68,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class ClientFrame extends MDIChildFrame implements InternalFrameListener {
 
 	final private static Logger logger = LoggerFactory.getLogger(ClientFrame.class);
-	
+
 	/**
 	 * Used to create drop down menus of different "modes"
 	 */
@@ -75,7 +76,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	public static final int		DO_INTERVIEW		= 1;
 	public static final int		VIEW_INTERVIEW		= 2;
 	public static final int		VIEW_SUMMARY		= 3;
-	
+
 	private final JMenuBar jMenuBar1 = new JMenuBar();
 
 	private final JMenu jMenuFile = new JMenu("File");
@@ -91,7 +92,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	private final JMenuItem saveStudySummary = new JMenuItem("Save Study Summary");
 
 	private final JMenuItem exportInterview = new JMenuItem("Export interview as...");
-	
+
 	private final JMenuItem exit = new JMenuItem("Exit");
 
 	public final JMenuItem saveAlterSummary = new JMenuItem("Save Alter Summary");
@@ -103,18 +104,18 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	public final JMenuItem saveWeightedAdjacencyMatrix = new JMenuItem("Save Weighted Adjacency Matrix");
 
         public final JMenuItem saveAlterByAlterPromptMatrix = new JMenuItem("Save Alter by Alter prompt Matrix");
-	
+
         public final JMenuItem saveGraphSettings = new JMenuItem("Save graph settings");
 	public final JMenuItem applyGraphSettings = new JMenuItem("Load/Apply graph settings");
 	public final JCheckBoxMenuItem detailedTooltips = new JCheckBoxMenuItem("Show extended node tooltips");
-	
-	
+
+
 	public final JMenuItem saveInterview = new JMenuItem("Save Interview");
 	public final JMenuItem saveGraph = new JMenuItem("Save Graph as image");
 	public final JMenuItem saveGraphCoordinates = new JMenuItem("Save Graph coordinates");
 	public final JMenuItem saveEdgeList = new JMenuItem("Save Edgelist");
-	
-	
+
+
 
 	public final JMenuItem recalculateStatistics = new JMenuItem("Recalculate Statistics");
 
@@ -138,9 +139,9 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 		createMenuBar(ClientFrame.SELECT);
 
 		setContentPane(new JPanel());
-		
+
 		pack();
-		
+
 		setMaximizable(true);
 		setIconifiable(true);
 		setResizable(true);
@@ -165,13 +166,13 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				saveGraph_actionPerformed(e);
 			}
 		});
-		
+
 		saveGraphCoordinates.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveGraphCoordinates_actionPerformed(e);
 			}
 		});
-		
+
 		saveEdgeList.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveEdgeList_actionPerformed(e);
@@ -195,7 +196,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				EgonetAnalytics.track("save interview"); // track!
 			}
 		});
-		
+
 		exportInterview.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -227,13 +228,13 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				}
 			}
 		});
-		
-		
+
+
 		recalculateStatistics.addActionListener(new CatchingAction("recalculateStatistics") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 						EgoStore storage = egoClient.getStorage();
 						Interview interview = storage.readInterview(storage.getInterviewFile());
-						
+
 						if (interview != null)
 						    gotoViewInterviewPanel();
 					}
@@ -244,7 +245,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 				gotoSourceSelectPanel();
 			}
 		});
-		
+
 		this.addInternalFrameListener(this);
 	}
 
@@ -295,7 +296,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			jMenuFile.add(saveAdjacencyMatrix);
 			jMenuFile.add(saveWeightedAdjacencyMatrix);
                         jMenuFile.add(saveAlterByAlterPromptMatrix);
-                        
+
 			jMenuFile.addSeparator();
 			jMenuFile.add(saveGraphSettings);
 			jMenuFile.add(applyGraphSettings);
@@ -308,7 +309,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			jMenuFile.add(saveInterview);
 			jMenuFile.add(exportInterview);
 			jMenuFile.add(recalculateStatistics);
-			
+
 			jMenuFile.addSeparator();
 			jMenuFile.add(close);
 
@@ -325,7 +326,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 
 	void saveStudySummary_actionPerformed(ActionEvent e) {
-		String name = 
+		String name =
 			FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
 		String filename = name + "_Summary";
 		CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
@@ -347,8 +348,8 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	void saveGraph_actionPerformed(ActionEvent e) {
 		String fileName;
-		
-		
+
+
 		fileName = egoClient.getStorage().getInterviewFile().getName() + "_graph";
 		File currentDirectory = new File(egoClient.getStorage().getStudyFile().getParent()+ "/Graphs");
 		currentDirectory.mkdir();
@@ -380,7 +381,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 		}
 
 	}
-	
+
 	void saveEdgeList_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = egoClient.getStorage().getInterviewFile().getName() + "_edgelist";
@@ -398,15 +399,15 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			returnValue = fileChooser.showSaveDialog(this);
 			File dataFile = fileChooser.getSelectedFile();
 			try {
-				
+
 				EdgeListWriter fw = new EdgeListWriter(dataFile);
-				
+
 				Interview interview = egoClient.getInterview();
 				Study study = egoClient.getStudy();
-				
+
 				String [] thisInterviewAlterlist = interview.getAlterList();
 
-				Iterator<Long> questions = study.getQuestionOrder(AlterPairQuestion.class).iterator();
+				Iterator<Long> questions = study.getQuestionOrder(QuestionType.ALTER_PAIR).iterator();
 				while (questions.hasNext()) {
 					Question q = study.getQuestion((Long) questions.next());
 					int[][] adj = interview.generateAdjacencyMatrix(q, true);
@@ -416,7 +417,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 					fw.writeEdgelist(thisInterviewAlterlist, adj);
 				}
-				
+
 				fw.close();
 			} catch (Exception e1) {
 				throw new RuntimeException(e1);
@@ -424,7 +425,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			break;
 		}
 	}
-	
+
 	void saveGraphCoordinates_actionPerformed(ActionEvent e) {
 		String fileName;
 		fileName = egoClient.getStorage().getInterviewFile().getName() + "_graph_coordinates";
@@ -451,7 +452,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			break;
 		}
 	}
-	
+
 	void saveGraphSettings_actionPerformed(ActionEvent e) {
 		String name = egoClient.getStorage().getInterviewFile().getName();
 		String fileName = "/" + name.replace(".int", "") + ".xml";
@@ -477,7 +478,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			GraphRenderer.getGraphSettings().saveSettingsFile(settingsFile);
 		}
 	}
-	
+
 	protected void applyGraphSettings_actionPerformed(ActionEvent e) {
 		String name = egoClient.getStorage().getInterviewFile().getName();
 		String fileName = "/" + name.replace(".int", "") + ".xml";
@@ -507,7 +508,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 			}
 		}
 	}
-	
+
 	public void gotoSourceSelectPanel() {
 		/* Return to first screen */
 		setVisible(false);
@@ -519,13 +520,13 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 		setVisible(true);
 	}
-	
+
 	public void gotoViewInterviewPanel()
 	   {
 	      final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
-	        final SwingWorker worker = new SwingWorker() 
+	        final SwingWorker worker = new SwingWorker()
 	        {
-	            public Object construct() 
+	            public Object construct()
 	            {
 	                // Build Screen
 	                setVisible(false);
@@ -539,7 +540,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	                return this;
 	          }
-	          
+
 	          public void finished()
 	            {
 	            //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
@@ -547,14 +548,14 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	             setVisible(true);
 	          }
 	      };
-	      
+
 	     progressMonitor.setProgress(0);
 	     progressMonitor.setMillisToDecideToPopup(0);
 	     progressMonitor.setMillisToPopup(0);
-	    
+
 	     worker.start();
 	   }
-	
+
 	   /**
      * Hides the static frame egoClient.getFrame() and initializes it with an
      * entirely new QuestionPanel
@@ -566,7 +567,7 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         pack();
         setVisible(true);
     }
-    
+
     public void gotoSummaryPanel(StatRecord[] stats)
     {
        // Build Screen
@@ -575,11 +576,11 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
        setContentPane(new SummaryPanel(egoClient, stats));
        createMenuBar(ClientFrame.VIEW_SUMMARY);
        pack();
-      // 
+      //
        //com.endlessloopsoftware.egonet.Shared.setWaitCursor(egoClient.getFrame(), false);
        setVisible(true);
     }
-    
+
     public void gotoStartPanel() throws Exception
     {
         /* Return to first screen */
@@ -591,10 +592,10 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         setVisible(true);
 
     }
-    		
+
     public void quickSaveSummary() {
         final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
-        final SwingWorker worker = new SwingWorker() 
+        final SwingWorker worker = new SwingWorker()
         {
         	public Object construct()
         	{
@@ -602,10 +603,10 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
         		SummaryPanel summaryPanel = new SummaryPanel(egoClient, progressMonitor);
         		return summaryPanel;
         	}
-           
+
         	public void finished() {
         		if (! progressMonitor.isCanceled()) {
-        			String name = 
+        			String name =
         				FileHelpers.formatForCSV(egoClient.getStudy().getStudyName());
         			String filename = name + "_Summary";
         			CSVWriter w = new CSVWriter(egoClient.getStorage().newStatisticsPrintWriter(
@@ -634,11 +635,11 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
         worker.start();
     }
-    
+
     public void gotoSummaryPanel()
     {
        final ProgressMonitor progressMonitor = new ProgressMonitor(egoClient.getFrame(), "Calculating Statistics", "", 0, 100);
-       final SwingWorker worker = new SwingWorker() 
+       final SwingWorker worker = new SwingWorker()
        {
           public Object construct()
           {
@@ -672,12 +673,12 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 
 	public void focusActivated() {
 		logger.trace(this.getTitle() + " activated");
-		
+
 	}
 
 	public void focusDeactivated() {
 		logger.trace(this.getTitle() + " deactivated");
-		
+
 	}
 
 	public JInternalFrame getInternalFrame() {
@@ -688,28 +689,28 @@ public class ClientFrame extends MDIChildFrame implements InternalFrameListener 
 	}
 
 	public void internalFrameActivated(InternalFrameEvent e) {
-		
+
 	}
 
 	public void internalFrameClosed(InternalFrameEvent e) {
-		
+
 	}
 
 	public void internalFrameClosing(InternalFrameEvent e) {
 		jMenuFileExit_actionPerformed(null);
-		
+
 	}
 
 	public void internalFrameDeactivated(InternalFrameEvent e) {
-		
+
 	}
 
 	public void internalFrameDeiconified(InternalFrameEvent e) {
-		
+
 	}
 
 	public void internalFrameIconified(InternalFrameEvent e) {
-		
+
 	}
 
 	public void internalFrameOpened(InternalFrameEvent e) {

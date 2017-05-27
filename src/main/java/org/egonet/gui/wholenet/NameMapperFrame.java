@@ -24,11 +24,11 @@ import org.egonet.graph.wholenet.WholeNetworkTie.DiscrepancyStrategy;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.wholenet.NameMappingReader;
 import org.egonet.io.wholenet.NameMappingWriter;
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.Name;
@@ -52,34 +52,34 @@ import com.google.common.collect.Maps;
 public class NameMapperFrame extends JFrame {
 
 	final private static Logger logger = LoggerFactory.getLogger(NameMapperFrame.class);
-	
+
 	private final Study study;
 	private final File studyFile;
-	
+
 	private final List<Pair<File, Interview>> interviewMap;
-	
+
 	private MapperTableModel tableModel;
-	
+
 	public NameMapperFrame(Study study, File studyFile, List<File> mappableFiles) {
 		super("Whole Network - Alter Name Mapping Editor");
 		this.study = study;
 		this.studyFile = studyFile;
 		this.interviewMap = new ArrayList<Pair<File, Interview>>(mappableFiles.size());
 		this.study.toString();
-		
+
 		for(File intFile : mappableFiles) {
 			try {
 				InterviewReader ir = new InterviewReader(study, intFile);
 				Interview intV = ir.getInterview();
 				Pair<File, Interview> p = new Pair<File, Interview>(intFile, intV);
 				interviewMap.add(p);
-			} 
+			}
 			catch (Exception ex ) {
 				logger.info("Couldn't map " + intFile.getName());
 				logger.error(ex.toString());
 			}
 		}
-		
+
 		build();
 	}
 
@@ -94,9 +94,9 @@ public class NameMapperFrame extends JFrame {
 		final Interview interview;
 		final Integer alterNumber;
 		final String alterName;
-		
+
 		private Integer group;
-		
+
 		public NameMapping(Study study, Interview interview, Integer alterNumber, Integer group) {
 			super();
 			this.interview = interview;
@@ -105,7 +105,7 @@ public class NameMapperFrame extends JFrame {
 			this.alterName = interview.getAlterList()[alterNumber];
 			this.group = group;
 		}
-		
+
 		// ego constructor
 		public NameMapping(Study study, Interview interview, String iName, Integer group) {
 			super();
@@ -135,7 +135,7 @@ public class NameMapperFrame extends JFrame {
 		public Integer getAlterNumber() {
 			return alterNumber;
 		}
-		
+
 		public String toString() {
 			return alterName;
 		}
@@ -190,22 +190,22 @@ public class NameMapperFrame extends JFrame {
 			return NameMapperFrame.this;
 		}
 	}
-	
+
 	public class MapperTableModel extends AbstractTableModel {
 
 		public final String [] columns = {"Alter", "Ego", "Mapping Group"};
 		private final List<NameMapping> mappings;
-		
+
 		private final List<Question> alterQuestions;
 		private final Set<Long> alterQuestionIds;
 		private final Map<Triple<Long,String,Integer>,Answer> questionInterviewAlterToAnswer;
-		
-		public Map<String,String> 
+
+		public Map<String,String>
 		attributesForInterviewAndAlterId(Interview interview,Integer alterId) {
 			Map<String,String> attributes = Maps.newTreeMap();
 			String interviewName = interview.toString();
 			for(Question question : alterQuestions) {
-				Answer answer = 
+				Answer answer =
 					questionInterviewAlterToAnswer.get(
 							new Triple<Long,String,Integer>(
 									question.UniqueId,interviewName,alterId));
@@ -213,33 +213,33 @@ public class NameMapperFrame extends JFrame {
 			}
 			return attributes;
 		}
-		
+
 		public MapperTableModel() {
 			mappings = new ArrayList<NameMapping>();
 			alterQuestions = new ArrayList<Question>();
 			alterQuestionIds = new TreeSet<Long>();
 			questionInterviewAlterToAnswer = new TreeMap<Triple<Long,String,Integer>,Answer>();
-			
+
 			for(Question question : study.getQuestions().values()) {
-				if(question instanceof AlterQuestion) {
+				if(question.questionType == QuestionType.ALTER) {
 					alterQuestions.add(question);
 					alterQuestionIds.add(question.UniqueId);
 				}
 			}
-			
+
 			int group = 1;
-			
+
 			for(Pair<File, Interview> entry : interviewMap) {
 				Interview interview = entry.getSecond();
 
 				NameMapping egoMapping = new NameMapping(study, interview, entry.getFirst().getName(), group++);
 				mappings.add(egoMapping);
-				
+
 				String [] alterList = interview.getAlterList();
 				for(int i = 0; i < alterList.length; i++) {
 					NameMapping mapping = new NameMapping(study, interview, i, group++);
 					mappings.add(mapping);
-					
+
 				}
 				for(Answer answer : interview.get_answers()) {
 					if(alterQuestionIds.contains(answer.getQuestionId())) {
@@ -253,20 +253,20 @@ public class NameMapperFrame extends JFrame {
 				}
 			}
 		}
-		
+
 		public int getColumnCount() {
 			return columns.length + alterQuestions.size();
 		}
 
 	    public String getColumnName(int column) {
-	    	return column < columns.length ? columns[column] : 
+	    	return column < columns.length ? columns[column] :
 	    		questionForColumn(column).title;
 	    }
-		
+
 	    private Question questionForColumn(int column) {
 	    	return alterQuestions.get(column - columns.length);
 	    }
-	    
+
 		public int getRowCount() {
 			return mappings.size();
 		}
@@ -291,31 +291,31 @@ public class NameMapperFrame extends JFrame {
 				return showAnswer(questionInterviewAlterToAnswer.get(key));
 			}
 		}
-		
+
 		private String showAnswer(Answer answer) {
 			String result = answer+"";
 			return result.equals("-1") || result.equals("null") ? "" : result;
 		}
-		
+
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			if(columnIndex == 2)
 				return true;
 			return false;
 		}
-		
+
 		@Override
 	    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			if(columnIndex == 2 && aValue instanceof String) {
-				
+
 				Integer i = null;
 				try {
 					i = Integer.parseInt(aValue.toString());
-				} 
+				}
 				catch(NumberFormatException ex) {
 					return;
 				}
-				
+
 				NameMapping row = mappings.get(rowIndex);
 				row.setGroup(i);
 			}
@@ -326,43 +326,43 @@ public class NameMapperFrame extends JFrame {
 		}
 
 	}
-	
+
 	class MappingRenderer implements ListCellRenderer, TableCellRenderer, Serializable {
-		
+
 		private final DefaultTableCellRenderer tableDelegate = new DefaultTableCellRenderer();
 		private final DefaultListCellRenderer listDelegate = new DefaultListCellRenderer();
-		
+
 		public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
-			
+
 			if(value instanceof NameMapping) {
 				value = convert((NameMapping)value);
 			}
-			
+
 			return tableDelegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
-			
+
 			if(value instanceof NameMapping) {
 				value = convert((NameMapping)value);
 			}
-			
+
 			return listDelegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}
-		
+
 		private String convert(NameMapping mapping) {
 			Interview intv = mapping.interview;
 			String ego = new Name(intv.getIntName()).toString();
 			String alter = mapping.alterName;
-			
+
 			return alter + " (" + ego + ")";
 		}
 	}
-	
+
 	private Settings settings = new Settings();
-	
+
 	private void editSettings(final Settings settings) {
 		JPanel panel = new JPanel(new MigLayout());
 
@@ -371,18 +371,18 @@ public class NameMapperFrame extends JFrame {
 		final JTextField inclusionField = new JTextField(5);
 		inclusionField.setText(settings.inclusionThreshold+"");
 		panel.add(inclusionField,"wrap");
-		
+
 		panel.add(new JSeparator(),"span,grow");
-		
-		final JCheckBox egoAlwaysIncludedField = 
+
+		final JCheckBox egoAlwaysIncludedField =
 			new JCheckBox(
 					"Always include ego (otherwise ego not mentioned often " +
-					"enough is filtered as above)", 
+					"enough is filtered as above)",
 					settings.alwaysIncludeEgo);
 		panel.add(egoAlwaysIncludedField,"span,grow");
-		
+
 		panel.add(new JSeparator(),"span,grow");
-		
+
 		panel.add(new JLabel("Alter tie discrepancies"),"wrap");
 		final ButtonGroup group = new ButtonGroup();
 		for(DiscrepancyStrategy strategy : DiscrepancyStrategy.values()) {
@@ -400,50 +400,50 @@ public class NameMapperFrame extends JFrame {
 					"(even if all other respondents disagree)",
 					settings.egoAlwaysTiedToOwnAlters);
 		panel.add(egoOverrideField,"span,grow");
-		
+
 		panel.add(new JSeparator(),"span,grow");
-		
+
 		final JFrame frame = new JFrame("Whole Network Analysis");
-		
+
 		panel.add(new JButton(new CatchingAction("Save") {
 			public void safeActionPerformed(ActionEvent e) throws Exception {
 				try {
 					settings.inclusionThreshold = Integer.parseInt(inclusionField.getText());
 				} catch(Exception ex) {
-					
+
 				}
 				settings.alwaysIncludeEgo = egoAlwaysIncludedField.isSelected();
-				settings.discrepancyStrategy = 
+				settings.discrepancyStrategy =
 					DiscrepancyStrategy.valueOf(group.getSelection().getActionCommand());
 				settings.egoAlwaysTiedToOwnAlters = egoOverrideField.isSelected();
 				frame.dispose();
 			}
 		}));
-		
+
 		frame.setContentPane(panel);
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
     private void build() {
 		tableModel = new MapperTableModel();
 		final JXTable table = new JXTable(tableModel);
 		table.setSortable(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		// column 0 - source ego/alter
 		table.getColumnModel().getColumn(0).setCellRenderer(new MappingRenderer());
-		
+
 		// column 1 - mapping group
 		; // no changes
-		
+
     	MigLayout layout = new MigLayout("fill", "[grow]");
 		setLayout(layout);
-		
-		JScrollPane scrollPane = 
+
+		JScrollPane scrollPane =
 			new JScrollPane(table,
 					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);		
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		add(new JLabel("Please perform alter/ego name mappings"),  "growx, wrap");
 		add(scrollPane, "grow, span, wrap");
 
@@ -455,7 +455,7 @@ public class NameMapperFrame extends JFrame {
 		};
 		JButton cancelButton = new JButton(cancelAction);
 		add(cancelButton,  "split, growx");
-		
+
 		Action automatchAction = new CatchingAction("Automatch") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
@@ -476,7 +476,7 @@ public class NameMapperFrame extends JFrame {
 					public void safeActionPerformed(ActionEvent e)
 							throws Exception {
 						File studyFile = NameMapperFrame.this.studyFile;
-						File suggestedOutputFile = 
+						File suggestedOutputFile =
 							new File(
 									studyFile.getParent(),
 									NameMapperFrame.this.study.getStudyName()+".mapping");
@@ -484,34 +484,34 @@ public class NameMapperFrame extends JFrame {
 						fc.setSelectedFile(suggestedOutputFile);
 						fc.addChoosableFileFilter(new ExtensionFileFilter("Name Mapping Files","mapping"));
 						fc.setDialogTitle("Save name mappings");
-						if(fc.showSaveDialog(NameMapperFrame.this) == 
-							JFileChooser.APPROVE_OPTION) 
+						if(fc.showSaveDialog(NameMapperFrame.this) ==
+							JFileChooser.APPROVE_OPTION)
 						{
 							new NameMappingWriter(tableModel.getMappings())
 							.writeToFile(fc.getSelectedFile());
 						}
 					}
-				}), 
+				}),
 				"split, growx");
 		add(
 				new JButton(new CatchingAction("Load") {
 					public void safeActionPerformed(ActionEvent e)
 							throws Exception {
 						File studyFile = NameMapperFrame.this.studyFile;
-						File suggestedOutputFile = 
+						File suggestedOutputFile =
 							new File(studyFile.getParent());
 						JFileChooser fc = new JFileChooser(suggestedOutputFile);
 						fc.setSelectedFile(suggestedOutputFile);
 						fc.addChoosableFileFilter(new ExtensionFileFilter("Name Mapping Files","mapping"));
 						fc.setDialogTitle("Load name mappings from file");
-						if(fc.showOpenDialog(NameMapperFrame.this) == 
-							JFileChooser.APPROVE_OPTION) 
+						if(fc.showOpenDialog(NameMapperFrame.this) ==
+							JFileChooser.APPROVE_OPTION)
 						{
 							new NameMappingReader(fc.getSelectedFile())
 							.applyTo(tableModel.getMappings());
 						}
 					}
-				}), 
+				}),
 				"split, growx");
 		add(new JButton(
 				new CatchingAction("Settings") {
@@ -521,83 +521,83 @@ public class NameMapperFrame extends JFrame {
 					}
 				}),
 				"split, growx");
-		
+
 		Action continueAction = new CatchingAction("Continue") {
 			@Override
 			public void safeActionPerformed(ActionEvent e) throws Exception {
-				
+
 				SwingWorker sw = new SwingWorker() {
 
 					WholeNetworkViewer viewer;
-					
+
 					@Override
 					public Object construct() {
-						
+
 						List<NameMapping> mappings = tableModel.getMappings();
-						
+
 						List<Interview> interviews = Lists.newArrayList(
 							Functions.map(new Pair<File,Interview>().second, interviewMap));
-						
+
 						Function2<Map<String,String>,Interview,Integer> getAlterAttributes = new Function2Impl<Map<String,String>,Interview,Integer>(){
 							public Map<String, String> call(
 									Interview interview, Integer alterId) {
 								return tableModel.attributesForInterviewAndAlterId(interview, alterId);
 							}
 						};
-						
+
 						// do the whole network combination, and export/show it!
-						WholeNetwork net = 
+						WholeNetwork net =
 							new WholeNetwork(study, interviews, mappings, settings, getAlterAttributes);
-						
+
 						viewer = new WholeNetworkViewer(study, studyFile, net);
 						return viewer;
 					}
-					
-					public void finished() { 
+
+					public void finished() {
 						viewer.setVisible(true);
 					}
-					
+
 				};
-				
+
 				sw.start();
 				dispose();
-				
+
 			}
 		};
 		JButton continueButton = new JButton(continueAction);
 		add(continueButton,  "growx");
-		
-		
-		
+
+
+
 		pack();
 	}
-    
+
     private void doDefaultSimilarity(MapperTableModel model, float cutoff) {
     	AbstractStringMetric metric = new Levenshtein();
-    	
+
     	Map<Integer,List<NameMapping>> groupings = new HashMap<Integer,List<NameMapping>>();
     	int groupCounter = 1;
-    	
+
     	ArrayList<NameMapping> names = new ArrayList<NameMapping>(model.getMappings());
     	while(names.size() > 0) {
     		NameMapping current = names.remove(0);
-    		
+
     		if(current == null || current.alterName == null)
     			continue;
-    		
+
     		float highest = 0.0f; Integer highestGroup = null;
     		for(Map.Entry<Integer,List<NameMapping>> entry : groupings.entrySet()) {
     			float averageScore = 0; int elementCount = 0;
     			for(NameMapping entryMapping : entry.getValue()) {
-    				
+
     				if(entryMapping.alterName == null)
     					continue;
-    				
+
     				// when figuring a true score, make everything lowercase and trimmed
     				float thisScore = metric.getSimilarity(current.alterName.toLowerCase().trim(), entryMapping.alterName.toLowerCase().trim());
     				if(thisScore >= cutoff)
     					logger.info(current.alterName + " + " + entryMapping.alterName + " = " + thisScore);
-    				
+
     				averageScore += thisScore;
     				elementCount++;
     			}
@@ -620,7 +620,7 @@ public class NameMapperFrame extends JFrame {
     			groupings.put(groupCounter++, destGroup);
     		}
     	}
-    	
+
     	for(NameMapping map : model.getMappings()) {
     		for(Integer group : groupings.keySet()) {
     			if(groupings.get(group).contains(map)) {

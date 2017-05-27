@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,8 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.egonet.gui.interview.EgoClient;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.Question;
+import org.egonet.model.Question;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.statistics.models.BetweennessModel;
 import org.egonet.statistics.models.CliqueModel;
 import org.egonet.statistics.models.ClosenessModel;
@@ -71,7 +71,7 @@ public class StatisticsFrame extends JPanel {
 	private JPanel qSummaryPanel = null;
 
 	private EgoClient egoClient;
-	
+
 	final private static Logger logger = LoggerFactory.getLogger(StatisticsFrame.class);
 
 	public StatisticsFrame(EgoClient egoClient) {
@@ -85,7 +85,7 @@ public class StatisticsFrame extends JPanel {
 		/***********************************************************************
 		 * Fill in alter pair question selection menu
 		 **********************************************************************/
-		Iterator questions = egoClient.getStudy().getQuestionOrder(AlterPairQuestion.class).iterator();
+		Iterator questions = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PAIR).iterator();
 		while (questions.hasNext()) {
 			Question q = egoClient.getStudy().getQuestion((Long) questions.next());
 
@@ -93,7 +93,7 @@ public class StatisticsFrame extends JPanel {
 				//alterQuestionMenu.addItem(q);
 				studyStatable = true;
 				stats = egoClient.getInterview().generateStatistics(q);
-				
+
 				// Use stats to initialize panels
 				summaryPanel = new StatisticsArrayPanel(new InterviewSummaryModel(
 						stats));
@@ -164,7 +164,7 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-                                
+
 				removeAllActionListeners(egoClient.getFrame().saveAlterByAlterPromptMatrix);
 				egoClient.getFrame().saveAlterByAlterPromptMatrix
 						.addActionListener(new CatchingAction("saveAlterByAlterPromptMatrix") {
@@ -172,7 +172,7 @@ public class StatisticsFrame extends JPanel {
 							    saveAlterByAlterPromptMatrix_actionPerformed(e);
 							}
 						});
-                                
+
 				removeAllActionListeners(egoClient.getFrame().saveAdjacencyMatrix);
 				egoClient.getFrame().saveAdjacencyMatrix
 						.addActionListener(new CatchingAction("saveAdjacencyMatrix") {
@@ -189,7 +189,7 @@ public class StatisticsFrame extends JPanel {
 							}
 						});
 
-				
+
 				updateAll();
 			}
 			else {
@@ -232,7 +232,7 @@ public class StatisticsFrame extends JPanel {
 				((StatisticsArrayPanel) component).getTableModel().setStats(
 						stats);
 				((StatisticsArrayPanel) component).getTableModel().update();
-			} 
+			}
 		}
 	}
 
@@ -273,21 +273,21 @@ public class StatisticsFrame extends JPanel {
 			}
 		}
 	}
-	
+
 	void saveAdjacencyMatrix_actionPerformed(ActionEvent e, boolean weighted) throws IOException {
 	    String filename = egoClient.getStorage().getInterviewFile().getName() + (weighted ? "_Weighted" : "") +  "_Adjacency_Matrix";
-	    
+
 	    PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
-	    
+
 	    stats.writeAdjacencyFile(w, egoClient.getStorage().getInterviewFile().getName().replace(".int", ""), weighted);
 	}
-        
+
         void saveAlterByAlterPromptMatrix_actionPerformed(ActionEvent e) throws IOException
         {
             String filename = egoClient.getStorage().getInterviewFile().getName() + ("_alter_by_alter_prompt");
-            
+
             PrintWriter w = egoClient.getStorage().newStatisticsPrintWriter(filename, "csv", filename);
-            
+
             stats.writeAlterByPromptFile(w, filename);
         }
 

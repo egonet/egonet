@@ -9,12 +9,12 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import org.egonet.exceptions.EgonetException;
+import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
+import org.egonet.model.Selection;
 import org.egonet.model.Shared;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
-import org.egonet.model.question.StudyQuestion;
 import org.egonet.util.DateUtils;
 
 import electric.xml.Document;
@@ -22,13 +22,13 @@ import electric.xml.Element;
 import electric.xml.ParseException;
 
 public class StudyWriter {
-	
+
 	private File studyFile;
 	public StudyWriter(File studyFile)
 	{
 		this.studyFile = studyFile;
 	}
-	
+
 	public void setStudy(Study study) throws IOException {
 		Document document = new Document();
 
@@ -39,13 +39,13 @@ public class StudyWriter {
 	      studyElement.setAttribute("InUse", study.isInUse() ? "Y" : "N");
 	      studyElement.setAttribute("Creator", org.egonet.model.Shared.version);
 	      studyElement.setAttribute("Updated", DateUtils.getDateString(Calendar.getInstance().getTime(), "dd/MM/yyyy hh:mm a"));
-	      
+
 	      writeStudyData(studyElement, study);
 	      writeAllQuestionData(studyElement, study.getQuestions());
 
 	      document.write(studyFile);
 	}
-	
+
 	public void setStudyInUse(boolean inUse) throws IOException, EgonetException {
 		Document packageDocument;
 		try {
@@ -58,16 +58,16 @@ public class StudyWriter {
 		packageDocument.write(studyFile);
 		//studyFile.setReadOnly();
 	}
-	
+
 	private void writeAllQuestionData(Element document, QuestionList questionList) throws IOException
-	{	
+	{
 		Element element = document.addElement("QuestionList");
 		for(Question q : questionList.values())
 		{
 			writeQuestion(element.addElement("Question"), q);
 		}
 	}
-	
+
 	public void writeAllQuestionData(QuestionList questionList) throws IOException
 	{
 		   Document document = new Document();
@@ -83,7 +83,7 @@ public class StudyWriter {
 		      document.write(studyFile);
 
 	}
-	
+
 	private void writeStudyData(Element document, Study studyObject)
 	{
 		try
@@ -92,32 +92,32 @@ public class StudyWriter {
 
 			study.addElement("name").setText(studyObject.getStudyName());
 			study.addElement("altermodeunlimited").setBoolean(studyObject.isUnlimitedAlterMode());
-                        
+
 			study.addElement("minalters").setInt(studyObject.getMinimumNumberOfAlters());
-                        
+
                         //Only adds max alters if study is in limited mode.
                         if(!studyObject.isUnlimitedAlterMode())
                         {
                             study.addElement("maxalters").setInt(studyObject.getMaximumNumberOfAlters());
                         }
-                        
+
 			study.addElement("altersamplingmodel").setInt(studyObject.getAlterSamplingModel().ordinal());
 			study.addElement("altersamplingparameter").setInt(studyObject.getAlterSamplingParameter() == null ? 0 : studyObject.getAlterSamplingParameter());
 			study.addElement("alternamemodel").setInt(studyObject.getAlterNameModel().ordinal());
 			study.addElement("allowskipquestions").setBoolean(studyObject.getAllowSkipQuestions());
-			
-			for (Class<? extends Question> type : Shared.questionClasses)
+
+			for (QuestionType type : Shared.QuestionType.values())
 			{
-			    
-			    if(type.equals(StudyQuestion.class))
+
+			    if(type.equals(type == QuestionType.STUDY_CONFIG))
 			        continue;
-			    
+
 				Element qorder = new Element("questionorder");
 				Iterator<Long> it = studyObject.getQuestionOrder(type).iterator();
 
 				if (it.hasNext())
 				{
-					study.addElement(qorder).setAttribute("questiontype", type.getSimpleName());
+					study.addElement(qorder).setAttribute("questiontype", type.name());
 					while (it.hasNext())
 					{
 						qorder.addElement("id").setLong(((Long) it.next()).longValue());
@@ -135,19 +135,19 @@ public class StudyWriter {
 
 		}
 	}
-	
-	
+
+
 	public void writeQuestion(Element e, Question q) {
-	    
+
 	    e.addComment(q.getString());
-	    
+
 		if (q.centralMarker) {
 			e.setAttribute("CentralityMarker", "true");
 		}
 
 		e.addElement("Id").setLong(q.UniqueId.longValue());
-		e.addElement("QuestionType").setString(q.getClass().getCanonicalName());
-		e.addElement("AnswerType").setString(q.answerType.getCanonicalName());
+		e.addElement("QuestionType").setString(q.questionType.name());
+		e.addElement("AnswerType").setString(q.answerType.name());
 		e.addElement("FollowUpOnly").setBoolean(q.followupOnly);
 
 		if ((q.title != null) && (!q.title.equals(""))) {
@@ -168,9 +168,9 @@ public class StudyWriter {
 
 			for (int i = 0; i < size; i++) {
 				Element answer = selections.addElement("AnswerText");
-				
+
 				Selection ptr = q.getSelections().get(i);
-				
+
 				answer.setText(ptr.getString());
 				answer.setAttribute("index", Integer.toString(i));
 				answer.setAttribute("value", Integer.toString(ptr.getValue()));

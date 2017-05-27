@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.egonet.model.question;
+package org.egonet.model;
 
 /**
  * Possible categorical answers to a question. These are attached to questions,

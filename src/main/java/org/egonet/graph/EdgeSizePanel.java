@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,17 +34,18 @@ import java.util.*;
 
 import org.egonet.gui.interview.EgoClient;
 import org.egonet.gui.table.*;
+import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
+
 
 
 public class EdgeSizePanel extends JPanel {
 
 	final private static Logger logger = LoggerFactory.getLogger(EdgeSizePanel.class);
-	
+
 	private JLabel questionLabel;
 
 	private JComboBox<Question> questionCombo;
@@ -89,10 +90,10 @@ public class EdgeSizePanel extends JPanel {
 		//List<Question> qList = new ArrayList<Question>();
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		
+
 		for (Long key : questionList.keySet()) {
 			Question currentQuestion = questionList.get(key);
-			if (currentQuestion instanceof AlterPairQuestion) {
+			if (currentQuestion.questionType == QuestionType.ALTER_PAIR) {
 				// populate the list box with only questions that have choices
 				// as answers
 				if (currentQuestion.getSelections().size() >= 1)
@@ -137,7 +138,7 @@ public class EdgeSizePanel extends JPanel {
 				edgesSelected[i][j] = false;
 			}
 		}
-		
+
 		createTable();
 		drawPanel();
 
@@ -196,7 +197,7 @@ public class EdgeSizePanel extends JPanel {
 		Question question = (Question) questionCombo.getSelectedItem();
 
 		int selectedQuestionIndex = qList.indexOf(question);
-		
+
 		logger.info("SizePanel:SelectedQuestionIndex:" + selectedQuestionIndex  + " " + question.toString());
 
 		for (int i = 0; i < question.getSelections().size(); i++) {
@@ -214,7 +215,7 @@ public class EdgeSizePanel extends JPanel {
 				graphRenderer.addQAsettings(graphQuestion, edgeProperty);
 				graphRenderer.updateGraphSettings();
 			} else {
-				
+
 				edgesSelected[selectedQuestionIndex][i] = false;
 				if (EdgeColorPanel.edgesSelected[selectedQuestionIndex][i] == false
 						&& EdgeShapePanel.edgesSelected[selectedQuestionIndex][i] == false) {

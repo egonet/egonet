@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,12 +29,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.egonet.exceptions.MissingPairException;
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
 import org.egonet.util.FileHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class Statistics
 {
 	final private static Logger logger = LoggerFactory.getLogger(Statistics.class);
-	
+
     private final Study     _study;
     private final Interview _interview;
 
@@ -97,7 +97,7 @@ public class Statistics
     public static Statistics generateInterviewStatistics(Interview interview, Question q)
     {
         Statistics stats = new Statistics(interview);
-        
+
         int      numAlters = stats.getInterview().getNumberAlters();
         //int numAlters = 2;
         int      alterindex;
@@ -107,7 +107,7 @@ public class Statistics
 
         boolean noneYet = stats.getInterview().getAnswerSubset(q.UniqueId).size() == 0;
         logger.info("CREATING STATISTICS: Study " + (noneYet ? "has none yet": "already had some"));
-        
+
         try
         {
             if (noneYet)
@@ -720,7 +720,7 @@ public class Statistics
      */
     private void generateAlterStatArray()
     {
-        List<Long> qList = _study.getQuestionOrder(AlterQuestion.class);
+        List<Long> qList = _study.getQuestionOrder(QuestionType.ALTER);
         Iterator<Long> qIt = qList.iterator();
         int index = 0;
 
@@ -731,7 +731,7 @@ public class Statistics
         {
             Question q = _study.getQuestions().getQuestion((Long) qIt.next());
 
-            if ((q.answerType.equals(CategoricalAnswer.class)) || (q.answerType.equals(NumericalAnswer.class)))
+            if ((q.answerType.equals(AnswerType.CATEGORICAL)) || (q.answerType.equals(AnswerType.NUMERICAL)))
                 index++;
         }
 
@@ -753,7 +753,7 @@ public class Statistics
             Long qId = (Long) qIt.next();
             Question q = _study.getQuestions().getQuestion(qId);
 
-            if ((q.answerType.equals(CategoricalAnswer.class)) || (q.answerType.equals(NumericalAnswer.class)))
+            if ((q.answerType.equals(AnswerType.CATEGORICAL)) || (q.answerType.equals(AnswerType.NUMERICAL)))
             {
                 Set<Answer> answerSet = _interview.getAnswerSubset(qId);
                 Iterator<Answer> aIt = answerSet.iterator();
@@ -762,12 +762,12 @@ public class Statistics
                 alterStatArray[index].qTitle = q.title;
                 alterStatArray[index].answerType = q.answerType;
 
-                if (q.answerType.equals(NumericalAnswer.class))
+                if (q.answerType.equals(AnswerType.NUMERICAL))
                 {
                     alterStatArray[index].answerText = new String[] { "Mean" };
                     alterStatArray[index].answerTotals = new int[1];
                 }
-                else if (q.answerType.equals(CategoricalAnswer.class))
+                else if (q.answerType.equals(AnswerType.CATEGORICAL))
                 {
                     alterStatArray[index].answerTotals = new int[q.getSelections().size()];
                     alterStatArray[index].answerText = new String[q.getSelections().size()];
@@ -788,7 +788,7 @@ public class Statistics
                         {
                             alterSummary[a.firstAlter()][index] = new Integer(a.getValue());
 
-                            if (q.answerType.equals(NumericalAnswer.class))
+                            if (q.answerType.equals(AnswerType.NUMERICAL))
                             {
                                 if (a.getValue() != -1)
                                 {
@@ -796,7 +796,7 @@ public class Statistics
                                     alterStatArray[index].answerCount++;
                                 }
                             }
-                            else if (q.answerType.equals(CategoricalAnswer.class))
+                            else if (q.answerType.equals(AnswerType.CATEGORICAL))
                             {
                                 alterStatArray[index].answerTotals[a.getIndex()] += 1;
                                 alterStatArray[index].answerCount++;
@@ -818,61 +818,61 @@ public class Statistics
         }
     }
 
-    
+
         /******************************************************************************
         * Writes matrix alter-prompt to see which alters has appeared in which alter prompt
         * questions.
-        * 
+        *
         * @param alterPromptWriter
         *              File to write data to
-        * 
+        *
         * @throws IOException
-        * 
+        *
         */
         public void writeAlterByPromptFile(PrintWriter alterPromptWriter, String name) throws IOException
         {
             logger.info("Writing Alter By Prompt matrix");
             CSVWriter alterByPromptCSVWriter = new CSVWriter(alterPromptWriter);
             writeAlterByPromptMatrix( name, alterByPromptCSVWriter );
-            alterByPromptCSVWriter.close(); 
+            alterByPromptCSVWriter.close();
         }
-    
+
         private void writeAlterByPromptMatrix(String name, CSVWriter w){
-        
+
         List <String> columnNames = new ArrayList<String>();
         columnNames.add(name);
-        int numPrompts = _study.getQuestionOrder(AlterPromptQuestion.class).size();
-       
+        int numPrompts = _study.getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+
         for (int i = 0; i < numPrompts; ++i)
         {
                 columnNames.add(FileHelpers.formatForCSV("Question "+i));
-                
+
         }
-        
+
         w.writeNext(columnNames.toArray(new String[]{}));
-        
+
          for (int i = 0; i < alterList.length; i++)
          {
-             List<String> row = new ArrayList<String>();  
-             //_study.getQuestionIterator(AlterPromptQuestion.class);
+             List<String> row = new ArrayList<String>();
+             //_study.getQuestionIterator(QuestionType.ALTER_PROMPT);
              row.add(FileHelpers.formatForCSV(alterList[i]));
-             
+
              for (int j = 0; j < numPrompts ; ++j)
              {
                  row.add(""+ alter_alterPromptMatrix[i][j]);
-             }    
+             }
              w.writeNext(row.toArray(new String[]{}));
          }
     }
-        
+
      /***************************************************************************
      * Writes all questions to a package file for later use
-     * 
+     *
      * @param f
      *            File to write data to
      * @param stats
      *            Statistics Object
-     * @throws IOException 
+     * @throws IOException
      * @throws IOException
      */
     public void writeAdjacencyFile(PrintWriter adjacencyWriter, String name, boolean weighted) throws IOException {
@@ -954,7 +954,7 @@ public class Statistics
             Answer answer = (Answer) qIt.next();
             Question q = _study.getQuestions().getQuestion(answer.getQuestionId());
 
-            if (q.answerType.equals(TextAnswer.class))
+            if (q.answerType.equals(AnswerType.TEXT))
             {
                 if (answer.isAnswered())
                 {
@@ -965,14 +965,14 @@ public class Statistics
             }
         }
 
-        qList = _study.getQuestionOrder(AlterQuestion.class);
+        qList = _study.getQuestionOrder(QuestionType.ALTER);
         qIt = qList.iterator();
         while (qIt.hasNext())
         {
             Long qId = (Long) qIt.next();
             Question q = _study.getQuestions().getQuestion(qId);
 
-            if (q.answerType.equals(TextAnswer.class))
+            if (q.answerType.equals(AnswerType.TEXT))
             {
                 w.println("Alter Question: " + q.title);
                 w.println("Text: " + q.text);

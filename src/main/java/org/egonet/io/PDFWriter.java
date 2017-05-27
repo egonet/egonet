@@ -10,29 +10,30 @@ import java.io.*;
 import java.util.*;
 
 import org.egonet.exceptions.CorruptedInterviewException;
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
 import org.egonet.model.Shared;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egonet.model.question.*;
 
 public class PDFWriter {
 	private Study study;
 	private Interview interview;
-	
+
 	final private static Logger logger = LoggerFactory.getLogger(PDFWriter.class);
 	private int indexPromptQuestion = 0;
-        
+
 	public PDFWriter(Study study, Interview interview) throws CorruptedInterviewException {
 		super();
 		this.study = study;
 		this.interview = interview;
 	}
-	
+
 	public PDFWriter(Study study, String name) throws CorruptedInterviewException {
 		this(study, new Interview(study, name));
 	}
@@ -48,7 +49,7 @@ public class PDFWriter {
 	public void setInterview(Interview interview) {
 		this.interview = interview;
 	}
-	
+
 	/**
 	 * Eventually, this separate method could be used for output settings that the user could choose
 	 */
@@ -75,67 +76,67 @@ public class PDFWriter {
 		document.addTitle(study.getStudyName());
 		document.addCreator("Egonet (http://egonet.sf.net)");
 
-		
+
 		document.add(new Paragraph(study.getStudyName()));
 		writeLine(document);
-		
-		for(Class<? extends Question> qT : Shared.questionClasses) {
-			document.add(new Paragraph("Questions of type: " + Question.getNiceName(qT)));
+
+		for(QuestionType qT : Shared.QuestionType.values()) {
+			document.add(new Paragraph("Questions of type: " + qT.niceName));
 			writeLine(document);
-			
+
 			Iterator<Long> it = study.getQuestionIterator(qT);
 			while(it.hasNext()) {
 				Long id = it.next();
 				Question question = study.getQuestion(id);
 				writeQuestion(document, question);
 			}
-			
+
 		}
 	}
-	
+
 	private void writeLine(Document document) throws DocumentException {
-		
+
 		Chunk c = new Chunk();
 		for(float i = 0; i < 120; i++)
 			c.append(" ");
-		
+
 		c.setUnderline(new Color(0x00, 0x00, 0x00),
 			0.0f, 0.1f, 0.0f, 0.2f,
 			PdfContentByte.LINE_CAP_PROJECTING_SQUARE);
 		document.add(c);
 		document.add(new Paragraph());
 	}
-	
+
 	private void writeQuestion(Document document, Question question) throws DocumentException {
-		if(question instanceof AlterQuestion) {
-			
+		if(question.questionType == QuestionType.ALTER) {
+
 		}
-		else if(question instanceof AlterPairQuestion) {
-			
+		else if(question.questionType == QuestionType.ALTER_PAIR) {
+
 		}
-		else if(question instanceof AlterPromptQuestion) {
-			
+		else if(question.questionType == QuestionType.ALTER_PROMPT) {
+
 			String[] alterList = interview.getAlterQuestionPromptAnswers()[indexPromptQuestion];
-						
+
                         Paragraph p1 = new Paragraph("Title: " + question.title);
                         Font f1 = p1.getFont(); f1.setStyle(Font.UNDERLINE); p1.setFont(f1);
                         document.add(p1);
                         indexPromptQuestion++;
-                        
+
                         // we have a list of alters
 			if(alterList.length > 0) {
 				for(int i = 0; i < alterList.length ;i++) {
 					String entry = "("+(i+1)+") " + alterList[i] + " ";
 					while(entry.length() < 25) entry += " "; // pad
-					
+
 					Paragraph p = new Paragraph(entry);
 					Font f = p.getFont(); f.setStyle(Font.UNDERLINE); p.setFont(f);
 					document.add(p);
 				}
 			}
 			else {
-				// we don't know the list yet, but the study is 
-                                // in limited mode, so we know how many alters 
+				// we don't know the list yet, but the study is
+                                // in limited mode, so we know how many alters
                                 // we will have as maximum.
                                 if(!study.isUnlimitedAlterMode())
                                 {
@@ -147,23 +148,23 @@ public class PDFWriter {
                                             Font f = p.getFont(); f.setStyle(Font.UNDERLINE); p.setFont(f);
                                             document.add(p);
                                     }
-                                }   
+                                }
 			}
-			
+
 			return;
 		}
-		else if(question instanceof EgoQuestion) {
-			
+		else if(question.questionType == QuestionType.EGO) {
+
 		}
-		
+
 		java.util.List<Answer> answers = interview.getAnswersByUniqueId(question.UniqueId);
 
 		List answeredQuestions = new List();
-			
+
 		for(Answer answer : answers) {
 
 			writeLine(document);
-			
+
 			document.add(new Paragraph("Title: " + question.title + " (Unique ID: " + question.UniqueId + ", Response type: " + question.answerType + ")"));
 			document.add(new Paragraph());
 			document.add(new Paragraph());
@@ -174,15 +175,15 @@ public class PDFWriter {
 			String qText = question.text;
 			qText = qText.replaceAll("\\$\\$[^0-9]+", "\\$\\$1");
 			qText = qText.replaceAll("\\$\\$$", "\\$\\$1");
-			
-			
+
+
 			if(answer.getAlters() != null && answer.getAlters().size() > 0) {
-				
+
 				String names = "";
 				java.util.List<Integer> alters = answer.getAlters();
 				for(int i = 0; i < alters.size() ;i++) {
 					int num = alters.get(i);
-					
+
 					String thisName = "";
 					if(interview.getAlterList().length > num)
 						thisName = interview.getAlterList()[num] + " ("+(num+1)+")";
@@ -191,24 +192,24 @@ public class PDFWriter {
 
 					qText = qText.replaceAll("\\$\\$"+(i+1), thisName);
 					names += thisName;
-					
+
 					if(i < alters.size()-1)
 						names += ", ";
 				}
-				
+
 				logger.info("Answer alters: " + Arrays.asList(names));
 				// document.add(new Paragraph("Answer Alters: " + names));
 			}
-			
+
 			document.add(new Paragraph("Text: " + qText));
-			
-			if(question.answerType.equals(NumericalAnswer.class)) {
+
+			if(question.answerType.equals(AnswerType.NUMERICAL)) {
 				if(answer.isAnswered() && answer.getValue() != -1)
 					document.add(new Paragraph("Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex()));
 				else
 					document.add(new Paragraph("Answer Value: _________________ "));
 			}
-			else if(question.answerType.equals(TextAnswer.class)) {
+			else if(question.answerType.equals(AnswerType.TEXT)) {
 				if(answer.isAnswered() && answer.string != null && !answer.string.equals(""))
 					document.add(new Paragraph("String answer: " + answer.string));
 				else {
@@ -218,7 +219,7 @@ public class PDFWriter {
 					document.add(new Paragraph(""));
 				}
 			}
-			else if(question.answerType.equals(CategoricalAnswer.class)) {
+			else if(question.answerType.equals(AnswerType.CATEGORICAL)) {
 				if(answer.isAnswered() && answer.getIndex() > -1) {
 					Selection sel = question.getSelections().get(answer.getIndex());
 					document.add(new Paragraph(sel.getString() + " (Answer Value: " + answer.getValue() + ", Answer Index: " + answer.getIndex() + ")"));
@@ -228,7 +229,7 @@ public class PDFWriter {
 					for(Selection sel : question.getSelections()) {
 						selections.add(sel.getString() + " (index="+sel.getIndex()+",value="+sel.getValue()+")");
 					}
-					
+
 					document.add(new Paragraph("Possible selections: "));
 					document.add(selections);
 					document.add(new Paragraph());
@@ -238,7 +239,7 @@ public class PDFWriter {
 			document.add(answeredQuestions);
 		}
 		document.add(new Paragraph());
-		
+
 		writeLine(document);
 	}
 

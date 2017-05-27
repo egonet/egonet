@@ -11,10 +11,10 @@ import net.sf.functionalj.tuple.Pair;
 import net.sf.functionalj.tuple.Triple;
 
 import org.egonet.io.InterviewDataWritingUtil.StudyQuestionsByCategoryAndId;
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.Question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

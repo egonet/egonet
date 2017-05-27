@@ -21,10 +21,11 @@ package org.egonet.util.listbuilder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.egonet.model.Selection;
+
 import java.util.HashMap;
 import java.util.ArrayList;
-
-import org.egonet.model.question.Selection;
 
 public class ListBuilderPresets
 {

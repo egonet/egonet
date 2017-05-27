@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,11 +33,9 @@ import org.apache.commons.collections15.Transformer;
 import org.egonet.graph.GraphSettingsEntry.GraphSettingType;
 import org.egonet.gui.interview.EgoClient;
 import org.egonet.model.Interview;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
-import org.egonet.model.question.StudyQuestion;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.statistics.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ public class GraphRenderer /*implements
 		ToolTipFunction */ {
 
 	final private static Logger logger = LoggerFactory.getLogger(GraphRenderer.class);
-	
+
 	public static GraphSettings graphSettings;
 
 	private static VisualizationViewer<Vertex,Edge> visualizationViewer;
@@ -88,25 +86,25 @@ public class GraphRenderer /*implements
 	private boolean showNodeLabels = true;
 
 	private EgoClient egoClient;
-	
+
 	public GraphRenderer(EgoClient egoClient) {
 		this.egoClient=egoClient;
 		graph = new UndirectedSparseGraph<Vertex, Edge>();
-		
+
 		Interview interview = egoClient.getInterview();
-		
+
 		Statistics stats = interview.getStats();
 		if(stats == null)
 			logger.error("No statistics were computed for this interview. This is likely going to cause problems later.");
 		else if(stats.alterList == null || stats.alterList.length == 0)
 			logger.error("Statistics alter list is null or empty. This is likely going to cause problems later.");
-		
+
 		alterList = stats != null ? stats.alterList : new String[0];
-		
+
 		for (String alter : alterList) {
 				graph.addVertex(new Vertex(alter));
 		}
-		
+
 		graphSettings = new GraphSettings(egoClient, this);
 	}
 
@@ -115,10 +113,10 @@ public class GraphRenderer /*implements
 			return "";
 		}
 	};
-	
+
 	/**
 	 * Redraws the graph with the provided layout
-	 * 
+	 *
 	 * @param Class Layout
 	 */
 	@SuppressWarnings("unchecked")
@@ -127,12 +125,12 @@ public class GraphRenderer /*implements
 			Object o = constructor.newInstance(graph);
 			Layout l = (Layout) o;
 
-			
+
 			if (l instanceof FRLayout) {
 				FRLayout frLayout = (FRLayout) l;
 				frLayout.setMaxIterations(1000);
 			}
-			
+
 			l.reset();
 			visualizationViewer.getModel().setGraphLayout(l);
 			//visualizationViewer.stop();
@@ -142,9 +140,9 @@ public class GraphRenderer /*implements
 	}
 
 	/**
-	 * Changes the size of the layout (canvas size) then redraws the graph 
+	 * Changes the size of the layout (canvas size) then redraws the graph
 	 * to fit the nodes to the new layout size
-	 * 
+	 *
 	 * @param int x -- width
 	 * @param int y -- height
 	 */
@@ -153,10 +151,10 @@ public class GraphRenderer /*implements
 		try {
 			Dimension dim = visualizationViewer.getGraphLayout().getSize();
 			Layout layout = visualizationViewer.getGraphLayout();
-			
+
 			if(dim.width + x < 5 || dim.height + y < 5){
-				JOptionPane.showMessageDialog(null, 
-						new String("Layout Size Out of Bounds"), "Error", 
+				JOptionPane.showMessageDialog(null,
+						new String("Layout Size Out of Bounds"), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				logger.info("Less than 5");
 			}
@@ -165,7 +163,7 @@ public class GraphRenderer /*implements
 				//visualizationViewer.stop();
 				visualizationViewer.getModel().setGraphLayout(layout, d);
 				//visualizationViewer.restart();
-			}					
+			}
 		} catch (Exception ex) {
 			logger.error(ex.toString());
 		}
@@ -180,19 +178,19 @@ public class GraphRenderer /*implements
 	public void reiterate(){
 		Dimension dim = visualizationViewer.getGraphLayout().getSize();
 		Layout layout = visualizationViewer.getGraphLayout();
-		
-		
+
+
 		layout.setSize(dim);
-		
+
 		//visualizationViewer.stop();
 		visualizationViewer.getModel().setGraphLayout(layout);
 		//visualizationViewer.restart();
 	}
-	
+
 	/**
 	 * create the main viewable Graph by for display on a panel use the JUNG
 	 * classes
-	 * 
+	 *
 	 * @return
 	 */
 	public JComponent createGraph() {
@@ -205,40 +203,40 @@ public class GraphRenderer /*implements
 
 		// create the regular viewer and scroller
 		visualizationViewer = new VisualizationViewer<Vertex,Edge>(visualizationModel);
-		
+
 		visualizationViewer.setPickSupport(new ShapePickSupport<Vertex,Edge>(visualizationViewer));
 		//visualizationViewer.setToolTipFunction(this);
 		visualizationViewer.setVertexToolTipTransformer(new VertexTooltipTransformer());
-		
-		
+
+
 		visualizationViewer.setGraphMouse(graphMouse);
 		visualizationViewer.setBackground(Color.WHITE);
 
 		RenderContext<Vertex, Edge> ctx = visualizationViewer.getRenderContext();
-		
+
 		//this.setVertexShapeFunction(this);
 		ctx.setVertexShapeTransformer(new VertexShapeTransformer());
-		
+
 		//this.setVertexPaintFunction(this);
 		ctx.setVertexFillPaintTransformer(new VertexPaintTransformer());
-		
+
 		//this.setEdgeShapeFunction(this);
 		ctx.setEdgeShapeTransformer(new EdgeShapeTransformer());
-		
+
 		//this.setEdgePaintFunction(this);
 		ctx.setEdgeDrawPaintTransformer(new EdgePaintTransformer());
-		
+
 		//this.setEdgeStrokeFunction(this);
 		ctx.setEdgeStrokeTransformer(new EdgeStrokeTransformer());
 
 		//this.setEdgeStringer(emptyStringer);
 		ctx.setEdgeLabelTransformer(new EmptyEdgeStringer());
-		
+
 		//this.setVertexStringer(this);
 		ctx.setVertexLabelTransformer(new VertexLabelTransformer());
 		visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
 
-		
+
 		visualizationViewerScrollPane = new GraphZoomScrollPane(
 				visualizationViewer);
 		final ScalingControl scaler = new CrossoverScalingControl();
@@ -276,7 +274,7 @@ public class GraphRenderer /*implements
 			}
 		}
 	}
-	
+
 	private void removeAllEdges(Graph<Vertex,Edge> g) {
 		while(g.getEdgeCount() > 0) {
 			for(Edge e : new ArrayList<Edge>(g.getEdges())) {
@@ -297,10 +295,10 @@ public class GraphRenderer /*implements
 	public void drawEdgeLabels() {
 		//this.setEdgeStringer(this);
 		visualizationViewer.getRenderContext().setEdgeLabelTransformer(new EdgeLabelTransformer());
-		
+
 		// ??? not ported!
 		//this.setEdgePaintFunction(new PickableEdgePaintTransformer(this,Color.black, Color.cyan));
-		
+
 		visualizationViewer.repaint();
 	}
 
@@ -316,16 +314,16 @@ public class GraphRenderer /*implements
 	 * Implemented for VertexPaintFunction Returns the color of the outline of
 	 * the vertex Draw paint color is defaulted BLACK
 	 */
-	
+
 	class VertexPaintTransformer implements Transformer<Vertex,Paint> {
 		public Paint transform(Vertex v) {
 			Color fillColor = graphSettings.getNodeColor(v);
 			//ConstantVertexPaintFunction cvpf = new ConstantVertexPaintFunction(Color.BLACK, fillColor);
-			
+
 			return fillColor;
 		}
 	}
-	
+
 	/*class VertexPaintTransformer implements Transformer<Vertex,Paint> {
 		public Paint transform(Vertex v) {
 			Color fillColor = graphSettings.getNodeColor(v);
@@ -335,7 +333,7 @@ public class GraphRenderer /*implements
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getFillPaint(org.egonet.graph.Edge)
 	 * @see edu.uci.ics.jung.graph.decorators.EdgePaintFunction#getDrawPaint(org.egonet.graph.Edge)
 	 */
@@ -349,9 +347,9 @@ public class GraphRenderer /*implements
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see edu.uci.ics.jung.graph.decorators.EdgeStrokeFunction#getStroke(org.egonet.graph.Edge)
-	 
+
 	public Stroke getStroke(Edge e) {
 		ConstantEdgeStrokeFunction edgeStrokeFunction = new ConstantEdgeStrokeFunction(
 				(float) graphSettings.getEdgeSize(e));
@@ -375,7 +373,7 @@ public class GraphRenderer /*implements
 	/**
 	 * Implementes for EdgeStringer Retruns the edgeLabel for a given edge
 	 */
-	
+
 	class EdgeLabelTransformer implements Transformer<Edge,String> {
 		public String transform(Edge e) {
 			return graphSettings.getEdgeLabel((Edge) e);
@@ -387,12 +385,12 @@ public class GraphRenderer /*implements
 	 * for an entry in map
 	 */
 	class VertexShapeTransformer implements Transformer<Vertex,Shape> {
-		
+
 		VertexShapeFactory<Vertex> v;
 		public Shape transform(Vertex v) {
 			NodeProperty.NodeShape shape = graphSettings.getNodeShape(v);
 			int size = graphSettings.getNodeSize(v);
-			
+
 			EllipseVertexShapeFunction basicCircle = new EllipseVertexShapeFunction();
 			Shape returnShape = basicCircle.getShape(v, 10 + (5 * size));
 			switch (shape) {
@@ -430,9 +428,9 @@ public class GraphRenderer /*implements
 			}
 			return returnShape;
 		}
-		
+
 	}
-		
+
 	public VisualizationModel getVisualizationModel() {
 		return visualizationModel;
 	}
@@ -472,7 +470,7 @@ public class GraphRenderer /*implements
 	class EdgeShapeTransformer implements Transformer<Context<Graph<Vertex, Edge>, Edge>, Shape> {
 		public Shape transform(Context<Graph<Vertex, Edge>, Edge> edge) {
 			Edge e = edge.element;
-			
+
 			AbstractEdgeShapeTransformer<Vertex,Edge> edgeShapeFunction;
 			switch (graphSettings.getEdgeShape(e)) {
 			case QuadCurve:
@@ -485,8 +483,8 @@ public class GraphRenderer /*implements
 				edgeShapeFunction = new EdgeShape.Line();
 				break;
 			}
-			
-			
+
+
 			return edgeShapeFunction.transform(edge);
 			// edgeShapeFunction = new EdgeShape.Line();
 			// returnShape = edgeShapeFunction.getShape(e);
@@ -496,21 +494,21 @@ public class GraphRenderer /*implements
 
 	class EdgeStrokeTransformer implements Transformer<Edge,Stroke> {
 		BasicStroke stroke;
-		
+
 		public EdgeStrokeTransformer() {
 			this.stroke = new BasicStroke();
 		}
-		
+
 		public EdgeStrokeTransformer(float weight) {
 			this.stroke = new BasicStroke(weight);
 		}
-		
+
 		public Stroke transform(Edge arg0) {
 			return stroke;
 		}
-		
+
 	}
-	
+
 	public void reSizeEdges(float strokeWeight) {
 		visualizationViewer.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeTransformer(strokeWeight));
 		visualizationViewer.repaint();
@@ -524,7 +522,7 @@ public class GraphRenderer /*implements
 		while (iterator.hasNext()) {
 			GraphSettingsEntry entry = (GraphSettingsEntry) iterator.next();
 			GraphQuestionSelectionPair graphQuestion = entry.getGraphQuestion();
-			if ((graphQuestion.getCategory().equals(AlterQuestion.class))
+			if ((graphQuestion.getCategory().equals(QuestionType.ALTER))
 					&& (entry.getType() == GraphSettingType.Node)) {
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
 				NodeProperty.NodePropertyType prop = nodeProperty.getProperty();
@@ -555,7 +553,7 @@ public class GraphRenderer /*implements
 					}
 					break;
 				}
-			} else if (graphQuestion.getCategory().equals(StudyQuestion.class)) // structural
+			} else if (graphQuestion.getCategory().equals(QuestionType.EGO)) // structural
 			// measure
 			{
 				NodeProperty nodeProperty = (NodeProperty) entry.getProperty();
@@ -581,12 +579,12 @@ public class GraphRenderer /*implements
 				}
 			}
 			// Edge property manipulation
-			else if ((graphQuestion.getCategory().equals(AlterPairQuestion.class))
+			else if ((graphQuestion.getCategory().equals(QuestionType.ALTER_PAIR))
 					&& (entry.getType() == GraphSettingType.Edge)) {
 				EdgeProperty edgeProperty = (EdgeProperty) entry.getProperty();
 				EdgeProperty.EdgePropertyType prop = edgeProperty.getProperty();
 				//logger.info("prop value is " +prop.toString());
-				
+
 				GraphData graphData = new GraphData(egoClient);
 				List<Pair<Integer>> vPair = graphData.getAlterPairs(graphQuestion);
 				//logger.info("Property to be updated:" + prop
@@ -605,7 +603,7 @@ public class GraphRenderer /*implements
 									&& (edge.getEndpoints().getSecond()
 											.equals(alterList[(Integer) pair
 													.getSecond()]))) {
-							
+
 								 //logger.info("EDGE color is " +edgeProperty.getColor());
 								graphSettings.setEdgeColor(edge, edgeProperty
 										.getColor());
@@ -815,10 +813,10 @@ public class GraphRenderer /*implements
     }
 
     public static void setGraphSettings(GraphSettings gs){
-    	
+
     	graphSettings = gs;
     }
-    
+
     public static VisualizationViewer getVisualizationViewer()
     {
         return visualizationViewer;

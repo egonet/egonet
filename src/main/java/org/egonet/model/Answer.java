@@ -1,36 +1,31 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.egonet.model.answer;
+package org.egonet.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.text.*;
+import org.egonet.model.Shared.AnswerType;
 
-import org.egonet.exceptions.MalformedQuestionException;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.EgoQuestion;
-
-public abstract class Answer implements Cloneable {
+public class Answer implements Cloneable {
     /**
      * Unique ID for every question
      */
@@ -54,10 +49,11 @@ public abstract class Answer implements Cloneable {
     public void setAlters(List<Integer> alters) {
 		this.alters = alters;
 	}
-    
+
     public void setAlters(int [] alters) {
 		this.alters = new ArrayList<Integer>();
-		for(int i : alters) this.alters.add(i);
+		for(int i : alters)
+			this.alters.add(i);
 	}
 
 	private boolean _answered = false;
@@ -84,11 +80,11 @@ public abstract class Answer implements Cloneable {
     public static final int ALL_ADJACENT = -2;
 
     private static Random generator = new Random(System.currentTimeMillis());
-    
+
     public Answer() {
     	this((long)generator.nextInt());
     }
-    
+
     public Answer(Long Id) {
         this(Id, null);
     }
@@ -110,33 +106,37 @@ public abstract class Answer implements Cloneable {
                 this.alters.add(a);
         }
     }
-    
-    public Integer firstAlter()
-    {
+
+    public Integer firstAlter() {
+    	if(!hasAtLeastOneAlter()) {
+    		throw new IllegalArgumentException("Does not have any alters at " + getString());
+    	}
+
         return alters.get(0);
     }
-    
-    public Integer secondAlter()
-    {
+
+    public Integer secondAlter() {
+    	if(!hasTwoAlters()) {
+    		throw new IllegalArgumentException("Does not have two alters at " + getString());
+    	}
+
         return alters.get(1);
     }
 
-    public boolean hasTwoAlters()
-    {
+    public boolean hasTwoAlters() {
         return alters.size() > 1;
     }
-    
-    public boolean hasAtLeastOneAlter()
-    {
+
+    public boolean hasAtLeastOneAlter() {
         return alters.size() > 0;
     }
-    
+
     public Object clone() throws CloneNotSupportedException {
         return (super.clone());
     }
 
     public String toString() {
-    	return string == null ? getValue()+"" : string;
+    	return string == null || string.equals("") ? getValue()+"" : string;
     }
 
     public String getString() {
@@ -165,59 +165,27 @@ public abstract class Answer implements Cloneable {
     public List<Integer> getAlters() {
         return Collections.unmodifiableList(alters);
     }
-    
+
 	/**
 	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
-	 * 
+	 *
 	 * @param questionType type of question subclass
 	 * @return a class object representing that type
 	 */
-    
-    private static String fromString(String s) {
+
+    public static AnswerType fromString(String s) {
 		if("1".equals(s)) {
-			s = CategoricalAnswer.class.getCanonicalName();
+			return AnswerType.CATEGORICAL;
 		}
 		else if("2".equals(s)) {
-			s = NumericalAnswer.class.getCanonicalName();
+			return AnswerType.NUMERICAL;
 		}
 		else if("3".equals(s)) {
-			s = TextAnswer.class.getCanonicalName();
+			return AnswerType.TEXT;
 		}
 		else if("4".equals(s)) {
-			s = InformationalAnswer.class.getCanonicalName();
+			return AnswerType.INFORMATIONAL;
 		}
-		return s;
+		throw new RuntimeException("Unknown answer type " + s);
     }
-	
-	public static Class<? extends Answer> asSubclass(String answerType) {
-		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Answer> clazz = (Class<? extends Answer>)Class.forName(fromString(answerType));
-
-			return clazz;
-		} 
-		catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-	
-	public static Answer newInstance(String answerType) {
-		try {
-			Class<? extends Answer> clazz = asSubclass(fromString(answerType));
-
-			return newInstance(clazz);
-		} 
-		catch (Exception ex) {
-			throw new MalformedQuestionException(ex);
-		}
-	}
-	
-	public static Answer newInstance(Class<? extends Answer> clazz) {
-		try {
-			return clazz.newInstance();
-		} 
-		catch (Exception ex) {
-			throw new MalformedQuestionException("could not instantiate an instance of class " + clazz.getCanonicalName(),ex);
-		}
-	}
 }

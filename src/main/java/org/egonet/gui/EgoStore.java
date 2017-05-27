@@ -23,8 +23,6 @@ import org.egonet.io.StudyReader;
 import org.egonet.io.StudyWriter;
 import org.egonet.io.VnaInterviewWriter;
 import org.egonet.model.*;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.Question;
 import org.egonet.statistics.Statistics;
 import org.egonet.util.ExtensionFileFilter;
 import org.egonet.util.FileHelpers;
@@ -37,9 +35,9 @@ import javax.swing.*;
 /**
  * This class represents storage for a session of the client. It specifically
  * encapsulates one dataset of files, i.e. one study and many interviews.
- * 
+ *
  * @author Martin
- * 
+ *
  */
 public class EgoStore {
 
@@ -101,7 +99,7 @@ public class EgoStore {
 	}
 
 	public void setCurrentInterview(Interview interview, File file) {
-		logger.info("Set current interview " + (file == null ? file : file.toString()) + " with " + (interview == null ? interview : interview.toString()));
+		logger.info("Set current file/interview " + (file == null ? "NULL" : file.toString()) + " with " + (interview == null ? "NULL" : interview.toString()));
 		currentInterview = new Tuple<File, Interview>(file, interview);
 	}
 
@@ -109,28 +107,28 @@ public class EgoStore {
 		logger.info("Unset current interview");
 		currentInterview = null;
 	}
-	
+
 	public boolean saveInterview(File fInterview) throws IOException {
 		logger.info("Saving a brand new, never before used file");
 		setCurrentInterview(currentInterview.second(), fInterview);
 		writeCurrentInterview();
 		return true;
 	}
-	
+
 	public boolean continueInterview(File fInterview) throws IOException, CorruptedInterviewException {
 		logger.info("Saving on top of an existing file");
 		setCurrentInterview(readInterview(fInterview), fInterview);
-		
+
 		setCurrentInterview(currentInterview.second(), fInterview);
 		writeCurrentInterview();
 		return true;
 	}
-	
+
 	public boolean saveLongitudinalFile(File fOriginal, File fInterview) throws IOException, CorruptedInterviewException {
 		InterviewReader tempIr = new InterviewReader(currentStudy.second(), fOriginal);
 		Interview curInt = tempIr.getInterview();
 		File newFile = fInterview;
-		
+
 		curInt.setComplete(false);
 		for(Answer answer : curInt.getEgoAnswers()) {
 			answer.setAnswered(false);
@@ -138,9 +136,9 @@ public class EgoStore {
 		for(Question answer : curInt.getAlterAnswers()) {
 			answer.getAnswer().setAnswered(false);
 		}
-		
+
 		curInt.setFollowup(true);
-		
+
 		setCurrentInterview(curInt, newFile);
 		writeCurrentInterview();
 		return true;
@@ -157,18 +155,16 @@ public class EgoStore {
 	public Interview readInterview(File interviewFile) throws CorruptedInterviewException, IOException {
 		return readInterview(interviewFile, false);
 	}
-	
+
 	/***************************************************************************
 	 * Reads in study information from an XML like input file Includes files
 	 * paths and arrays of question orders
-	 * 
-	 * @return interview structure derived from file 
+	 *
+	 * @return interview structure derived from file
 	 */
-	public Interview readInterview(File interviewFile, boolean ignoreStudyIdMismatch)
-			throws CorruptedInterviewException, IOException {
+	public Interview readInterview(File interviewFile, boolean ignoreStudyIdMismatch) throws CorruptedInterviewException, IOException {
 		try {
-			InterviewReader ir = new InterviewReader(currentStudy.second(),
-					interviewFile);
+			InterviewReader ir = new InterviewReader(currentStudy.second(), interviewFile);
 			Interview interview = ir.getInterview(ignoreStudyIdMismatch);
 
 			if (!interview.isComplete()
@@ -296,11 +292,15 @@ public class EgoStore {
 	}
 
 	public File getInterviewFile() {
-		return currentInterview != null ? currentInterview.first() : null;
+		File r = currentInterview != null ? currentInterview.first() : null;
+		// logger.info("EgoStore#getInterviewFile() called, returning " + r);
+		return r;
 	}
 
 	public Interview getInterview() {
-		return currentInterview != null ? currentInterview.second() : null;
+		Interview r = currentInterview != null ? currentInterview.second() : null;
+		// logger.info("EgoStore#getInterview() called, returning " + r);
+		return r;
 	}
 
 	public void chooseStudy() throws IOException, EgonetException {
@@ -313,7 +313,7 @@ public class EgoStore {
 
 	/**
 	 * Show the user a dialog box to select a study file, then return that file.
-	 * 
+	 *
 	 * @param parent
 	 *            a parent Window for the dialog box
 	 * @param studyFile
@@ -562,7 +562,7 @@ public class EgoStore {
 			return new File("./lib/");
 		}
 
-	
+
 
 	/************************************************************************************************************************************************************
 	 * Select a question file to use for custom questions
@@ -810,6 +810,7 @@ public class EgoStore {
 								InterviewReader sr = new InterviewReader(getStudy(), f);
 								complete = sr.getInterview().isComplete();
 							} catch (StudyIdMismatchException ex) {
+								logger.info("Study ID was already a mismatch, asking for UI confirmation");
 								int confirm = JOptionPane.showConfirmDialog(parent, "Study file and interview file don't match. Do you wish to override? (This may not work)", "", JOptionPane.YES_NO_OPTION);
 								if(confirm != JOptionPane.YES_OPTION) {
 									complete = false;
@@ -823,7 +824,7 @@ public class EgoStore {
 									complete = false;
 									throw new RuntimeException(ex2);
 								}
-								
+
 							} catch (Exception ex) {
 								complete = false;
 								throw new RuntimeException(ex);
@@ -864,7 +865,7 @@ public class EgoStore {
 	public File interviewStatisticsFile(String istPath, String intFile) {
 		return createFileWithNewEndingFromDot(istPath,intFile,".ist");
 	}
-	
+
 	private File createFileWithNewEndingFromDot(String path, String oldFileName, String newEnding) {
 		String n = oldFileName;
 		if(n.contains("."))
@@ -888,7 +889,7 @@ public class EgoStore {
                         File altByAltFile = createFileWithNewEndingFromDot(statdir, name, "_alter_by_alter_prompt_Matrix.csv");
                         PrintWriter pwABAP = new PrintWriter(altByAltFile);
 			stats.writeAlterByPromptFile(pwABAP, name);
-                        
+
 			File adjFile = createFileWithNewEndingFromDot(statdir,name,"_matrix.csv");
 			PrintWriter pwNA = new PrintWriter(adjFile);
 			stats.writeAdjacencyFile(pwNA, name, false);
@@ -896,12 +897,12 @@ public class EgoStore {
 			File wadjFile = createFileWithNewEndingFromDot(statdir,name,"_weighted_matrix.csv");
 			PrintWriter pwAA = new PrintWriter(wadjFile);
 			stats.writeAdjacencyFile(pwAA, name, true);
-			
+
 			File asFile = createFileWithNewEndingFromDot(statdir,name,"_alter_summary.csv");
 			PrintWriter pwAS = new PrintWriter(asFile);
 			stats.writeAlterArray(pwAS);
 			pwAS.close();
-			
+
 			new VnaInterviewWriter(stats.getStudy(),stats.getInterview())
 			.write(createFileWithNewEndingFromDot(statdir,name,".vna"));
 		}
@@ -913,7 +914,7 @@ public class EgoStore {
 
 	/***************************************************************************
 	 * Writes all questions to a package file for later use
-	 * 
+	 *
 	 * @param f
 	 *            File to write data to
 	 * @param stats
@@ -940,7 +941,7 @@ public class EgoStore {
 
 	/***************************************************************************
 	 * Creates a new csv file to store statistics in
-	 * 
+	 *
 	 * @param parent
 	 *            Frame for centering error messages
 	 * @param filetype
@@ -986,7 +987,7 @@ public class EgoStore {
 
 	/***************************************************************************
 	 * Creates a new .ist file from an existing complete interview file
-	 * 
+	 *
 	 * @param interviewFile
 	 *            File from which to read interview
 	 * @throws IOException

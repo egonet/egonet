@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.egonet.gui.table;
-import org.egonet.model.question.Selection;
-
 import javax.swing.table.AbstractTableModel;
+
+import org.egonet.model.Selection;
 
 public class LabelTableModel extends AbstractTableModel {
 	private String[] columnNames = { "Responses" };

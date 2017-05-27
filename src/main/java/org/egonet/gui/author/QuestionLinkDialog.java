@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,11 +34,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.PlainDocument;
 
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
+import org.egonet.model.Answer;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
 
@@ -49,7 +49,7 @@ public class QuestionLinkDialog extends JDialog
 		implements Observer
 {
 	private Question                  baseQuestion;
-   private Answer                    linkAnswer           = new TextAnswer(new Long(-1));
+   private Answer                    linkAnswer           = new Answer(new Long(-1));
 
    /* Containers */
    private final JSplitPane          questionSplit        = new JSplitPane();
@@ -95,8 +95,8 @@ public class QuestionLinkDialog extends JDialog
    private Question                  question;
 
    private EgoNet egoNet;
-   
-   
+
+
 	/**
 	 * Generates Panel for question editing to insert in file tab window
 	 * @param	parent	parent frame for referencing composed objects
@@ -292,8 +292,8 @@ public class QuestionLinkDialog extends JDialog
 
 		if (question != null)
 		{
-			
-			linkAnswer = Answer.newInstance(question.answerType);
+
+			linkAnswer = new Answer();
 			linkAnswer.setQuestionId(question.UniqueId);
 
 			if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().getQuestionId())))
@@ -339,7 +339,7 @@ public class QuestionLinkDialog extends JDialog
 			question = (Question) questionList.getSelectedValue();
 
 			if (question != null) {
-				linkAnswer = Answer.newInstance(question.answerType);
+				linkAnswer = new Answer();
 				linkAnswer.setQuestionId(question.UniqueId);
 
 				if (baseQuestion.link.isActive() && (question.UniqueId.equals(baseQuestion.link.getAnswer().getQuestionId())))
@@ -371,12 +371,12 @@ public class QuestionLinkDialog extends JDialog
 			answerPanel.setVisible(false);
 			answerPanel.removeAll();
 			questionText.setText("Please select a question and an answer which will trigger the inclusion of the current question");
-			if (question instanceof AlterPromptQuestion)
+			if (question.questionType == QuestionType.ALTER_PROMPT)
 			{
 				// Should never be here
 				//assert(false);
 			}
-			else if (question.answerType.equals(TextAnswer.class))
+			else if (question.answerType.equals(AnswerType.TEXT))
 			{
 				answerPanel.add(textPanel);
 				answerPanel.validate();
@@ -392,7 +392,7 @@ public class QuestionLinkDialog extends JDialog
 					answerTextField.setText("");
 				}
 			}
-			else if (question.answerType.equals(InformationalAnswer.class))
+			else if (question.answerType.equals(AnswerType.INFORMATIONAL))
 			{
 				answerPanel.add(textPanel);
 				answerTextField.setDocument(wholeNumberDocument);
@@ -409,7 +409,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else if (question.getSelections().size() <= 5)
 			{
-				allAdjacentCheck.setVisible(question instanceof AlterPairQuestion);
+				allAdjacentCheck.setVisible(question.questionType == QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 
 				answerPanel.add(radioPanel);
@@ -446,7 +446,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 			else
 			{
-				allAdjacentCheck.setVisible(question instanceof AlterPairQuestion);
+				allAdjacentCheck.setVisible(question.questionType == QuestionType.ALTER_PAIR);
 				questionText.setText(question.text);
 				answerPanel.add(menuPanel);
 
@@ -499,7 +499,7 @@ public class QuestionLinkDialog extends JDialog
 	{
 		linkAnswer.string = null;
 
-		if(question.answerType.equals(NumericalAnswer.class)) {
+		if(question.answerType.equals(AnswerType.NUMERICAL)) {
 			if (answerTextField.getText().length() > 0)
 			{
 				linkAnswer.string   	= answerTextField.getText();
@@ -511,16 +511,16 @@ public class QuestionLinkDialog extends JDialog
 				linkAnswer.setValue(Answer.NO_ANSWER);
 				linkAnswer.setAnswered(false);
 			}
-		} else if(question.answerType.equals(TextAnswer.class)) {
+		} else if(question.answerType.equals(AnswerType.TEXT)) {
 			linkAnswer.string   		= answerTextField.getText();
 			linkAnswer.setValue(linkAnswer.string.length());
 			linkAnswer.setAnswered((linkAnswer.getValue() != 0));
-		} else if(question.answerType.equals(InformationalAnswer.class)) {
+		} else if(question.answerType.equals(AnswerType.INFORMATIONAL)) {
 			linkAnswer.string = "informational";
 			linkAnswer.setValue(1);
 			linkAnswer.setAnswered(true);
-		} else if(question.answerType.equals(CategoricalAnswer.class)) {
-			
+		} else if(question.answerType.equals(AnswerType.CATEGORICAL)) {
+
 			// option/radio buttons
 			if (question.getSelections().size() <= 5) {
 				if (allAdjacentCheck.isSelected()) {
@@ -531,7 +531,7 @@ public class QuestionLinkDialog extends JDialog
 				else {
 					int button          		= selectedButtonIndex(answerButtons);
 					linkAnswer.setAnswered( (button != MAX_BUTTONS));
-					
+
 					if (linkAnswer.isAnswered())
 					{
 						linkAnswer.setValue(question.getSelections().get(button).getValue());
@@ -546,7 +546,7 @@ public class QuestionLinkDialog extends JDialog
 					}
 				}
 			}
-			
+
 			// drop down buttons
 			else {
 				if (allAdjacentCheck.isSelected())
@@ -571,7 +571,7 @@ public class QuestionLinkDialog extends JDialog
 			}
 		}
 	}
-	
+
 
 	void jShowListButton_actionPerformed(ActionEvent e)
 	{
@@ -588,7 +588,7 @@ public class QuestionLinkDialog extends JDialog
 			egoNet.getStudy().setModified(true);
 			egoNet.getStudy().setCompatible(false);
 		}
-		
+
 		egoNet.getFrame().fillCurrentPanel();
 		this.hide();
 	 }

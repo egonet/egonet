@@ -3,11 +3,10 @@ package org.egonet.io;
 import java.io.File;
 import java.io.IOException;
 
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.Question;
-
 import electric.xml.Document;
 import electric.xml.Element;
 

@@ -20,9 +20,10 @@ import org.egonet.io.InterviewFileFilter;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StudyReader;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.Question;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +34,13 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 public class CombineInterviews
 {
 	final private static Logger logger = LoggerFactory.getLogger(CombineInterviews.class);
-	
+
 	public void doCombineInterviews() throws Exception
 	{
 		/* Read new study */
 		EgoStore store = new EgoStore(null);
 		File studyFile = store.selectStudy(new File("."));
-		
+
 		StudyReader sr = new StudyReader(studyFile);
 		Study study = sr.getStudy();
 
@@ -56,19 +57,19 @@ public class CombineInterviews
 
 		final File currentDirectory = guessLocation;
 
-		String[] fileList = currentDirectory.list();	
+		String[] fileList = currentDirectory.list();
 		InterviewFileFilter filter = new InterviewFileFilter(study, "Interview Files", "int");
 		ArrayList<String> alterList = new ArrayList<String>();
 		int[][] adj = null;
 
 		Set<Edge> allPairs = new HashSet<Edge>();
 		Set<Vertex> pairedAlters = new HashSet<Vertex>();
-		
-		
-		
+
+
+
 		for (String s: fileList){
 
-			File f = new File(currentDirectory.toString() + "/" + s);			
+			File f = new File(currentDirectory.toString() + "/" + s);
 			if(!filter.accept(f) || !f.canRead())
 				throw new IOException("Couldn't read file or file not associated with selected study.");
 
@@ -79,15 +80,15 @@ public class CombineInterviews
 				logger.info("*** SKIPPED because interview isn't complete: " + f.getName());
 				continue;
 			}
-			
+
 			logger.info("** Reading next file " + f.getName());
-			
-			
+
+
 
 			String [] thisInterviewAlterlist = interview.getAlterList();
 			alterList.addAll(Arrays.asList(interview.getAlterList()));
 
-			Iterator<Long> questions = study.getQuestionOrder(AlterPairQuestion.class).iterator();
+			Iterator<Long> questions = study.getQuestionOrder(QuestionType.ALTER_PAIR).iterator();
 			while (questions.hasNext()) {
 				Question q = study.getQuestion((Long) questions.next());
 				adj = interview.generateAdjacencyMatrix(q, false);
@@ -101,15 +102,15 @@ public class CombineInterviews
 					{
 						if(adj[i][j] == 1 && i != j)
 						{
-							
+
 							String alter1 = thisInterviewAlterlist[i];
 							String alter2 = thisInterviewAlterlist[j];
-							
+
 							allPairs.add(new Edge(alter1, alter2));
-							
+
 							pairedAlters.add(new Vertex(alter1));
 							pairedAlters.add(new Vertex(alter2));
-							
+
 							// mark those as adjacent in the new big matrix
 							//logger.info(p +  " are adjacent");
 						}
@@ -127,43 +128,43 @@ public class CombineInterviews
 			vertices.add(v1);
 			vertices.add(v2);
 		}
-		
+
 		for(String isolate : alterList)
 		{
 			Vertex v = new Vertex(isolate);
 			vertices.add(v);
 		}
-		
+
 		SparseGraph<Vertex,Edge> graph = new SparseGraph<Vertex,Edge>();
 		for(Edge pair : allPairs)
 		{
 			Vertex v1 = new Vertex(pair.pair.getFirst());
 			Vertex v2 = new Vertex(pair.pair.getSecond());
-			
+
 			if(!graph.getVertices().contains(v1))
 				graph.addVertex(v1);
 			if(!graph.getVertices().contains(v2))
 				graph.addVertex(v2);
-			
+
 			graph.addEdge(pair, Arrays.asList(v1,v2));
 		}
-		
+
 		for(String isolate : alterList)
 		{
 			Vertex v = new Vertex(isolate);
 			if(!graph.getVertices().contains(v))
 				graph.addVertex(v);
 		}
-		
+
         Layout<Vertex,Edge> layout = new ELSFRLayout2<Vertex,Edge>(graph);
         VisualizationViewer<Vertex,Edge> vv = new VisualizationViewer<Vertex,Edge>(layout);
-        
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(vv, BorderLayout.CENTER);
-        
+
         frame.setContentPane(panel);
         frame.pack();
 
@@ -173,7 +174,7 @@ public class CombineInterviews
 		logger.info("Pairs: " + allPairs);
 		alterList.removeAll(pairedAlters);
 		logger.info("Single alters: " + alterList);
-		
+
 		// TODO: write to file using save dialog
 	}
 

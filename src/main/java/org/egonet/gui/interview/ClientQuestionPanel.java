@@ -1,30 +1,32 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.egonet.gui.interview;
 
+import org.egonet.model.Answer;
 import org.egonet.model.Interview;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
 import org.egonet.model.Shared;
 import org.egonet.model.Study;
 import org.egonet.model.Shared.AlterSamplingModel;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.*;
-
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +54,6 @@ import javax.swing.text.html.HTMLEditorKit;
 import net.miginfocom.swing.MigLayout;
 
 import org.egonet.exceptions.CorruptedInterviewException;
-import org.egonet.model.question.Question;
 import org.egonet.util.CardPanel;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.WholeNumberDocument;
@@ -85,7 +86,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	final private static Logger logger = LoggerFactory.getLogger(ClientQuestionPanel.class);
 
 	/* Lists */
-	private final JRadioButton[] answerButtons = { 
+	private final JRadioButton[] answerButtons = {
 			new JRadioButton(), // 1
 			new JRadioButton(), // 2
 			new JRadioButton(), // 3
@@ -158,7 +159,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private final ListBuilder alterList = new ListBuilder();
 
         private final ArrayList <ListBuilder> alterLists = new ArrayList<ListBuilder>();
-        
+
 	private final JCheckBox noAnswerBox = new JCheckBox("Don't Know");
 
 	/* Containers */
@@ -203,7 +204,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	/**
 	 * Generates Panel for question editing to insert in file tab window
-	 * 
+	 *
 	 * @param parent
 	 *            parent frame for referencing composed objects
 	 */
@@ -215,7 +216,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						178, 178, 178)), "Questions"), BorderFactory
 						.createEmptyBorder(10, 10, 10, 10));
 
-                
+
 
 		// Question vars
 		question = egoClient.getInterview().setInterviewIndex(egoClient.getInterview()
@@ -225,13 +226,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		this.setLayout(new GridLayout());
 
                 //Initiliaze all jBuilders we will need in the interview.
-                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(AlterPromptQuestion.class).size();
+                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
                 for (int i=0; i< numQuestionPrompt; i++)
                 {
                     alterLists.add(new ListBuilder());
                     alterLists.get(i).addListObserver(this);
                 }
-                
+
 		tabbedPanel = new JTabbedPane();
 		questionPanelLeft = getLeftPanel();
 		questionPanelRight = getRightPanel();
@@ -359,8 +360,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionProgress.setStringPainted(true);
 
 		questionList.setModel(new DefaultListModel<Question>());
-		questionList.setCellRenderer(new QuestionListCellRenderer(egoClient.getInterview()));
-		
+		questionList.setCellRenderer(new QuestionListCellRenderer());
+
 		egoClient.getInterview().fillList((DefaultListModel<Question>) questionList.getModel());
 
 		if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW)
@@ -368,33 +369,47 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		fillPanel();
 	}
-	
-	class QuestionListCellRenderer extends DefaultListCellRenderer {
-		private Interview interview;
-		
-		public QuestionListCellRenderer(Interview interview) {
-			this.interview = interview;
-		}
 
+	class QuestionListCellRenderer extends DefaultListCellRenderer {
 		@Override
 		public Component getListCellRendererComponent(JList list, Object arg1, int index, boolean isSelected, boolean cellHasFocus) {
-			
-			Question q = (Question)arg1;
-			Answer[] _answers = interview.get_answers();
-			List<Answer> lAnswers = Arrays.asList(_answers);
-			
-			String s = q.toString();
-			int i = lAnswers.indexOf(q.getAnswer());
+			Interview interview = egoClient.getInterview();
+			String s = "unknown";
 
-			if (q instanceof AlterQuestion) {
-				s = s + "; " + _answers[i].firstAlter();
-			} else if (q instanceof AlterPairQuestion) {
-				s = s + "; "
-					+ _answers[i].firstAlter() + " & "
-					+ _answers[i].secondAlter();
+			try {
+				Question q = (Question)arg1;
+				String[] alterNames = interview.getAlterStrings(q);
+
+				if(q.toString() != null && !q.toString().equals("")) {
+					s = q.toString();
+				}
+				else if(q.getNiceName() != null && !q.getNiceName().equals("")) {
+					s = q.getNiceName();
+				}
+
+				Answer found = null;
+				for(Answer ptr: interview.get_answers()) {
+					if(ptr.equals(q.getAnswer())) {
+						found = ptr;
+					}
+				}
+				if(found == null) {
+					throw new RuntimeException("Could not find " + q.getAnswer().getString());
+				}
+
+				if (q.questionType ==  QuestionType.ALTER && alterNames[0] != null) {
+					// s = s + "; " + _answers[i].firstAlter();
+					s = s + "; " + alterNames[0];
+				} else if (q.questionType ==  QuestionType.ALTER_PAIR && alterNames[0] != null && alterNames[1] != null) {
+					s = s + "; "
+						+ alterNames[0] + " & " + alterNames[1];
+				}
+			}
+			catch (Exception ex) {
+				// so much noise, consider eating silently
+				// logger.error("Could not render question or answer in listbox: " + arg1, ex);
 			}
 
-			s = q.getNiceName() + ": " + s;
 			return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
 		}
 	}
@@ -452,10 +467,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionText = new JEditorPane();
 		questionText.setName("questionText");
 
-		/* 
+		/*
 		questionText.setLineWrap(true);
 		questionText.setTabSize(4);
-		questionText.setWrapStyleWord(true); 
+		questionText.setWrapStyleWord(true);
 		*/
 
 		questionText.setBackground(SystemColor.window);
@@ -470,17 +485,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		// upon which the size of everything else is constrained in this frame!
 		Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
 		questionTextScrollPane.setMaximumSize(new Dimension((int)(ss.width*0.4),(int)(ss.height*0.4)));
-                
+
 		/* Set up answer panel cards */
 		//answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
-               
+
                 //Set up answer panels for alter question prompt questions.
-                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(AlterPromptQuestion.class).size();
-                
+                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+
                 for (int i = 0; i< numQuestionPrompts; i++){
                       answerPanel.add(new JScrollPane(alterLists.get(i)), "ALTER"+i);
                 }
-                
+
 		answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
 		answerPanel.add(new JScrollPane(numericalPanel), NUMERICAL_CARD);
 		answerPanel.add(new JScrollPane(radioPanel), RADIO_CARD);
@@ -546,7 +561,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	/**
 	 * Updates right side question fields when the selection changes
-	 * 
+	 *
 	 * @param e
 	 *            event generated by selection change.
 	 */
@@ -584,12 +599,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
             strTitle = strTitle.replace("$$2", alterNames[1]);
 
 		// for informational answers, don't show "Questions about $$1" -- they may not always apply.
-		if(question.answerType.equals(InformationalAnswer.class))
+		if(question.answerType.equals(AnswerType.INFORMATIONAL))
 			strTitle = "Informational Item";
 		titleText.setText(strTitle);
 
 		answerPanel.setVisible(false);
-		if ((question instanceof AlterPromptQuestion)
+		if ((question.questionType == QuestionType.ALTER_PROMPT)
 				&& egoClient.getStudy().getUIType().equals(
 						Shared.TRADITIONAL_QUESTIONS)) {
 
@@ -598,17 +613,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                           int altersRemain = (study.getMinimumNumberOfAlters() - egoClient.getInterview().getAlterList().length);
                           if(altersRemain < 0)
                             altersRemain = 0;
-                          
+
                         if(!study.isUnlimitedAlterMode())
-                        
+
                             if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
                                     qs = "Enter the names of " + altersRemain + " people. ";
                             else
-                                    qs = "Enter the names of at least " + altersRemain + " people, up to " + 
+                                    qs = "Enter the names of at least " + altersRemain + " people, up to " +
                                             (study.getMaximumNumberOfAlters()-egoClient.getInterview().getAlterList().length)+ " people. ";
                         else
                             qs = "Enter the names of at least " +altersRemain +" people. You have no limit of names.";
-                        
+
 			if (egoClient.getInterview().isLastAlterPrompt()) {
 				qs += "After entering " + altersRemain
 				+ " names you can continue.";
@@ -624,14 +639,14 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                         //Show card panel according to the current question prompt.
 			answerPanel.showCard("ALTER"+currentQuestionPrompt);
                         //answerPanel.showCard(ALTER_CARD);
-                        
-                        
+
+
                         /*If study is in limited mode we must set the maximum size.
-                          If study is in unlimited mode there is no limit of alters. 
+                          If study is in unlimited mode there is no limit of alters.
                           By default, the listBuilder does not have limit. */
                         if(!egoClient.getStudy().isUnlimitedAlterMode())
                         {
-                            alterLists.get(currentQuestionPrompt).setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());//-egoClient.getInterview().getAlterList().length);                                   
+                            alterLists.get(currentQuestionPrompt).setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());//-egoClient.getInterview().getAlterList().length);
                         }
 			alterLists.get(currentQuestionPrompt).setDescription(qs);
 			alterLists.get(currentQuestionPrompt).setElementName("Name: ");
@@ -639,7 +654,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			alterLists.get(currentQuestionPrompt).setNameModel(egoClient.getStudy().getAlterNameModel());
 			alterLists.get(currentQuestionPrompt).setTitle("Your Acquaintances");
                         alterLists.get(currentQuestionPrompt).setKnownAlters(egoClient.getInterview().getAlterHashmap());
-			
+
                         // set alter Strings IF they exist yet
 			alterLists.get(currentQuestionPrompt).setListStrings(egoClient.getInterview().getAlterQuestionPromptAnswers()[currentQuestionPrompt]);
 			alterLists.get(currentQuestionPrompt).setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
@@ -647,10 +662,10 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			egoClient.getFrame().flood();
 			answerPanel.setVisible(true);
 			alterLists.get(currentQuestionPrompt).requestFocusOnFirstVisibleComponent();
-		} else if (question.answerType.equals(InformationalAnswer.class)) {
+		} else if (question.answerType.equals(AnswerType.INFORMATIONAL)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
-		} else if (question.answerType.equals(TextAnswer.class)) {
+		} else if (question.answerType.equals(AnswerType.TEXT)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
@@ -671,7 +686,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			answerTextField.requestFocusInWindow();
-		} else if (question.answerType.equals(NumericalAnswer.class)) {
+		} else if (question.answerType.equals(AnswerType.NUMERICAL)) {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
@@ -699,7 +714,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					|| (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW));
 			answerPanel.setVisible(true);
 			numericalTextField.requestFocusInWindow();
-		} else if(question.answerType.equals(CategoricalAnswer.class)) {
+		} else if(question.answerType.equals(AnswerType.CATEGORICAL)) {
 
 			logger.info("Displaying CATEGORICAL question: " + question.text);
 			setQuestionText(question.text);
@@ -738,7 +753,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				} else {
 					// Unselect visible buttons by selecting invisible button in same group
 					// Workaround because ButtonGroup doesn't allow total selections to drop from 1 to 0
-					noAnswerButton.setSelected(true); 
+					noAnswerButton.setSelected(true);
 				}
 
                 answerPanel.showCard(RADIO_CARD);
@@ -756,11 +771,11 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				for (int i = 0; i < question.getSelections().size(); i++) {
 					answerMenu.addItem(question.getSelections().get(i));
 					// If question already answered, then select that answer
-					if(	i > 0 && 
+					if(	i > 0 &&
 						question.getAnswer().getIndex() >= 0 &&
 						question.getAnswer().getIndex()+1 == i
 						)
-						answerMenu.setSelectedIndex(i);	
+						answerMenu.setSelectedIndex(i);
 				}
 
 				// Question not answered yet, so should start on "Select an answer"
@@ -794,7 +809,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	 * Figure out the question type and the answer type, and store the
 	 * appropriate data. Most controls that could provide selection of a
 	 * particular answer have a listener that calls this method.
-	 * @throws CorruptedInterviewException 
+	 * @throws CorruptedInterviewException
 	 */
 	private void fillAnswer(Answer answer) throws CorruptedInterviewException {
 		// Don't touch values if we are just viewing interview
@@ -805,8 +820,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		Study study = egoClient.getStudy();
                 Interview interview = egoClient.getInterview();
                 int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
-                
-		if (question instanceof AlterPromptQuestion) {
+
+		if (question.questionType == QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
 			boolean morePrompts = !egoClient.getInterview().isLastAlterPrompt();
 			logger.info("More prompts? " + morePrompts);
@@ -815,7 +830,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			// TODO: make sure answer.getValue matches number of alters created
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			answer.setValue(egoClient.getInterview().getNumberAlters());
-                                                
+
                         //If there are alters to remove, we remove them from the alter global list.
                         if(!alterLists.get(currentQuestionPrompt).getAltersToRemove().isEmpty())
                         {
@@ -830,7 +845,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                             answer.setAnswered(morePrompts || maxAlters);
                         }else
                         {
-                            
+
                             logger.info("There is no limit of alters.  " +" (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
                             answer.setAnswered(morePrompts);
                         }
@@ -838,9 +853,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
 			{
-				
+
                                 answer.setValue(alterLists.get(currentQuestionPrompt).getListStrings().length);
-				// TODO smithmb: In all three cases below, make some determination about 'follow up only' and 
+				// TODO smithmb: In all three cases below, make some determination about 'follow up only' and
 				// then note the added alters when setting the new list
 
                                 //Only modifies alter lists if we are doing the interview.
@@ -850,12 +865,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                                     //question prompt.
                                     String [] newAlterList = interview.getUnifiedAlterList(alterLists.get(currentQuestionPrompt).getListStrings());
                                     interview.setAlterList(newAlterList);
-                                    
+
                                     //Sets the alter list for the current question prompt.
-                                    interview.setAlterQuestionPromptAnswers(alterLists.get(currentQuestionPrompt).getListStrings(), currentQuestionPrompt);                
-                                    
+                                    interview.setAlterQuestionPromptAnswers(alterLists.get(currentQuestionPrompt).getListStrings(), currentQuestionPrompt);
+
                                 }
-                                
+
 			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.NTH_ALTER))
 			{
 				String [] oldAlterList = alterList.getListStrings();
@@ -892,7 +907,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		} else {
 
-			if(question.answerType.equals(NumericalAnswer.class)) {
+			if(question.answerType.equals(AnswerType.NUMERICAL)) {
 				if (noAnswerBox.isSelected()
 						|| (numericalTextField.getText().length() > 0)) {
 					answer.timestamp = generateTimeStamp();
@@ -910,17 +925,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answer.setValue((Answer.NO_ANSWER));
 					answer.setAnswered(false);
 				}
-			} else if(question.answerType.equals(InformationalAnswer.class)) {
+			} else if(question.answerType.equals(AnswerType.INFORMATIONAL)) {
 				answer.setValue(1);
 				answer.setAnswered(true);
-			} else if(question.answerType.equals(TextAnswer.class)) {
+			} else if(question.answerType.equals(AnswerType.TEXT)) {
 				answer.timestamp = generateTimeStamp();
 				//logger.info("Timestamp: " + answer.timestamp);
 				answer.string = answerTextField.getText();
 				answer.setValue((answer.string.length()));
 				answer.setAnswered((answer.getValue() != 0));
 				logger.info("Recorded textual answer " + answer.string);
-			} else if(question.answerType.equals(CategoricalAnswer.class)) {
+			} else if(question.answerType.equals(AnswerType.CATEGORICAL)) {
 
 				// option items
 				if (question.getSelections().size() <= answerButtons.length) {
@@ -997,7 +1012,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		if (key == -1 && questionButtonNext.isEnabled())
 			questionButtonNext_actionPerformed(e);
 
-		if (question.answerType.equals(CategoricalAnswer.class)) {
+		if (question.answerType.equals(AnswerType.CATEGORICAL)) {
 			for (Selection sel : question.getSelections()) {
 				// int val = question.selections[i].value;
 				// logger.info("Selection value :" +sel.getValue());
@@ -1015,19 +1030,19 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	}
 
 	private void questionButtonNext_actionPerformed(ActionEvent e) throws IOException {
-		
+
             Interview interview = egoClient.getInterview();
             boolean nameTyped = false;
-            
-            //If we are at question prompt question, check if there is some input field 
-            //typed. If there is some name, we must allow the user to add it in the list, 
+
+            //If we are at question prompt question, check if there is some input field
+            //typed. If there is some name, we must allow the user to add it in the list,
             //so we won't proceed to the next question.
-            if ((question instanceof AlterPromptQuestion))
+            if ((question.questionType == QuestionType.ALTER_PROMPT))
             {
                 int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
                 nameTyped = alterLists.get(currentQuestionPrompt).isTypedAlter();
             }
-            
+
             //Proceed to next question only if there is no name typed in alter question prompt.
             if(!nameTyped)
             {
@@ -1042,7 +1057,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
                             }
 
                             if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-                                            && (question instanceof AlterPairQuestion)) {
+                                            && (question.questionType == QuestionType.ALTER_PAIR)) {
                                     setDefaultAnswer();
                             }
 
@@ -1099,7 +1114,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-					&& (question instanceof AlterPairQuestion)) {
+					&& (question.questionType == QuestionType.ALTER_PAIR)) {
 				setDefaultAnswer();
 			}
 
@@ -1142,7 +1157,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			}
 		}
 
-		// Pressing <enter> during an interview should always advance to next question, 
+		// Pressing <enter> during an interview should always advance to next question,
 		// even if most recent action was going back to previous question.
 		questionButtonNext.requestFocusInWindow();
 
@@ -1162,13 +1177,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private void setButtonNextState() {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
                 Interview interview = egoClient.getInterview();
-                
-		if (question instanceof AlterPromptQuestion) {
+
+		if (question.questionType == QuestionType.ALTER_PROMPT) {
 			boolean morePrompts = !interview.isLastAlterPrompt();
 			boolean bWithinRequiredAlterRange;
-                        
-                       
-                        
+
+
+
                         int totalAltersCount = interview.getAlterList().length;
                         //Depending on study mode, the range of valid number of alters, changes.
                         if(egoClient.getStudy().isUnlimitedAlterMode())
@@ -1199,7 +1214,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 				questionButtonNext.setEnabled(skip || question.getAnswer().isAnswered());
 			}
 		}
-		if(question.answerType.equals(InformationalAnswer.class)) {
+		if(question.answerType.equals(AnswerType.INFORMATIONAL)) {
 			questionButtonNext.setEnabled(true);
 		}
 
@@ -1256,7 +1271,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void setDefaultAnswer() {
 		if (!question.getAnswer().isAnswered()
-				&& (question.answerType.equals(CategoricalAnswer.class))
+				&& (question.answerType.equals(AnswerType.CATEGORICAL))
 				&& (question.getAnswer().secondAlter() > (question.getAnswer()
 						.firstAlter() + 1))) {
 			int defaultAnswer = -1;
@@ -1283,7 +1298,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
-       
+
 	/**
 	 * Radio Panel
 	 */
@@ -1375,33 +1390,32 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		}
 	}
 
-	public static void showPreview(String questionTitle, String questionText, 
-			Class<? extends Question> questionType, Class<? extends Answer> answerType, List<Selection> selections) 
+	public static void showPreview(String questionTitle, String questionText, QuestionType questionType, AnswerType answerType, List<Selection> selections)
 	{
 
 		JDialog dialog = new JDialog(null,"Preview of "+questionTitle,Dialog.ModalityType.APPLICATION_MODAL);
 		MigLayout layout = new MigLayout("", "[grow]");
 		JPanel panel = new JPanel();
 		panel.setLayout(layout);
-		panel.add(new JLabel(Question.getTitle(questionType).replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
+		panel.add(new JLabel(questionType.title.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
 		panel.add(new JLabel(questionText.replace("$$1", "Tom").replace("$$2", "Mary")), "growx, wrap");
 		panel.add(new JLabel(""), "growx, wrap");
 
-		if(questionType.equals(AlterPromptQuestion.class)) {
+		if(questionType.equals(QuestionType.ALTER_PROMPT)) {
 			panel.add(new JLabel(""), "growx, wrap");
 			panel.add(new JLabel("(Alter entry not yet implemented in alter prompt preview)"), "growx, wrap");
-		} else if(answerType.equals(TextAnswer.class)) {
+		} else if(answerType.equals(AnswerType.TEXT)) {
 			panel.add(new JLabel("Textual Answer:"),"growx,wrap");
 			JTextArea textArea = new JTextArea();
 			textArea.setRows(5);
-			panel.add(textArea,"growx,wrap"); 
-		} else if(answerType.equals(NumericalAnswer.class)) {
+			panel.add(textArea,"growx,wrap");
+		} else if(answerType.equals(AnswerType.NUMERICAL)) {
 			panel.add(new JLabel("Numerical Answer:"),"growx,wrap");
 			JTextField numberField = new JTextField();
 			numberField.setFont(new java.awt.Font("SansSerif", 0, 14));
-			panel.add(numberField,"growx,wrap"); // TODO: needs to be like numericalTextField 
+			panel.add(numberField,"growx,wrap"); // TODO: needs to be like numericalTextField
 			                                     // I wonder how it prevents typing letters
-		} else if(answerType.equals(CategoricalAnswer.class)) {
+		} else if(answerType.equals(AnswerType.CATEGORICAL)) {
 			if(selections != null) {
 				if(selections.size() < 10) {
 					panel.add(new JLabel("List-item Answer:"),"growx,wrap");
@@ -1432,7 +1446,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		dialog.setVisible(true);
 
 	}
-        
+
 }
 /**
  * Extends JPanel class to keep focus in right panel of split qustion panel

@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,12 +34,12 @@ import org.egonet.graph.GraphSettingsEntry.GraphSettingType;
 import org.egonet.graph.NodeProperty.NodePropertyType;
 import org.egonet.graph.NodeProperty.NodeShape;
 import org.egonet.gui.interview.*;
+import org.egonet.model.Answer;
+import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.model.Study;
-import org.egonet.model.answer.*;
-import org.egonet.model.question.AlterQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
@@ -53,7 +53,7 @@ import javax.xml.transform.stream.*;
 public class GraphSettings {
 
 	final private static Logger logger = LoggerFactory.getLogger(GraphSettings.class);
-	
+
 	private Map<Vertex, NodeProperty> nodeSettingsMap = Collections
 			.synchronizedMap(new HashMap<Vertex, NodeProperty>());
 
@@ -62,7 +62,7 @@ public class GraphSettings {
 
 	private java.util.List<GraphSettingsEntry> QAsettings = Collections
 			.synchronizedList(new ArrayList<GraphSettingsEntry>());
-	
+
 	private boolean detailedTooltips = false;
 
 	public boolean isDetailedTooltips() {
@@ -81,31 +81,31 @@ public class GraphSettings {
 		this.renderer = renderer;
 			init();
 	}
-	
+
 	public void reset() {
 		for(Map.Entry<Vertex,NodeProperty> entry : nodeSettingsMap.entrySet()) {
-			
+
 			NodeProperty nodeProperty = entry.getValue();
-			
-			
+
+
 			NodeShape shape = NodeShape.Circle;
 			Color color = Color.RED;
 			int size = 1;
-			
+
 			 nodeProperty.setColor(color);
 			 nodeProperty.setShape(shape);
 			 nodeProperty.setSize(size);
 		}
 		for(Map.Entry<Edge,EdgeProperty> entry : edgeSettingsMap.entrySet()) {
 			EdgeProperty edgeProperty = entry.getValue();
-			
-			
+
+
 			edgeProperty.setColor(Color.BLACK);
 			edgeProperty.setShape(EdgeShape.Line);
 			edgeProperty.setSize(1);
-			
+
 			edgeProperty.setVisible(true);
-			
+
 		}
 		QAsettings.clear();
 		renderer.updateGraphSettings();
@@ -113,11 +113,11 @@ public class GraphSettings {
 
 	private void init() {
 		int noOfAlters = egoClient.getInterview().getNumberAlters();
-		
+
 		String[] renderAlterList = renderer.getAlterList();
 		if(renderAlterList.length < 1)
 			throw new IllegalArgumentException("Graph renderer was called with an empty alter list!");
-		
+
 		// initialize nodes with default settings
 		for (int i = 0; i < noOfAlters; i++) {
 			String alterName = egoClient.getInterview().getAlterList()[i];
@@ -131,52 +131,52 @@ public class GraphSettings {
 		}
 		// initialize edges with default settings
 		Graph<Vertex, Edge> g = GraphRenderer.getGraph();
-		
+
 		while(g.getEdgeCount() > 0) {
 			Collection<Edge> oldEdges = g.getEdges();
 			for(Edge ed : oldEdges)
 				g.removeEdge(ed);
 		}
-		
-		
+
+
 		GraphData graphData = new GraphData(egoClient);
 		Graph<Vertex, Edge> graph = GraphRenderer.getGraph();
-		
+
 		int[][] adjacencyMatrix = graphData.getAdjacencyMatrix();
 		for (int i = 0; i < adjacencyMatrix.length; ++i) {
 			for (int j = i + 1; j < adjacencyMatrix[i].length; ++j) {
 				if (adjacencyMatrix[i][j] > 0) {
-					
+
 					String[] list = renderer.getAlterList();
-					
+
 					// create edge and note where it came from, so we can point out if it's a dupe
 					Edge edge = new Edge(list[i], list[j]);
 					edge.setNotes("i="+i+",j="+j);
-					
+
 					List<Vertex> verts = Arrays.asList(new Vertex(list[i]), new Vertex(list[j]));
-		
+
 					if(graph.containsEdge(edge)) {
 						Edge oldEdge = null;
 						for(Edge e : graph.getEdges()) {
 							if(e.equals(edge))
 								oldEdge = e;
 						}
-						
+
 						// help by printing out the problem
 						String oldEdgeStr = "unknown";
 						if(oldEdge != null) {
 							oldEdgeStr = edge.toString() + " from position " + edge.getNotes();
 						}
-						
+
 						String err = "Graph already contained connected vertices " + verts + " (adjacency matrix position [i="+i+",j="+j+"] was already in the adjacency matrix from "+oldEdgeStr+")";
 						logger.error(err);
 						throw new RuntimeException(err);
-						
+
 					}
-					
+
 					graph.addEdge(edge, verts);
 					String label = ((Integer) egoClient.getInterview().getStats().proximityMatrix[i][j]).toString();
-					
+
 					EdgeProperty edgeProperty = new EdgeProperty(label, Color.BLACK, EdgeShape.Line, 1);
 					edgeProperty.setVisible(true);
 					edgeSettingsMap.put(edge, edgeProperty);
@@ -184,7 +184,7 @@ public class GraphSettings {
 			}
 		}
 	}
-	
+
 	public void saveSettingsFile(File file) {
 		try {
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -206,9 +206,9 @@ public class GraphSettings {
 				LayoutDecorator decor = (LayoutDecorator)graphLayout;
 				graphLayout = decor.getDelegate();
 			}
-			
+
 			layoutElement.setAttribute("layout", graphLayout.getClass().getName());
-			
+
 			// zoomElement
 			Element zoomElement = doc.createElement("Zoom");
 			zoomElement.setAttribute("zoom", GraphRenderer.getVv().getLayout()
@@ -259,7 +259,7 @@ public class GraphSettings {
 
 		Study study = egoClient.getInterview().getStudy();
 		QuestionList questionList = study.getQuestions();
-		
+
 
 		for (int i = 1; i < nodeList.getLength(); i++) {
 			Node entryNode = nodeList.item(i);
@@ -309,7 +309,7 @@ public class GraphSettings {
 						.getElementsByTagName("Question").item(0);
 				Element selectionElement = (Element) graphQuestionSelectionElement
 						.getElementsByTagName("Selection").item(0);
-				
+
 				//Element categoryElement = (Element) graphQuestionSelectionElement.getElementsByTagName("Category").item(0);
 
 				Element propertyElement = (Element) entryElement
@@ -319,7 +319,7 @@ public class GraphSettings {
 						.getElementsByTagName("Visible").item(0);
 
 				Question question = questionList.get(Long.parseLong(questionElement.getAttribute("id")));
-				
+
 				for (int j = 0; j < question.getSelections().size(); j++) {
 					Selection selection = question.getSelections().get(j);
 
@@ -522,7 +522,7 @@ public class GraphSettings {
 		boolean debug = false;
 		if(!debug)
 			return;
-		
+
 		int size = QAsettings.size();
 		logger.info("Graph settings (" + size + " entries):");
 		for (int i = 0; i < size; i++) {
@@ -546,7 +546,7 @@ public class GraphSettings {
 			String questionTitle = "";
 			String answerString = "";
 			Question question = egoClient.getStudy().getQuestion(answer.getQuestionId());
-			if (question instanceof AlterQuestion) {
+			if (question.questionType == QuestionType.ALTER) {
 				questionTitle = question.title;
 				answerString = answer.string + " " + (detail ? "(index="+answer.getIndex()+",value="+answer.getValue()+")" : "");
 				for (int alter : answer.getAlters()) {

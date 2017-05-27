@@ -1,18 +1,18 @@
 /***
  * Copyright (c) 2008, Endless Loop Software, Inc.
- * 
+ *
  * This file is part of EgoNet.
- * 
+ *
  * EgoNet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * EgoNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,16 +33,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.egonet.model.answer.CategoricalAnswer;
-import org.egonet.model.question.AlterPairQuestion;
-import org.egonet.model.question.AlterPromptQuestion;
-import org.egonet.model.question.Question;
-import org.egonet.model.question.Selection;
+import org.egonet.model.Question;
+import org.egonet.model.Selection;
+import org.egonet.model.Shared.AnswerType;
+import org.egonet.model.Shared.QuestionType;
 import org.egonet.util.CatchingAction;
 import org.egonet.util.listbuilder.ListBuilder;
 
 public class CategoryInputPane extends JDialog {
-	
+
 	private final JList parentList;
 
 	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -55,17 +54,17 @@ public class CategoryInputPane extends JDialog {
 	private final JButton jCancelButton = new JButton("Cancel");
 
 	private JScrollPane scrollPane;
-	
+
 	private final EgoNet egoNet;
 
 	/**
 	 * Constructor for CategoryInputPane
-	 * 
+	 *
 	 * @param list
 	 *            question list from parent frame used to determine which
 	 *            question we are operating on
 	 */
-	public CategoryInputPane(EgoNet egoNet, JList list) throws Exception 
+	public CategoryInputPane(EgoNet egoNet, JList list) throws Exception
 	{
 		parentList = list;
 		this.egoNet = egoNet;
@@ -74,13 +73,13 @@ public class CategoryInputPane extends JDialog {
 
 	/**
 	 * Initializes layout and fields for the dialog
-	 * 
+	 *
 	 * @throws Exception
 	 *             No idea, sorry
 	 */
 	private void jbInit() throws Exception {
 		JPanel panel = new JPanel();
-		
+
 		panel.setLayout(gridBagLayout1);
 		this.setModal(true);
 		this.setTitle("Category Options");
@@ -128,7 +127,7 @@ public class CategoryInputPane extends JDialog {
 			/* count choices */
 
 			List<Selection> newSelections = listBuilder.getListSelections();
-			
+
 			if (newSelections.size() != q.getSelections().size()) {
 				if (egoNet.getStudy().confirmIncompatibleChange(egoNet.getFrame())) {
 					compatible = false;
@@ -186,27 +185,27 @@ public class CategoryInputPane extends JDialog {
 		listBuilder
 				.setDescription("Enter possible answers to this question below. Press Return to add the option "
 						+ "to the options list. Press OK to set options or Cancel to undo changes.");
-		if(q instanceof AlterPromptQuestion)
+		if(q.questionType == QuestionType.ALTER_PAIR)
 			listBuilder.setNameModel(egoNet.getStudy().getAlterNameModel());
 		listBuilder.setLetUserPickValues(true);
-		listBuilder.setPresetListsActive(q.answerType.equals(CategoricalAnswer.class));
-		
-//		boolean preset = (q.answerType.equals(CategoricalAnswer.class)) ? true : false;
+		listBuilder.setPresetListsActive(q.answerType.equals(AnswerType.CATEGORICAL));
+
+//		boolean preset = (q.answerType.equals(AnswerType.CATEGORICAL)) ? true : false;
 //		logger.info("Is question categorical? " + preset);
-//		
-		listBuilder.setAdjacencyActive(q instanceof AlterPairQuestion);
+//
+		listBuilder.setAdjacencyActive(q.questionType == QuestionType.ALTER_PAIR);
 
 		this.setSize(500, 400); // width, height
-		
+
 		// Center the window
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = this.getSize();
 		this.setLocation((screenSize.width - frameSize.width) / 2,
 				(screenSize.height - frameSize.height) / 2);
-		
+
 		jOKButton.setVisible(true);
 		jCancelButton.setText("Cancel");
-		
+
 		this.setVisible(true);
 	}
 }
