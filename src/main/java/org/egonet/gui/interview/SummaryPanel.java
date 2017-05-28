@@ -40,8 +40,8 @@ import org.egonet.gui.EgoStore;
 import org.egonet.io.InterviewReader;
 import org.egonet.io.StatisticsFileReader;
 import org.egonet.statistics.StatRecord;
+import org.egonet.statistics.StatTableModel;
 import org.egonet.statistics.StatisticsArrayPanel;
-import org.egonet.statistics.models.StatTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

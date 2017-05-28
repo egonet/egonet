@@ -32,7 +32,7 @@ import org.jdesktop.layout.GroupLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egonet.gui.interview.EgoClient;
-import org.egonet.gui.table.*;
+import org.egonet.gui.util.*;
 import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
 import org.egonet.model.Selection;

@@ -22,12 +22,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.sf.functionalj.tuple.Pair;
 
 import org.egonet.graph.ELSFRLayout2;
-import org.egonet.graph.wholenet.WholeNetwork;
-import org.egonet.graph.wholenet.WholeNetworkAlter;
-import org.egonet.graph.wholenet.WholeNetworkTie;
+import org.egonet.graph.WholeNetwork;
+import org.egonet.graph.WholeNetworkAlter;
+import org.egonet.graph.WholeNetworkTie;
 import org.egonet.io.AdjacencyWriter;
+import org.egonet.io.ConsensusDataWriter;
 import org.egonet.io.EdgeListWriter;
-import org.egonet.io.wholenet.ConsensusDataWriter;
 import org.egonet.model.Study;
 import org.egonet.util.CatchingAction;
 import org.slf4j.Logger;

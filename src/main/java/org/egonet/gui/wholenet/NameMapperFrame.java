@@ -18,12 +18,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.egonet.graph.wholenet.WholeNetwork;
-import org.egonet.graph.wholenet.WholeNetwork.Settings;
-import org.egonet.graph.wholenet.WholeNetworkTie.DiscrepancyStrategy;
+import org.egonet.graph.WholeNetwork;
+import org.egonet.graph.WholeNetwork.Settings;
+import org.egonet.graph.WholeNetworkTie.DiscrepancyStrategy;
 import org.egonet.io.InterviewReader;
-import org.egonet.io.wholenet.NameMappingReader;
-import org.egonet.io.wholenet.NameMappingWriter;
+import org.egonet.io.NameMappingReader;
+import org.egonet.io.NameMappingWriter;
 import org.egonet.model.Answer;
 import org.egonet.model.Interview;
 import org.egonet.model.Question;

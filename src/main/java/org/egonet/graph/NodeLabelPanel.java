@@ -31,8 +31,8 @@ import java.util.*;
 import java.awt.event.*;
 
 import org.egonet.gui.interview.EgoClient;
-import org.egonet.gui.table.LabelRenderer;
-import org.egonet.gui.table.LabelTableModel;
+import org.egonet.gui.util.LabelRenderer;
+import org.egonet.gui.util.LabelTableModel;
 import org.egonet.model.Answer;
 import org.egonet.model.Question;
 import org.egonet.model.QuestionList;

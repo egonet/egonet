@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import org.egonet.statistics.models.StatTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

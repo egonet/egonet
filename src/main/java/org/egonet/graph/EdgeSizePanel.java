@@ -33,7 +33,7 @@ import java.awt.event.ItemEvent;
 import java.util.*;
 
 import org.egonet.gui.interview.EgoClient;
-import org.egonet.gui.table.*;
+import org.egonet.gui.util.*;
 import org.egonet.model.Question;
 import org.egonet.model.QuestionList;
 import org.egonet.model.Selection;
