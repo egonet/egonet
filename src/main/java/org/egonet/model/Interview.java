@@ -74,10 +74,6 @@ public class Interview implements Comparable<Interview> {
 
 	private boolean followup = false;
 
-
-
-
-
 	public boolean isFollowup() {
 		return followup;
 	}

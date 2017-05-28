@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egonet.exceptions.MalformedQuestionException;
 import org.egonet.model.Shared.AnswerType;
 import org.egonet.model.Shared.QuestionType;
 
@@ -204,36 +203,5 @@ public class Question implements Cloneable {
 
 	public void setStatable(boolean statable) {
 		this.statable = statable;
-	}
-
-	/**
-	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
-	 *
-	 * @param questionType type of question subclass
-	 * @return a class object representing that type
-	 */
-
-	public static QuestionType asSubclass(String questionType) {
-		try {
-			if("0".equals(questionType)) {
-				return QuestionType.STUDY_CONFIG;
-			}
-			else if("1".equals(questionType)) {
-				return QuestionType.EGO;
-			}
-			else if("2".equals(questionType)) {
-				return QuestionType.ALTER_PROMPT;
-			}
-			else if("3".equals(questionType)) {
-				return QuestionType.ALTER;
-			}
-			else if("4".equals(questionType)) {
-				return QuestionType.ALTER_PAIR;
-			}
-			throw new RuntimeException("Unknown type " + questionType);
-		}
-		catch (Exception ex) {
-			throw new MalformedQuestionException(ex);
-		}
 	}
 }

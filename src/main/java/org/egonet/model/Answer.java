@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.text.*;
-import org.egonet.model.Shared.AnswerType;
 
 public class Answer implements Cloneable {
     /**
@@ -166,26 +165,4 @@ public class Answer implements Cloneable {
         return Collections.unmodifiableList(alters);
     }
 
-	/**
-	 * Given a string representation of a question subclass, return the class object. This is mostly used when unserializing textual representations of subclasses.
-	 *
-	 * @param questionType type of question subclass
-	 * @return a class object representing that type
-	 */
-
-    public static AnswerType fromString(String s) {
-		if("1".equals(s)) {
-			return AnswerType.CATEGORICAL;
-		}
-		else if("2".equals(s)) {
-			return AnswerType.NUMERICAL;
-		}
-		else if("3".equals(s)) {
-			return AnswerType.TEXT;
-		}
-		else if("4".equals(s)) {
-			return AnswerType.INFORMATIONAL;
-		}
-		throw new RuntimeException("Unknown answer type " + s);
-    }
 }

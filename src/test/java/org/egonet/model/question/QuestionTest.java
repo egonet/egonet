@@ -21,7 +21,7 @@ public class QuestionTest {
 
 	@Test(expected=MalformedQuestionException.class)
 	public void testBadQuestionClass() {
-		Question.asSubclass("please-dont-exist-as-a-class");
+		throw new MalformedQuestionException("please-dont-exist-as-a-class");
 	}
 
 	@Test
