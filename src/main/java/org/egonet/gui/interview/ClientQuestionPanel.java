@@ -100,7 +100,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	private final JRadioButton noAnswerButton = new JRadioButton();
 
 	private final KeyStroke enter = KeyStroke
-	.getKeyStroke(KeyEvent.VK_ENTER, 0);
+			.getKeyStroke(KeyEvent.VK_ENTER, 0);
 
 	private final KeyStroke[] numKey = {
 			KeyStroke.getKeyStroke(KeyEvent.VK_0, 0),
@@ -115,7 +115,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			KeyStroke.getKeyStroke(KeyEvent.VK_9, 0) };
 
 	private final ActionListener keyActionListener = new CatchingAction("keyActionListener") {
-	    public void safeActionPerformed(ActionEvent e) throws Exception {
+		public void safeActionPerformed(ActionEvent e) throws Exception {
 			numberKey_actionPerformed(e);
 		}
 	};
@@ -158,7 +158,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private final ListBuilder alterList = new ListBuilder();
 
-        private final ArrayList <ListBuilder> alterLists = new ArrayList<ListBuilder>();
+	private final ArrayList <ListBuilder> alterLists = new ArrayList<ListBuilder>();
 
 	private final JCheckBox noAnswerBox = new JCheckBox("Don't Know");
 
@@ -214,7 +214,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		listBorder = BorderFactory.createCompoundBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.RAISED, Color.white, new Color(
 						178, 178, 178)), "Questions"), BorderFactory
-						.createEmptyBorder(10, 10, 10, 10));
+				.createEmptyBorder(10, 10, 10, 10));
 
 
 
@@ -225,13 +225,13 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		this.setMinimumSize(new Dimension(330,330));
 		this.setLayout(new GridLayout());
 
-                //Initiliaze all jBuilders we will need in the interview.
-                int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
-                for (int i=0; i< numQuestionPrompt; i++)
-                {
-                    alterLists.add(new ListBuilder());
-                    alterLists.get(i).addListObserver(this);
-                }
+		//Initiliaze all jBuilders we will need in the interview.
+		int numQuestionPrompt = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+		for (int i=0; i< numQuestionPrompt; i++)
+		{
+			alterLists.add(new ListBuilder());
+			alterLists.get(i).addListObserver(this);
+		}
 
 		tabbedPanel = new JTabbedPane();
 		questionPanelLeft = getLeftPanel();
@@ -402,7 +402,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					s = s + "; " + alterNames[0];
 				} else if (q.questionType ==  QuestionType.ALTER_PAIR && alterNames[0] != null && alterNames[1] != null) {
 					s = s + "; "
-						+ alterNames[0] + " & " + alterNames[1];
+							+ alterNames[0] + " & " + alterNames[1];
 				}
 			}
 			catch (Exception ex) {
@@ -422,8 +422,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		JScrollPane questionListScroll = new JScrollPane(questionList);
 		questionListScroll.setBorder(listBorder);
 		questionListScroll.setMinimumSize(new Dimension(150, 150));
-//		questionListScroll
-//		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		//		questionListScroll
+		//		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		questionListScroll.setAutoscrolls(true);
 
 		questionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -471,7 +471,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		questionText.setLineWrap(true);
 		questionText.setTabSize(4);
 		questionText.setWrapStyleWord(true);
-		*/
+		 */
 
 		questionText.setBackground(SystemColor.window);
 		questionText.setFont(new java.awt.Font("Serif", 0, 16));
@@ -489,12 +489,12 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		/* Set up answer panel cards */
 		//answerPanel.add(new JScrollPane(alterList), ALTER_CARD);
 
-                //Set up answer panels for alter question prompt questions.
-                int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
+		//Set up answer panels for alter question prompt questions.
+		int numQuestionPrompts = egoClient.getStudy().getQuestionOrder(QuestionType.ALTER_PROMPT).size();
 
-                for (int i = 0; i< numQuestionPrompts; i++){
-                      answerPanel.add(new JScrollPane(alterLists.get(i)), "ALTER"+i);
-                }
+		for (int i = 0; i< numQuestionPrompts; i++){
+			answerPanel.add(new JScrollPane(alterLists.get(i)), "ALTER"+i);
+		}
 
 		answerPanel.add(new JScrollPane(textPanel), TEXT_CARD);
 		answerPanel.add(new JScrollPane(numericalPanel), NUMERICAL_CARD);
@@ -594,9 +594,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		String strTitle = question.getTitle();
 		if(strTitle.contains("$$1"))
-		    strTitle = strTitle.replace("$$1", alterNames[0]);
+			strTitle = strTitle.replace("$$1", alterNames[0]);
 		if(strTitle.contains("$$2"))
-            strTitle = strTitle.replace("$$2", alterNames[1]);
+			strTitle = strTitle.replace("$$2", alterNames[1]);
 
 		// for informational answers, don't show "Questions about $$1" -- they may not always apply.
 		if(question.answerType.equals(AnswerType.INFORMATIONAL))
@@ -610,23 +610,23 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			Study study = egoClient.getStudy();
 			String qs = "";
-                          int altersRemain = (study.getMinimumNumberOfAlters() - egoClient.getInterview().getAlterList().length);
-                          if(altersRemain < 0)
-                            altersRemain = 0;
+			int altersRemain = (study.getMinimumNumberOfAlters() - egoClient.getInterview().getAlterList().length);
+			if(altersRemain < 0)
+				altersRemain = 0;
 
-                        if(!study.isUnlimitedAlterMode())
+			if(!study.isUnlimitedAlterMode())
 
-                            if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
-                                    qs = "Enter the names of " + altersRemain + " people. ";
-                            else
-                                    qs = "Enter the names of at least " + altersRemain + " people, up to " +
-                                            (study.getMaximumNumberOfAlters()-egoClient.getInterview().getAlterList().length)+ " people. ";
-                        else
-                            qs = "Enter the names of at least " +altersRemain +" people. You have no limit of names.";
+				if(study.getMinimumNumberOfAlters() == study.getMaximumNumberOfAlters())
+					qs = "Enter the names of " + altersRemain + " people. ";
+				else
+					qs = "Enter the names of at least " + altersRemain + " people, up to " +
+							(study.getMaximumNumberOfAlters()-egoClient.getInterview().getAlterList().length)+ " people. ";
+			else
+				qs = "Enter the names of at least " +altersRemain +" people. You have no limit of names.";
 
 			if (egoClient.getInterview().isLastAlterPrompt()) {
 				qs += "After entering " + altersRemain
-				+ " names you can continue.";
+						+ " names you can continue.";
 			} else {
 				qs += "";
 			}
@@ -634,28 +634,28 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			setQuestionText(question.text);
 			questionText.setCaretPosition(0);
 
-                        int currentQuestionPrompt = egoClient.getInterview().getCurrentAlterQuestionPrompt();
+			int currentQuestionPrompt = egoClient.getInterview().getCurrentAlterQuestionPrompt();
 
-                        //Show card panel according to the current question prompt.
+			//Show card panel according to the current question prompt.
 			answerPanel.showCard("ALTER"+currentQuestionPrompt);
-                        //answerPanel.showCard(ALTER_CARD);
+			//answerPanel.showCard(ALTER_CARD);
 
 
-                        /*If study is in limited mode we must set the maximum size.
+			/*If study is in limited mode we must set the maximum size.
                           If study is in unlimited mode there is no limit of alters.
                           By default, the listBuilder does not have limit. */
-                        if(!egoClient.getStudy().isUnlimitedAlterMode())
-                        {
-                            alterLists.get(currentQuestionPrompt).setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());//-egoClient.getInterview().getAlterList().length);
-                        }
+			if(!egoClient.getStudy().isUnlimitedAlterMode())
+			{
+				alterLists.get(currentQuestionPrompt).setMaxListSize(egoClient.getStudy().getMaximumNumberOfAlters());//-egoClient.getInterview().getAlterList().length);
+			}
 			alterLists.get(currentQuestionPrompt).setDescription(qs);
 			alterLists.get(currentQuestionPrompt).setElementName("Name: ");
 			alterLists.get(currentQuestionPrompt).setPresetListsActive(false);
 			alterLists.get(currentQuestionPrompt).setNameModel(egoClient.getStudy().getAlterNameModel());
 			alterLists.get(currentQuestionPrompt).setTitle("Your Acquaintances");
-                        alterLists.get(currentQuestionPrompt).setKnownAlters(egoClient.getInterview().getAlterHashmap());
+			alterLists.get(currentQuestionPrompt).setKnownAlters(egoClient.getInterview().getAlterHashmap());
 
-                        // set alter Strings IF they exist yet
+			// set alter Strings IF they exist yet
 			alterLists.get(currentQuestionPrompt).setListStrings(egoClient.getInterview().getAlterQuestionPromptAnswers()[currentQuestionPrompt]);
 			alterLists.get(currentQuestionPrompt).setEditable(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW);
 
@@ -756,7 +756,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					noAnswerButton.setSelected(true);
 				}
 
-                answerPanel.showCard(RADIO_CARD);
+				answerPanel.showCard(RADIO_CARD);
 				answerPanel.setVisible(true);
 			} else { // drop downs!
 				logger.info(" -- doing drop downs!");
@@ -772,9 +772,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 					answerMenu.addItem(question.getSelections().get(i));
 					// If question already answered, then select that answer
 					if(	i > 0 &&
-						question.getAnswer().getIndex() >= 0 &&
-						question.getAnswer().getIndex()+1 == i
-						)
+							question.getAnswer().getIndex() >= 0 &&
+							question.getAnswer().getIndex()+1 == i
+							)
 						answerMenu.setSelectedIndex(i);
 				}
 
@@ -818,8 +818,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 		//logger.info("fillAnswer called for " + answer.getString());
 		Study study = egoClient.getStudy();
-                Interview interview = egoClient.getInterview();
-                int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
+		Interview interview = egoClient.getInterview();
+		int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
 
 		if (question.questionType == QuestionType.ALTER_PROMPT) {
 			answer.string = "Egonet - University of Florida";
@@ -831,45 +831,45 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			answer.setValue(egoClient.getInterview().getNumberAlters());
 
-                        //If there are alters to remove, we remove them from the alter global list.
-                        if(!alterLists.get(currentQuestionPrompt).getAltersToRemove().isEmpty())
-                        {
-                            interview.removeAlters(alterLists.get(currentQuestionPrompt).getAltersToRemove());
-                            alterLists.get(currentQuestionPrompt).getAltersToRemove().clear();
-                        }
+			//If there are alters to remove, we remove them from the alter global list.
+			if(!alterLists.get(currentQuestionPrompt).getAltersToRemove().isEmpty())
+			{
+				interview.removeAlters(alterLists.get(currentQuestionPrompt).getAltersToRemove());
+				alterLists.get(currentQuestionPrompt).getAltersToRemove().clear();
+			}
 			//System.out.println("*** fillAnswer: answer.getValue() => "+answer.getValue()+" ***");
 			if(!study.isUnlimitedAlterMode())
-                        {
-                            boolean maxAlters = answer.getValue()+1 >= study.getMaximumNumberOfAlters();
-                            logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
-                            answer.setAnswered(morePrompts || maxAlters);
-                        }else
-                        {
+			{
+				boolean maxAlters = answer.getValue()+1 >= study.getMaximumNumberOfAlters();
+				logger.info("Max alters? " + maxAlters + " (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
+				answer.setAnswered(morePrompts || maxAlters);
+			}else
+			{
 
-                            logger.info("There is no limit of alters.  " +" (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
-                            answer.setAnswered(morePrompts);
-                        }
+				logger.info("There is no limit of alters.  " +" (answer value = " + answer.getValue() + " , network size = " + study.getMaximumNumberOfAlters());
+				answer.setAnswered(morePrompts);
+			}
 
 			AlterSamplingModel alterSampleModel = study.getAlterSamplingModel();
 			if(alterSampleModel.equals(Shared.AlterSamplingModel.ALL))
 			{
 
-                                answer.setValue(alterLists.get(currentQuestionPrompt).getListStrings().length);
+				answer.setValue(alterLists.get(currentQuestionPrompt).getListStrings().length);
 				// TODO smithmb: In all three cases below, make some determination about 'follow up only' and
 				// then note the added alters when setting the new list
 
-                                //Only modifies alter lists if we are doing the interview.
-                                if(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW )
-                                {
-                                    //The new global alter list is the current global alter list, plus the unknown alters of this current
-                                    //question prompt.
-                                    String [] newAlterList = interview.getUnifiedAlterList(alterLists.get(currentQuestionPrompt).getListStrings());
-                                    interview.setAlterList(newAlterList);
+				//Only modifies alter lists if we are doing the interview.
+				if(egoClient.getUiPath() == ClientFrame.DO_INTERVIEW )
+				{
+					//The new global alter list is the current global alter list, plus the unknown alters of this current
+					//question prompt.
+					String [] newAlterList = interview.getUnifiedAlterList(alterLists.get(currentQuestionPrompt).getListStrings());
+					interview.setAlterList(newAlterList);
 
-                                    //Sets the alter list for the current question prompt.
-                                    interview.setAlterQuestionPromptAnswers(alterLists.get(currentQuestionPrompt).getListStrings(), currentQuestionPrompt);
+					//Sets the alter list for the current question prompt.
+					interview.setAlterQuestionPromptAnswers(alterLists.get(currentQuestionPrompt).getListStrings(), currentQuestionPrompt);
 
-                                }
+				}
 
 			} else if(alterSampleModel.equals(Shared.AlterSamplingModel.NTH_ALTER))
 			{
@@ -895,7 +895,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 				int subsampleParameter = study.getAlterSamplingParameter() != null ? study.getAlterSamplingParameter() : study.getMaximumNumberOfAlters();
 				for(int i = 0; i < subsampleParameter && i < oldAlterList.size()-1; i++)
-						newAlterList.add(oldAlterList.get(i));
+					newAlterList.add(oldAlterList.get(i));
 
 				answer.setValue(newAlterList.size());
 				egoClient.getInterview().setAlterList(newAlterList.toArray(new String[0]));
@@ -974,9 +974,9 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 						answer.setIndex(sel.getIndex());
 
 						answer.adjacent = question.getSelections().get(selectionIndex)
-						                                           .isAdjacent();
+								.isAdjacent();
 						answer.string = question.getSelections().get(selectionIndex)
-						                                         .getString();
+								.getString();
 
 						logger.info("Answered: " + answer.getString());
 					}
@@ -1001,8 +1001,8 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		seconds = seconds.length() < 2 ? "0" + seconds : seconds;
 
 		String timestamp = month + " " + date + " "
-		+ String.valueOf(tempdate.getYear() + 1900) + " " + hours + " "
-		+ minutes + " " + seconds;
+				+ String.valueOf(tempdate.getYear() + 1900) + " " + hours + " "
+				+ minutes + " " + seconds;
 		return timestamp;
 	}
 
@@ -1031,63 +1031,63 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void questionButtonNext_actionPerformed(ActionEvent e) throws IOException {
 
-            Interview interview = egoClient.getInterview();
-            boolean nameTyped = false;
+		Interview interview = egoClient.getInterview();
+		boolean nameTyped = false;
 
-            //If we are at question prompt question, check if there is some input field
-            //typed. If there is some name, we must allow the user to add it in the list,
-            //so we won't proceed to the next question.
-            if ((question.questionType == QuestionType.ALTER_PROMPT))
-            {
-                int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
-                nameTyped = alterLists.get(currentQuestionPrompt).isTypedAlter();
-            }
+		//If we are at question prompt question, check if there is some input field
+		//typed. If there is some name, we must allow the user to add it in the list,
+		//so we won't proceed to the next question.
+		if ((question.questionType == QuestionType.ALTER_PROMPT))
+		{
+			int currentQuestionPrompt = interview.getCurrentAlterQuestionPrompt();
+			nameTyped = alterLists.get(currentQuestionPrompt).isTypedAlter();
+		}
 
-            //Proceed to next question only if there is no name typed in alter question prompt.
-            if(!nameTyped)
-            {
-                if (egoClient.getInterview().hasNext()) {
+		//Proceed to next question only if there is no name typed in alter question prompt.
+		if(!nameTyped)
+		{
+			if (egoClient.getInterview().hasNext()) {
 
 
-                            question = egoClient.getInterview().next();
+				question = egoClient.getInterview().next();
 
-                            // write interview data on every NEXT button
-                            if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) {
-                                egoClient.getStorage().writeCurrentInterview();
-                            }
+				// write interview data on every NEXT button
+				if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) {
+					egoClient.getStorage().writeCurrentInterview();
+				}
 
-                            if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
-                                            && (question.questionType == QuestionType.ALTER_PAIR)) {
-                                    setDefaultAnswer();
-                            }
+				if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
+						&& (question.questionType == QuestionType.ALTER_PAIR)) {
+					setDefaultAnswer();
+				}
 
-                            fillPanel();
+				fillPanel();
 
-                            if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
-                                    questionList.setSelectedIndex(egoClient.getInterview()
-                                                    .getQuestionIndex());
-                            }
-                    } else {
-                            try {
-                                    egoClient.getInterview().completeInterview(egoClient.getStorage());
-                            } catch (IOException ex) {
-                                    String msg = "Unable to complete interview OR unable to generate statistics. It may not be saved.";
-                                    logger.info(msg,ex);
-                                    JOptionPane.showMessageDialog(egoClient.getFrame(),
-                                                    msg,
-                                                    "Statistics Error", JOptionPane.WARNING_MESSAGE);
-                            }
+				if (egoClient.getUiPath() == ClientFrame.VIEW_INTERVIEW) {
+					questionList.setSelectedIndex(egoClient.getInterview()
+							.getQuestionIndex());
+				}
+			} else {
+				try {
+					egoClient.getInterview().completeInterview(egoClient.getStorage());
+				} catch (IOException ex) {
+					String msg = "Unable to complete interview OR unable to generate statistics. It may not be saved.";
+					logger.info(msg,ex);
+					JOptionPane.showMessageDialog(egoClient.getFrame(),
+							msg,
+							"Statistics Error", JOptionPane.WARNING_MESSAGE);
+				}
 
-                            JOptionPane.showMessageDialog(egoClient.getFrame(),
-                                            "You have completed this interview.", "Interview Complete",
-                                            JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(egoClient.getFrame(),
+						"You have completed this interview.", "Interview Complete",
+						JOptionPane.INFORMATION_MESSAGE);
 
-                            /* Return to first screen */
-                            egoClient.getFrame().gotoSourceSelectPanel();
-                    }
+				/* Return to first screen */
+				egoClient.getFrame().gotoSourceSelectPanel();
+			}
 
-                    questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
-            }
+			questionProgress.setValue(egoClient.getInterview().getQuestionIndex());
+		}
 	}
 
 
@@ -1110,7 +1110,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)) // && ((_qIndex % 20) == 0))
 			{
-			    egoClient.getStorage().writeCurrentInterview();
+				egoClient.getStorage().writeCurrentInterview();
 			}
 
 			if ((egoClient.getUiPath() == ClientFrame.DO_INTERVIEW)
@@ -1176,7 +1176,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 	private void setButtonNextState() {
 		boolean skip = egoClient.getStudy().getAllowSkipQuestions();
-                Interview interview = egoClient.getInterview();
+		Interview interview = egoClient.getInterview();
 
 		if (question.questionType == QuestionType.ALTER_PROMPT) {
 			boolean morePrompts = !interview.isLastAlterPrompt();
@@ -1184,17 +1184,17 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 
 
 
-                        int totalAltersCount = interview.getAlterList().length;
-                        //Depending on study mode, the range of valid number of alters, changes.
-                        if(egoClient.getStudy().isUnlimitedAlterMode())
-                        {
-                                bWithinRequiredAlterRange = totalAltersCount>= egoClient.getStudy().getMinimumNumberOfAlters();
-                        }else
-                        {
-                                bWithinRequiredAlterRange =
-					(totalAltersCount >= egoClient.getStudy().getMinimumNumberOfAlters())
-				&&  (totalAltersCount <= egoClient.getStudy().getMaximumNumberOfAlters());
-                        }
+			int totalAltersCount = interview.getAlterList().length;
+			//Depending on study mode, the range of valid number of alters, changes.
+			if(egoClient.getStudy().isUnlimitedAlterMode())
+			{
+				bWithinRequiredAlterRange = totalAltersCount>= egoClient.getStudy().getMinimumNumberOfAlters();
+			}else
+			{
+				bWithinRequiredAlterRange =
+						(totalAltersCount >= egoClient.getStudy().getMinimumNumberOfAlters())
+						&&  (totalAltersCount <= egoClient.getStudy().getMaximumNumberOfAlters());
+			}
 
 			// consider question answered if we hit alter threshold or have more prompts coming
 			question.getAnswer().setAnswered(bWithinRequiredAlterRange || morePrompts);
@@ -1305,7 +1305,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 	class RadioPanel extends JPanel {
 		public RadioPanel() {
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-			"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d,  4dlu, d");
+					"t:p, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d, 4dlu, d,  4dlu, d");
 
 			layout.setRowGroups(new int[][] { { 1, 3, 5, 7, 9, 11, 13, 15, 17 } });
 
@@ -1334,7 +1334,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public TextAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-			"f:50dlu");
+					"f:50dlu");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
@@ -1354,7 +1354,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public MenuAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-			"t:d:g");
+					"t:d:g");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
@@ -1374,7 +1374,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 		public NumericalAnswerPanel() {
 			CellConstraints cc = new CellConstraints();
 			FormLayout layout = new FormLayout("r:p, 4dlu, max(250dlu;p):g",
-			"f:d, 4dlu, d");
+					"f:d, 4dlu, d");
 
 			PanelBuilder builder = new PanelBuilder(layout);
 
@@ -1414,7 +1414,7 @@ public class ClientQuestionPanel extends JPanel implements Observer {
 			JTextField numberField = new JTextField();
 			numberField.setFont(new java.awt.Font("SansSerif", 0, 14));
 			panel.add(numberField,"growx,wrap"); // TODO: needs to be like numericalTextField
-			                                     // I wonder how it prevents typing letters
+			// I wonder how it prevents typing letters
 		} else if(answerType.equals(AnswerType.CATEGORICAL)) {
 			if(selections != null) {
 				if(selections.size() < 10) {

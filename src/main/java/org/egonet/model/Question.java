@@ -25,20 +25,15 @@ import java.util.List;
 import org.egonet.model.Shared.AnswerType;
 import org.egonet.model.Shared.QuestionType;
 
-
 /*******************************************************************************
  * Routines for creating and handling atomic question elements
- *
- *
- *
- *
- *
  */
 public class Question implements Cloneable {
 
 	public String getNiceName() {
 		return questionType.niceName;
 	}
+
 	public String getTitle() {
 		return questionType.title;
 	}
@@ -100,7 +95,6 @@ public class Question implements Cloneable {
 		this.questionType = t;
 	}
 
-
 	/***************************************************************************
 	 * Returns whether a given selection is adjacent based on the values stored
 	 * in the question. Is used to override value found in an interview file
@@ -111,7 +105,7 @@ public class Question implements Cloneable {
 	public boolean selectionAdjacent(int value) {
 		boolean rval = false;
 
-		if(getSelections() == null || getSelections().size() <= 0)
+		if (getSelections() == null || getSelections().size() <= 0)
 			return false;
 
 		for (Selection sel : getSelections()) {
@@ -128,8 +122,8 @@ public class Question implements Cloneable {
 	 * Does the answer to this question determine whether alters are adjacent?
 	 */
 	public boolean determinesAdjacency() {
-		for(Selection selection : getSelections()) {
-			if(selection.isAdjacent()) {
+		for (Selection selection : getSelections()) {
+			if (selection.isAdjacent()) {
 				return true;
 			}
 		}
@@ -150,7 +144,8 @@ public class Question implements Cloneable {
 	}
 
 	/***************************************************************************
-	 * Implements Clone interface for conducting an interview and cloning the study question. The clone is attached to the interview.
+	 * Implements Clone interface for conducting an interview and cloning the
+	 * study question. The clone is attached to the interview.
 	 *
 	 * @return Clone of Question
 	 */
@@ -176,8 +171,8 @@ public class Question implements Cloneable {
 
 	public String getString() {
 		String str = "";
-		str = "ID : " + UniqueId + ", Qtype="+questionType+",Atype="+answerType+", Title : " + title + " text : " + text
-				+ "\nAnswer : " + getAnswer().getString();
+		str = "ID : " + UniqueId + ", Qtype=" + questionType + ",Atype=" + answerType + ", Title : " + title
+				+ " text : " + text + "\nAnswer : " + getAnswer().getString();
 		return str;
 	}
 

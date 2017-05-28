@@ -5,9 +5,9 @@ import java.util.Set;
 
 public class AlterPair {
 	private Alter first, second;
-	
+
 	public AlterPair(Alter first, Alter second) {
-		
+
 		// ensure these come sorted correctly
 		if(first.compareTo(second) < 0) {
 			this.first = first;
@@ -54,13 +54,13 @@ public class AlterPair {
 	public String toString() {
 		return "AlterPair [first=" + first + ", second=" + second + "]";
 	}
-	
-	
+
+
 	public Set<Alter> getAlters() {
 		// separate unordered list (force that with set)
 		HashSet<Alter> r = new HashSet<Alter>();
 		r.add(first); r.add(second);
-		
+
 		return r;
 	}
 }

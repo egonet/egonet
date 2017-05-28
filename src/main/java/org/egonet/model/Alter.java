@@ -19,19 +19,19 @@ public class Alter implements Comparable<Alter> {
 		this.name = name;
 		_id = UUID.randomUUID();
 	}
-	
+
 	public Alter(String name, UUID id) {
 		super();
 		this.name = name;
 		_id = id;
 	}
-	
+
 	public Alter(String name, String id) {
 		super();
 		this.name = name;
 		_id = UUID.fromString(id);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -49,7 +49,7 @@ public class Alter implements Comparable<Alter> {
 		if (getClass() != obj.getClass())
 			return false;
 		Alter other = (Alter) obj;
-		
+
 		return _id.equals(other._id);
 	}
 
@@ -62,20 +62,20 @@ public class Alter implements Comparable<Alter> {
 	public int compareTo(Alter arg0) {
 		UUID first = this._id;
 		UUID second = arg0._id;
-		
+
 		return first.compareTo(second);
 	}
-	
+
 	public class AlterNameComparator implements Comparator<Alter> {
 
 		@Override
 		public int compare(Alter arg0, Alter arg1) {
 			String first = arg0.name;
 			String second = arg1.name;
-			
+
 			return first.compareTo(second);
 		}
-		
+
 	}
 
 	public String getName() {

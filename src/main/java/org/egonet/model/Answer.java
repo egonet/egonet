@@ -25,12 +25,12 @@ import java.util.Random;
 import java.text.*;
 
 public class Answer implements Cloneable {
-    /**
-     * Unique ID for every question
-     */
-    private Long questionId;
+	/**
+	 * Unique ID for every question
+	 */
+	private Long questionId;
 
-    public Long getQuestionId() {
+	public Long getQuestionId() {
 		return questionId;
 	}
 
@@ -39,17 +39,17 @@ public class Answer implements Cloneable {
 	}
 
 	/**
-     * Represents the alter or alter pair that this answer is about. It may be a
-     * single alter for alter questions, or two alters for an alter pair
-     * question.
-     */
-    private List<Integer> alters;
+	 * Represents the alter or alter pair that this answer is about. It may be a
+	 * single alter for alter questions, or two alters for an alter pair
+	 * question.
+	 */
+	private List<Integer> alters;
 
-    public void setAlters(List<Integer> alters) {
+	public void setAlters(List<Integer> alters) {
 		this.alters = alters;
 	}
 
-    public void setAlters(int [] alters) {
+	public void setAlters(int [] alters) {
 		this.alters = new ArrayList<Integer>();
 		for(int i : alters)
 			this.alters.add(i);
@@ -57,7 +57,7 @@ public class Answer implements Cloneable {
 
 	private boolean _answered = false;
 
-    public boolean isAnswered() {
+	public boolean isAnswered() {
 		return _answered;
 	}
 
@@ -67,102 +67,102 @@ public class Answer implements Cloneable {
 
 	public boolean adjacent;
 
-    private int value;
+	private int value;
 
-    private int index;
+	private int index;
 
-    public String string;
+	public String string;
 
-    public String timestamp;
+	public String timestamp;
 
-    public static final int NO_ANSWER = -1;
-    public static final int ALL_ADJACENT = -2;
+	public static final int NO_ANSWER = -1;
+	public static final int ALL_ADJACENT = -2;
 
-    private static Random generator = new Random(System.currentTimeMillis());
+	private static Random generator = new Random(System.currentTimeMillis());
 
-    public Answer() {
-    	this((long)generator.nextInt());
-    }
+	public Answer() {
+		this((long)generator.nextInt());
+	}
 
-    public Answer(Long Id) {
-        this(Id, null);
-    }
+	public Answer(Long Id) {
+		this(Id, null);
+	}
 
-    public Answer(Long Id, int[] alters) {
-        //logger.info("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
-        questionId = Id;
-        setAnswered(false);
-        adjacent = false;
-        setValue(-1);
-        string = "";
-        timestamp = DateFormat.getDateInstance().format(new Date());
+	public Answer(Long Id, int[] alters) {
+		//logger.info("New answer object created with id="+Id+" and alters: " + Arrays.asList(alters));
+		questionId = Id;
+		setAnswered(false);
+		adjacent = false;
+		setValue(-1);
+		string = "";
+		timestamp = DateFormat.getDateInstance().format(new Date());
 
-        if (alters == null) {
-            this.alters = new ArrayList<Integer>();
-        } else {
-            this.alters = new ArrayList<Integer>(alters.length);
-            for(Integer a : alters)
-                this.alters.add(a);
-        }
-    }
+		if (alters == null) {
+			this.alters = new ArrayList<Integer>();
+		} else {
+			this.alters = new ArrayList<Integer>(alters.length);
+			for(Integer a : alters)
+				this.alters.add(a);
+		}
+	}
 
-    public Integer firstAlter() {
-    	if(!hasAtLeastOneAlter()) {
-    		throw new IllegalArgumentException("Does not have any alters at " + getString());
-    	}
+	public Integer firstAlter() {
+		if(!hasAtLeastOneAlter()) {
+			throw new IllegalArgumentException("Does not have any alters at " + getString());
+		}
 
-        return alters.get(0);
-    }
+		return alters.get(0);
+	}
 
-    public Integer secondAlter() {
-    	if(!hasTwoAlters()) {
-    		throw new IllegalArgumentException("Does not have two alters at " + getString());
-    	}
+	public Integer secondAlter() {
+		if(!hasTwoAlters()) {
+			throw new IllegalArgumentException("Does not have two alters at " + getString());
+		}
 
-        return alters.get(1);
-    }
+		return alters.get(1);
+	}
 
-    public boolean hasTwoAlters() {
-        return alters.size() > 1;
-    }
+	public boolean hasTwoAlters() {
+		return alters.size() > 1;
+	}
 
-    public boolean hasAtLeastOneAlter() {
-        return alters.size() > 0;
-    }
+	public boolean hasAtLeastOneAlter() {
+		return alters.size() > 0;
+	}
 
-    public Object clone() throws CloneNotSupportedException {
-        return (super.clone());
-    }
+	public Object clone() throws CloneNotSupportedException {
+		return (super.clone());
+	}
 
-    public String toString() {
-    	return string == null || string.equals("") ? getValue()+"" : string;
-    }
+	public String toString() {
+		return string == null || string.equals("") ? getValue()+"" : string;
+	}
 
-    public String getString() {
-        String str = "";
-        str = "questionId=" + questionId + ", answered=" + isAnswered() + ", adjacent=" + adjacent +  ", string=" + string + ", index="+getIndex()+", value=" + getValue();
-        return str;
+	public String getString() {
+		String str = "";
+		str = "questionId=" + questionId + ", answered=" + isAnswered() + ", adjacent=" + adjacent +  ", string=" + string + ", index="+getIndex()+", value=" + getValue();
+		return str;
 
-    }
+	}
 
-    public void setValue(int value) {
-        this.value = value;
-    }
+	public void setValue(int value) {
+		this.value = value;
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public int getValue() {
+		return value;
+	}
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
-    public int getIndex() {
-        return index;
-    }
+	public int getIndex() {
+		return index;
+	}
 
-    public List<Integer> getAlters() {
-        return Collections.unmodifiableList(alters);
-    }
+	public List<Integer> getAlters() {
+		return Collections.unmodifiableList(alters);
+	}
 
 }
