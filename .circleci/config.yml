@@ -10,18 +10,12 @@ jobs:
       - run:
           name: Get sbt binary
           command: |
-                    apt update && apt install -y curl
-                    curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
-                    sudo dpkg -i sbt-$SBT_VERSION.deb
-                    rm sbt-$SBT_VERSION.deb
-                    apt-get update
-                    apt-get install -y python-pip git
-                    pip install awscli
-                    apt-get clean && apt-get autoclean
+            mkdir -p ~/.packages
+            wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.7.deb -O ~/.packages/sbt-0.13.7.deb
+            sudo dpkg -i ~/.packages/sbt-0.13.7.deb
+            wget -q https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/launch4j-3.9-linux.tgz/download -O ~/launch4j.tar.gz
+            tar xzvf ~/launch4j.tar.gz -C ~/.packages
       - checkout
-      - restore_cache:
-          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: sbt-cache
       - run:
           name: install launch4j
           command: |
@@ -33,9 +27,3 @@ jobs:
             sbt assembly
             rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
             cp target/*.exe target/*.jar $CIRCLE_ARTIFACTS/
-      - save_cache:
-          key: sbt-cache
-          paths:
-            - "~/.ivy2/cache"
-            - "~/.sbt"
-            - "~/.m2"
