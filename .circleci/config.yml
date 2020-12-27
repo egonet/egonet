@@ -2,9 +2,11 @@ version: 2.0
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:9-jdk
+      - image: circleci/openjdk:8-jdk
     steps:
       - checkout
+      - restore_cache:
+          key: egonet-circleci-v0
       - run:
           name: install dependencies
           command: |
