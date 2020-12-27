@@ -1,0 +1,27 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:9-jdk
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            mkdir -p ~/.packages
+            wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.7.deb -O ~/.packages/sbt-0.13.7.deb
+            sudo dpkg -i ~/.packages/sbt-0.13.7.deb
+            wget -q https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/launch4j-3.9-linux.tgz/download -O ~/launch4j.tar.gz
+            tar xzvf ~/launch4j.tar.gz -C ~/.packages
+      - run:
+          name: test
+          command: |
+            sbt assembly
+            rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
+            cp target/*.exe target/*.jar $CIRCLE_ARTIFACTS/
+      - save_cache:
+          key: egonet-circleci-v0
+          paths:
+            - "~/.ivy2"
+            - "~/.sbt"
+            - "~/.packages"
