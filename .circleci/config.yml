@@ -40,6 +40,7 @@ jobs:
       - run:
           name: launch4j
           command: |
-            rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
+            rm -rf lib/launch4j && mv ~/.packages/launch4j lib/launch4j
+            ant -buildfile build-launch4j.xml
       - store_artifacts:
           path: /home/circleci/project/target/egonet/target/*.exe
