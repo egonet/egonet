@@ -16,15 +16,14 @@
 	<!--specifying the main classes to be executed -->
 	<property name="main.class.Egonet" value="org.egonet.gui.EgonetRunner" />
 
-	<property name="launch4j.dir" location="lib/launch4j" />
-	
+	<property name="launch4j.dir" location="/home/circleci/project/lib/launch4j" />
+
 	<taskdef name="launch4j"
 		classname="net.sf.launch4j.ant.Launch4jTask"
 		classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
-	
+
 	<target name="compile" description="Create Windows-compatible executables from the built Jar files">
 		<launch4j configFile="winwrap.xml" />
 	</target>
 
 </project>
-
