@@ -36,10 +36,10 @@ jobs:
           command: |
             sbt assembly < /dev/null
       - store_artifacts:
-          path: target/*.jar
+          path: /home/circleci/project/target/egonet/target/*.jar
       - run:
           name: launch4j
           command: |
             rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
       - store_artifacts:
-          path: target/*.exe
+          path: /home/circleci/project/target/egonet/target/*.exe
