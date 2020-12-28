@@ -25,6 +25,7 @@ jobs:
             echo SBT_VERSION=$SBT_VERSION
             java -version
             sbt sbtVersion < /dev/null
+            sbt update < /dev/null
       - save_cache:
           key: sbt-cache
           paths:
@@ -41,6 +42,7 @@ jobs:
           name: launch4j
           command: |
             rm -rf lib/launch4j && mv ~/.packages/launch4j lib/launch4j
+            ls -la lib/launch4j/bin
             ant -buildfile build-launch4j.xml
       - store_artifacts:
           path: /home/circleci/project/target/egonet/target/*.exe
