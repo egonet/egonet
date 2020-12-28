@@ -35,9 +35,11 @@ jobs:
           name: assembly
           command: |
             sbt assembly < /dev/null
-            cp target/*.jar $CIRCLE_ARTIFACTS/
+      - store_artifacts:
+          path: target/*.jar
       - run:
           name: launch4j
           command: |
             rm -rf lib/launch4j && ln -s ~/.packages/launch4j lib/launch4j && ant -buildfile build-launch4j.xml
-            cp target/*.exe $CIRCLE_ARTIFACTS/
+      - store_artifacts:
+          path: target/*.exe
