@@ -16,7 +16,7 @@
 	<!--specifying the main classes to be executed -->
 	<property name="main.class.Egonet" value="org.egonet.gui.EgonetRunner" />
 
-	<property name="launch4j.dir" location="/home/circleci/project/lib/launch4j" />
+	<property name="launch4j.dir" location="lib/launch4j" />
 
 	<taskdef name="launch4j"
 		classname="net.sf.launch4j.ant.Launch4jTask"
