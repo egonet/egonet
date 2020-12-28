@@ -37,7 +37,7 @@ jobs:
           command: |
             sbt assembly < /dev/null
       - store_artifacts:
-          path: /home/circleci/project/target/egonet/target/*.jar
+          path: /home/circleci/project/target/egonet-*.jar
       - run:
           name: launch4j
           command: |
@@ -45,4 +45,4 @@ jobs:
             ls -la lib/launch4j/bin/windres
             # ant -buildfile build-launch4j.xml
       - store_artifacts:
-          path: /home/circleci/project/target/egonet/target/*.exe
+          path: /home/circleci/project/target/egonet-*.exe
