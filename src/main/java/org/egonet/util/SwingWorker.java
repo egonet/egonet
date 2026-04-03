@@ -25,7 +25,7 @@ public abstract class SwingWorker
 	private Object value;  // see getValue(), setValue()
 	private Thread thread;
 
-	public final static Integer INDETERMINATE = new Integer(-1);
+	public final static Integer INDETERMINATE = Integer.valueOf(-1);
 
 	/**
 	 * Class to maintain reference to current worker thread

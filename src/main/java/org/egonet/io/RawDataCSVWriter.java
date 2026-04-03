@@ -18,7 +18,7 @@ import org.egonet.model.Study;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 
 public class RawDataCSVWriter {
 	

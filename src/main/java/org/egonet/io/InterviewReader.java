@@ -313,7 +313,7 @@ public class InterviewReader {
 
     private static Answer readAnswer(Study study, Element e) {
         int qAlters[] = null;
-        Long qId = new Long(e.getLong("QuestionId"));
+        Long qId = Long.valueOf(e.getLong("QuestionId"));
         Question q = (Question) study.getQuestions().getQuestion(qId);
         Element alterElem = e.getElement("Alters");
 

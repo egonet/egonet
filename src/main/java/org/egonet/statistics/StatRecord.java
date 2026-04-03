@@ -29,24 +29,24 @@ public class StatRecord
 {
 	private String  name           = "";
 	public String  degreeName     = "";
-	public Integer degreeValue    = new Integer(0);
-	public Float   degreeMean     = new Float(0);
-	public Float   degreeNC       = new Float(0);
+	public Integer degreeValue    = Integer.valueOf(0);
+	public Float   degreeMean     = Float.valueOf(0);
+	public Float   degreeNC       = Float.valueOf(0);
 
 	public String  betweenName    = "";
-	public Float   betweenValue   = new Float(0);
-	public Float   betweenMean    = new Float(0);
-	public Float   betweenNC      = new Float(0);
+	public Float   betweenValue   = Float.valueOf(0);
+	public Float   betweenMean    = Float.valueOf(0);
+	public Float   betweenNC      = Float.valueOf(0);
 
 	public String  closenessName  = "";
-	public Float   closenessValue = new Float(0);
-	public Float   closenessMean  = new Float(0);
-	public Float   closenessNC    = new Float(0);
+	public Float   closenessValue = Float.valueOf(0);
+	public Float   closenessMean  = Float.valueOf(0);
+	public Float   closenessNC    = Float.valueOf(0);
 
-	public Integer numCliques     = new Integer(0);
-	public Integer numComponents  = new Integer(0);
-	public Integer numIsolates    = new Integer(0);
-	public Integer numDyads       = new Integer(0);
+	public Integer numCliques     = Integer.valueOf(0);
+	public Integer numComponents  = Integer.valueOf(0);
+	public Integer numIsolates    = Integer.valueOf(0);
+	public Integer numDyads       = Integer.valueOf(0);
    
    public List<EgoAnswer>    egoAnswers     = new ArrayList<EgoAnswer>();
    public List<AlterAnswer>    alterAnswers   = new ArrayList<AlterAnswer>();
@@ -70,24 +70,24 @@ public class StatRecord
 	   setName(new Name(stats.getInterview().getIntName()).toString());
       
       degreeName  = stats.mostCentralDegreeAlterName;
-      degreeValue = new Integer(stats.mostCentralDegreeAlterValue);
-      degreeMean  = new Float(stats.meanCentralDegreeValue);
-      degreeNC    = new Float(stats.degreeNC);
+      degreeValue = Integer.valueOf(stats.mostCentralDegreeAlterValue);
+      degreeMean  = Float.valueOf(stats.meanCentralDegreeValue);
+      degreeNC    = Float.valueOf(stats.degreeNC);
 
       closenessName  = stats.mostCentralClosenessAlterName;
-      closenessValue = new Float(stats.mostCentralClosenessAlterValue);
-      closenessMean  = new Float(stats.meanCentralClosenessValue);
-      closenessNC    = new Float(stats.closenessNC);
-      
+      closenessValue = Float.valueOf(stats.mostCentralClosenessAlterValue);
+      closenessMean  = Float.valueOf(stats.meanCentralClosenessValue);
+      closenessNC    = Float.valueOf(stats.closenessNC);
+
       betweenName    = stats.mostCentralBetweenAlterName;
-      betweenValue   = new Float(stats.mostCentralBetweenAlterValue);
-      betweenMean    = new Float(stats.meanCentralBetweenAlterValue);
-      betweenNC      = new Float(stats.betweenNC);
-      
-      numCliques     = new Integer(stats.cliqueSet.size());
-      numComponents  = new Integer(stats.componentSet.size() - stats.isolates - stats.dyads);
-      numIsolates    = new Integer(stats.isolates);
-      numDyads       = new Integer(stats.dyads);
+      betweenValue   = Float.valueOf(stats.mostCentralBetweenAlterValue);
+      betweenMean    = Float.valueOf(stats.meanCentralBetweenAlterValue);
+      betweenNC      = Float.valueOf(stats.betweenNC);
+
+      numCliques     = Integer.valueOf(stats.cliqueSet.size());
+      numComponents  = Integer.valueOf(stats.componentSet.size() - stats.isolates - stats.dyads);
+      numIsolates    = Integer.valueOf(stats.isolates);
+      numDyads       = Integer.valueOf(stats.dyads);
 
       egoAnswers = Arrays.asList(stats.getInterview().getEgoAnswerArray(this));
       

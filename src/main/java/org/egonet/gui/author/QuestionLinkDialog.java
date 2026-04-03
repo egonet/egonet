@@ -49,7 +49,7 @@ public class QuestionLinkDialog extends JDialog
 		implements Observer
 {
 	private Question                  baseQuestion;
-   private Answer                    linkAnswer           = new Answer(new Long(-1));
+   private Answer                    linkAnswer           = new Answer(Long.valueOf(-1));
 
    /* Containers */
    private final JSplitPane          questionSplit        = new JSplitPane();

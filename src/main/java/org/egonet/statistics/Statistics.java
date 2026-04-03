@@ -39,7 +39,7 @@ import org.egonet.util.FileHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 
 public class Statistics
 {
@@ -416,7 +416,7 @@ public class Statistics
 
             spaths[s] = 1;
             distance[s] = 0;
-            Q.addLast(new Integer(s));
+            Q.addLast(Integer.valueOf(s));
 
             while (!Q.isEmpty())
             {
@@ -432,7 +432,7 @@ public class Statistics
                         // w found for first time?
                         if (distance[w] < 0)
                         {
-                            Q.addLast(new Integer(w));
+                            Q.addLast(Integer.valueOf(w));
                             distance[w] = distance[v] + 1;
                         }
 
@@ -440,7 +440,7 @@ public class Statistics
                         if (distance[w] == (distance[v] + 1))
                         {
                             spaths[w] += spaths[v];
-                            P[w].add(new Integer(v));
+                            P[w].add(Integer.valueOf(v));
                         }
                     }
                 }
@@ -786,7 +786,7 @@ public class Statistics
 
                         if (a.isAnswered())
                         {
-                            alterSummary[a.firstAlter()][index] = new Integer(a.getValue());
+                            alterSummary[a.firstAlter()][index] = Integer.valueOf(a.getValue());
 
                             if (q.answerType.equals(AnswerType.NUMERICAL))
                             {
@@ -804,7 +804,7 @@ public class Statistics
                         }
                         else
                         {
-                            alterSummary[a.firstAlter()][index] = new Integer(-1);
+                            alterSummary[a.firstAlter()][index] = Integer.valueOf(-1);
                         }
 
                     } catch (Exception ex) {

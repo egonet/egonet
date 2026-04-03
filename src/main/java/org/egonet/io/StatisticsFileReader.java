@@ -35,24 +35,24 @@ public class StatisticsFileReader {
 		}
 
 		sr.degreeName     = e.getString("DegreeName");
-		sr.degreeValue    = new Integer(e.getInt("DegreeValue"));
-		sr.degreeMean     = new Float(e.getFloat("DegreeMean"));
-		sr.degreeNC       = new Float(e.getFloat("DegreeNC"));
+		sr.degreeValue    = Integer.valueOf(e.getInt("DegreeValue"));
+		sr.degreeMean     = Float.valueOf(e.getFloat("DegreeMean"));
+		sr.degreeNC       = Float.valueOf(e.getFloat("DegreeNC"));
 
 		sr.closenessName  = e.getString("ClosenessName");
-		sr.closenessValue = new Float(e.getFloat("ClosenessValue"));
-		sr.closenessMean  = new Float(e.getFloat("ClosenessMean"));
-		sr.closenessNC    = new Float(e.getFloat("ClosenessNC"));
+		sr.closenessValue = Float.valueOf(e.getFloat("ClosenessValue"));
+		sr.closenessMean  = Float.valueOf(e.getFloat("ClosenessMean"));
+		sr.closenessNC    = Float.valueOf(e.getFloat("ClosenessNC"));
 
 		sr.betweenName    = e.getString("BetweenName");
-		sr.betweenValue   = new Float(e.getFloat("BetweenValue"));
-		sr.betweenMean    = new Float(e.getFloat("BetweenMean"));
-		sr.betweenNC      = new Float(e.getFloat("BetweenNC"));
+		sr.betweenValue   = Float.valueOf(e.getFloat("BetweenValue"));
+		sr.betweenMean    = Float.valueOf(e.getFloat("BetweenMean"));
+		sr.betweenNC      = Float.valueOf(e.getFloat("BetweenNC"));
 
-		sr.numCliques     = new Integer(e.getInt("NumCliques"));
-		sr.numComponents  = new Integer(e.getInt("NumComponents"));
-		sr.numIsolates    = new Integer(e.getInt("NumIsolates"));
-		sr.numDyads       = new Integer(e.getInt("NumDyads"));
+		sr.numCliques     = Integer.valueOf(e.getInt("NumCliques"));
+		sr.numComponents  = Integer.valueOf(e.getInt("NumComponents"));
+		sr.numIsolates    = Integer.valueOf(e.getInt("NumIsolates"));
+		sr.numDyads       = Integer.valueOf(e.getInt("NumDyads"));
 
 		Elements egoList = e.getElement("EgoAnswers").getElements("EgoAnswer");
 		while (egoList.hasMoreElements())

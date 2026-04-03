@@ -47,15 +47,15 @@ public class ClosenessModel extends StatTableModel
          }
          else if (columnIndex == (getColumnCount() - 2))
          {
-            return (new Integer(stats.farnessArray[rowIndex]));
+            return (Integer.valueOf(stats.farnessArray[rowIndex]));
          }
          else if (columnIndex == (getColumnCount() - 1))
          {
-            return (new Float(stats.closenessArray[rowIndex]));
+            return (Float.valueOf(stats.closenessArray[rowIndex]));
          }
          else
          {
-            return (new Integer(stats.proximityMatrix[rowIndex][columnIndex - 1]));
+            return (Integer.valueOf(stats.proximityMatrix[rowIndex][columnIndex - 1]));
          }
       }
       catch (Exception ex)

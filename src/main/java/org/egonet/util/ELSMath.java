@@ -115,11 +115,11 @@ public class ELSMath
       Integer i;
       try
       {
-         i = new Integer(field.trim());
+         i = Integer.valueOf(field.trim());
       }
       catch (NumberFormatException ex)
       {
-         i = new Integer(0);
+         i = Integer.valueOf(0);
       }
       return i;
    }
@@ -134,11 +134,11 @@ public class ELSMath
       Float f;
       try
       {
-         f = new Float(field.trim());
+         f = Float.valueOf(field.trim());
       }
       catch (NumberFormatException ex)
       {
-         f = new Float(0);
+         f = Float.valueOf(0);
       }
       return f;
    }

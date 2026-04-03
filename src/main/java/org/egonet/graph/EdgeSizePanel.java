@@ -164,10 +164,10 @@ public class EdgeSizePanel extends JPanel {
 		int noOfSizes = question.getSelections().size();
 		for (int i = 1; i <= noOfSizes; i++) {
 			if (i < sizes.length) {
-				String num = (new Integer(i)).toString();
+				String num = (Integer.valueOf(i)).toString();
 				rowData[i - 1][2] = num;
 			} else {
-				String num = (new Integer(i - sizes.length)).toString();
+				String num = (Integer.valueOf(i - sizes.length)).toString();
 				rowData[i - 1][2] = num;
 			}
 		}

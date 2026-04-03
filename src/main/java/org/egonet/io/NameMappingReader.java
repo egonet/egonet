@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 
 public class NameMappingReader {
 	
@@ -140,18 +140,18 @@ public class NameMappingReader {
 	
 	public NameMappingReader(File mappingFile) throws IOException {
 		FileReader fileReader = new FileReader(mappingFile);
-		CSVReader csv = new CSVReader(fileReader);
+		try (CSVReader csv = new CSVReader(fileReader)) {
+			csv.readNext(); // skip header
 
-		csv.readNext(); // skip header
-		
-		mappings = new Mappings();
-		
-		String[] nextLine;
-		while((nextLine = csv.readNext()) != null) {
-			mappings.add(new Mapping(nextLine));
+			mappings = new Mappings();
+
+			String[] nextLine;
+			while ((nextLine = csv.readNext()) != null) {
+				mappings.add(new Mapping(nextLine));
+			}
+		} catch (com.opencsv.exceptions.CsvValidationException e) {
+			throw new IOException("Invalid CSV in mapping file: " + mappingFile, e);
 		}
-		
-		fileReader.close();
 	}
 	
 	public void applyTo(List<NameMapping> nameMappings) {

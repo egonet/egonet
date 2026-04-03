@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.egonet.gui.wholenet.NameMapperFrame;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 
 public class NameMappingWriter {
 	

@@ -695,7 +695,7 @@ public class GraphRenderer /*implements
 		float[] degreeCentrality = new float[egoClient.getInterview().getNumberAlters()];
 		float[] scaledDegreeCentrality = new float[egoClient.getInterview().getNumberAlters()];
 		for (int i = 0; i < egoClient.getInterview().getNumberAlters(); i++) {
-			degreeCentrality[i] = new Float(
+			degreeCentrality[i] = Float.valueOf(
 					egoClient.getInterview().getStats().degreeArray[i]
 							/ ((float) (egoClient.getInterview().getStats().proximityMatrix.length - 1)));
 		}
@@ -726,8 +726,7 @@ public class GraphRenderer /*implements
 		for (int i = 0; i < egoClient.getInterview().getNumberAlters(); i++) {
 			double big = egoClient.getInterview().getStats().proximityMatrix.length - 1;
 			big *= big;
-			betweennessCentrality[i] = new Float(
-					egoClient.getInterview().getStats().betweennessArray[i] / big);
+			betweennessCentrality[i] = (float) (egoClient.getInterview().getStats().betweennessArray[i] / big);
 		}
 		// scale the values
 		float maximum = max(betweennessCentrality);

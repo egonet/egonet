@@ -47,13 +47,13 @@ public class BetweennessModel extends StatTableModel
          }
          else if (columnIndex == 1)
          {
-            return (new Float(stats.betweennessArray[rowIndex]));
+            return (Float.valueOf(stats.betweennessArray[rowIndex]));
          }
          else
          {
             double big = stats.proximityMatrix.length - 1;
             big *= big;
-            return (new Float(stats.betweennessArray[rowIndex] / big));
+            return (Float.valueOf((float)(stats.betweennessArray[rowIndex] / big)));
          }
       }
       catch (Exception ex)

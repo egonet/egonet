@@ -52,7 +52,7 @@ public class Question implements Cloneable {
 		this.followupOnly = followupOnly;
 	}
 
-	public Long UniqueId = new Long(new Date().getTime());
+	public Long UniqueId = Long.valueOf(new Date().getTime());
 
 	public QuestionType questionType = QuestionType.EGO;
 

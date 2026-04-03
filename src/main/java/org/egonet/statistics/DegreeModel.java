@@ -47,11 +47,11 @@ public class DegreeModel extends StatTableModel
 			}
 			else if (columnIndex == 1)
 			{
-				return (new Integer(stats.degreeArray[rowIndex]));
+				return (Integer.valueOf(stats.degreeArray[rowIndex]));
 			}
 			else
 			{
-				return (new Float(stats.degreeArray[rowIndex] / ((float) (stats.proximityMatrix.length - 1))));
+				return (Float.valueOf(stats.degreeArray[rowIndex] / ((float) (stats.proximityMatrix.length - 1))));
 			}
 		}
 		catch (Exception ex)

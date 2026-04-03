@@ -70,9 +70,9 @@ public class InterviewSummaryModel extends StatTableModel
 					case 2 :
 						return (stats.mostCentralBetweenAlterName);
 					case 3 :
-						return (new Integer(stats.cliqueSet.size()));
+						return (Integer.valueOf(stats.cliqueSet.size()));
 					case 4 :
-						return (new Integer(stats.componentSet.size()));
+						return (Integer.valueOf(stats.componentSet.size()));
 					default :
 						return (null);
 				}
@@ -81,11 +81,11 @@ public class InterviewSummaryModel extends StatTableModel
 				switch (rowIndex)
 				{
 					case 0 :
-						return (new Integer(stats.mostCentralDegreeAlterValue));
+						return (Integer.valueOf(stats.mostCentralDegreeAlterValue));
 					case 1 :
-						return (new Float(stats.mostCentralClosenessAlterValue));
+						return (Float.valueOf(stats.mostCentralClosenessAlterValue));
 					case 2 :
-						return (new Float(stats.mostCentralBetweenAlterValue));
+						return (Float.valueOf(stats.mostCentralBetweenAlterValue));
 					default :
 						return (null);
 				}

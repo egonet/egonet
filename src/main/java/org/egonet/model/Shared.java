@@ -111,9 +111,9 @@ public class Shared {
 	public final static String THREE_STEP_ELICITATION = "Three Step Elicitation";
 
 	/* Dynamic question placeholders */
-	public final static Long GENERIC_ALTER_PROMPT = new Long(45);
-	public final static Long GENERIC_CORRECTION = new Long(49);
-	public final static Long GENERIC_APPLET_LINK = new Long(54);
+	public final static Long GENERIC_ALTER_PROMPT = Long.valueOf(45);
+	public final static Long GENERIC_CORRECTION = Long.valueOf(49);
+	public final static Long GENERIC_APPLET_LINK = Long.valueOf(54);
 
 	/* For dynamic Alter Prompts */
 	public final static class AlterPromptType implements Serializable {

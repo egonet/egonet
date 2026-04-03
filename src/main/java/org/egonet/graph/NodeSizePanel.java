@@ -158,10 +158,10 @@ public class NodeSizePanel extends JPanel {
 			int noOfSizes = question.getSelections().size();
 			for (int i = 1; i <= noOfSizes; i++) {
 				if (i < sizes.length) {
-					String num = (new Integer(i)).toString();
+					String num = (Integer.valueOf(i)).toString();
 					rowData[i - 1][1] = num;
 				} else {
-					String num = (new Integer(i - sizes.length)).toString();
+					String num = (Integer.valueOf(i - sizes.length)).toString();
 					rowData[i - 1][1] = num;
 				}
 			}
@@ -197,10 +197,10 @@ public class NodeSizePanel extends JPanel {
 			int noOfSizes = selectionList.size();
 			for (int i = 1; i <= noOfSizes; i++) {
 				if (i < sizes.length) {
-					String num = (new Integer(i)).toString();
+					String num = (Integer.valueOf(i)).toString();
 					rowData[i - 1][1] = num;
 				} else {
-					String num = (new Integer(i - sizes.length)).toString();
+					String num = (Integer.valueOf(i - sizes.length)).toString();
 					rowData[i - 1][1] = num;
 				}
 			}

@@ -141,7 +141,7 @@ public class StudyReader {
 
 			Elements ids = element.getElements("id");
 			while (ids.hasMoreElements()) {
-				questionOrder.add(new Long(ids.next().getLong()));
+				questionOrder.add(Long.valueOf(ids.next().getLong()));
 				orderct++;
 			}
 		}
@@ -246,7 +246,7 @@ public class StudyReader {
 			q.followupOnly = foo;
 		}
 
-		q.UniqueId = new Long(question.getLong("Id"));
+		q.UniqueId = Long.valueOf(question.getLong("Id"));
 
 		if (question.getAttribute("CentralityMarker") != null) {
 			boolean centrality = question.getAttribute("CentralityMarker").equals("true");
